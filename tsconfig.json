@@ -1,0 +1,18 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "importsNotUsedAsValues": "remove",
+
+        "inlineSources": true,
+        "module": "ESNext",
+        "target": "es2020",
+        "allowJs": true,
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "importHelpers": true,
+        "types": ["svelte", "node", "jest"],
+        "lib": ["dom", "esnext", "scripthost", "es2015"]
+    },
+    "include": ["src/**/*", "tests/**/*"]
+}

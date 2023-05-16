@@ -1,0 +1,23 @@
+# Intellij
+*.iml
+.idea
+
+# npm
+node_modules
+
+# build
+main.js
+*.js.map
+dist
+styles.css
+!src/styles.css
+
+# obsidian
+data.json
+.DS_Store
+rollup.config-dev.js
+webpack.dev.js
+main.js.LICENSE.txt
+
+.env
+build
