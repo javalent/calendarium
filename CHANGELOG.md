@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/javalent/the-calendarium/compare/v4.0.0...4.1.0) (2023-05-16)
+
+
+### Features
+
+* The Calendarium ([ea7015e](https://github.com/javalent/the-calendarium/commit/ea7015ef09ed979f6fc091824a98979c7b9e07c3))
+
 ## [4.0.0-b4](https://github.com/fantasycalendar/obsidian-fantasy-calendar/compare/4.0.0-b3...4.0.0-b4) (2023-05-16)
 
 
