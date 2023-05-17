@@ -1,0 +1,13 @@
+
+.calendarium-date-fields {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+}
+
+.calendarium-date-fields .calendarium-date-field {
+    display: flex;
+    flex-flow: column nowrap;
+}
