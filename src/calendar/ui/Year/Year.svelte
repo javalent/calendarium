@@ -9,8 +9,8 @@
     $: yearCalculator = store.yearCalculator;
 
     const ephemeral = getTypedContext("ephemeralStore");
-    $: displaying = ephemeral.displaying;
-    $: displayedMonth = ephemeral.displayingMonth;
+    $: displaying = $ephemeral.displaying;
+    $: displayedMonth = $ephemeral.displayingMonth;
 
     $: yearStore = yearCalculator.getYearFromCache($displaying.year);
     $: monthArray = store.staticStore.months;

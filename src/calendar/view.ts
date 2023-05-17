@@ -11,7 +11,7 @@ interface CalendarContext {
     store: Writable<CalendarStore>;
     plugin: Calendarium;
     yearView: Writable<boolean>;
-    ephemeralStore: EphemeralStore;
+    ephemeralStore: Writable<EphemeralStore>;
 }
 
 export function setTypedContext<T extends keyof CalendarContext>(

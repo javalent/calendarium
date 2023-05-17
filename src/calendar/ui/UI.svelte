@@ -12,12 +12,13 @@
     setTypedContext("plugin", plugin);
 
     const store = plugin.getStore(calendar);
+    console.log("🚀 ~ file: UI.svelte:15 ~ store:", store);
 
     $: {
         if (store) {
             setTypedContext("store", writable(store));
             const ephemeralStore = store.getEphemeralStore();
-            setTypedContext("ephemeralStore", ephemeralStore);
+            setTypedContext("ephemeralStore", writable(ephemeralStore));
         }
     }
 </script>

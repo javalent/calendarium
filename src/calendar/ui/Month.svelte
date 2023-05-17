@@ -9,14 +9,14 @@
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
     $: store = $global;
-    $: ({ yearCalculator, staticStore } = store);
-    $: displayingMonth = ephemeral.displayingMonth;
-    $: previousMonth = ephemeral.getPreviousMonth(month, year);
-    $: nextMonth = ephemeral.getNextMonth(month, year);
-    $: displayWeeks = ephemeral.displayWeeks;
-    $: viewState = ephemeral.viewState;
+    $: staticStore = store.staticStore;
+    $: yearCalculator = store.yearCalculator;
+    $: previousMonth = $ephemeral.getPreviousMonth(month, year);
+    $: nextMonth = $ephemeral.getNextMonth(month, year);
+    $: displayWeeks = $ephemeral.displayWeeks;
+    $: viewState = $ephemeral.viewState;
 
-    const { staticConfiguration } = staticStore;
+    $: staticConfiguration = staticStore.staticConfiguration;
     $: displayedMonth = yearCalculator
         .getYearFromCache(year)
         .getMonthFromCache(month);

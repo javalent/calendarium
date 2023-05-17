@@ -11,10 +11,10 @@
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
     $: store = $global;
-    $: displaying = ephemeral.displaying;
-    $: viewState = ephemeral.viewState;
+    $: displaying = $ephemeral.displaying;
+    $: viewState = $ephemeral.viewState;
 
-    $: viewing = ephemeral.viewing;
+    $: viewing = $ephemeral.viewing;
 
     const plugin = getTypedContext("plugin");
     let otherCalendars = plugin.data.calendars;
@@ -37,6 +37,7 @@
                 item.setTitle(calendar.name).onClick(() => {
                     const newStore = plugin.getStore(calendar);
                     global.set(newStore);
+                    ephemeral.set(newStore.getEphemeralStore());
                 })
             );
         }

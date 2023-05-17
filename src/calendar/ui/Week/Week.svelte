@@ -5,19 +5,19 @@
     import { get } from "svelte/store";
 
     const ephemeral = getTypedContext("ephemeralStore");
-    $: displaying = ephemeral.displaying;
-    $: displayWeeks = ephemeral.displayWeeks;
-    $: displayedMonth = ephemeral.displayingMonth;
+    $: displaying = $ephemeral.displaying;
+    $: displayWeeks = $ephemeral.displayWeeks;
+    $: displayedMonth = $ephemeral.displayingMonth;
     $: firstDay = $displayedMonth.firstDay;
     $: days = $displayedMonth.days;
     $: firstWeekNumber = $displayedMonth.firstWeekNumber;
     $: weekdays = $displayedMonth.weekdays;
 
-    $: previousMonth = ephemeral.getPreviousMonth(
+    $: previousMonth = $ephemeral.getPreviousMonth(
         $displaying.month,
         $displaying.year
     );
-    $: nextMonth = ephemeral.getNextMonth($displaying.month, $displaying.year);
+    $: nextMonth = $ephemeral.getNextMonth($displaying.month, $displaying.year);
 
     //not zero indexed, need to subtract one
     $: currentWeekday = wrap($displaying.day - 1 + $firstDay, $weekdays.length);

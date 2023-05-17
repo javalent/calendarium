@@ -9,12 +9,12 @@
     const ephemeral = getTypedContext("ephemeralStore");
     const plugin = getTypedContext("plugin");
     const store = $global;
-    const { displayingMonth, displayingYear } = ephemeral;
+    const { displayingMonth, displayingYear } = $ephemeral;
     const { currentDisplay } = store;
-    $: displayMoons = ephemeral.displayMoons;
-    $: displayWeeks = ephemeral.displayWeeks;
-    $: displayDayNumber = ephemeral.displayDayNumber;
-    $: viewState = ephemeral.viewState;
+    $: displayMoons = $ephemeral.displayMoons;
+    $: displayWeeks = $ephemeral.displayWeeks;
+    $: displayDayNumber = $ephemeral.displayDayNumber;
+    $: viewState = $ephemeral.viewState;
 
     const left = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon("left-arrow");
@@ -113,11 +113,11 @@
                 <div
                     class="arrow calendar-clickable"
                     use:left
-                    on:click={() => ephemeral.goToPrevious()}
+                    on:click={() => $ephemeral.goToPrevious()}
                 />
                 <div
                     class="reset-button calendar-clickable"
-                    on:click={() => ephemeral.displayDate()}
+                    on:click={() => $ephemeral.displayDate()}
                     aria-label="Today is {$currentDisplay}"
                 >
                     <span>Today</span>
@@ -125,7 +125,7 @@
                 <div
                     class="arrow right calendar-clickable"
                     use:right
-                    on:click={(evt) => ephemeral.goToNext()}
+                    on:click={(evt) => $ephemeral.goToNext()}
                 />
                 <div
                     class="calendar-clickable"

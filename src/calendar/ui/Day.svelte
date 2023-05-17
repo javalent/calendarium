@@ -15,7 +15,7 @@
     $: year = month.year;
     $: current = $store.current;
     $: eventCache = $store.eventCache;
-    $: viewing = ephemeral.viewing;
+    $: viewing = $ephemeral.viewing;
     $: events = eventCache.getItemsOrRecalculate({
         day: number,
         month: $index,

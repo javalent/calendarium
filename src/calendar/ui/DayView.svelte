@@ -11,8 +11,8 @@
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
     $: store = $global;
-    $: viewing = ephemeral.viewing;
-    $: if (!$viewing) viewing = ephemeral.displaying;
+    $: viewing = $ephemeral.viewing;
+    $: if (!$viewing) viewing = $ephemeral.displaying;
     $: date = dateString($viewing, $store);
     $: yearCalculator = store.yearCalculator;
     $: displayedMonth = yearCalculator
@@ -22,8 +22,8 @@
     $: daysBeforeDay = $daysBeforeMonth + $viewing.day;
     $: events = store.eventCache.getItemsOrRecalculate($viewing);
     $: moons = store.moonCache.getItemsOrRecalculate($viewing);
-    $: displayDayNumber = ephemeral.displayDayNumber;
-    $: displayMoons = ephemeral.displayMoons;
+    $: displayDayNumber = $ephemeral.displayDayNumber;
+    $: displayMoons = $ephemeral.displayMoons;
 
     const dispatch = createEventDispatcher();
 
@@ -55,7 +55,7 @@
             <div
                 use:reveal
                 on:click={() => {
-                    ephemeral.displayDate($viewing);
+                    $ephemeral.displayDate($viewing);
                 }}
             />
             <div use:event on:click={() => store.addEvent($viewing)} />
@@ -68,9 +68,9 @@
             use:left
             aria-label="Previous"
             on:click={() => {
-                ephemeral.goToPreviousDay();
+                $ephemeral.goToPreviousDay();
 
-                ephemeral.displayDate($viewing);
+                $ephemeral.displayDate($viewing);
             }}
         />
         <div class="title-container">
@@ -88,8 +88,8 @@
             use:right
             aria-label="Next"
             on:click={() => {
-                ephemeral.goToNextDay();
-                ephemeral.displayDate($viewing);
+                $ephemeral.goToNextDay();
+                $ephemeral.displayDate($viewing);
             }}
         />
     </div>
