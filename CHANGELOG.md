@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-b1](https://github.com/javalent/the-calendarium/compare/1.0.0...1.0.0-b1) (2023-05-17)
+
+
+### Bug Fixes
+
+* adds manifest, oops ([7843349](https://github.com/javalent/the-calendarium/commit/7843349803e9ed3c7f672c838d05480b1c1058bd))
+
 ## [1.0.0](https://github.com/javalent/the-calendarium/compare/v1.0.0...1.0.0) (2023-05-17)
 
 
