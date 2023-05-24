@@ -4,6 +4,8 @@
     import Dots from "./Dots.svelte";
     import { Menu, TFile } from "obsidian";
     import type { FcEvent } from "src/@types";
+    import Moon from "./Moon.svelte";
+    import { ViewState } from "src/stores/calendar.store";
 
     export let month: MonthStore;
     export let number: number;
@@ -11,12 +13,21 @@
 
     const store = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
+    const full = getTypedContext("full");
     $: index = month.index;
     $: year = month.year;
     $: current = $store.current;
     $: eventCache = $store.eventCache;
     $: viewing = $ephemeral.viewing;
+    $: viewState = $ephemeral.viewState;
     $: events = eventCache.getItemsOrRecalculate({
+        day: number,
+        month: $index,
+        year: year.year,
+    });
+    $: displayMoons = $ephemeral.displayMoons;
+
+    $: moons = $store.moonCache.getItemsOrRecalculate({
         day: number,
         month: $index,
         year: year.year,
@@ -94,10 +105,28 @@
         openMenu(evt);
     }}
 >
-    <div class="day" class:adjacent-month={adjacent} class:opened class:today>
-        {number}
+    <div
+        class="day"
+        class:adjacent-month={adjacent}
+        class:opened
+        class:today
+        class:full={$full}
+    >
+        <span class="day-number">
+            {number}
+        </span>
         {#key $events}
-            <Dots events={$events} />
+            {#if $full && $viewState != ViewState.Year}
+                {#if $displayMoons}
+                    <div class="moon-container">
+                        {#each $moons as moon}
+                            <Moon {moon} />
+                        {/each}
+                    </div>
+                {/if}
+            {:else}
+                <Dots events={$events} />
+            {/if}
         {/key}
     </div>
 </td>

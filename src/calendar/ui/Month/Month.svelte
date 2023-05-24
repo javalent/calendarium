@@ -8,6 +8,7 @@
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
+    const full = getTypedContext("full");
     $: store = $global;
     $: yearCalculator = store.yearCalculator;
     $: previousMonth = $ephemeral.getPreviousMonth(month, year);
@@ -21,7 +22,6 @@
         .getMonthFromCache(month);
     $: ({ weekdays, days, lastDay, firstWeekNumber, weeks } = displayedMonth);
     $: ({ lastDay: previousLastDay, days: previousDays } = previousMonth);
-    
 
     $: extraWeek = $weekdays.length - $lastDay <= $weekdays.length / 2 ? 1 : 0;
     const tbody = (node: HTMLElement) => {
@@ -87,7 +87,7 @@
         <span class="calendarium-month month">{displayedMonth.name}</span>
     </h4>
 {/if}
-<div class="month-container">
+<div class="month-container" class:full={$full}>
     <table>
         <tbody>
             <tr>
@@ -151,6 +151,9 @@
 <style scoped>
     .month-container {
         height: min-content;
+    }
+    .full {
+        height: 100%;
     }
     table {
         height: 100%;
