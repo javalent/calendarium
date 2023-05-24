@@ -1,6 +1,8 @@
-import { LeapDay } from "../src/@types/calendar";
 import { FcEventHelper, ParseDate } from "../src/helper/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
+
+import Moment from 'moment';
+Object.defineProperty(window, 'moment', { value: Moment });
 
 const HARPTOS = PRESET_CALENDARS.find((p) => p.name == "Calendar of Harptos");
 const helper = new FcEventHelper(HARPTOS, false, 'YYYY-MM-DD');

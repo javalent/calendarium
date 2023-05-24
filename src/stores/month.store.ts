@@ -2,7 +2,7 @@ import type { Month } from "src/@types";
 import { StaticStore } from "./calendar.store";
 import { YearStore } from "./years.store";
 import { derived, readable } from "svelte/store";
-import { wrap } from "src/utils/functions";
+import { wrap } from "../utils/functions";
 
 export class MonthStore {
     dayCache = new Map<number, MonthStore>();

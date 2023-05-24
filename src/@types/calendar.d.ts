@@ -59,7 +59,9 @@ export interface Day extends BaseDay {
     type: "day";
 }
 export interface Year extends TimeSpan {}
+
 export type Week = Day[];
+
 interface BaseMonth extends TimeSpan {
     length: number;
     interval: number;
@@ -74,6 +76,7 @@ export interface IntercalaryMonth extends BaseMonth {
     type: "intercalary";
 }
 export type Month = RegularMonth | IntercalaryMonth;
+
 interface LeapDayCondition {
     ignore: boolean; //ignore offset
     exclusive: boolean; //causes failure if true

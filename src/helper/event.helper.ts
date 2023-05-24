@@ -11,7 +11,7 @@ import type {
     Nullable
 } from "../@types";
 
-const timelineData: RegExp = /<(span|div)[\s\S]*?<\/(span|div)>/g;
+const inlineDateSpans: RegExp = /<(span|div)[\s\S]*?<\/(span|div)>/g;
 
 export type FcEventCallback = (fcEvent: FcEvent) => void;
 
@@ -127,36 +127,36 @@ export class FcEventHelper {
         const domparser = new DOMParser();
         // span or div with attributes:
         // <span
-        //     data-fc-date='144-Ches'      // mixed/short: year-...
-        //     data-fc-end='144-Ches-03-07' // mixed/full:
-        //     data-title='Another Event'
-        //     data-class='orange'
-        //     data-img = 'Timeline Example/Timeline_2.jpg'>
+        //     data-category='orange'    // optional
+        //     data-date='144-Ches'      // mixed/short: year-...
+        //     data-end='144-Ches-03-07' // mixed/full with -07 as additional for order
+        //     data-img = 'Timeline Example/Timeline_2.jpg'
+        //     data-name='Another Event'>
         //     Event description
         // </span>
         // 4 segments: year-\d+-\d+-\d+ or year-monthName-\d+-\d+
         // For repeating events, use *
-        for (const match of contents.matchAll(timelineData)) {
+        for (const match of contents.matchAll(inlineDateSpans)) {
             const doc = domparser.parseFromString(match[0], "text/html");
             const element = {
                 dataset: {
                     // Calendarium mixed-date format
-                    fcDate: doc.documentElement.getAttribute("data-fc-date"),
-                    fcEnd: doc.documentElement.getAttribute("data-fc-end"),
+                    date: doc.documentElement.getAttribute("data-date"),
+                    end: doc.documentElement.getAttribute("data-end"),
                     // timeline card attributes
-                    title: doc.documentElement.getAttribute("data-title"),
+                    title: doc.documentElement.getAttribute("data-name"),
                     class: doc.documentElement.getAttribute("data-category"),
                     img: doc.documentElement.getAttribute("data-img"),
                 },
                 content: doc.documentElement.textContent
             };
-            if (!element.dataset.fcDate) {
+            if (!element.dataset.date) {
                 continue; // span must contain a date
             }
             // parse date strings, will return with all elements present: year, month, day, hour/order
-            let date = this.parseFcDateString(element.dataset.fcDate, file);
-            let end = element.dataset.fcEnd
-                    ? this.parseFcDateString(element.dataset.fcEnd, file)
+            let date = this.parseFcDateString(element.dataset.date, file);
+            let end = element.dataset.end
+                    ? this.parseFcDateString(element.dataset.end, file)
                     : undefined;
 
             if (element.dataset.class) {

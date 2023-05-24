@@ -50,6 +50,7 @@ esbuild
             "@codemirror/text",
             "@codemirror/tooltip",
             "@codemirror/view",
+            "moment",
             ...builtins
         ],
         format: "cjs",
