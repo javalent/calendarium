@@ -1,6 +1,9 @@
 import { FcEventHelper, ParseDate } from "../src/helper/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
+import Moment from 'moment';
+Object.defineProperty(window, 'moment', { value: Moment });
+
 const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
 const helper = new FcEventHelper(GREGORIAN, false, 'YYYY-MM-DD');
 const file = {

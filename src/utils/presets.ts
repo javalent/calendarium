@@ -57,72 +57,96 @@ export const PRESET_CALENDARS: Calendar[] = [
                     name: "January",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_e9997a780b3a"
                 },
                 {
                     name: "February",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_b8c9ebeb0b89"
                 },
                 {
                     name: "March",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_b83bda2b9be8"
                 },
                 {
                     name: "April",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_29baea7b28ab"
                 },
                 {
                     name: "May",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_6a3899fad909"
                 },
                 {
                     name: "June",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_384aeb1afa8a"
                 },
                 {
                     name: "July",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_48b8cba87b8a"
                 },
                 {
                     name: "August",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_fa0b1a6bab8a"
                 },
                 {
                     name: "September",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_da880b8af849"
                 },
                 {
                     name: "October",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_babba8186968"
                 },
                 {
                     name: "November",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_da582bfaf9b9"
                 },
                 {
                     name: "December",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_ba1bab4a3a28"
                 }
             ],
@@ -557,96 +581,128 @@ export const PRESET_CALENDARS: Calendar[] = [
                     name: "Needfest",
                     type: "month",
                     length: 7,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_b8a9e9da8a48"
                 },
                 {
                     name: "Fireseek",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_39b90bd8189a"
                 },
                 {
                     name: "Readying",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_48a9081ad839"
                 },
                 {
                     name: "Coldeven",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_5a7b6beadb68"
                 },
                 {
                     name: "Growfest",
                     type: "month",
                     length: 7,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_48c8d82b1908"
                 },
                 {
                     name: "Planting",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_081a793a49da"
                 },
                 {
                     name: "Flocktime",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_eb68a89a0a2a"
                 },
                 {
                     name: "Wealsun",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_9b3a098ae908"
                 },
                 {
                     name: "Richfest",
                     type: "month",
                     length: 7,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_f99b4b3a08b8"
                 },
                 {
                     name: "Reaping",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_ebe9eb68ea39"
                 },
                 {
                     name: "Goodmonth",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_fb3b6af9895b"
                 },
                 {
                     name: "Harvester",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_395bcb399b8a"
                 },
                 {
                     name: "Brewfest",
                     type: "month",
                     length: 7,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_e8b908181afa"
                 },
                 {
                     name: "Patchwall",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_cbda3b399969"
                 },
                 {
                     name: "Ready'reat",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_592a2a690bf8"
                 },
                 {
                     name: "Sunsebb",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_39e8faf8e9b8"
                 }
             ],
@@ -1032,72 +1088,96 @@ export const PRESET_CALENDARS: Calendar[] = [
                     name: "Abadius",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_dad9da89f818"
                 },
                 {
                     name: "Calistril",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_980a88cb9b68"
                 },
                 {
                     name: "Pharast",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_a9c96ac80908"
                 },
                 {
                     name: "Gozran",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_a99a697b9abb"
                 },
                 {
                     name: "Desnus",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_8bcad9a8f84a"
                 },
                 {
                     name: "Sarenith",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_484a49a998db"
                 },
                 {
                     name: "Erastus",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_9a48e9b96938"
                 },
                 {
                     name: "Arodus",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_bbe99b2afaea"
                 },
                 {
                     name: "Rova",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_ba39fbe8c8b8"
                 },
                 {
                     name: "Lamashan",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_69d93ba9dba8"
                 },
                 {
                     name: "Neth",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_4ad8fb79eb6a"
                 },
                 {
                     name: "Kuthona",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_9a3a8b388939"
                 }
             ],
@@ -2677,72 +2757,96 @@ export const PRESET_CALENDARS: Calendar[] = [
                     name: "Zarantyr",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_7a8afb09aa6a"
                 },
                 {
                     name: "Olarune",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_386b188b2a89"
                 },
                 {
                     name: "Therendor",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_599a0ad859c8"
                 },
                 {
                     name: "Eyre",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_98a95869e90b"
                 },
                 {
                     name: "Dravago",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_eb5a194bcbf8"
                 },
                 {
                     name: "Nymm",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_bb596aa9ca5b"
                 },
                 {
                     name: "Lharvion",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_fb1bb9dabb88"
                 },
                 {
                     name: "Barrakas",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_8bcb19c8f90a"
                 },
                 {
                     name: "Rhaan",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_0a09eb5b7b9b"
                 },
                 {
                     name: "Sypheros",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_3b98ab1a29e8"
                 },
                 {
                     name: "Aryth",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_899b59faaba9"
                 },
                 {
                     name: "Vult",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_8a286b78aac9"
                 }
             ],
@@ -3439,72 +3543,96 @@ export const PRESET_CALENDARS: Calendar[] = [
                     name: "1st Moon",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_7b4978ab581a"
                 },
                 {
                     name: "2nd Moon",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_cb99fbb9395b"
                 },
                 {
                     name: "3rd Moon",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_79881a89cb18"
                 },
                 {
                     name: "4th Moon",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_5b9a8a397908"
                 },
                 {
                     name: "5th Moon",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_f8399ab80818"
                 },
                 {
                     name: "6th Moon",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_3ac84a7bc869"
                 },
                 {
                     name: "7th Moon",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_e98bc86bc809"
                 },
                 {
                     name: "8th Moon",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_89ea78ca5988"
                 },
                 {
                     name: "9th Moon",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_798a3b990a4b"
                 },
                 {
                     name: "10th Moon",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_3a9999e8eb59"
                 },
                 {
                     name: "11th Moon",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_db39383b990a"
                 },
                 {
                     name: "12th Moon",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_1bfa3b180a48"
                 }
             ],
@@ -3747,66 +3875,88 @@ export const PRESET_CALENDARS: Calendar[] = [
                     name: "Horisal",
                     type: "month",
                     length: 29,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_e89a4ab9995b"
                 },
                 {
                     name: "Misuthar",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_18b8894bab7b"
                 },
                 {
                     name: "Dualahei",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_0a9b29f8f8db"
                 },
                 {
                     name: "Thunsheer",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_6a8a8a5bea5b"
                 },
                 {
                     name: "Unndilar",
                     type: "month",
                     length: 28,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_b8295bdbcafa"
                 },
                 {
                     name: "Brussendar",
                     type: "month",
                     length: 31,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_c92a489bb909"
                 },
                 {
                     name: "Sydenstar",
                     type: "month",
                     length: 32,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_7b48bb1b0a4a"
                 },
                 {
                     name: "Fessuran",
                     type: "month",
                     length: 29,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_289858c97849"
                 },
                 {
                     name: "Quen'pillar",
                     type: "month",
                     length: 27,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_f8abd9a86aa9"
                 },
                 {
                     name: "Cuersaar",
                     type: "month",
                     length: 29,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_7aba59fa2b69"
                 },
                 {
                     name: "Duscar",
                     type: "month",
                     length: 32,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_5819f86b99cb"
                 }
             ],
@@ -4401,102 +4551,136 @@ export const PRESET_CALENDARS: Calendar[] = [
                     name: "Hammer (Deepwinter)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_cbeb4b190b6a"
                 },
                 {
                     name: "Midwinter",
                     type: "intercalary",
                     length: 1,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_89bad9089b7b"
                 },
                 {
                     name: "Alturiak (The Claw of Winter)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_6a08a8aacb7b"
                 },
                 {
                     name: "Ches (The Claw of the Sunsets)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_db2a7bf97afa"
                 },
                 {
                     name: "Tarsakh (The Claw of Storms)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_6b48982b0bda"
                 },
                 {
                     name: "Greengrass",
                     type: "intercalary",
                     length: 1,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_08790af92809"
                 },
                 {
                     name: "Mirtul (The Melting)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_b91b39f95a28"
                 },
                 {
                     name: "Kythorn (The Time of Flowers)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_f8e9585a2bf8"
                 },
                 {
                     name: "Flamerule (Summertide)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_fa895bdb38e9"
                 },
                 {
                     name: "Midsummer",
                     type: "intercalary",
                     length: 1,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_a9181b5a683a"
                 },
                 {
                     name: "Eleasis (Highsun)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_1b1b1b287b0a"
                 },
                 {
                     name: "Eleint (The Fading)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_1aca5918993a"
                 },
                 {
                     name: "Highharvestide",
                     type: "intercalary",
                     length: 1,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_a94a183b4b88"
                 },
                 {
                     name: "Marpenoth (Leaffall)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_58d97969eb79"
                 },
                 {
                     name: "Uktar (The Rotting)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_4b090b787b18"
                 },
                 {
                     name: "The Feast of the Moon",
                     type: "intercalary",
                     length: 1,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_1b0ae8dbdb4a"
                 },
                 {
                     name: "Nightal (The Drawing Down)",
                     type: "month",
                     length: 30,
+                    interval: 1,
+                    offset: 0,
                     id: "ID_abb82afab80a"
                 }
             ],

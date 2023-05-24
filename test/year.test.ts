@@ -2,7 +2,7 @@ import { Calendar } from "../src/@types";
 import {
     daysBeforeYear,
     getFirstDayOfYear,
-} from "../src/stores/calculator/years.store";
+} from "../src/stores/years.store";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
 const GREGORIAN: Calendar = PRESET_CALENDARS.find(

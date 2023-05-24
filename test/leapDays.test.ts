@@ -1,5 +1,5 @@
 import type { Calendar } from "../src/@types/calendar";
-import { leapDaysBeforeYear } from "../src/stores/calculator/years.store";
+import { leapDaysBeforeYear } from "../src/stores/years.store";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
 const GREGORIAN: Calendar = PRESET_CALENDARS.find(

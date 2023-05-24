@@ -3,6 +3,9 @@ import { FcEvent } from "../src/@types";
 import { FcEventHelper, ParseDate } from "../src/helper/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
+import Moment from 'moment';
+Object.defineProperty(window, 'moment', { value: Moment });
+
 const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
 const gregorian = new FcEventHelper(GREGORIAN, true, 'YYYY-MM-DD');
 
@@ -141,10 +144,10 @@ test("parseTimelineEvent", () => {
     gregorian.parseTimelineEvents(
         "<span class='ob-timelines'   \n" +
         " data-category='natural-events' \n" +
-        " data-fc-date='1966-05-23-00'\n" +
-        " data-fc-end='1966-08-1-00'  \n" +
+        " data-date='1966-05-23-00'\n" +
+        " data-end='1966-08-1-00'  \n" +
         " data-img='attachments/thing.png'  \n" +
-        " data-title='Pretty name'>\n" +
+        " data-name='Pretty name'>\n" +
         "Fun text" +
         "</span>",
         file,
