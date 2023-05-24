@@ -35,17 +35,6 @@
                 /* openDate(); */
             });
         });
-        menu.addItem((item) => {
-            item.setTitle(
-                `Show ${$viewState == ViewState.Year ? "Month" : "Year"} View`
-            ).onClick(() => {
-                if ($viewState == ViewState.Year) {
-                    $viewState = ViewState.Month;
-                } else {
-                    $viewState = ViewState.Year;
-                }
-            });
-        });
         menu.addSeparator();
         menu.addItem((item) => {
             item.setTitle(

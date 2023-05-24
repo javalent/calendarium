@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Platform, Setting } from "obsidian";
+    import { Platform, Setting, setIcon } from "obsidian";
     import { warning } from "./utils";
 
     export let open = !Platform.isMobile;
@@ -12,6 +12,9 @@
     };
     const summary = (node: HTMLDivElement) => {
         new Setting(node).setHeading().setName(name);
+    };
+    const handle = (node: HTMLElement) => {
+        setIcon(node, "chevron-right");
     };
 </script>
 
@@ -28,7 +31,7 @@
                 {#if warn}
                     <div use:warning />
                 {/if}
-                <div class="handle" />
+                <div class="handle" use:handle />
             </div>
         </div>
     </summary>
@@ -89,15 +92,7 @@
     .handle {
         transform: rotate(0deg);
         transition: transform 0.25s;
-        background-color: currentColor;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-image: var(--admonition-details-icon);
-        mask-image: var(--admonition-details-icon);
-        width: 20px;
-        height: 20px;
+        display: flex;
     }
 
     details[open] .handle {

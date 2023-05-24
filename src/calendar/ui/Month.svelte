@@ -9,20 +9,19 @@
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
     $: store = $global;
-    $: staticStore = store.staticStore;
     $: yearCalculator = store.yearCalculator;
     $: previousMonth = $ephemeral.getPreviousMonth(month, year);
     $: nextMonth = $ephemeral.getNextMonth(month, year);
     $: displayWeeks = $ephemeral.displayWeeks;
     $: viewState = $ephemeral.viewState;
 
-    $: staticConfiguration = staticStore.staticConfiguration;
+    $: staticConfiguration = store.staticStore.staticConfiguration;
     $: displayedMonth = yearCalculator
         .getYearFromCache(year)
         .getMonthFromCache(month);
     $: ({ weekdays, days, lastDay, firstWeekNumber, weeks } = displayedMonth);
     $: ({ lastDay: previousLastDay, days: previousDays } = previousMonth);
-    $: firstDay = displayedMonth.firstDay;
+    
 
     $: extraWeek = $weekdays.length - $lastDay <= $weekdays.length / 2 ? 1 : 0;
     const tbody = (node: HTMLElement) => {

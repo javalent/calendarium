@@ -1,3 +1,7 @@
+:root {
+    --calendarium-details-icon: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http: //www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z'/></svg>");
+}
+
 body:not(.is-mobile)
     .modal.mod-settings
     .vertical-tab-content-container
@@ -8,6 +12,8 @@ body:not(.is-mobile)
 .calendarium-settings,
 .calendarium-settings-content {
     background-color: inherit;
+}
+.calendarium-settings-content {
     position: relative;
 }
 
@@ -29,12 +35,6 @@ body:not(.is-mobile)
 }
 
 /** Details */
-.modal.mod-settings
-    .vertical-tab-content-container
-    .vertical-tab-content.calendarium-settings {
-    position: relative;
-    /* padding-top: 0px; */
-}
 
 .modal.mod-settings
     .vertical-tab-content.calendarium-settings
@@ -71,21 +71,9 @@ details.calendarium-nested-settings > summary > .collapser {
 details.calendarium-nested-settings > summary > .collapser > .handle {
     transform: rotate(0deg);
     transition: transform 0.25s;
-    background-color: currentColor;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-image: var(--admonition-details-icon);
-    mask-image: var(--admonition-details-icon);
-    width: 20px;
-    height: 20px;
 }
 
-details.calendarium-nested-settings[open]
-    > summary
-    > .collapser
-    > .handle {
+details.calendarium-nested-settings[open] > summary > .collapser > .handle {
     transform: rotate(90deg);
 }
 
@@ -199,9 +187,7 @@ details.calendarium-nested-settings[open]
 
     flex-direction: column;
 }
-.calendarium-choose-preset
-    .calendarium-preset-container
-    button.mod-cta {
+.calendarium-choose-preset .calendarium-preset-container button.mod-cta {
     box-shadow: 0 0 10px var(--background-modifier-success);
 }
 

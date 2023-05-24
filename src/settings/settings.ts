@@ -7,7 +7,7 @@ import {
     PluginSettingTab,
     setIcon,
     Setting,
-    TFolder
+    TFolder,
 } from "obsidian";
 
 import copy from "fast-copy";
@@ -30,7 +30,7 @@ import { nanoid } from "src/utils/functions";
 export enum Recurring {
     none = "None",
     monthly = "Monthly",
-    yearly = "Yearly"
+    yearly = "Yearly",
 }
 interface Context {
     store: ReturnType<typeof createStore>;
@@ -85,16 +85,14 @@ export default class CalendariumSettings extends PluginSettingTab {
             "calendarium-settings-content"
         );
 
-        this.buildInfo(
-            this.contentEl.createDiv("calendarium-nested-settings")
-        );
+        this.buildInfo(this.contentEl.createDiv("calendarium-nested-settings"));
         this.calendarsEl = this.contentEl.createEl("details", {
             cls: "calendarium-nested-settings",
             attr: {
                 ...(this.data.settingsToggleState.calendars
                     ? { open: `open` }
-                    : {})
-            }
+                    : {}),
+            },
         });
         this.buildCalendars();
         this.buildEvents(
@@ -103,8 +101,8 @@ export default class CalendariumSettings extends PluginSettingTab {
                 attr: {
                     ...(this.data.settingsToggleState.events
                         ? { open: `open` }
-                        : {})
-                }
+                        : {}),
+                },
             })
         );
         this.buildAdvanced(
@@ -113,8 +111,8 @@ export default class CalendariumSettings extends PluginSettingTab {
                 attr: {
                     ...(this.data.settingsToggleState.advanced
                         ? { open: `open` }
-                        : {})
-                }
+                        : {}),
+                },
             })
         );
     }
@@ -131,7 +129,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     this.plugin.data.exit = {
                         saving: false,
                         event: false,
-                        calendar: false
+                        calendar: false,
                     };
                     await this.plugin.saveSettings();
                 });
@@ -151,16 +149,16 @@ export default class CalendariumSettings extends PluginSettingTab {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Please back up your data before changing this setting. Hidden directories must be manually entered."
+                        text: "Please back up your data before changing this setting. Hidden directories must be manually entered.",
                     });
                     e.createEl("br");
                     e.createSpan({
-                        text: `Current directory: `
+                        text: `Current directory: `,
                     });
                     const configDirectory =
                         this.data.configDirectory ?? this.app.vault.configDir;
                     e.createEl("code", {
-                        text: configDirectory
+                        text: configDirectory,
                     });
                 })
             )
@@ -173,7 +171,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     this.data.configDirectory ?? this.app.vault.configDir
                 );
                 const modal = new FolderSuggestionModal(this.app, text, [
-                    ...(folders as TFolder[])
+                    ...(folders as TFolder[]),
                 ]);
 
                 modal.onClose = async () => {
@@ -223,7 +221,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         const summary = this.calendarsEl.createEl("summary");
         new Setting(summary).setHeading().setName("Calendar Management");
 
-        summary.createDiv("collapser").createDiv("handle");
+        setIcon(summary.createDiv("collapser").createDiv("handle"), "chevron-right");
 
         new Setting(this.calendarsEl)
             .setName("Show Intercalary Months Separately")
@@ -262,12 +260,12 @@ export default class CalendariumSettings extends PluginSettingTab {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Import calendar from "
+                        text: "Import calendar from ",
                     });
                     e.createEl("a", {
                         href: "https://app.calendarium.com",
                         text: "Calendarium",
-                        cls: "external-link"
+                        cls: "external-link",
                     });
                 })
             )
@@ -278,8 +276,8 @@ export default class CalendariumSettings extends PluginSettingTab {
                         name: "merge",
                         accept: ".json",
                         multiple: true,
-                        style: "display: none;"
-                    }
+                        style: "display: none;",
+                    },
                 });
                 input.onchange = async () => {
                     const { files } = input;
@@ -335,7 +333,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         this.existingEl.empty();
         if (!this.data.calendars.length) {
             this.existingEl.createSpan({
-                text: "No calendars created! Create a calendar to see it here."
+                text: "No calendars created! Create a calendar to see it here.",
             });
             return;
         }
@@ -388,14 +386,14 @@ export default class CalendariumSettings extends PluginSettingTab {
         const summary = containerEl.createEl("summary");
         new Setting(summary).setHeading().setName("Events");
 
-        summary.createDiv("collapser").createDiv("handle");
+        setIcon(summary.createDiv("collapser").createDiv("handle"), "chevron-right");
 
         new Setting(containerEl)
             .setName("Add Events to Default Calendar")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Add events found in notes to the default calendar if the "
+                        text: "Add events found in notes to the default calendar if the ",
                     });
                     e.createEl("code", { text: "fc-calendar" });
                     e.createSpan({ text: " frontmatter tag is not present." });
@@ -449,25 +447,25 @@ export default class CalendariumSettings extends PluginSettingTab {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Event dates will be parsed using this format."
+                        text: "Event dates will be parsed using this format.",
                     });
                     e.createSpan({ text: "Only the " });
                     e.createEl("code", { text: "Y" });
                     e.createSpan({
-                        text: ", "
+                        text: ", ",
                     });
                     e.createEl("code", { text: "M" });
                     e.createSpan({
-                        text: ", and "
+                        text: ", and ",
                     });
                     e.createEl("code", { text: "D" });
                     e.createEl("a", {
                         text: "tokens",
                         href: "https://momentjs.com/docs/#/displaying/format/",
-                        cls: "external-link"
+                        cls: "external-link",
                     });
                     e.createSpan({
-                        text: " are supported."
+                        text: " are supported.",
                     });
                     if (
                         ["Y", "M", "D"].some(
@@ -476,7 +474,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     ) {
                         e.createEl("br");
                         const span = e.createSpan({
-                            cls: "calendarium-warning date-format"
+                            cls: "calendarium-warning date-format",
                         });
                         setIcon(
                             span.createSpan("calendarium-warning"),
@@ -488,7 +486,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                         span.createSpan({
                             text: ` Date format is missing: ${missing
                                 .join(", ")
-                                .replace(/, ([^,]*)$/, " and $1")}`
+                                .replace(/, ([^,]*)$/, " and $1")}`,
                         });
                     }
                 })
@@ -532,14 +530,14 @@ export default class CalendariumSettings extends PluginSettingTab {
         const summary = containerEl.createEl("summary");
         new Setting(summary).setHeading().setName("Advanced");
 
-        summary.createDiv("collapser").createDiv("handle");
+        setIcon(summary.createDiv("collapser").createDiv("handle"), "chevron-right");
 
         new Setting(containerEl)
             .setName("Show Event Debug Messages")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "The plugin will show debug messages when events are added, deleted or updated by the file watcher."
+                        text: "The plugin will show debug messages when events are added, deleted or updated by the file watcher.",
                     });
                 })
             )
@@ -588,8 +586,8 @@ export default class CalendariumSettings extends PluginSettingTab {
                         plugin: this.plugin,
                         width: this.contentEl.clientWidth,
                         color,
-                        top: this.containerEl.scrollTop
-                    }
+                        top: this.containerEl.scrollTop,
+                    },
                 });
                 const observer = new ResizeObserver(() => {
                     $app.$set({ width: this.contentEl.clientWidth });
@@ -636,8 +634,8 @@ class MobileCreatorModal extends CalendariumModal {
                 base: this.calendar,
                 plugin: this.plugin,
                 width: this.contentEl.clientWidth,
-                top: 0
-            }
+                top: 0,
+            },
         });
         $app.$on(
             "exit",
