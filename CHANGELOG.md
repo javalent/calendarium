@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.0.0-b2](https://github.com/javalent/the-calendarium/compare/1.0.0-b1...1.0.0-b2) (2023-05-24)
+
+
+### Features
+
+* adds full year view ([9792d6e](https://github.com/javalent/the-calendarium/commit/9792d6eecc705752603079e5cdd1aeb69fc955bf))
+* **Publish:** Added Images of Right Sidebar ([8571516](https://github.com/javalent/the-calendarium/commit/857151639a2b797ca502b2be0679fcf74550278a))
+
+
+### Bug Fixes
+
+* Large Month view works... still need flags ([52719bf](https://github.com/javalent/the-calendarium/commit/52719bf2442a6e16d5cfe125bdf8dcfb822cc5df))
+* settings can be closed, improves settings styling ([2f1f345](https://github.com/javalent/the-calendarium/commit/2f1f345b94c979f9ee6dc5ecd144a5d455aac3f6))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b2 ([fbfc1f0](https://github.com/javalent/the-calendarium/commit/fbfc1f07d2a1a6aa139a5ea0f6f2d7f0a0d70c4f))
+
 ## [1.0.0-b1](https://github.com/javalent/the-calendarium/compare/1.0.0...1.0.0-b1) (2023-05-17)
 
 
