@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ViewState } from "src/stores/calendar.store";
-    import { getTypedContext } from "../view";
-    import Day from "./Day.svelte";
+    import { getTypedContext } from "../../view";
+    import Day from "../Day.svelte";
 
     export let year: number;
     export let month: number;

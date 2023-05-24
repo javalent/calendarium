@@ -2,17 +2,19 @@
     import type { Calendar as CalendarInterface } from "src/@types";
     import type Calendarium from "src/main";
     import Calendar from "./Calendar.svelte";
-    import { setContext } from "svelte";
-    import { CalendarStore } from "src/stores/calendar.store";
     import { setTypedContext } from "../view";
     import { writable } from "svelte/store";
 
     export let calendar: CalendarInterface;
     export let plugin: Calendarium;
+    export let full: boolean;
     setTypedContext("plugin", plugin);
+    const fullStore = writable(full);
+    $: $fullStore = full;
+
+    setTypedContext("full", fullStore);
 
     const store = plugin.getStore(calendar);
-    console.log("🚀 ~ file: UI.svelte:15 ~ store:", store);
 
     $: {
         if (store) {

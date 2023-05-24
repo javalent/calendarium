@@ -3,7 +3,7 @@
     import { createEventDispatcher } from "svelte";
     import { getTypedContext } from "../view";
     import { ViewState } from "src/stores/calendar.store";
-    import Month from "./Month.svelte";
+    import Month from "./Month/Month.svelte";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");

@@ -1,9 +1,9 @@
 <script lang="ts">
     import Nav from "./Nav.svelte";
-    import Month from "./Month.svelte";
+    import Month from "./Month/Month.svelte";
     import { ExtraButtonComponent, Menu } from "obsidian";
     import { getTypedContext } from "../view";
-    import DayView from "./DayView.svelte";
+    import DayView from "./Day/DayView.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Year from "./Year/Year.svelte";
     import Week from "./Week/Week.svelte";
