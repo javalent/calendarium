@@ -78,8 +78,8 @@ export class FcEventHelper {
             category
         );
 
-        if (this.calendar.supportTimelines) {
-            this.parseTimelineEvents(
+        if (this.calendar.supportInlineEvents) {
+            this.parseInlineEvents(
                 data,
                 file,
                 publish,
@@ -118,7 +118,7 @@ export class FcEventHelper {
         }
     }
 
-    parseTimelineEvents(
+    parseInlineEvents(
         contents: string,
         file: { path: string; basename: string },
         publish: FcEventCallback,
@@ -130,7 +130,7 @@ export class FcEventHelper {
         //     data-category='orange'    // optional
         //     data-date='144-Ches'      // mixed/short: year-...
         //     data-end='144-Ches-03-07' // mixed/full with -07 as additional for order
-        //     data-img = 'Timeline Example/Timeline_2.jpg'
+        //     data-img = 'Inline Example/Event_2.jpg'
         //     data-name='Another Event'>
         //     Event description
         // </span>
@@ -143,7 +143,7 @@ export class FcEventHelper {
                     // Calendarium mixed-date format
                     date: doc.documentElement.getAttribute("data-date"),
                     end: doc.documentElement.getAttribute("data-end"),
-                    // timeline card attributes
+                    // event attributes
                     title: doc.documentElement.getAttribute("data-name"),
                     class: doc.documentElement.getAttribute("data-category"),
                     img: doc.documentElement.getAttribute("data-img"),

@@ -141,7 +141,7 @@ test("parseTimelineEvent", () => {
     let category = gregorian.calendar.categories[0];
     let actual: FcEvent[] = [];
 
-    gregorian.parseTimelineEvents(
+    gregorian.parseInlineEvents(
         "<span class='ob-timelines'   \n" +
         " data-category='natural-events' \n" +
         " data-date='1966-05-23-00'\n" +

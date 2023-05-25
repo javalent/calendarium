@@ -96,6 +96,9 @@ test("Parse Harptos: 1499-06, Greengrass", () => {
     expect(helper.parseFcDateString("1499-06-01", file)).toEqual(expected);
     expect(helper.parseFcDateString("1499-Greengrass", file)).toEqual(expected);
     expect(helper.parseFcDateString("1499-Greengrass-01", file)).toEqual(expected);
+
+    const ordered: ParseDate = { ... expected, order: '03' }
+    expect(helper.parseFcDateString("1499-Greengrass-01-03", file)).toEqual(ordered);
     // Greengrass has only one day...
     expect(helper.parseFcDateString("1499-06-03", file)).toBeNull();
 });
