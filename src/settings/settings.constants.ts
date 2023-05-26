@@ -35,7 +35,6 @@ export const DEFAULT_DATA: CalendariumData = {
     addToDefaultIfMissing: true,
     calendars: [],
     configDirectory: null,
-    currentCalendar: null,
     dailyNotes: false,
     dateFormat: "YYYY-MM-DD",
     defaultCalendar: null,

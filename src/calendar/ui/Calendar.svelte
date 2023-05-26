@@ -7,6 +7,7 @@
     import { ViewState } from "src/stores/calendar.store";
     import Year from "./Year/Year.svelte";
     import Week from "./Week/Week.svelte";
+    import { writable } from "svelte/store";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -17,12 +18,12 @@
     $: viewing = $ephemeral.viewing;
 
     const plugin = getTypedContext("plugin");
-    let otherCalendars = plugin.data.calendars;
+    let otherCalendars = writable(plugin.data.calendars);
 
     //don't like this... find a better way
     plugin.app.workspace.on(
         "calendarium-updated",
-        () => (otherCalendars = plugin.data.calendars)
+        () => ($otherCalendars = plugin.data.calendars)
     );
 
     const drop = (node: HTMLElement) => {
@@ -49,7 +50,7 @@
     <div class="top-container">
         <div class="name-container">
             <h3 class="calendar-name">{$store.name}</h3>
-            {#if otherCalendars.length > 1}
+            {#if $otherCalendars.length > 1}
                 <div use:drop on:click={(evt) => showMenu(evt)} />
             {/if}
         </div>

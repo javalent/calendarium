@@ -1,16 +1,16 @@
 import { prepareFuzzySearch } from "obsidian";
 import type {
     Calendar,
-    CurrentCalendarData,
+    FcDate,
     Day,
-    Event,
-    EventCategory,
+    FcEvent,
+    FcEventCategory,
     LeapDay,
     Month,
     Moon,
     StaticCalendarData,
     Week,
-    Year
+    Year,
 } from "src/@types";
 import type Calendarium from "src/main";
 import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
@@ -18,7 +18,7 @@ import {
     isValidDay,
     isValidMonth,
     isValidYear,
-    nanoid
+    nanoid,
 } from "src/utils/functions";
 import { derived, writable } from "svelte/store";
 
@@ -100,17 +100,17 @@ function createStore(
         update,
         currentStore: {
             subscribe: currentStore.subscribe,
-            set: (data: CurrentCalendarData) => {
+            set: (data: FcDate) => {
                 update((calendar) => {
                     calendar.current = { ...data };
                     return calendar;
                 });
             },
-            update: (data: CurrentCalendarData) =>
+            update: (data: FcDate) =>
                 update((calendar) => {
                     calendar.current = { ...data };
                     return calendar;
-                })
+                }),
         },
         valid: validCalendar,
         validDate,
@@ -129,7 +129,7 @@ function createStore(
         },
 
         /** Setters */
-        setCurrentDate: (date: CurrentCalendarData) =>
+        setCurrentDate: (date: FcDate) =>
             update((cal) => {
                 cal.current = { ...date };
                 return cal;
@@ -146,7 +146,7 @@ function createStore(
                     calendar.static[key] = value;
                     return calendar;
                 });
-            }
+            },
         },
         weekdayStore: {
             subscribe: weekStore.subscribe,
@@ -155,7 +155,7 @@ function createStore(
                     data.static.weekdays.push({
                         type: "day",
                         name: null,
-                        id: nanoid(6)
+                        id: nanoid(6),
                     });
                     return data;
                 }),
@@ -180,7 +180,7 @@ function createStore(
                 update((data) => {
                     data.static.weekdays = [...weekdays];
                     return data;
-                })
+                }),
         },
         monthStore: {
             subscribe: monthStore.subscribe,
@@ -190,7 +190,9 @@ function createStore(
                         type: "month",
                         name: null,
                         length: null,
-                        id: nanoid(6)
+                        id: nanoid(6),
+                        interval: 1,
+                        offset: 0,
                     });
                     return data;
                 }),
@@ -214,7 +216,7 @@ function createStore(
                 update((data) => {
                     data.static.months = [...months];
                     return data;
-                })
+                }),
         },
         yearStore: {
             customYears,
@@ -224,7 +226,7 @@ function createStore(
                     data.static.years.push({
                         type: "year",
                         name: null,
-                        id: nanoid(6)
+                        id: nanoid(6),
                     });
                     return data;
                 }),
@@ -248,7 +250,7 @@ function createStore(
                 update((data) => {
                     data.static.years = [...years];
                     return data;
-                })
+                }),
         },
         eventStore: {
             subscribe: eventStore.subscribe,
@@ -263,17 +265,17 @@ function createStore(
                     return a.date.day - b.date.day;
                 })
             ),
-            set: (events: Event[]) =>
+            set: (events: FcEvent[]) =>
                 update((data) => {
                     data.events = [...events];
                     return data;
                 }),
-            add: (event: Event) =>
+            add: (event: FcEvent) =>
                 update((data) => {
                     data.events.push({ ...event });
                     return data;
                 }),
-            update: (id: string, event: Event) =>
+            update: (id: string, event: FcEvent) =>
                 update((data) => {
                     const index = data.events.findIndex((e) => e.id === id);
 
@@ -284,21 +286,21 @@ function createStore(
                 update((data) => {
                     data.events = data.events.filter((e) => e.id !== id);
                     return data;
-                })
+                }),
         },
         categoryStore: {
             subscribe: categoryStore.subscribe,
-            set: (categories: EventCategory[]) =>
+            set: (categories: FcEventCategory[]) =>
                 update((data) => {
                     data.categories = [...categories];
                     return data;
                 }),
-            add: (category: EventCategory) =>
+            add: (category: FcEventCategory) =>
                 update((data) => {
                     data.categories.push({ ...category });
                     return data;
                 }),
-            update: (id: string, category: EventCategory) =>
+            update: (id: string, category: FcEventCategory) =>
                 update((data) => {
                     const index = data.categories.findIndex((e) => e.id === id);
 
@@ -311,7 +313,7 @@ function createStore(
                         (c) => c.id !== id
                     );
                     return data;
-                })
+                }),
         },
         displayMoons: {
             subscribe: displayMoons.subscribe,
@@ -320,7 +322,7 @@ function createStore(
                     data.static.displayMoons = val;
                     return data;
                 });
-            }
+            },
         },
         moonStore: {
             subscribe: moonStore.subscribe,
@@ -349,7 +351,7 @@ function createStore(
                         (c) => c.id !== id
                     );
                     return data;
-                })
+                }),
         },
         leapDayDisabled: derived(
             monthStore,
@@ -382,8 +384,8 @@ function createStore(
                         (c) => c.id !== id
                     );
                     return data;
-                })
-        }
+                }),
+        },
     };
 }
 

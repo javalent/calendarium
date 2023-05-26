@@ -10,7 +10,6 @@ export interface CalendariumData {
     addToDefaultIfMissing: boolean;
     calendars: Calendar[];
     configDirectory: string;
-    currentCalendar: string;
     dailyNotes: boolean;
     dateFormat: string;
     defaultCalendar: string;

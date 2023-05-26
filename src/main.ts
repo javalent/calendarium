@@ -94,7 +94,6 @@ export const DEFAULT_DATA: CalendariumData = {
     addToDefaultIfMissing: true,
     calendars: [],
     configDirectory: null,
-    currentCalendar: null,
     dailyNotes: false,
     dateFormat: "YYYY-MM-DD",
     defaultCalendar: null,
@@ -152,13 +151,9 @@ export default class Calendarium extends Plugin {
     get calendars() {
         return this.$settingsService.getCalendars();
     }
-    get currentCalendar() {
-        return this.calendars.find((c) => c.id == this.data.currentCalendar);
-    }
     private readonly stores: WeakMap<Calendar, CalendarStore> = new WeakMap();
     getStore(calendar: Calendar) {
         if (!calendar) return null;
-        console.log("🚀 ~ file: main.ts:160 ~ calendar:", calendar);
         if (!this.stores.has(calendar)) {
             this.stores.set(calendar, createCalendarStore(calendar, this));
         }
@@ -199,18 +194,6 @@ export default class Calendarium extends Plugin {
             ) ?? this.data.calendars[0]
         );
     }
-    get view() {
-        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE);
-        const leaf = leaves.length ? leaves[0] : null;
-        if (leaf && leaf.view && leaf.view instanceof CalendariumView)
-            return leaf.view;
-    }
-    /* get full() {
-        const leaves = this.app.workspace.getLeavesOfType(FULL_VIEW);
-        const leaf = leaves.length ? leaves[0] : null;
-        if (leaf && leaf.view && leaf.view instanceof CalendariumView)
-            return leaf.view;
-    } */
     async onload() {
         console.log("Loading Calendarium v" + this.manifest.version);
         this.$settingsService = new SettingsService(this.app, this.manifest);
@@ -224,9 +207,6 @@ export default class Calendarium extends Plugin {
             VIEW_TYPE,
             (leaf: WorkspaceLeaf) => new CalendariumView(leaf, this)
         );
-        /* this.registerView(FULL_VIEW, (leaf: WorkspaceLeaf) => {
-            return new CalendariumView(this, leaf, { full: true });
-        }); */
         this.app.workspace.onLayoutReady(async () => {
             await this.loadSettings();
 
@@ -234,15 +214,14 @@ export default class Calendarium extends Plugin {
 
             this.addCommands();
 
+            this.addRibbonIcon(VIEW_TYPE, "Open Calendarium", () => {
+                this.addCalendarView();
+            });
+
             this.addSettingTab(new CalendariumSettings(this));
 
             this.addCalendarView(true);
         });
-        /* this.addRibbonIcon(VIEW_TYPE, "Open Large Calendarium", (evt) => {
-            this.app.workspace
-                .getLeaf(evt.getModifierState(MODIFIER_KEY))
-                .setViewState({ type: FULL_VIEW });
-        }); */
     }
 
     async onunload() {
@@ -250,9 +229,6 @@ export default class Calendarium extends Plugin {
         this.app.workspace
             .getLeavesOfType(VIEW_TYPE)
             .forEach((leaf) => leaf.detach());
-        /* this.app.workspace
-            .getLeavesOfType(FULL_VIEW)
-            .forEach((leaf) => leaf.detach()); */
         this.watcher.unload();
     }
 
@@ -264,82 +240,17 @@ export default class Calendarium extends Plugin {
                 this.addCalendarView();
             },
         });
-
-        /*         this.addCommand({
-            id: "open-big-calendarium",
-            name: "Open Large Calendarium",
-            callback: () => {
-                this.addFullCalendarView();
-            },
-        });
-
-        this.addCommand({
-            id: "toggle-moons",
-            name: "Toggle Moons",
-            checkCallback: (checking) => {
-                const views = this.app.workspace.getLeavesOfType(VIEW_TYPE);
-                if (views && views.length) {
-                    if (!checking) {
-                        (views[0].view as CalendariumView).toggleMoons();
-                    }
-                    return true;
-                }
-            },
-        });
-        this.addCommand({
-            id: "view-date",
-            name: "View Date",
-            checkCallback: (checking) => {
-                const views = this.app.workspace.getLeavesOfType(VIEW_TYPE);
-                if (views && views.length) {
-                    if (!checking) {
-                        (views[0].view as CalendariumView).openDate();
-                    }
-                    return true;
-                }
-            },
-        });
-        this.addCommand({
-            id: "view-date",
-            name: "View Note Event",
-            checkCallback: (checking) => {
-                const views = this.app.workspace.getLeavesOfType(VIEW_TYPE);
-                if (
-                    views &&
-                    views.length &&
-                    views[0].view instanceof CalendariumView
-                ) {
-                    const file = this.app.workspace.getActiveFile();
-                    if (file) {
-                        const event = views[0].view.calendar.events.find(
-                            (e) => e.note == file.path
-                        );
-                        if (event) {
-                            if (!checking) {
-                                views[0].view.openDay(event.date);
-                            }
-                            return true;
-                        }
-                    }
-                }
-            },
-        }); */
     }
 
     async addCalendarView(startup: boolean = false) {
         if (startup && this.app.workspace.getLeavesOfType(VIEW_TYPE)?.length)
             return;
-        await this.app.workspace.getRightLeaf(false).setViewState({
+        const leaf = await this.app.workspace.getRightLeaf(false);
+        leaf.setViewState({
             type: VIEW_TYPE,
         });
-        if (this.view) this.app.workspace.revealLeaf(this.view.leaf);
+        if (leaf) this.app.workspace.revealLeaf(leaf);
     }
-    /*     async addFullCalendarView(startup: boolean = false) {
-        if (startup && this.app.workspace.getLeavesOfType(FULL_VIEW)?.length)
-            return;
-        this.app.workspace.getLeaf(false).setViewState({ type: FULL_VIEW });
-        if (this.full) this.app.workspace.revealLeaf(this.full.leaf);
-    } */
     async loadSettings() {
         let data = {
             ...(await this.loadData()),
@@ -402,5 +313,4 @@ export default class Calendarium extends Plugin {
     async saveSettings() {
         await this.$settingsService.saveData();
     }
-    async saveData(data: CalendariumData) {}
 }
