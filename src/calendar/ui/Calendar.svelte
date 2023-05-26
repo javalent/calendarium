@@ -42,6 +42,7 @@
                     ephemeral.set(newStore.ephemeralStore);
                     view.store = newStore;
                     view.calendar = calendar.id;
+                    app.workspace.requestSaveLayout();
                 })
             );
         }

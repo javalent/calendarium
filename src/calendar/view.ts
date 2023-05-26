@@ -50,8 +50,6 @@ export default class CalendariumView extends ItemView {
     calendar: string;
     store: CalendarStore;
     async display() {
-        //todo: inject store here, subscribe to
-        console.log("🚀 ~ file: view.ts:55 ~ this.calendar:", this.calendar);
         if (!this.calendar) {
             this.calendar = this.plugin.defaultCalendar?.id;
         }

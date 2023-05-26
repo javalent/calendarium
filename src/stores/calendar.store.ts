@@ -133,6 +133,20 @@ export function getEphemeralStore(
     const viewState = writable<ViewState>(ViewState.Month);
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
+    derived(
+        [
+            viewState,
+            viewing,
+            displayDayNumber,
+            displayMoons,
+            displayWeeks,
+            displaying,
+        ],
+        (a) => {
+            console.log("🚀 ~ file: calendar.store.ts:146 ~ a:", a);
+            app.workspace.requestSaveLayout();
+        }
+    ).subscribe(() => {});
     return {
         initializeFromState: (state: EphemeralState) => {
             viewState.set(state.viewState);
