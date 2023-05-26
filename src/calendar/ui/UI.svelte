@@ -19,7 +19,7 @@
     $: {
         if (store) {
             setTypedContext("store", writable(store));
-            const ephemeralStore = store.ephemeralStore;
+            const ephemeralStore = store.getEphemeralStore();
             setTypedContext("ephemeralStore", writable(ephemeralStore));
         }
     }

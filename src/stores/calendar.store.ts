@@ -40,7 +40,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     //@ts-expect-error
     window.yearCache = yearCalculator;
 
-    const ephemeralStore = getEphemeralStore(
+    let ephemeralStore = getEphemeralStore(
         store,
         staticStore,
         calendar,
@@ -90,7 +90,15 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         staticStore,
 
         ephemeralStore,
-
+        getEphemeralStore: () => {
+            ephemeralStore = getEphemeralStore(
+                store,
+                staticStore,
+                calendar,
+                yearCalculator
+            );
+            return ephemeralStore;
+        },
         yearCalculator,
     };
 }
