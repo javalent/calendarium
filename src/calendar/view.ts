@@ -46,9 +46,7 @@ export default class CalendariumView extends ItemView {
         const rootSplit = this.app.workspace.rootSplit;
         return this.leaf.getRoot() === rootSplit;
     }
-    protected async onOpen(): Promise<void> {
-        this.plugin.onSettingsLoad(() => this.display());
-    }
+    protected async onOpen(): Promise<void> {}
     calendar: string;
     store: CalendarStore;
     async display() {
@@ -96,12 +94,14 @@ export default class CalendariumView extends ItemView {
                 this.store.ephemeralStore.initializeFromState(state.ephemeral);
             }
         }
+        if (!this.ui) {
+            this.plugin.onSettingsLoad(() => this.display());
+        }
         super.setState(state, result);
     }
 
     getState(): CalendarStoreState {
         const state = this.store?.getStoreState();
-        console.log("🚀 ~ file: view.ts:92 ~ state:", state.calendar);
         return state;
     }
 
