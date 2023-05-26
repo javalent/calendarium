@@ -1,6 +1,7 @@
 <script lang="ts">
     import { getTypedContext } from "src/calendar/view";
     import Month from "../Month/Month.svelte";
+    import { nanoid } from "src/utils/functions";
 
     let yearContainer: HTMLDivElement;
 
@@ -22,15 +23,27 @@
         yearStore.getMonthFromCache($monthArray.indexOf(m))
     ); */
     const focus = (year: HTMLElement) => {
-        const header = year.querySelector(`#${$displayedMonth.name}`);
+        const header = year.querySelector(
+            `#${getIdForMonth($displayedMonth.name)}`
+        );
         if (header) header.scrollIntoView(true);
+    };
+    const id_map = new Map();
+    const getIdForMonth = (month: string) => {
+        if (!id_map.has(month)) {
+            id_map.set(
+                month,
+                `ID_${nanoid(5)}_${month.replace(/^[^a-z]+|[^\w:.-]+/gi, "")}`
+            );
+        }
+        return id_map.get(month);
     };
 </script>
 
 <div class="year-view">
     <div class="year" bind:this={yearContainer} use:focus class:full={$full}>
         {#each $monthArray as month, index}
-            <div class="month-container">
+            <div class="month-container" id={getIdForMonth(month.name)}>
                 <Month year={$displaying.year} month={index} />
             </div>
         {/each}

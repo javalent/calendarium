@@ -83,7 +83,7 @@
 </script>
 
 {#if $viewState == ViewState.Year}
-    <h4 class="month-header" id={displayedMonth.name}>
+    <h4 class="month-header">
         <span class="calendarium-month month">{displayedMonth.name}</span>
     </h4>
 {/if}
@@ -159,7 +159,7 @@
         height: 100%;
     }
     .month-header {
-        margin-bottom: 0;
+        margin: 0;
     }
     .month {
         width: 100%;
