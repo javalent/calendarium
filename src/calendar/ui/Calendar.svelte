@@ -36,9 +36,9 @@
         )) {
             menu.addItem((item) =>
                 item.setTitle(calendar.name).onClick(() => {
-                    const newStore = plugin.getStore(calendar);
+                    const newStore = plugin.getStore(calendar.id);
                     global.set(newStore);
-                    ephemeral.set(newStore.getEphemeralStore());
+                    ephemeral.set(newStore.ephemeralStore);
                 })
             );
         }

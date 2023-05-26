@@ -4,8 +4,9 @@
     import Calendar from "./Calendar.svelte";
     import { setTypedContext } from "../view";
     import { writable } from "svelte/store";
+    import { CalendarStore } from "src/stores/calendar.store";
 
-    export let calendar: CalendarInterface;
+    export let store: CalendarStore;
     export let plugin: Calendarium;
     export let full: boolean;
     setTypedContext("plugin", plugin);
@@ -13,27 +14,24 @@
     $: $fullStore = full;
 
     setTypedContext("full", fullStore);
-
-    const store = plugin.getStore(calendar);
-
     $: {
         if (store) {
             setTypedContext("store", writable(store));
-            const ephemeralStore = store.getEphemeralStore();
+            const ephemeralStore = store.ephemeralStore;
             setTypedContext("ephemeralStore", writable(ephemeralStore));
         }
     }
 </script>
 
-{#if !store}
-    <p>No calendars created! Create one in settings to get started.</p>
-{:else}
-    {#key store}
+{#key store}
+    {#if !store}
+        <p>No calendars created! Create one in settings to get started.</p>
+    {:else}
         <div class="calendar-container calendarium">
             <Calendar />
         </div>
-    {/key}
-{/if}
+    {/if}
+{/key}
 
 <style scoped>
     .calendar-container {

@@ -41,7 +41,6 @@
                 `${$displayWeeks ? "Hide" : "Display"} Week Numbers`
             ).onClick(async () => {
                 $displayWeeks = !$displayWeeks;
-                plugin.saveCalendars();
             });
         });
         menu.addItem((item) => {

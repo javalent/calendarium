@@ -9,10 +9,7 @@ import { CreateEventModal } from "src/settings/modals/event/event";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
-export function createCalendarStore(
-    calendar: Calendar,
-    plugin: Calendarium
-) {
+export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     const store = writable(calendar);
     const { set, update, subscribe } = store;
 
@@ -74,8 +71,12 @@ export function createCalendarStore(
         //Readable store containing static calendar data
         staticStore,
 
-        getEphemeralStore: () =>
-            getEphemeralStore(store, staticStore, calendar, yearCalculator),
+        ephemeralStore: getEphemeralStore(
+            store,
+            staticStore,
+            calendar,
+            yearCalculator
+        ),
 
         yearCalculator,
     };
@@ -88,6 +89,14 @@ export enum ViewState {
     Week,
     Day,
 }
+export interface EphemeralState {
+    viewState: ViewState;
+    displayMoons: boolean;
+    displayWeeks: boolean;
+    displayDayNumber: boolean;
+    displaying: FcDate;
+    viewing: FcDate;
+}
 export function getEphemeralStore(
     store: Writable<Calendar>,
     staticStore: StaticStore,
@@ -96,7 +105,6 @@ export function getEphemeralStore(
 ) {
     const displaying = writable({ ...base.current });
     const viewing = writable<FcDate | null>();
-    const yearView = writable(false);
 
     const displayMoons = writable(base.static.displayMoons);
     const displayDayNumber = writable(base.static.displayDayNumber);
@@ -105,7 +113,24 @@ export function getEphemeralStore(
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
     return {
-        yearView,
+        initializeFromState: (state: EphemeralState) => {
+            viewState.set(state.viewState);
+            displayDayNumber.set(state.displayDayNumber);
+            displayMoons.set(state.displayMoons);
+            displayWeeks.set(state.displayWeeks);
+            displaying.set(state.displaying);
+            viewing.set(state.viewing);
+        },
+        getEphemeralState: (): EphemeralState => {
+            return {
+                viewing: get(viewing),
+                viewState: get(viewState),
+                displaying: get(displaying),
+                displayDayNumber: get(displayDayNumber),
+                displayMoons: get(displayMoons),
+                displayWeeks: get(displayWeeks),
+            };
+        },
         displayMoons,
         displayDayNumber,
         displayWeeks,

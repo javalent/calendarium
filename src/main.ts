@@ -152,12 +152,15 @@ export default class Calendarium extends Plugin {
         return this.$settingsService.getCalendars();
     }
     private readonly stores: WeakMap<Calendar, CalendarStore> = new WeakMap();
-    getStore(calendar: Calendar) {
+    getStore(calendar: string) {
+        console.log("🚀 ~ file: main.ts:156 ~ calendar:", calendar);
         if (!calendar) return null;
-        if (!this.stores.has(calendar)) {
-            this.stores.set(calendar, createCalendarStore(calendar, this));
+        const cal = this.data.calendars.find((c) => c.id == calendar);
+        if (!cal) return null;
+        if (!this.stores.has(cal)) {
+            this.stores.set(cal, createCalendarStore(cal, this));
         }
-        return this.stores.get(calendar);
+        return this.stores.get(cal);
     }
     get canUseDailyNotes() {
         return this.dailyNotes._loaded;
