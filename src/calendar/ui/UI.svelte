@@ -39,7 +39,7 @@
         background: inherit;
         display: flex;
         flex-flow: column;
-        overflow: hidden;
+        overflow: auto;
         height: 100%;
     }
 </style>
