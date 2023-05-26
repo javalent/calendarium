@@ -153,7 +153,6 @@ export default class Calendarium extends Plugin {
     }
     private readonly stores: WeakMap<Calendar, CalendarStore> = new WeakMap();
     getStore(calendar: string) {
-        console.log("🚀 ~ file: main.ts:156 ~ calendar:", calendar);
         if (!calendar) return null;
         const cal = this.data.calendars.find((c) => c.id == calendar);
         if (!cal) return null;
@@ -190,11 +189,17 @@ export default class Calendarium extends Plugin {
                 : this.data.dateFormat) ?? "YYYY-MM-DD"
         );
     }
+    hasCalendar(calendar: string): boolean {
+        const cal = this.data.calendars.find((c) => c.id == calendar);
+        return !!cal;
+    }
     get defaultCalendar(): Calendar {
         return (
-            this.data.calendars.find(
+            this.data.calendars?.find(
                 (c) => c.id == this.data.defaultCalendar
-            ) ?? this.data.calendars[0]
+            ) ??
+            this.data.calendars?.[0] ??
+            null
         );
     }
     async onload() {

@@ -11,6 +11,7 @@
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
+    const view = getTypedContext("view");
     $: store = $global;
     $: displaying = $ephemeral.displaying;
     $: viewState = $ephemeral.viewState;
@@ -39,6 +40,8 @@
                     const newStore = plugin.getStore(calendar.id);
                     global.set(newStore);
                     ephemeral.set(newStore.ephemeralStore);
+                    view.store = newStore;
+                    view.calendar = calendar.id;
                 })
             );
         }

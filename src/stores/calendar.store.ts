@@ -9,6 +9,10 @@ import { CreateEventModal } from "src/settings/modals/event/event";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
+export interface CalendarStoreState {
+    ephemeral: EphemeralState;
+    calendar: string;
+}
 export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     const store = writable(calendar);
     const { set, update, subscribe } = store;
@@ -36,7 +40,21 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     //@ts-expect-error
     window.yearCache = yearCalculator;
 
+    const ephemeralStore = getEphemeralStore(
+        store,
+        staticStore,
+        calendar,
+        yearCalculator
+    );
+
     return {
+        getStoreState: () => {
+            return {
+                calendar: calendar.id,
+                ephemeral: ephemeralStore.getEphemeralState(),
+            };
+        },
+
         set,
         update,
         subscribe,
@@ -71,12 +89,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         //Readable store containing static calendar data
         staticStore,
 
-        ephemeralStore: getEphemeralStore(
-            store,
-            staticStore,
-            calendar,
-            yearCalculator
-        ),
+        ephemeralStore,
 
         yearCalculator,
     };
