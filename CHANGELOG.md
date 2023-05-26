@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.0.0-b3](https://github.com/javalent/the-calendarium/compare/1.0.0-b2...1.0.0-b3) (2023-05-26)
+
+
+### Features
+
+* partial state recovery ([9d3d785](https://github.com/javalent/the-calendarium/commit/9d3d7852ed38c51c7cd9d7f90edfbacedf2cd63c))
+* Persistent view state ([567255c](https://github.com/javalent/the-calendarium/commit/567255c42dee5206718fced84e00d7367becb13d))
+
+
+### Bug Fixes
+
+* preset months; window moment for tests; span data attributes ([#23](https://github.com/javalent/the-calendarium/issues/23)) ([6aaea42](https://github.com/javalent/the-calendarium/commit/6aaea426867e9766dfd26ee0c2586d018b8644ee))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b3 ([2d41827](https://github.com/javalent/the-calendarium/commit/2d41827204b74625f2d821afda699e4a99a846b4))
+* release 1.0.0-b3 ([e0e3169](https://github.com/javalent/the-calendarium/commit/e0e31695c377c182314738404931206ef019da5b))
+
 ## [1.0.0-b2](https://github.com/javalent/the-calendarium/compare/1.0.0-b1...1.0.0-b2) (2023-05-24)
 
 
