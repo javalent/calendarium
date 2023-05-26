@@ -1,4 +1,6 @@
+import { FcEvent } from "../src/@types";
 import { FcEventHelper, ParseDate } from "../src/helper/event.helper";
+import { sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
 import Moment from 'moment';
@@ -87,4 +89,43 @@ test("Parse March", () => {
     expect(helper.parseFcDateString("0-03-31-some extra", file)).toEqual(expected);
     expect(helper.parseFcDateString("0-Mar-31-some extra", file)).toEqual(expected);
     expect(helper.parseFcDateString("0-March-31-some extra", file)).toEqual(expected);
+});
+
+
+test("Sort Gregorian dates", () => {
+    const events = [
+        helper.parseFcDateString("1954-January-01-all the things happened", file), // 0
+        helper.parseFcDateString("1954-January-01-misc", file), // 1
+        helper.parseFcDateString("1954-January-01", file), // 2
+        helper.parseFcDateString("0-February-01-other stuff", file), // 3
+        helper.parseFcDateString("0-February-01-02", file), // 4
+        helper.parseFcDateString("2000-February-29", file), // 5
+        helper.parseFcDateString("0-March-31-some extra", file), // 6
+    ];
+
+    const fcEvents: FcEvent[] = events.map((x) => {
+        return {
+            date: x,
+            description: "Test",
+            id: "test",
+            name: "Test",
+            note: "Test",
+            category: "Test",
+            sort: helper.parsedToTimestamp(x),
+            type: "Test"
+        }
+    });
+
+    const sorted = sortEventList(fcEvents);
+    console.log(sorted);
+
+    expect(sorted[0].date).toEqual(events[4]);
+    expect(sorted[1].date).toEqual(events[3]);
+    expect(sorted[2].date).toEqual(events[6]);
+    expect(sorted[3].date).toEqual(events[2]);
+    expect(sorted[4].date).toEqual(events[0]);
+    expect(sorted[5].date).toEqual(events[1]);
+    expect(sorted[6].date).toEqual(events[5]);
+
+    console.log(sorted);
 });
