@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.0-b4](https://github.com/javalent/the-calendarium/compare/1.0.0-b3...1.0.0-b4) (2023-05-26)
+
+
+### Bug Fixes
+
+* allow scrolling again, oops ([e92c624](https://github.com/javalent/the-calendarium/commit/e92c624af2eea2e0c353b557f1f625afd206cc6a))
+* better ephemeral state persistance ([0839738](https://github.com/javalent/the-calendarium/commit/08397385cd1d9f062d97010170d2d6cac9fce6d1))
+* fixes issue with html IDs for some month names ([fff519f](https://github.com/javalent/the-calendarium/commit/fff519fcf75c55de0c3c413e16a1623f44e13a98))
+* make ephemeral stores separate again ([af2c4d2](https://github.com/javalent/the-calendarium/commit/af2c4d284d71ac59ed4e58a0337c5b4340793468))
+* view state persists properly ([d981542](https://github.com/javalent/the-calendarium/commit/d981542ad684efea5f8745fedb9139ab3daaaa8e))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b4 ([0d6fa40](https://github.com/javalent/the-calendarium/commit/0d6fa407e95764a7fdea823a481d335e03400f65))
+
 ## [1.0.0-b3](https://github.com/javalent/the-calendarium/compare/1.0.0-b2...1.0.0-b3) (2023-05-26)
 
 
