@@ -145,7 +145,7 @@
                 }}
             />
             {#if supportInlineEvents}
-                {#key $calendar.inlineEvents}
+                {#key $calendar.supportInlineEvents}
                     <TextComponent
                         name={"Default Inline Events Tag"}
                         desc={inlineEventTagDesc}
