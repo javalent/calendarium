@@ -1,4 +1,6 @@
+import { FcEvent } from "../src/@types";
 import { FcEventHelper, ParseDate } from "../src/helper/event.helper";
+import { sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
 import Moment from 'moment';
@@ -96,6 +98,9 @@ test("Parse Harptos: 1499-06, Greengrass", () => {
     expect(helper.parseFcDateString("1499-06-01", file)).toEqual(expected);
     expect(helper.parseFcDateString("1499-Greengrass", file)).toEqual(expected);
     expect(helper.parseFcDateString("1499-Greengrass-01", file)).toEqual(expected);
+
+    const ordered: ParseDate = { ... expected, order: '03' }
+    expect(helper.parseFcDateString("1499-Greengrass-01-03", file)).toEqual(ordered);
     // Greengrass has only one day...
     expect(helper.parseFcDateString("1499-06-03", file)).toBeNull();
 });
@@ -126,6 +131,9 @@ test("Parse Harptos: 1499-09, Midsummer", () => {
     expect(helper.parseFcDateString("1499-10-01", file)).toEqual(expected);
     expect(helper.parseFcDateString("1499-Midsum", file)).toEqual(expected);
     expect(helper.parseFcDateString("1499-Midsummer-01", file)).toEqual(expected);
+
+    const ordered: ParseDate = { ... expected, order: '03' }
+    expect(helper.parseFcDateString("1499-Midsummer-01-03", file)).toEqual(ordered);
 });
 test("Parse Harptos: 1372-Shieldmeet", () => {
     const expected: ParseDate = {
@@ -137,9 +145,12 @@ test("Parse Harptos: 1372-Shieldmeet", () => {
     expect(helper.parseFcDateString("1372-10-02", file)).toEqual(expected);
     expect(helper.parseFcDateString("1372-Shieldmeet", file)).toEqual(expected);
     expect(helper.parseFcDateString("1372-Shieldmeet-02", file)).toEqual(expected);
-    // Shieldmeet is a leapday
-    expect(helper.parseFcDateString("1499-10-02", file)).toBeNull();
 
+    const ordered: ParseDate = { ... expected, order: '03' }
+    expect(helper.parseFcDateString("1372-Shieldmeet-02-03", file)).toEqual(ordered);
+
+    // Shieldmeet is a leapday (not in 1499)
+    expect(helper.parseFcDateString("1499-10-02", file)).toBeNull();
 });
 // 10 | 11 |  8 | Eleasis
 test("Parse Harptos: 1499-11, Eleasis", () => {
@@ -184,3 +195,56 @@ test("Parse Harptos: 1499-14, Marpenoth", () => {
 // 14 | 15 | 11 | Uktar
 // 15 | 16 |  - | Feast of the Moon
 // 16 | 17 | 12 | Nightal
+
+test("Sort Harptos dates", () => {
+    const events = [
+        helper.parseFcDateString("1499-Midsummer-01-02", file), // 0
+        helper.parseFcDateString("1499-Greengrass-01-04", file), // 1
+        helper.parseFcDateString("1499-Hammer-01-03", file), // 2
+        helper.parseFcDateString("1372-Shieldmeet-02-03", file), // 3
+        helper.parseFcDateString("1372-Shieldmeet", file), // 4
+        helper.parseFcDateString("1499-Alturiak", file), // 5
+        helper.parseFcDateString("1499-Alturiak-01", file), // 6
+        helper.parseFcDateString("1499-Greengrass-01-03", file), // 7
+        helper.parseFcDateString("1499-Hammer", file), // 8
+        helper.parseFcDateString("1499-Hammer-01", file), // 9
+        helper.parseFcDateString("1499-Highharvestide-01", file), // 10
+        helper.parseFcDateString("1499-Marpenoth-01", file), // 11
+        helper.parseFcDateString("1499-Midsummer-01-03", file), // 12
+        helper.parseFcDateString("1499-Alturiak-01-whatever", file), // 13
+        helper.parseFcDateString("1499-Alturiak-01-ok?", file), // 14
+    ];
+
+    const fcEvents: FcEvent[] = events.map((x) => {
+        return {
+            date: x,
+            description: "Test",
+            id: "test",
+            name: "Test",
+            note: "Test",
+            category: "Test",
+            sort: helper.parsedToTimestamp(x),
+            type: "Test"
+        }
+    });
+
+    const sorted = sortEventList(fcEvents);
+
+    expect(sorted[0].date).toEqual(events[4]);
+    expect(sorted[1].date).toEqual(events[3]);
+    expect(sorted[2].date).toEqual(events[8]);
+    expect(sorted[3].date).toEqual(events[9]);
+    expect(sorted[4].date).toEqual(events[2]);
+    expect(sorted[5].date).toEqual(events[5]);
+    expect(sorted[6].date).toEqual(events[6]);
+    expect(sorted[7].date).toEqual(events[14]);
+    expect(sorted[8].date).toEqual(events[13]);
+    expect(sorted[9].date).toEqual(events[7]);
+    expect(sorted[10].date).toEqual(events[1]);
+    expect(sorted[11].date).toEqual(events[0]);
+    expect(sorted[12].date).toEqual(events[12]);
+    expect(sorted[13].date).toEqual(events[10]);
+    expect(sorted[14].date).toEqual(events[11]);
+
+    console.log(sorted);
+});

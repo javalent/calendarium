@@ -26,9 +26,8 @@ export const DEFAULT_CALENDAR: Calendar = {
     categories: [],
     autoParse: false,
     path: "/",
-    supportTimelines: false,
-    syncTimelines: true,
-    timelineTag: "#timeline"
+    supportInlineEvents: false,
+    inlineEventTag: "#inline-events"
 };
 
 export const DEFAULT_DATA: CalendariumData = {

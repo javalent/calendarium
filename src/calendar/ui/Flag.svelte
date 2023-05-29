@@ -58,7 +58,7 @@
 
     const openNote = (evt: MouseEvent) => {
         if (event.note) {
-            const file = app.vault.getAbstractFileByPath(`${event.note}.md`);
+            const file = app.vault.getAbstractFileByPath(event.note);
             if (file && file instanceof TFile) {
                 app.workspace.getLeaf().openFile(file);
             }

@@ -155,9 +155,12 @@ class Parser {
                 }
                 if (event.data.type != "file") return;
                 if (event.data.path != path) return;
+
                 ctx.removeEventListener("message", resolution);
                 const { data, cache, allTags, file } = event.data;
-                self.parseFileForEvents(data, cache, allTags, file);
+                if (path.endsWith(".md")) {
+                    self.parseFileForEvents(data, cache, allTags, file);
+                }
                 resolve();
             }
             setTimeout(() => resolve(), 500);
@@ -210,11 +213,11 @@ class Parser {
         });
 
         if (
-            eventHelper.calendar.supportTimelines &&
+            eventHelper.calendar.supportInlineEvents &&
             allTags &&
-            allTags.includes(eventHelper.calendar.timelineTag)
+            allTags.includes(eventHelper.calendar.inlineEventTag)
         ) {
-            eventHelper.parseTimelineEvents(data, file, (event: FcEvent) => {
+            eventHelper.parseInlineEvents(data, file, (event: FcEvent) => {
                 ctx.postMessage<UpdateEventMessage>({
                     type: "update",
                     id: eventHelper.calendar.id,
@@ -229,7 +232,7 @@ class Parser {
 
         if (this.debug && fEvents + tEvents > 0) {
             console.info(
-                `${fEvents} frontmatter and ${tEvents} timeline event operations completed on ${eventHelper.calendar.name} for ${file.basename}`
+                `${fEvents} frontmatter and ${tEvents} inline event operations completed on ${eventHelper.calendar.name} for ${file.basename}`
             );
         }
     }

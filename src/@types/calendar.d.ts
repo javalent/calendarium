@@ -19,9 +19,8 @@ export interface Calendar {
     displayWeeks?: boolean;
     autoParse: boolean;
     path: string;
-    supportTimelines: boolean;
-    syncTimelines: boolean;
-    timelineTag: string;
+    supportInlineEvents: boolean;
+    inlineEventTag: string;
     dateFormat?: string;
 }
 export interface StaticCalendarData {
