@@ -384,8 +384,7 @@ export class CreateEventModal extends CalendariumModal {
 
                 modal.onClose = async () => {
                     text.inputEl.blur();
-
-                    this.event.note = modal.link;
+                    if (modal.file) this.event.note = modal.file.path;
 
                     this.tryParse(modal.file);
                 };
