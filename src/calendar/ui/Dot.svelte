@@ -27,7 +27,6 @@
         min-width: 6px;
         height: 6px;
         width: 6px;
-        margin: 0 2px;
     }
     .active {
         color: var(--text-on-accent);
