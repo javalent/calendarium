@@ -1,10 +1,10 @@
 <script lang="ts">
     import { MonthStore } from "src/stores/month.store";
-    import { getTypedContext } from "../view";
-    import Dots from "./Dots.svelte";
+    import { getTypedContext } from "../../view";
+    import Dots from "../Events/Dots.svelte";
     import { Menu, TFile } from "obsidian";
     import type { FcEvent } from "src/@types";
-    import Moon from "./Moon.svelte";
+    import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
 
     export let month: MonthStore;
@@ -104,6 +104,7 @@
     on:contextmenu={(evt) => {
         openMenu(evt);
     }}
+    aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
 >
     <div
         class="day"

@@ -1,10 +1,9 @@
 <script lang="ts">
     import { ExtraButtonComponent } from "obsidian";
     import { createEventDispatcher } from "svelte";
-    import Flags from "../Flags.svelte";
+    import Flags from "../Events/Flags.svelte";
     import MoonUI from "../Moon.svelte";
     import { getTypedContext } from "../../view";
-    import type { Phase, Moon } from "src/@types";
     import { dateString } from "src/utils/functions";
     import { REVEAL_ICON } from "src/utils/constants";
 

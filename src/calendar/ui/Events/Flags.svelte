@@ -2,7 +2,7 @@
     import Flag from "./Flag.svelte";
     import type { FcDate, FcEvent } from "src/@types";
     import { createEventDispatcher } from "svelte";
-    import { getTypedContext } from "../view";
+    import { getTypedContext } from "../../view";
     import { sortEventList } from "src/utils/functions";
 
     export let events: FcEvent[] = [];

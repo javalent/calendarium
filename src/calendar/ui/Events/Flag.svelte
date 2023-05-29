@@ -4,8 +4,8 @@
     import type { FcDate, FcEvent, FcEventCategory } from "src/@types";
     import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
     import { createEventDispatcher } from "svelte";
-    import { getTypedContext } from "../view";
-    import { ViewEventModal } from "../event-modal";
+    import { getTypedContext } from "../../view";
+    import { ViewEventModal } from "../../event-modal";
     const dispatch = createEventDispatcher();
 
     export let event: FcEvent;
@@ -58,7 +58,10 @@
 
     const openNote = (evt: MouseEvent) => {
         if (event.note) {
-            const file = app.vault.getAbstractFileByPath(event.note);
+            const note = event.note.endsWith(".md")
+                ? event.note
+                : `${event.note}.md`;
+            const file = app.vault.getAbstractFileByPath(note);
             if (file && file instanceof TFile) {
                 app.workspace.getLeaf().openFile(file);
             }

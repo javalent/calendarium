@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getTypedContext } from "../view";
+    import { getTypedContext } from "../../view";
     import Dot from "./Dot.svelte";
     import type { FcEvent, FcEventCategory } from "src/@types";
 
@@ -11,19 +11,21 @@
     const color = (event: FcEvent) => {
         return $categories.find((c) => c.id == event.category)?.color;
     };
-    $: overflow = Math.max(events.length - 3, 0);
+    $: overflow = Math.max(events.length - 2, 0);
 </script>
 
 <div class="dots-container">
-    <div class="dot-container centered">
-        {#each events.slice(0, 3) as event}
+    <div
+        class="dot-container centered"
+    >
+        {#each events.slice(0, 2) as event}
             <Dot color={color(event)} />
         {/each}
-    </div>
-    <div class="overflow">
-        {#if overflow > 0}
-            <span>+{overflow}</span>
-        {/if}
+        <div class="overflow">
+            {#if overflow > 0}
+                <span>+</span>
+            {/if}
+        </div>
     </div>
 </div>
 
