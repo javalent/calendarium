@@ -78,7 +78,7 @@
         let notes: { event: FcEvent; file: TFile }[] = [];
         for (const event of $events) {
             if (!event.note) continue;
-            const file = app.vault.getAbstractFileByPath(`${event.note}.md`);
+            const file = app.vault.getAbstractFileByPath(event.note);
             if (file && file instanceof TFile) {
                 notes.push({ event, file });
             }

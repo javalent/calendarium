@@ -1,5 +1,5 @@
 import { FcEventDate } from "../src/@types";
-import { FcEventHelper, ParseDate } from "../src/helper/event.helper";
+import { FcEventHelper } from "../src/helper/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
 import Moment from 'moment';

@@ -27,10 +27,10 @@
 
     $: autoParse = $calendar.autoParse;
 
-    $: timelines = $calendar.supportTimelines;
+    $: supportInlineEvents = $calendar.supportInlineEvents;
 
-    if (!$calendar.timelineTag)
-        $calendar.timelineTag = DEFAULT_CALENDAR.timelineTag;
+    if (!$calendar.inlineEventTag)
+        $calendar.inlineEventTag = DEFAULT_CALENDAR.inlineEventTag;
 
     const folder = (node: HTMLElement) => {
         let folders = plugin.app.vault
@@ -58,67 +58,27 @@
         };
     };
 
-    $: timelinesDesc = createFragment((e) => {
+    $: inlineEventTagDesc = createFragment((e) => {
         e.createSpan({
-            text: "Support ",
+            text: "Tag to specify which notes to scan for inline events, e.g. ",
         });
-        e.createEl("code", { text: "<span>" });
-        e.createSpan({ text: " elements used by the " });
-        e.createEl("a", {
-            text: "Obsidian Timelines",
-            href: "obsidian://show-plugin?id=obsidian-timelines",
-        });
-        e.createSpan({
-            text: " plugin (by Darakah).",
-        });
-    });
-    $: timelinesTagDesc = createFragment((e) => {
-        e.createSpan({
-            text: "Tag to specify which notes to include in created timelines, e.g. ",
-        });
-        e.createEl("code", { text: "timeline" });
+        e.createEl("code", { text: "inline-events" });
         e.createSpan({
             text: " to use the ",
         });
-        e.createEl("code", { text: "#timeline" });
+        e.createEl("code", { text: "#inline-events" });
         e.createSpan({
             text: " tag.",
         });
     });
 
-    const timelinesTagSetting = (node: HTMLElement) => {
+    const inlineEventTagSetting = (node: HTMLElement) => {
         const text = new ObsidianTextComponent(node);
-        text.setValue(`${$calendar.timelineTag ?? ""}`.replace("#", ""))
-            .setDisabled($calendar.syncTimelines)
+        text.setValue(`${$calendar.inlineEventTag ?? ""}`.replace("#", ""))
             .onChange(async (v) => {
-                $calendar.timelineTag = v.startsWith("#") ? v : `#${v}`;
+                $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
                 await plugin.saveSettings();
             });
-        const b = new ExtraButtonComponent(node);
-        if (!plugin.canUseTimelines) {
-            $calendar.syncTimelines = false;
-            b.extraSettingsEl.detach();
-            return;
-        }
-        if ($calendar.syncTimelines) {
-            b.setIcon("checkmark")
-                .setTooltip("Unsync from Timelines Plugin")
-                .onClick(async () => {
-                    $calendar.syncTimelines = false;
-                    await plugin.saveSettings();
-                });
-        } else {
-            b.setIcon("sync")
-                .setTooltip("Sync with Timelines Plugin")
-                .onClick(async () => {
-                    $calendar.syncTimelines = true;
-                    $calendar.timelineTag =
-                        plugin.app.plugins.getPlugin(
-                            "obsidian-timelines"
-                        ).settings.timelineTag;
-                    await plugin.saveSettings();
-                });
-        }
     };
 </script>
 
@@ -177,22 +137,22 @@
                 <div use:folder />
             </TextComponent>
             <ToggleComponent
-                name={"Support Timelines Events"}
-                desc={timelinesDesc}
-                value={timelines}
+                name={"Support Inline Events"}
+                desc={"Look for <span> tags defining events in notes."}
+                value={supportInlineEvents}
                 on:click={() => {
-                    $calendar.supportTimelines = !$calendar.supportTimelines;
+                    $calendar.supportInlineEvents = !$calendar.supportInlineEvents;
                 }}
             />
-            {#if timelines}
-                {#key $calendar.syncTimelines}
+            {#if supportInlineEvents}
+                {#key $calendar.supportInlineEvents}
                     <TextComponent
-                        name={"Default Timelines Tag"}
-                        desc={timelinesTagDesc}
+                        name={"Default Inline Events Tag"}
+                        desc={inlineEventTagDesc}
                         value={""}
                     >
                         <div
-                            use:timelinesTagSetting
+                            use:inlineEventTagSetting
                             class="setting-item-control"
                         />
                     </TextComponent>

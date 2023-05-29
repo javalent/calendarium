@@ -40,15 +40,6 @@ declare module "obsidian" {
         trigger(name: "calendarium-settings-loaded"): void;
         on(name: "calendarium-settings-loaded", callback: () => any): EventRef;
     }
-    interface App {
-        plugins: {
-            getPlugin(plugin: "obsidian-timelines"): {
-                settings: {
-                    timelineTag: string;
-                };
-            };
-        };
-    }
 }
 
 declare global {
@@ -85,9 +76,8 @@ export const DEFAULT_CALENDAR: Calendar = {
     categories: [],
     autoParse: false,
     path: "/",
-    supportTimelines: false,
-    syncTimelines: true,
-    timelineTag: "timeline",
+    supportInlineEvents: false,
+    inlineEventTag: "inline-events",
 };
 
 export const DEFAULT_DATA: CalendariumData = {
@@ -166,21 +156,6 @@ export default class Calendarium extends Plugin {
     }
     get dailyNotes() {
         return this.app.internalPlugins.getPluginById("daily-notes");
-    }
-    get canUseTimelines() {
-        return this.app.plugins.getPlugin("obsidian-timelines") != null;
-    }
-    syncTimelines(calendar: Calendar) {
-        return calendar.syncTimelines && this.canUseTimelines;
-    }
-    timelineTag(calendar: Calendar) {
-        let tag = calendar.timelineTag;
-        if (this.syncTimelines(calendar)) {
-            tag = this.app.plugins
-                .getPlugin("obsidian-timelines")
-                .settings.timelineTag.replace("#", "");
-        }
-        return tag ?? calendar.timelineTag ?? "";
     }
     get format() {
         return (
