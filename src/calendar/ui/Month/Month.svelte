@@ -83,20 +83,22 @@
         ? `${(1 / $weeks) * 100}%`
         : '1fr'}; --calendar-row-count: {$weeks}"
 >
-    {#if $displayWeeks}
-        <div class="week-numbers-container calendarium">
-            <div class="weekday calendarium">
-                <span>W</span>
+    <div class="week-numbers-outer calendarium">
+        {#if $displayWeeks}
+            <div class="week-numbers-container calendarium">
+                <div class="weekday week-number-header calendarium">
+                    <span>W</span>
+                </div>
+                <div class="week-numbers calendarium">
+                    {#each [...Array($weeks).keys()] as week}
+                        <span class="week-number"
+                            >{$firstWeekNumber + 1 + week}</span
+                        >
+                    {/each}
+                </div>
             </div>
-            <div class="week-numbers calendarium">
-                {#each [...Array($weeks).keys()] as week}
-                    <span class="week-number"
-                        >{$firstWeekNumber + 1 + week}</span
-                    >
-                {/each}
-            </div>
-        </div>
-    {/if}
+        {/if}
+    </div>
     <div class="calendarium month">
         <div class="weekday-container calendarium">
             {#each $weekdays as day}
@@ -111,15 +113,15 @@
 </div>
 
 <style scoped>
-    .weekday-container {
-        display: grid;
-        grid-template-columns: repeat(var(--calendar-columns), 1fr);
-        text-align: center;
-    }
     .month-container {
         height: min-content;
         display: grid;
         grid-template-columns: auto 1fr;
+    }
+    .weekday-container {
+        display: grid;
+        grid-template-columns: repeat(var(--calendar-columns), 1fr);
+        text-align: center;
     }
     .day-container {
         display: grid;
@@ -130,9 +132,6 @@
         );
     }
     .full {
-        height: 100%;
-    }
-    table {
         height: 100%;
     }
     .month-header {
@@ -151,7 +150,11 @@
         padding: 4px;
         text-transform: uppercase;
     }
+    .week-numbers-outer {
+        height: 100%;
+    }
     .week-numbers-container {
+        height: 100%;
         border-right: 1px solid var(--blockquote-border-color);
         padding-right: 0.5rem;
         margin-right: 0.5rem;
@@ -165,7 +168,7 @@
     }
     .week-number {
         background-color: transparent;
-        margin-bottom: 6px;
+        margin-bottom: 12px;
         color: var(--text-muted);
         cursor: pointer;
         font-size: 0.65em;

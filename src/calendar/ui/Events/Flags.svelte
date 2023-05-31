@@ -28,7 +28,7 @@
             previousHeight = height;
             target.empty();
             overflow = 0;
-            let added = 0;
+            let remaining = height;
 
             for (const event of events) {
                 const flag = new Flag({
@@ -41,32 +41,31 @@
                     },
                 });
                 console.log(flag);
-                /* if (!dayView) {
-                    remaining += flag.$$..height;
+                if (!dayView) {
+                    remaining =
+                        height -
+                        Array.from(target.children).reduce(
+                            (a, b) => b.getBoundingClientRect().height + a,
+                            0
+                        );
                     if (remaining < 0) {
-                        entry.target.lastElementChild.detach();
+                        target.lastElementChild.detach();
                         overflow = events.length - events.indexOf(event);
                         break;
                     } else if (remaining == 0) {
                         overflow = events.length - events.indexOf(event) - 1;
                         break;
                     }
-                } */
+                }
             }
         }
     };
 
     let container: HTMLElement;
-    const observer = new ResizeObserver(
-        debounce(
-            (entries) =>
-                addEvents(entries[0].contentRect?.height, entries[0]?.target),
-            25
-        )
+    const observer = new ResizeObserver((entries) =>
+        addEvents(entries[0].contentRect?.height, entries[0]?.target)
     );
     onMount(() => {
-        /* 
-        addEvents(container.getBoundingClientRect()?.height, container); */
         observer.observe(container);
     });
 </script>
