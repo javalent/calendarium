@@ -3,8 +3,7 @@
     import type { FcDate, FcEvent } from "src/@types";
     import { getTypedContext } from "../../view";
     import { sortEventList } from "src/utils/functions";
-    import { createEventDispatcher, onMount } from "svelte";
-    import { debounce } from "obsidian";
+    import { onMount } from "svelte";
 
     export let events: FcEvent[] = [];
     export let dayView: boolean = false;

@@ -1,15 +1,12 @@
 <script lang="ts">
-    import type { Calendar } from "src/@types";
     import type Calendarium from "src/main";
     import {
-        ExtraButtonComponent,
         normalizePath,
         TextComponent as ObsidianTextComponent,
         TFolder,
     } from "obsidian";
     import { FolderSuggestionModal } from "src/suggester/folder";
     import { getContext } from "svelte";
-    import { Writable } from "svelte/store";
     import TextAreaComponent from "../Settings/TextAreaComponent.svelte";
     import TextComponent from "../Settings/TextComponent.svelte";
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
@@ -74,11 +71,12 @@
 
     const inlineEventTagSetting = (node: HTMLElement) => {
         const text = new ObsidianTextComponent(node);
-        text.setValue(`${$calendar.inlineEventTag ?? ""}`.replace("#", ""))
-            .onChange(async (v) => {
-                $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
-                await plugin.saveSettings();
-            });
+        text.setValue(
+            `${$calendar.inlineEventTag ?? ""}`.replace("#", "")
+        ).onChange(async (v) => {
+            $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
+            await plugin.saveSettings();
+        });
     };
 </script>
 
@@ -141,7 +139,8 @@
                 desc={"Look for <span> tags defining events in notes."}
                 value={supportInlineEvents}
                 on:click={() => {
-                    $calendar.supportInlineEvents = !$calendar.supportInlineEvents;
+                    $calendar.supportInlineEvents =
+                        !$calendar.supportInlineEvents;
                 }}
             />
             {#if supportInlineEvents}
@@ -171,9 +170,7 @@
         flex-flow: column;
         align-items: flex-start;
     }
-    .calendarium-info
-        :global(.calendarium-description)
-        :global(textarea) {
+    .calendarium-info :global(.calendarium-description) :global(textarea) {
         width: 100%;
     }
 </style>

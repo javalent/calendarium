@@ -6,7 +6,7 @@
     import type { FcEvent } from "src/@types";
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
-    import Flags from "../events/Flags.svelte";
+    import Flags from "../Events/Flags.svelte";
 
     export let month: MonthStore;
     export let number: number;
