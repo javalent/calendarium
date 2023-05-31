@@ -6,6 +6,7 @@
     import type { FcEvent } from "src/@types";
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
+    import Flags from "../events/Flags.svelte";
 
     export let month: MonthStore;
     export let number: number;
@@ -98,7 +99,12 @@
     };
 </script>
 
-<td
+<div
+    class="day"
+    class:adjacent-month={adjacent}
+    class:opened
+    class:today
+    class:full={$full}
     on:click={() =>
         ($viewing = { day: number, month: $index, year: year.year })}
     on:contextmenu={(evt) => {
@@ -106,31 +112,31 @@
     }}
     aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
 >
-    <div
-        class="day"
-        class:adjacent-month={adjacent}
-        class:opened
-        class:today
-        class:full={$full}
-    >
-        <span class="day-number">
-            {number}
-        </span>
-        {#key $events}
-            {#if $full && $viewState != ViewState.Year}
-                {#if $displayMoons}
-                    <div class="moon-container">
-                        {#each $moons as moon}
-                            <Moon {moon} />
-                        {/each}
-                    </div>
-                {/if}
-            {:else}
-                <Dots events={$events} />
+    <span class="day-number">
+        {number}
+    </span>
+    {#key $events}
+        {#if $full && $viewState != ViewState.Year}
+            {#if $displayMoons}
+                <div class="moon-container">
+                    {#each $moons as moon}
+                        <Moon {moon} />
+                    {/each}
+                </div>
             {/if}
-        {/key}
-    </div>
-</td>
+            <Flags
+                events={$events}
+                date={{
+                    day: number,
+                    month: $index,
+                    year: year.year,
+                }}
+            />
+        {:else}
+            <Dots events={$events} />
+        {/if}
+    {/key}
+</div>
 
 <style scoped>
     .day {
@@ -146,6 +152,8 @@
         text-align: center;
         transition: background-color 0.1s ease-in, color 0.1s ease-in;
         vertical-align: baseline;
+        display: flex;
+        flex-flow: column nowrap;
     }
     .day:hover {
         background-color: var(--interactive-hover);

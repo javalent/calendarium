@@ -1,9 +1,10 @@
 <script lang="ts">
     import Flag from "./Flag.svelte";
     import type { FcDate, FcEvent } from "src/@types";
-    import { createEventDispatcher } from "svelte";
     import { getTypedContext } from "../../view";
     import { sortEventList } from "src/utils/functions";
+    import { createEventDispatcher, onMount } from "svelte";
+    import { debounce } from "obsidian";
 
     export let events: FcEvent[] = [];
     export let dayView: boolean = false;
@@ -13,15 +14,11 @@
     const { categories } = $store;
 
     $: events = sortEventList([...events]);
-
     let overflow: number = 0;
-    const dispatch = createEventDispatcher();
-    let flagContainer: HTMLElement;
     let previousHeight = 0;
-    const addFcEvents = (flags: HTMLElement) => {
-        if (events.length) {
-            const height =
-                flags?.parentElement?.getBoundingClientRect()?.height;
+
+    const addEvents = (height: number, target: Element) => {
+        if (events.length && target) {
             if (
                 !dayView &&
                 (height == null ||
@@ -29,14 +26,13 @@
             )
                 return;
             previousHeight = height;
-            flagContainer = flags;
-            flags.empty();
+            target.empty();
             overflow = 0;
-            let remaining = height;
+            let added = 0;
 
             for (const event of events) {
                 const flag = new Flag({
-                    target: flags,
+                    target,
                     props: {
                         event,
                         categories: $categories,
@@ -44,46 +40,51 @@
                         date,
                     },
                 });
-                flag.$on("event-click", (e) =>
-                    dispatch("event-click", e.detail)
-                );
-                flag.$on("event-mouseover", (e) =>
-                    dispatch("event-mouseover", e.detail)
-                );
-                flag.$on("event-context", (e) =>
-                    dispatch("event-context", e.detail)
-                );
-                if (!dayView) {
-                    remaining = height - flags.getBoundingClientRect().height;
+                console.log(flag);
+                /* if (!dayView) {
+                    remaining += flag.$$..height;
                     if (remaining < 0) {
-                        flags.lastElementChild.detach();
+                        entry.target.lastElementChild.detach();
                         overflow = events.length - events.indexOf(event);
                         break;
                     } else if (remaining == 0) {
                         overflow = events.length - events.indexOf(event) - 1;
                         break;
                     }
-                }
+                } */
             }
         }
     };
+
+    let container: HTMLElement;
+    const observer = new ResizeObserver(
+        debounce(
+            (entries) =>
+                addEvents(entries[0].contentRect?.height, entries[0]?.target),
+            25
+        )
+    );
+    onMount(() => {
+        /* 
+        addEvents(container.getBoundingClientRect()?.height, container); */
+        observer.observe(container);
+    });
 </script>
 
 <div class="flags-container">
     {#key events}
-        <div class="flag-container" use:addFcEvents>
-            <!-- {#each events.slice(0, MAX_EVENTS) as event}
-            <Flag
-                {event}
-                {categories}
-                {dayView}
-                {date}
-                on:event-click
-                on:event-mouseover
-                on:event-context
-            />
-        {/each} -->
-        </div>
+        <div class="flag-container" bind:this={container} />
+        <!-- {#each events.slice(0, 3) as event}
+                <Flag
+                    {event}
+                    categories={$categories}
+                    {dayView}
+                    {date}
+                    on:event-click
+                    on:event-mouseover
+                    on:event-context
+                />
+            {/each} -->
     {/key}
     <div class="overflow">
         {#if overflow > 0}
@@ -93,17 +94,18 @@
 </div>
 
 <style>
-    .flags-container {
-        height: 100%;
-    }
+    .flags-container,
     .flag-container {
+        height: 100%;
         display: flex;
         flex-flow: column nowrap;
         gap: 0.25rem;
+        overflow: hidden;
     }
 
     .overflow {
         color: var(--text-muted);
+        justify-self: flex-end;
         display: flex;
         justify-content: flex-end;
         width: 100%;

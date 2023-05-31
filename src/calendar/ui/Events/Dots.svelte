@@ -15,9 +15,7 @@
 </script>
 
 <div class="dots-container">
-    <div
-        class="dot-container centered"
-    >
+    <div class="dot-container centered">
         {#each events.slice(0, 2) as event}
             <Dot color={color(event)} />
         {/each}
@@ -50,7 +48,6 @@
         font-size: xx-small;
         display: flex;
         justify-content: flex-end;
-        width: 100%;
         line-height: 1.25;
     }
 </style>

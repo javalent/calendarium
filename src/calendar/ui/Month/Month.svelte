@@ -24,15 +24,14 @@
     $: ({ lastDay: previousLastDay, days: previousDays } = previousMonth);
 
     $: extraWeek = $weekdays.length - $lastDay <= $weekdays.length / 2 ? 1 : 0;
-    const tbody = (node: HTMLElement) => {
-        let row = node.createEl("tr");
+    const addDays = (target: HTMLElement) => {
         if ($staticConfiguration.overflow) {
             for (let i = 0; i < $previousLastDay; i++) {
                 if ($viewState == ViewState.Year) {
-                    row.createEl("td");
+                    target.createDiv();
                 } else {
                     new Day({
-                        target: row,
+                        target,
                         props: {
                             adjacent: true,
                             number: $previousDays - $previousLastDay + i + 1,
@@ -43,11 +42,8 @@
             }
         }
         for (let i = 0; i < $days; i++) {
-            if (row.childElementCount >= $weekdays.length) {
-                row = node.createEl("tr");
-            }
             new Day({
-                target: row,
+                target,
                 props: {
                     adjacent: false,
                     number: i + 1,
@@ -58,18 +54,13 @@
         //-1 because its the index
         if ($staticConfiguration.overflow) {
             let remaining =
-                $weekdays.length -
-                row.childElementCount +
-                extraWeek * $weekdays.length;
+                $weekdays.length - $lastDay + extraWeek * $weekdays.length;
             for (let i = 0; i < remaining; i++) {
-                if (row.childElementCount >= $weekdays.length) {
-                    row = node.createEl("tr");
-                }
                 if ($viewState == ViewState.Year) {
-                    row.createEl("td");
+                    target.createDiv();
                 } else {
                     new Day({
-                        target: row,
+                        target,
                         props: {
                             adjacent: true,
                             number: i + 1,
@@ -83,74 +74,60 @@
 </script>
 
 {#if $viewState == ViewState.Year}
-    <h4 class="month-header">
-        <span class="calendarium-month month">{displayedMonth.name}</span>
-    </h4>
+    <h4 class="calendarium month-header">{displayedMonth.name}</h4>
 {/if}
-<div class="month-container" class:full={$full}>
-    <table>
-        <tbody>
-            <tr>
-                {#if $displayWeeks}
-                    <td>
-                        <table class="week-number-table calendarium">
-                            <colgroup>
-                                <col class="week-numbers" />
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th class="weekday">
-                                        <span>W</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {#each [...Array($weeks).keys()] as week}
-                                    <tr>
-                                        <td>
-                                            <span class="week-num"
-                                                >{$firstWeekNumber +
-                                                    1 +
-                                                    week}</span
-                                            >
-                                        </td>
-                                    </tr>
-                                {/each}
-                            </tbody>
-                        </table>
-                    </td>
-                {/if}
-                <td>
-                    <table class="calendar calendarium month">
-                        <colgroup>
-                            {#each $weekdays as day}
-                                <col class={day.name} />
-                            {/each}
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                {#each $weekdays as day}
-                                    <th class="weekday"
-                                        >{day.name
-                                            .slice(0, 3)
-                                            .toUpperCase()}</th
-                                    >
-                                {/each}
-                            </tr>
-                        </thead>
-                        {#key displayedMonth}
-                            <tbody use:tbody />
-                        {/key}
-                    </table>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<div
+    class="calendarium month-container"
+    class:full={$full}
+    style="--calendar-columns: {$weekdays.length};--calendar-rows: {$full
+        ? `${(1 / $weeks) * 100}%`
+        : '1fr'}; --calendar-row-count: {$weeks}"
+>
+    {#if $displayWeeks}
+        <div class="week-numbers-container calendarium">
+            <div class="weekday calendarium">
+                <span>W</span>
+            </div>
+            <div class="week-numbers calendarium">
+                {#each [...Array($weeks).keys()] as week}
+                    <span class="week-number"
+                        >{$firstWeekNumber + 1 + week}</span
+                    >
+                {/each}
+            </div>
+        </div>
+    {/if}
+    <div class="calendarium month">
+        <div class="weekday-container calendarium">
+            {#each $weekdays as day}
+                <div class="weekday calendarium">
+                    {day.name.slice(0, 3).toUpperCase()}
+                </div>
+            {/each}
+        </div>
+
+        <div class="day-container calendarium" use:addDays />
+    </div>
 </div>
 
 <style scoped>
+    .weekday-container {
+        display: grid;
+        grid-template-columns: repeat(var(--calendar-columns), 1fr);
+        text-align: center;
+    }
     .month-container {
         height: min-content;
+        display: grid;
+        grid-template-columns: auto 1fr;
+    }
+    .day-container {
+        display: grid;
+        grid-template-columns: repeat(var(--calendar-columns), 1fr);
+        grid-template-rows: repeat(
+            var(--calendar-row-count),
+            var(--calendar-rows)
+        );
     }
     .full {
         height: 100%;
@@ -163,7 +140,8 @@
     }
     .month {
         width: 100%;
-        table-layout: fixed;
+        display: grid;
+        grid-template-rows: auto 1fr;
     }
     .weekday {
         background-color: var(--color-background-heading);
@@ -173,20 +151,26 @@
         padding: 4px;
         text-transform: uppercase;
     }
-    .week-number-table {
+    .week-numbers-container {
         border-right: 1px solid var(--blockquote-border-color);
         padding-right: 0.5rem;
+        margin-right: 0.5rem;
+        display: grid;
+        grid-template-rows: auto 1fr;
     }
-    .week-number-table td {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .week-numbers {
+        display: grid;
+        grid-template-rows: repeat(var(--calendar-rows), 1fr);
+        height: 100%;
     }
-    .week-num {
+    .week-number {
         background-color: transparent;
+        margin-bottom: 6px;
         color: var(--text-muted);
         cursor: pointer;
         font-size: 0.65em;
-        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>

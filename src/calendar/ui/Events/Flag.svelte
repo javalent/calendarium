@@ -1,3 +1,5 @@
+<svelte:options accessors />
+
 <script lang="ts">
     import { Platform, TFile, setIcon } from "obsidian";
 
@@ -70,9 +72,12 @@
             modal.open();
         }
     };
+
+    export let flag: HTMLElement = null;
 </script>
 
 <div
+    bind:this={flag}
     class="flag"
     class:multi
     class:start
