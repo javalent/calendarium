@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.0.0-b5](https://github.com/javalent/the-calendarium/compare/1.0.0-b4...1.0.0-b5) (2023-05-31)
+
+
+### Bug Fixes
+
+* dot overflow ([f8695ca](https://github.com/javalent/the-calendarium/commit/f8695ca3a340b4d088ef1e5b945444b43b34a5d8))
+* fixes dot overflow ([e93cedf](https://github.com/javalent/the-calendarium/commit/e93cedf1b22038f5b1f4c93670871208a0779ac8))
+* fixes event file path in modal creator ([6f63478](https://github.com/javalent/the-calendarium/commit/6f63478a6f794332d8817b158f1876a656f9c7b6))
+* flag opens notes correctly if there is no file extension ([f8695ca](https://github.com/javalent/the-calendarium/commit/f8695ca3a340b4d088ef1e5b945444b43b34a5d8))
+* flags overflow properly ([82052da](https://github.com/javalent/the-calendarium/commit/82052daa39a8cf4b24279d9b71fedbe564a8e8de))
+* switch to grid layout for better consistency ([e95baba](https://github.com/javalent/the-calendarium/commit/e95baba1a42b469cdbe8000e3f8887ada9bdcdf7))
+* timelineEvent -&gt; inlineEvent; parse .md files ([#25](https://github.com/javalent/the-calendarium/issues/25)) ([8629425](https://github.com/javalent/the-calendarium/commit/86294254d9a0aa236b142c99069cef9bdb2cf8a5))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b5 ([86e2b2b](https://github.com/javalent/the-calendarium/commit/86e2b2b696fbfac4420b1b22544fd0ae9d945f89))
+
 ## [1.0.0-b4](https://github.com/javalent/the-calendarium/compare/1.0.0-b3...1.0.0-b4) (2023-05-26)
 
 
