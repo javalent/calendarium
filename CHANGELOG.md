@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b8](https://github.com/javalent/the-calendarium/compare/1.0.0-b7...1.0.0-b8) (2023-06-01)
+
+
+### Features
+
+* Settings migration from Fantasy Calendar plugin ([017d727](https://github.com/javalent/the-calendarium/commit/017d7270928fb53f83eb91a16fb8dadc8460f471))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b8 ([6161c31](https://github.com/javalent/the-calendarium/commit/6161c311fb38d61db05864b4e97efca8ff4aef0a))
+
 ## [1.0.0-b7](https://github.com/javalent/the-calendarium/compare/1.0.0-b6...1.0.0-b7) (2023-06-01)
 
 
