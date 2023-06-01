@@ -19,7 +19,7 @@ import PathSuggestionModal from "../../../suggester/path";
 import copy from "fast-copy";
 import Calendarium from "src/main";
 import { CalendariumModal } from "../modal";
-import { FcEventHelper } from "src/helper/event.helper";
+import { CalEventHelper } from "src/helper/event.helper";
 
 export class CreateEventModal extends CalendariumModal {
     saved = false;
@@ -97,7 +97,7 @@ export class CreateEventModal extends CalendariumModal {
                             return;
                         }
 
-                        const helper = new FcEventHelper(
+                        const helper = new CalEventHelper(
                             this.calendar,
                             false,
                             this.plugin.format

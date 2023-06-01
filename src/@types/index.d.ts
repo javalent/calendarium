@@ -30,7 +30,8 @@ export interface CalendariumData {
     version: {
         major: number;
         minor: number;
-        patch: number;
+        patch: number | string;
     };
     debug: boolean;
+    askedToMoveFC: boolean;
 }

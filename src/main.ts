@@ -13,10 +13,17 @@ import CalendariumView, { VIEW_TYPE } from "./calendar/view";
 import { CalendarEventTree, Watcher } from "./watcher/watcher";
 import { API } from "./api/api";
 import SettingsService from "./settings/settings.service";
-import { FcEventHelper } from "./helper/event.helper";
+import { CalEventHelper } from "./helper/event.helper";
 import { CalendarStore, createCalendarStore } from "./stores/calendar.store";
 
 declare module "obsidian" {
+    interface App {
+        plugins: {
+            plugins: {
+                "fantasy-calendar": Plugin;
+            };
+        };
+    }
     interface Workspace {
         on(name: "calendarium-updated", callback: () => any): EventRef;
         on(
@@ -47,67 +54,7 @@ declare global {
         CalendariumAPI?: API;
     }
 }
-
 export const MODIFIER_KEY = Platform.isMacOS ? "Meta" : "Control";
-
-export const DEFAULT_CALENDAR: Calendar = {
-    name: null,
-    description: null,
-    id: null,
-    static: {
-        incrementDay: false,
-        firstWeekDay: null,
-        overflow: true,
-        weekdays: [],
-        months: [],
-
-        moons: [],
-        displayMoons: true,
-        displayDayNumber: false,
-        leapDays: [],
-        eras: [],
-    },
-    current: {
-        year: null,
-        month: null,
-        day: null,
-    },
-    events: [],
-    categories: [],
-    autoParse: false,
-    path: "/",
-    supportInlineEvents: false,
-    inlineEventTag: "inline-events",
-};
-
-export const DEFAULT_DATA: CalendariumData = {
-    addToDefaultIfMissing: true,
-    calendars: [],
-    configDirectory: null,
-    dailyNotes: false,
-    dateFormat: "YYYY-MM-DD",
-    defaultCalendar: null,
-    eventPreview: false,
-    exit: {
-        saving: false,
-        event: false,
-        calendar: false,
-    },
-    eventFrontmatter: false,
-    parseDates: false,
-    settingsToggleState: {
-        calendars: false,
-        events: false,
-        advanced: true,
-    },
-    showIntercalary: false,
-    version: {
-        major: null,
-        minor: null,
-        patch: null,
-    },
-    debug: false,
-};
 
 export default class Calendarium extends Plugin {
     api = new API();
@@ -179,7 +126,7 @@ export default class Calendarium extends Plugin {
     }
     async onload() {
         console.log("Loading Calendarium v" + this.manifest.version);
-        this.$settingsService = new SettingsService(this.app, this.manifest);
+        this.$settingsService = new SettingsService(this, this.manifest);
         await this.$settingsService.loadData();
 
         this.watcher = new Watcher(this);
@@ -191,8 +138,6 @@ export default class Calendarium extends Plugin {
             (leaf: WorkspaceLeaf) => new CalendariumView(leaf, this)
         );
         this.app.workspace.onLayoutReady(async () => {
-            await this.loadSettings();
-
             this.watcher.load();
 
             this.addCommands();
@@ -212,7 +157,9 @@ export default class Calendarium extends Plugin {
         this.app.workspace
             .getLeavesOfType(VIEW_TYPE)
             .forEach((leaf) => leaf.detach());
-        this.watcher.unload();
+        this.watcher?.unload();
+
+        this.$settingsService.notice?.hide();
     }
 
     addCommands() {
@@ -234,59 +181,8 @@ export default class Calendarium extends Plugin {
         });
         if (leaf) this.app.workspace.revealLeaf(leaf);
     }
-    async loadSettings() {
-        let data = {
-            ...(await this.loadData()),
-        };
-        if (data && data.configDirectory) {
-            if (
-                await this.app.vault.adapter.exists(
-                    `${this.data.configDirectory}/data.json`
-                )
-            ) {
-                try {
-                    data = JSON.parse(
-                        await this.app.vault.adapter.read(
-                            `${this.data.configDirectory}/data.json`
-                        )
-                    );
-                } catch (e) {}
-            }
-            if (!this.data.version.major || this.data.version.major < 3) {
-                for (const calendar of this.data.calendars) {
-                    // Ensure events in existing calendars have sort keys
-                    if (this.data.debug)
-                        console.log(
-                            "Updating cached events for %s",
-                            calendar.name
-                        );
-                    const helper = new FcEventHelper(
-                        calendar,
-                        false,
-                        this.format
-                    );
-                    calendar.events.forEach((e) => {
-                        e.sort = helper.timestampForFcEvent(e);
-                        const x: any = e;
-                        delete x["timestamp"];
-                        delete x["auto"];
-                    });
-                }
-            }
-        }
-        if (data && !data.transitioned) {
-            await this.$settingsService.saveData(data);
-            await super.saveData({ transitioned: true });
-        }
-    }
-    onSettingsLoad(callback: () => any) {
-        if (this.$settingsService.loaded) {
-            callback();
-        } else {
-            this.app.workspace.on("calendarium-settings-loaded", () =>
-                callback()
-            );
-        }
+    onSettingsLoaded(callback: () => any) {
+        this.$settingsService.onSettingsLoaded(callback);
     }
 
     async saveCalendars() {

@@ -1,5 +1,5 @@
 import { FcEvent } from "../src/@types";
-import { FcEventHelper, ParseDate } from "../src/helper/event.helper";
+import { CalEventHelper, ParseDate } from "../src/helper/event.helper";
 import { sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
@@ -7,7 +7,7 @@ import Moment from 'moment';
 Object.defineProperty(window, 'moment', { value: Moment });
 
 const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
-const helper = new FcEventHelper(GREGORIAN, false, 'YYYY-MM-DD');
+const helper = new CalEventHelper(GREGORIAN, false, 'YYYY-MM-DD');
 const file = {
     path: "path",
     basename: "basename"

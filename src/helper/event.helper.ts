@@ -29,7 +29,7 @@ export interface ParseDate {
     order: string
 }
 
-export class FcEventHelper {
+export class CalEventHelper {
     calendar: Calendar;
     useFilenameForEvents: boolean;
     formatString: string;

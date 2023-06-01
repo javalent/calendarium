@@ -92,7 +92,7 @@ export default class CalendariumView extends ItemView {
             }
         }
         if (!this.ui) {
-            this.plugin.onSettingsLoad(() => this.display());
+            this.plugin.onSettingsLoaded(() => this.display());
         }
         super.setState(state, result);
     }

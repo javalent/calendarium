@@ -73,14 +73,6 @@
         grid-template-columns: repeat(var(--calendar-columns), 1fr);
         text-align: center;
     }
-    .weekday {
-        background-color: var(--color-background-heading);
-        color: var(--color-text-heading);
-        font-size: 0.6em;
-        letter-spacing: 1px;
-        padding: 4px;
-        text-transform: uppercase;
-    }
     .week-number {
         border-right: 1px solid var(--blockquote-border-color);
         background-color: transparent;
@@ -92,8 +84,5 @@
         display: flex;
         align-items: center;
         justify-content: center;
-    }
-    .align-top {
-        vertical-align: top;
     }
 </style>

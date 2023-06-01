@@ -15,19 +15,19 @@ export const DEFAULT_CALENDAR: Calendar = {
         displayMoons: true,
         displayDayNumber: false,
         leapDays: [],
-        eras: []
+        eras: [],
     },
     current: {
         year: null,
         month: null,
-        day: null
+        day: null,
     },
     events: [],
     categories: [],
     autoParse: false,
     path: "/",
     supportInlineEvents: false,
-    inlineEventTag: "#inline-events"
+    inlineEventTag: "#inline-events",
 };
 
 export const DEFAULT_DATA: CalendariumData = {
@@ -41,20 +41,21 @@ export const DEFAULT_DATA: CalendariumData = {
     exit: {
         saving: false,
         event: false,
-        calendar: false
+        calendar: false,
     },
     eventFrontmatter: false,
     parseDates: false,
     settingsToggleState: {
         calendars: false,
         events: false,
-        advanced: true
+        advanced: true,
     },
     showIntercalary: false,
     version: {
         major: null,
         minor: null,
-        patch: null
+        patch: null,
     },
-    debug: false
+    debug: false,
+    askedToMoveFC: false,
 };

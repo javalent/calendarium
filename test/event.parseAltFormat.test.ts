@@ -1,5 +1,5 @@
 import { FcEventDate } from "../src/@types";
-import { FcEventHelper } from "../src/helper/event.helper";
+import { CalEventHelper } from "../src/helper/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
 import Moment from 'moment';
@@ -18,14 +18,14 @@ const input: FcEventDate = {
 };
 
 test("YYYY-MM-DD", () => {
-    const YMD = new FcEventHelper(GREGORIAN, true, 'YYYY-MM-DD');
+    const YMD = new CalEventHelper(GREGORIAN, true, 'YYYY-MM-DD');
     const datestring = '1400-02-28';
     expect(YMD.formatDigest).toEqual('YMD');
     expect(YMD.toFcDateString(input)).toEqual(datestring);
     expect(YMD.parseFcDateString(datestring, file)).toEqual(expect.objectContaining(input));
 });
 test("YYYY-MMM-DD", () => {
-    const YMD = new FcEventHelper(GREGORIAN, true, 'YYYY-MMM-DD');
+    const YMD = new CalEventHelper(GREGORIAN, true, 'YYYY-MMM-DD');
     const datestring = '1400-February-28';
     expect(YMD.formatDigest).toEqual('YMD');
     expect(YMD.toFcDateString(input)).toEqual(datestring);
@@ -33,7 +33,7 @@ test("YYYY-MMM-DD", () => {
 });
 
 test("M-D-Y", () => {
-    const MDY = new FcEventHelper(GREGORIAN, true, 'M-D-Y');
+    const MDY = new CalEventHelper(GREGORIAN, true, 'M-D-Y');
     const datestring = "2-28-1400";
     expect(MDY.formatDigest).toEqual('MDY');
     expect(MDY.toFcDateString(input)).toEqual(datestring);
@@ -41,7 +41,7 @@ test("M-D-Y", () => {
 });
 
 test("MM-D-Y", () => {
-    const MDY = new FcEventHelper(GREGORIAN, true, 'MM-D-Y');
+    const MDY = new CalEventHelper(GREGORIAN, true, 'MM-D-Y');
     const datestring = "02-28-1400";
     expect(MDY.formatDigest).toEqual('MDY');
     expect(MDY.toFcDateString(input)).toEqual(datestring);
@@ -49,7 +49,7 @@ test("MM-D-Y", () => {
 });
 
 test("DD-M-Y", () => {
-    const DMY = new FcEventHelper(GREGORIAN, true, 'DD-M-Y');
+    const DMY = new CalEventHelper(GREGORIAN, true, 'DD-M-Y');
     const datestring = "28-2-1400";
     expect(DMY.formatDigest).toEqual('DMY');
     expect(DMY.toFcDateString(input)).toEqual(datestring);
@@ -57,7 +57,7 @@ test("DD-M-Y", () => {
 });
 
 test("DD-MMM-Y", () => {
-    const DMY = new FcEventHelper(GREGORIAN, true, 'DD-MMM-Y');
+    const DMY = new CalEventHelper(GREGORIAN, true, 'DD-MMM-Y');
     const datestring = "28-February-1400";
     expect(DMY.formatDigest).toEqual('DMY');
     expect(DMY.toFcDateString(input)).toEqual(datestring);

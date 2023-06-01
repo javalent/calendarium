@@ -1,6 +1,6 @@
 import type { CachedMetadata, FrontMatterCache } from "obsidian";
 import type { Calendar, FcEvent, Nullable } from "src/@types";
-import { FcEventHelper } from "src/helper/event.helper";
+import { CalEventHelper } from "src/helper/event.helper";
 
 export interface QueueMessage {
     type: "queue";
@@ -236,7 +236,7 @@ class Parser {
             );
         }
     }
-    createEventHandler(frontmatter: FrontMatterCache, file: { path: string; basename: string }): Nullable<FcEventHelper> {
+    createEventHandler(frontmatter: FrontMatterCache, file: { path: string; basename: string }): Nullable<CalEventHelper> {
         if (frontmatter && ! frontmatter["fc-ignore"]) {
             let name = frontmatter?.["fc-calendar"];
             if (this.addToDefaultIfMissing && (!name || !name.length)) {
@@ -254,7 +254,7 @@ class Parser {
                     );
                     if (calendar) {
                         if (this.debug) console.log("creating event helper for calendar", calendar);
-                        helper = new FcEventHelper(calendar, this.parseTitle, this.format);
+                        helper = new CalEventHelper(calendar, this.parseTitle, this.format);
                         this.eventHelpers.set(name, helper);
                         return helper;
                     }

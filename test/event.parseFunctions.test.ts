@@ -1,13 +1,13 @@
 import { Loc, Pos } from "obsidian";
 import { FcEvent } from "../src/@types";
-import { FcEventHelper, ParseDate } from "../src/helper/event.helper";
+import { CalEventHelper, ParseDate } from "../src/helper/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
 import Moment from 'moment';
 Object.defineProperty(window, 'moment', { value: Moment });
 
 const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
-const gregorian = new FcEventHelper(GREGORIAN, true, 'YYYY-MM-DD');
+const gregorian = new CalEventHelper(GREGORIAN, true, 'YYYY-MM-DD');
 
 const file = {
     path: "path",
