@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b7](https://github.com/javalent/the-calendarium/compare/1.0.0-b6...1.0.0-b7) (2023-06-01)
+
+
+### Bug Fixes
+
+* Code cleanup, switch to Week component ([83705a0](https://github.com/javalent/the-calendarium/commit/83705a06edbdbb0b6c2d00ff327e1a272be2b1ad))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b7 ([5642e1c](https://github.com/javalent/the-calendarium/commit/5642e1c2f1c8f8d7b702911bdce239ae9cc29877))
+
 ## [1.0.0-b6](https://github.com/javalent/the-calendarium/compare/v1.0.0-b5...1.0.0-b6) (2023-05-31)
 
 
