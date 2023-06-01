@@ -2,6 +2,36 @@
     --calendarium-details-icon: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http: //www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z'/></svg>");
 }
 
+/** Settings Service */
+.calendarium-notice .calendarium-header {
+    margin-top: 0;
+}
+.calendarium-notice-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+.calendarium-migrating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.migrating-icon {
+    display: flex;
+}
+.migrating-icon.rotating > svg {
+    animation: migration-rotating 2s linear infinite;
+}
+@keyframes migration-rotating {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/** Settings Tab */
 body:not(.is-mobile)
     .modal.mod-settings
     .vertical-tab-content-container
