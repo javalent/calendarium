@@ -17,7 +17,6 @@
 
     $: yearStore = yearCalculator.getYearFromCache($displaying.year);
     $: monthArray = store.staticStore.months;
-    $: console.log("🚀 ~ file: Year.svelte:16 ~ monthArray:", monthArray);
 
     /* const months = $monthArray.map((m) =>
         yearStore.getMonthFromCache($monthArray.indexOf(m))
@@ -40,10 +39,18 @@
     };
 </script>
 
-<div class="year-view">
-    <div class="year" bind:this={yearContainer} use:focus class:full={$full}>
+<div class="year-container calendarium">
+    <div
+        class="year calendarium"
+        bind:this={yearContainer}
+        use:focus
+        class:full={$full}
+    >
         {#each $monthArray as month, index}
-            <div class="month-container" id={getIdForMonth(month.name)}>
+            <div
+                class="month-container calendarium"
+                id={getIdForMonth(month.name)}
+            >
                 <Month year={$displaying.year} month={index} />
             </div>
         {/each}
@@ -51,7 +58,7 @@
 </div>
 
 <style scoped>
-    .year-view {
+    .year-container {
         height: 100%;
         position: relative;
         display: flex;

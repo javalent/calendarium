@@ -143,7 +143,6 @@ export function getEphemeralStore(
             displaying,
         ],
         (a) => {
-            console.log("🚀 ~ file: calendar.store.ts:146 ~ a:", a);
             app.workspace.requestSaveLayout();
         }
     ).subscribe(() => {});

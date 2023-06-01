@@ -84,7 +84,6 @@ export default class CalendariumView extends ItemView {
         state: CalendarStoreState,
         result: ViewStateResult
     ): Promise<void> {
-        console.log("🚀 ~ file: view.ts:92 ~ state:", state.calendar);
         if (state && Object.keys(state).length) {
             this.store = this.plugin.getStore(state.calendar);
             this.calendar = state.calendar;

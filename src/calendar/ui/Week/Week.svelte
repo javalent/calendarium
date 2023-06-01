@@ -4,117 +4,74 @@
     import { wrap } from "src/utils/functions";
     import { get } from "svelte/store";
 
-    const ephemeral = getTypedContext("ephemeralStore");
-    $: displaying = $ephemeral.displaying;
-    $: displayWeeks = $ephemeral.displayWeeks;
-    $: displayedMonth = $ephemeral.displayingMonth;
-    $: firstDay = $displayedMonth.firstDay;
-    $: days = $displayedMonth.days;
-    $: firstWeekNumber = $displayedMonth.firstWeekNumber;
-    $: weekdays = $displayedMonth.weekdays;
+    export let year: number;
+    export let month: number;
+    export let startingDay: number;
 
-    $: previousMonth = $ephemeral.getPreviousMonth(
-        $displaying.month,
-        $displaying.year
-    );
-    $: nextMonth = $ephemeral.getNextMonth($displaying.month, $displaying.year);
+    const global = getTypedContext("store");
+    const ephemeral = getTypedContext("ephemeralStore");
+
+    $: store = $global;
+    $: yearCalculator = store.yearCalculator;
+    $: displayWeeks = $ephemeral.displayWeeks;
+    $: displayedMonth = yearCalculator
+        .getYearFromCache(year)
+        .getMonthFromCache(month);
+    $: days = displayedMonth.days;
+    $: firstDay = displayedMonth.firstDay;
+    $: firstWeekNumber = displayedMonth.firstWeekNumber;
+    $: weekdays = displayedMonth.weekdays;
+
+    $: previousMonth = $ephemeral.getPreviousMonth(month, year);
+    $: nextMonth = $ephemeral.getNextMonth(month, year);
 
     //not zero indexed, need to subtract one
-    $: currentWeekday = wrap($displaying.day - 1 + $firstDay, $weekdays.length);
+    $: currentWeekday = wrap(startingDay + $firstDay, $weekdays.length);
 
     $: week = [...Array($weekdays.length).keys()].map(
-        (k) => $displaying.day + (k - currentWeekday)
+        (k) => startingDay + k - currentWeekday + 1
     );
-    $: console.log("🚀 ~ file: Week.svelte:28 ~ week:", week);
-
     $: weekNumber =
         $firstWeekNumber +
-        Math.ceil(($firstDay + $displaying.day) / $weekdays.length);
+        Math.ceil(($firstDay + startingDay) / $weekdays.length) +
+        1;
 
     const getMonth = (number: number) => {
         if (number <= 0)
             return {
                 month: previousMonth,
                 number: get(previousMonth.days) + number,
+                adjacent: true,
             };
         if (number > $days) {
             return {
                 month: nextMonth,
                 number: number - $days,
+                adjacent: true,
             };
         }
         return {
-            month: $displayedMonth,
+            month: displayedMonth,
             number,
+            adjacent: false,
         };
     };
 </script>
 
-<div class="week-container">
-    <table>
-        <tbody>
-            <tr>
-                {#if $displayWeeks}
-                    <td class="align-top">
-                        <table class="week-number-table calendarium">
-                            <colgroup>
-                                <col class="week-numbers" />
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th class="weekday">
-                                        <span>W</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <span class="week-num"
-                                            >{weekNumber}</span
-                                        >
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                {/if}
-                <td class="align-top">
-                    <table class="calendar calendarium week">
-                        <colgroup>
-                            {#each $weekdays as day}
-                                <col class={day.name} />
-                            {/each}
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                {#each $weekdays as day}
-                                    <th class="weekday"
-                                        >{day.name
-                                            .slice(0, 3)
-                                            .toUpperCase()}</th
-                                    >
-                                {/each}
-                            </tr>
-                        </thead>
-                        {#key displayedMonth}
-                            <tbody>
-                                {#each week as day}
-                                    <Day {...getMonth(day)} adjacent={false} />
-                                {/each}
-                            </tbody>
-                        {/key}
-                    </table>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<div class="week calendarium">
+    {#if $displayWeeks}
+        <span class="week-number">{weekNumber}</span>
+    {/if}
+    {#each week as day}
+        <Day {...getMonth(day)} />
+    {/each}
 </div>
 
 <style scoped>
     .week {
-        width: 100%;
-        table-layout: fixed;
+        display: grid;
+        grid-template-columns: repeat(var(--calendar-columns), 1fr);
+        text-align: center;
     }
     .weekday {
         background-color: var(--color-background-heading);
@@ -124,21 +81,17 @@
         padding: 4px;
         text-transform: uppercase;
     }
-    .week-number-table {
+    .week-number {
         border-right: 1px solid var(--blockquote-border-color);
-        padding-right: 0.5rem;
-    }
-    .week-number-table td {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .week-num {
         background-color: transparent;
+        padding-bottom: 6px;
+        margin-right: 0.25rem;
         color: var(--text-muted);
         cursor: pointer;
         font-size: 0.65em;
-        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .align-top {
         vertical-align: top;

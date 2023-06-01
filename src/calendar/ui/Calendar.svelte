@@ -8,12 +8,20 @@
     import Year from "./Year/Year.svelte";
     import Week from "./Week/Week.svelte";
     import { writable } from "svelte/store";
+    import Weekdays from "./Week/Weekdays.svelte";
+    import { wrap } from "src/utils/functions";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
     const view = getTypedContext("view");
+    const full = getTypedContext("full");
     $: store = $global;
     $: displaying = $ephemeral.displaying;
+    $: displayWeeks = $ephemeral.displayWeeks;
+    $: displayedMonth = $ephemeral.displayingMonth;
+    $: firstDay = $displayedMonth.firstDay;
+    $: weekdays = $displayedMonth.weekdays;
+    $: weeks = $displayedMonth.weeks;
     $: viewState = $ephemeral.viewState;
 
     $: viewing = $ephemeral.viewing;
@@ -51,30 +59,43 @@
 </script>
 
 {#key $store}
-    <div class="top-container">
-        <div class="name-container">
-            <h3 class="calendar-name">{$store.name}</h3>
-            {#if $otherCalendars.length > 1}
-                <div use:drop on:click={(evt) => showMenu(evt)} />
-            {/if}
+    <div
+        class="calendar-container"
+        style="--calendar-columns: {$weekdays.length +
+            ($displayWeeks ? 1 : 0)};--calendar-row-size: {$full
+            ? `${(1 / $weeks) * 100}%`
+            : '1fr'}; --calendar-row-count: {$weeks}"
+    >
+        <div class="top-container">
+            <div class="name-container">
+                <h3 class="calendar-name">{$store.name}</h3>
+                {#if $otherCalendars.length > 1}
+                    <div use:drop on:click={(evt) => showMenu(evt)} />
+                {/if}
+            </div>
+            <Nav />
         </div>
-        <Nav />
+        {#if $viewState == ViewState.Year}
+            <Year />
+        {:else if $viewState == ViewState.Month}
+            {#key $displaying}
+                <Month year={$displaying.year} month={$displaying.month} />
+            {/key}
+        {:else if $viewState == ViewState.Week}
+            <Weekdays year={$displaying.year} month={$displaying.month} />
+            <Week
+                year={$displaying.year}
+                month={$displaying.month}
+                startingDay={$displaying.day}
+            />
+        {:else if $viewState == ViewState.Day}
+            <DayView />
+        {/if}
+        {#if $viewing}
+            <hr />
+            <DayView />
+        {/if}
     </div>
-    {#if $viewState == ViewState.Year}
-        <Year />
-    {:else if $viewState == ViewState.Month}
-        {#key $displaying}
-            <Month year={$displaying.year} month={$displaying.month} />
-        {/key}
-    {:else if $viewState == ViewState.Week}
-        <Week />
-    {:else if $viewState == ViewState.Day}
-        <DayView />
-    {/if}
-    {#if $viewing}
-        <hr />
-        <DayView />
-    {/if}
 {/key}
 
 <style scoped>

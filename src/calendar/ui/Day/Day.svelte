@@ -84,7 +84,7 @@
                 notes.push({ event, file });
             }
         }
-        console.log("🚀 ~ file: Day.svelte:66 ~ notes:", notes);
+        
         if (notes.length) {
             menu.addSeparator();
             for (const { event, file } of notes) {
@@ -99,44 +99,48 @@
     };
 </script>
 
-<div
-    class="day"
-    class:adjacent-month={adjacent}
-    class:opened
-    class:today
-    class:full={$full}
-    on:click={() =>
-        ($viewing = { day: number, month: $index, year: year.year })}
-    on:contextmenu={(evt) => {
-        openMenu(evt);
-    }}
-    aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
->
-    <span class="day-number">
-        {number}
-    </span>
-    {#key $events}
-        {#if $full && $viewState != ViewState.Year}
-            {#if $displayMoons}
-                <div class="moon-container">
-                    {#each $moons as moon}
-                        <Moon {moon} />
-                    {/each}
-                </div>
+{#if $viewState == ViewState.Year && adjacent}
+    <div />
+{:else}
+    <div
+        class="day"
+        class:adjacent-month={adjacent}
+        class:opened
+        class:today
+        class:full={$full}
+        on:click={() =>
+            ($viewing = { day: number, month: $index, year: year.year })}
+        on:contextmenu={(evt) => {
+            openMenu(evt);
+        }}
+        aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
+    >
+        <span class="day-number">
+            {number}
+        </span>
+        {#key $events}
+            {#if $full && $viewState != ViewState.Year}
+                {#if $displayMoons}
+                    <div class="moon-container">
+                        {#each $moons as moon}
+                            <Moon {moon} />
+                        {/each}
+                    </div>
+                {/if}
+                <Flags
+                    events={$events}
+                    date={{
+                        day: number,
+                        month: $index,
+                        year: year.year,
+                    }}
+                />
+            {:else}
+                <Dots events={$events} />
             {/if}
-            <Flags
-                events={$events}
-                date={{
-                    day: number,
-                    month: $index,
-                    year: year.year,
-                }}
-            />
-        {:else}
-            <Dots events={$events} />
-        {/if}
-    {/key}
-</div>
+        {/key}
+    </div>
+{/if}
 
 <style scoped>
     .day {

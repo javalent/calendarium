@@ -39,7 +39,6 @@
                         date,
                     },
                 });
-                console.log(flag);
                 if (!dayView) {
                     remaining =
                         height -
