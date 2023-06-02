@@ -53,10 +53,12 @@ export interface TimeSpan {
 
 interface BaseDay extends TimeSpan {
     type: "day" | "leapday";
+    number: number;
 }
 export interface Day extends BaseDay {
     type: "day";
 }
+export type DayOrLeapDay = Day | LeapDay;
 export interface Year extends TimeSpan {}
 
 export type Week = Day[];

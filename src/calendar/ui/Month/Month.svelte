@@ -19,55 +19,8 @@
     $: displayedMonth = yearCalculator
         .getYearFromCache(year)
         .getMonthFromCache(month);
-    $: ({ weekdays, weeks, firstDay } = displayedMonth);
-    $: weekArray = [...Array($weeks).keys()];
-    /*     const addDays = (target: HTMLElement) => {
-        if ($staticConfiguration.overflow) {
-            for (let i = 0; i < $previousLastDay; i++) {
-                if ($viewState == ViewState.Year) {
-                    target.createDiv();
-                } else {
-                    new Day({
-                        target,
-                        props: {
-                            adjacent: true,
-                            number: $previousDays - $previousLastDay + i + 1,
-                            month: previousMonth,
-                        },
-                    });
-                }
-            }
-        }
-        for (let i = 0; i < $days; i++) {
-            new Day({
-                target,
-                props: {
-                    adjacent: false,
-                    number: i + 1,
-                    month: displayedMonth,
-                },
-            });
-        }
-        //-1 because its the index
-        if ($staticConfiguration.overflow) {
-            let remaining =
-                $weekdays.length - $lastDay + extraWeek * $weekdays.length;
-            for (let i = 0; i < remaining; i++) {
-                if ($viewState == ViewState.Year) {
-                    target.createDiv();
-                } else {
-                    new Day({
-                        target,
-                        props: {
-                            adjacent: true,
-                            number: i + 1,
-                            month: nextMonth,
-                        },
-                    });
-                }
-            }
-        }
-    }; */
+    $: ({ weekdays, weeks } = displayedMonth);
+    $: weekArray = displayedMonth.daysAsWeeks;
 </script>
 
 {#if $viewState == ViewState.Year}
@@ -83,12 +36,8 @@
 >
     <Weekdays {year} {month} />
     <div class="calendarium month">
-        {#each weekArray as week}
-            <Week
-                {month}
-                {year}
-                startingDay={week * $weekdays.length - $firstDay}
-            />
+        {#each $weekArray as week}
+            <Week {month} {year} dayArray={week} />
         {/each}
     </div>
 </div>

@@ -304,9 +304,9 @@ export function getEphemeralStore(
                         const month = year.getMonthFromCache(next.month);
 
                         const weekdays = get(month.weekdays);
+                        const weekArray = get(month.daysAsWeeks);
 
                         const firstDay = get(month.firstDay);
-                        const lastDay = get(month.lastDay);
                         const currentWeekday = wrap(
                             next.day + firstDay - 1,
                             weekdays.length
@@ -326,9 +326,13 @@ export function getEphemeralStore(
                             const nextMonth = nextYear.getMonthFromCache(
                                 incMonth.month
                             );
-                            incMonth.day =
-                                1 + (weekdays.length - get(nextMonth.firstDay));
-
+                            if (get(staticStore.staticConfiguration).overflow) {
+                                incMonth.day =
+                                    1 +
+                                    (weekdays.length - get(nextMonth.firstDay));
+                            } else {
+                                incMonth.day = 1;
+                            }
                             return incMonth;
                         }
                         return next;

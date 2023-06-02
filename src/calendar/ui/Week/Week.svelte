@@ -3,10 +3,11 @@
     import Day from "../Day/Day.svelte";
     import { wrap } from "src/utils/functions";
     import { get } from "svelte/store";
+    import type { DayOrLeapDay } from "src/@types";
 
     export let year: number;
     export let month: number;
-    export let startingDay: number;
+    export let dayArray: (DayOrLeapDay | null)[];
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -18,41 +19,27 @@
         .getYearFromCache(year)
         .getMonthFromCache(month);
     $: days = displayedMonth.days;
-    $: firstDay = displayedMonth.firstDay;
-    $: firstWeekNumber = displayedMonth.firstWeekNumber;
-    $: weekdays = displayedMonth.weekdays;
 
     $: previousMonth = $ephemeral.getPreviousMonth(month, year);
     $: nextMonth = $ephemeral.getNextMonth(month, year);
 
-    //not zero indexed, need to subtract one
-    $: currentWeekday = wrap(startingDay + $firstDay, $weekdays.length);
-
-    $: week = [...Array($weekdays.length).keys()].map(
-        (k) => startingDay + k - currentWeekday + 1
-    );
-    $: weekNumber =
-        $firstWeekNumber +
-        Math.ceil(($firstDay + startingDay) / $weekdays.length) +
-        1;
-
-    const getMonth = (number: number) => {
-        if (number <= 0)
+    const getMonth = (day: DayOrLeapDay) => {
+        if (day.number <= 0)
             return {
                 month: previousMonth,
-                number: get(previousMonth.days) + number,
+                day: { ...day, number: get(previousMonth.days) + day.number },
                 adjacent: true,
             };
-        if (number > $days) {
+        if (day.number > $days) {
             return {
                 month: nextMonth,
-                number: number - $days,
+                day: { ...day, number: day.number - $days },
                 adjacent: true,
             };
         }
         return {
             month: displayedMonth,
-            number,
+            day,
             adjacent: false,
         };
     };
@@ -60,10 +47,14 @@
 
 <div class="week calendarium">
     {#if $displayWeeks}
-        <span class="week-number">{weekNumber}</span>
+        <!-- <span class="week-number">{weekNumber}</span> -->
     {/if}
-    {#each week as day}
-        <Day {...getMonth(day)} />
+    {#each dayArray as day}
+        {#if day}
+            <Day {...getMonth(day)} />
+        {:else}
+            <div />
+        {/if}
     {/each}
 </div>
 

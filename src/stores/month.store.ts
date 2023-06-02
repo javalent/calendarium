@@ -1,7 +1,7 @@
-import type { Month } from "src/@types";
+import type { Day, DayOrLeapDay, LeapDay, Month } from "src/@types";
 import { StaticStore } from "./calendar.store";
 import { YearStore } from "./years.store";
-import { derived, readable } from "svelte/store";
+import { Readable, derived, readable } from "svelte/store";
 import { wrap } from "../utils/functions";
 
 export class MonthStore {
@@ -25,7 +25,10 @@ export class MonthStore {
         [this.index, this.year.leapDays, this.year.months],
         ([index, leapDays, months]) => {
             return (
-                months.slice(0, index).reduce((a, b) => a + b.length, 0) +
+                months
+                    .slice(0, index)
+                    .filter((m) => m.type == "month")
+                    .reduce((a, b) => a + b.length, 0) +
                 leapDays.filter((l) => l.timespan < index).length
             );
         }
@@ -64,6 +67,54 @@ export class MonthStore {
         ([weekdays, lastDay, firstDay]) =>
             Math.ceil((firstDay + this.month.length) / weekdays.length) +
             (weekdays.length - lastDay <= weekdays.length / 2 ? 1 : 0)
+    );
+
+    daysAsWeeks: Readable<Array<(DayOrLeapDay | null)[]>> = derived(
+        [this.weeks, this.weekdays, this.days, this.firstDay, this.leapDays],
+        ([weeks, weekdays, days, firstDay, leapDays]) => {
+            let weekArray = [];
+            for (let week = 0; week < weeks; week++) {
+                let dayArray: (DayOrLeapDay | null)[] = [];
+                let intercals = 0;
+                for (
+                    let weekday = 0;
+                    weekday < weekdays.length + intercals;
+                    weekday++
+                ) {
+                    const day = weekday + week * weekdays.length - firstDay;
+                    if (day >= days && this.month.type == "intercalary") break;
+                    const leapday = leapDays.find(
+                        (leapday) => leapday.after == day
+                    );
+                    if (leapday) {
+                        leapday.number = day + 1;
+                        if (leapday.intercalary) {
+                            if (dayArray.length) weekArray.push(dayArray);
+                            weekArray.push([leapday]);
+                            if (leapday.after > 0) {
+                                dayArray = [
+                                    ...Array(dayArray.length + 1).keys(),
+                                ].map((k) => null);
+                            } else {
+                                intercals++;
+                                dayArray = [];
+                            }
+                        } else {
+                            dayArray.push(leapday);
+                        }
+                    } else {
+                        dayArray.push({
+                            type: "day",
+                            number: day + 1,
+                            name: null,
+                            id: null,
+                        });
+                    }
+                }
+                weekArray.push(dayArray);
+            }
+            return weekArray;
+        }
     );
 
     firstWeekNumber = derived(

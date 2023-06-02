@@ -19,7 +19,7 @@
     $: displaying = $ephemeral.displaying;
     $: displayWeeks = $ephemeral.displayWeeks;
     $: displayedMonth = $ephemeral.displayingMonth;
-    $: firstDay = $displayedMonth.firstDay;
+    $: daysAsWeeks = $displayedMonth.daysAsWeeks;
     $: weekdays = $displayedMonth.weekdays;
     $: weeks = $displayedMonth.weeks;
     $: viewState = $ephemeral.viewState;
@@ -56,6 +56,9 @@
         }
         menu.showAtMouseEvent(evt);
     };
+    $: weekForDay = $daysAsWeeks.find((w) =>
+        w.find((day) => day.number == $displaying.day)
+    );
 </script>
 
 {#key $store}
@@ -86,7 +89,7 @@
             <Week
                 year={$displaying.year}
                 month={$displaying.month}
-                startingDay={$displaying.day}
+                dayArray={weekForDay}
             />
         {:else if $viewState == ViewState.Day}
             <DayView />
