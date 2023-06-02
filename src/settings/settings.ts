@@ -221,7 +221,10 @@ export default class CalendariumSettings extends PluginSettingTab {
         const summary = this.calendarsEl.createEl("summary");
         new Setting(summary).setHeading().setName("Calendar Management");
 
-        setIcon(summary.createDiv("collapser").createDiv("handle"), "chevron-right");
+        setIcon(
+            summary.createDiv("collapser").createDiv("handle"),
+            "chevron-right"
+        );
 
         new Setting(this.calendarsEl)
             .setName("Show Intercalary Months Separately")
@@ -386,7 +389,10 @@ export default class CalendariumSettings extends PluginSettingTab {
         const summary = containerEl.createEl("summary");
         new Setting(summary).setHeading().setName("Events");
 
-        setIcon(summary.createDiv("collapser").createDiv("handle"), "chevron-right");
+        setIcon(
+            summary.createDiv("collapser").createDiv("handle"),
+            "chevron-right"
+        );
 
         new Setting(containerEl)
             .setName("Add Events to Default Calendar")
@@ -530,7 +536,10 @@ export default class CalendariumSettings extends PluginSettingTab {
         const summary = containerEl.createEl("summary");
         new Setting(summary).setHeading().setName("Advanced");
 
-        setIcon(summary.createDiv("collapser").createDiv("handle"), "chevron-right");
+        setIcon(
+            summary.createDiv("collapser").createDiv("handle"),
+            "chevron-right"
+        );
 
         new Setting(containerEl)
             .setName("Show Event Debug Messages")
@@ -556,24 +565,24 @@ export default class CalendariumSettings extends PluginSettingTab {
         const clone = copy(calendar);
         clone.id = `ID_${nanoid(10)}`;
 
-        if (Platform.isMobile) {
-            const modal = new MobileCreatorModal(this.plugin, clone);
-            return new Promise((resolve, reject) => {
-                try {
-                    modal.onClose = () => {
-                        if (modal.saved) {
-                            calendar = copy(modal.calendar);
-                            resolve(calendar);
-                        }
-                        resolve();
-                    };
+        /* if (Platform.isMobile) { */
+        const modal = new CreatorModal(this.plugin, clone);
+        return new Promise((resolve, reject) => {
+            try {
+                modal.onClose = () => {
+                    if (modal.saved) {
+                        calendar = copy(modal.calendar);
+                        resolve(calendar);
+                    }
+                    resolve();
+                };
 
-                    modal.open();
-                } catch (e) {
-                    reject();
-                }
-            });
-        } else {
+                modal.open();
+            } catch (e) {
+                reject();
+            }
+        });
+        /* } else {
             this.containerEl.addClass("calendarium-creator-open");
             return new Promise((resolve) => {
                 const color = getComputedStyle(
@@ -612,11 +621,11 @@ export default class CalendariumSettings extends PluginSettingTab {
                     }
                 );
             });
-        }
+        } */
     }
 }
 
-class MobileCreatorModal extends CalendariumModal {
+class CreatorModal extends CalendariumModal {
     calendar: Calendar;
     saved = false;
     constructor(public plugin: Calendarium, calendar: Calendar) {
@@ -624,10 +633,6 @@ class MobileCreatorModal extends CalendariumModal {
         this.calendar = copy(calendar);
     }
     onOpen() {
-        this.contentEl.setAttr(
-            "style",
-            "background-color: inherit; padding-top: 0px;"
-        );
         const $app = new CalendarCreator({
             target: this.contentEl,
             props: {

@@ -31,22 +31,7 @@
     }
 }
 
-/** Settings Tab */
-body:not(.is-mobile)
-    .modal.mod-settings
-    .vertical-tab-content-container
-    .vertical-tab-content.calendarium-settings.calendarium-creator-open {
-    overflow: hidden;
-}
-
-.calendarium-settings,
-.calendarium-settings-content {
-    background-color: inherit;
-}
-.calendarium-settings-content {
-    position: relative;
-}
-
+/** Confirm Buttons */
 .calendarium-confirm-buttons-container {
     display: flex;
     justify-content: space-between;
@@ -65,7 +50,6 @@ body:not(.is-mobile)
 }
 
 /** Details */
-
 .modal.mod-settings
     .vertical-tab-content.calendarium-settings
     .calendarium-settings-content

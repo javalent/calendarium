@@ -67,7 +67,7 @@
                                 calendar.setCurrentDate({
                                     year: today.getFullYear(),
                                     month: today.getMonth(),
-                                    day: today.getDate()
+                                    day: today.getDate(),
                                 });
                             }
                         };
@@ -158,15 +158,8 @@
                             {/if}
                         </div>
                     </div>
-                    <div
-                        class="cancel"
-                        use:cancel
-                        on:click={() => (ready = false)}
-                    />
                 </div>
-                <h3 class="calendarium-creator-header">
-                    Calendar Creator
-                </h3>
+                <h3 class="calendarium-creator-header">Calendar Creator</h3>
             </div>
             <div class="calendarium-creator-app">
                 <div use:preset />
@@ -190,30 +183,10 @@
 </div>
 
 <style>
-    :global(body:not(.is-mobile)) .calendarium-creator {
-        position: absolute;
-        top: var(--top, 0);
-        height: 100%;
-    }
-    :global(body:not(.is-mobile)) .calendarium-creator-inner {
-        position: absolute;
-        top: 0;
-        left: -2px;
-        bottom: 0;
-        overflow: auto;
-        display: grid;
-        grid-template-rows: auto 1fr;
-    }
-
     .calendarium-creator,
     .calendarium-creator .calendarium-creator-inner,
     .calendarium-creator .calendarium-creator-app {
         background-color: var(--creator-background-color);
-    }
-    :global(body.is-mobile) .calendarium-creator,
-    :global(body.is-mobile) .calendarium-creator .calendarium-creator-app {
-        padding: 0px 10px;
-        width: 100%;
     }
     .calendarium-creator-app {
         overflow: auto;
