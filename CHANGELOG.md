@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0-b9](https://github.com/javalent/the-calendarium/compare/1.0.0-b8...1.0.0-b9) (2023-06-02)
+
+
+### Bug Fixes
+
+* load Fantasy Calendar markdown file if user is on beta ([eb94669](https://github.com/javalent/the-calendarium/commit/eb946691f1009f8149c693232182a5ccd0b75ea7))
+* shows intercalary days correctly ([b2fe5c7](https://github.com/javalent/the-calendarium/commit/b2fe5c700664c0f815a82893a7c5c60f3f22629c))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b9 ([c07ee4c](https://github.com/javalent/the-calendarium/commit/c07ee4c7e83f558f9deffefce338808202f8f68b))
+
 ## [1.0.0-b8](https://github.com/javalent/the-calendarium/compare/1.0.0-b7...1.0.0-b8) (2023-06-01)
 
 
