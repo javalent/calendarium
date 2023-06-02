@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b10](https://github.com/javalent/the-calendarium/compare/1.0.0-b9...1.0.0-b10) (2023-06-02)
+
+
+### Bug Fixes
+
+* fixes presets ([5e66035](https://github.com/javalent/the-calendarium/commit/5e66035ccd5af26e51d6e10d9abb7e62640165ac))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b10 ([c4551c4](https://github.com/javalent/the-calendarium/commit/c4551c455dde4cc35d5a4d79db0f169f491a19f0))
+
 ## [1.0.0-b9](https://github.com/javalent/the-calendarium/compare/1.0.0-b8...1.0.0-b9) (2023-06-02)
 
 
