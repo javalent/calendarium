@@ -1,13 +1,13 @@
 <script lang="ts">
     import { getTypedContext } from "src/calendar/view";
     import Day from "../Day/Day.svelte";
-    import { wrap } from "src/utils/functions";
     import { get } from "svelte/store";
     import type { DayOrLeapDay } from "src/@types";
 
     export let year: number;
     export let month: number;
     export let dayArray: (DayOrLeapDay | null)[];
+    export let weekNumber: number;
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -47,7 +47,7 @@
 
 <div class="week calendarium">
     {#if $displayWeeks}
-        <!-- <span class="week-number">{weekNumber}</span> -->
+        <span class="week-number">{weekNumber}</span>
     {/if}
     {#each dayArray as day}
         {#if day}

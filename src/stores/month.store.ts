@@ -33,6 +33,15 @@ export class MonthStore {
             );
         }
     );
+    daysBeforeAll = derived(
+        [this.index, this.year.leapDays, this.year.months],
+        ([index, leapDays, months]) => {
+            return (
+                months.slice(0, index).reduce((a, b) => a + b.length, 0) +
+                leapDays.filter((l) => l.timespan < index).length
+            );
+        }
+    );
     firstDay = derived(
         [this.year.firstDay, this.daysBefore, this.weekdays],
         ([firstDayOfYear, daysBefore, weekdays]) => {
@@ -118,7 +127,7 @@ export class MonthStore {
     );
 
     firstWeekNumber = derived(
-        [this.daysBefore, this.weekdays, this.year.firstDay],
+        [this.daysBeforeAll, this.weekdays, this.year.firstDay],
         ([daysBefore, week, firstDay]) => {
             return Math.floor((daysBefore + firstDay) / week.length);
         }

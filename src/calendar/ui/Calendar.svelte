@@ -20,6 +20,7 @@
     $: displayWeeks = $ephemeral.displayWeeks;
     $: displayedMonth = $ephemeral.displayingMonth;
     $: daysAsWeeks = $displayedMonth.daysAsWeeks;
+    $: firstWeekNumber = $displayedMonth.firstWeekNumber;
     $: weekdays = $displayedMonth.weekdays;
     $: weeks = $displayedMonth.weeks;
     $: viewState = $ephemeral.viewState;
@@ -59,6 +60,12 @@
     $: weekForDay = $daysAsWeeks.find((w) =>
         w.find((day) => day.number == $displaying.day)
     );
+    $: weekNumber =
+        $daysAsWeeks.findIndex((w) =>
+            w.find((day) => day.number == $displaying.day)
+        ) +
+        $firstWeekNumber +
+        1;
 </script>
 
 {#key $store}
@@ -90,6 +97,7 @@
                 year={$displaying.year}
                 month={$displaying.month}
                 dayArray={weekForDay}
+                {weekNumber}
             />
         {:else if $viewState == ViewState.Day}
             <DayView />
