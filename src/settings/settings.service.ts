@@ -208,11 +208,27 @@ export default class SettingsService {
     }
     private async migrateFCData() {
         //transform data;
-        const data = merge(
-            DEFAULT_DATA,
-            (await this.app.plugins.plugins["fantasy-calendar"].loadData()) ??
-                {}
-        );
+        let fcData: CalendariumData;
+        if (
+            await this.adapter.exists(
+                ".obsidian/plugins/fantasy-calendar/_data.md"
+            )
+        ) {
+            const contents = (
+                await this.adapter.read(
+                    ".obsidian/plugins/fantasy-calendar/_data.md"
+                )
+            )
+                .split(SPLITTER)
+                .pop()
+                .trim();
+            fcData = parseYaml(contents);
+        } else {
+            fcData = await this.app.plugins.plugins[
+                "fantasy-calendar"
+            ].loadData();
+        }
+        const data = merge(DEFAULT_DATA, fcData ?? {});
         data.askedToMoveFC = true;
         await this.saveData(data);
         this.saveCalendars();
