@@ -85,23 +85,25 @@
             </div>
             <Nav />
         </div>
-        {#if $viewState == ViewState.Year}
-            <Year />
-        {:else if $viewState == ViewState.Month}
-            {#key $displaying}
-                <Month year={$displaying.year} month={$displaying.month} />
-            {/key}
-        {:else if $viewState == ViewState.Week}
-            <Weekdays year={$displaying.year} month={$displaying.month} />
-            <Week
-                year={$displaying.year}
-                month={$displaying.month}
-                dayArray={weekForDay}
-                {weekNumber}
-            />
-        {:else if $viewState == ViewState.Day}
-            <DayView />
-        {/if}
+        <div class="calendar">
+            {#if $viewState == ViewState.Year}
+                <Year />
+            {:else if $viewState == ViewState.Month}
+                {#key $displaying}
+                    <Month year={$displaying.year} month={$displaying.month} />
+                {/key}
+            {:else if $viewState == ViewState.Week}
+                <Weekdays year={$displaying.year} month={$displaying.month} />
+                <Week
+                    year={$displaying.year}
+                    month={$displaying.month}
+                    dayArray={weekForDay}
+                    {weekNumber}
+                />
+            {:else if $viewState == ViewState.Day}
+                <DayView />
+            {/if}
+        </div>
         {#if $viewing}
             <hr />
             <DayView />
@@ -110,6 +112,14 @@
 {/key}
 
 <style scoped>
+    .calendar-container {
+        overflow: hidden;
+        display: flex;
+        flex-flow: column nowrap;
+    }
+    .calendar {
+        overflow: auto;
+    }
     .top-container {
         display: flex;
         flex-flow: column;
