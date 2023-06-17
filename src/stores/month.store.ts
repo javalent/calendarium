@@ -81,7 +81,7 @@ export class MonthStore {
     daysAsWeeks: Readable<Array<(DayOrLeapDay | null)[]>> = derived(
         [this.weeks, this.weekdays, this.days, this.firstDay, this.leapDays],
         ([weeks, weekdays, days, firstDay, leapDays]) => {
-            let weekArray = [];
+            let weekArray: DayOrLeapDay[][] = [];
             for (let week = 0; week < weeks; week++) {
                 let dayArray: (DayOrLeapDay | null)[] = [];
                 let intercals = 0;
@@ -90,7 +90,15 @@ export class MonthStore {
                     weekday < weekdays.length + intercals;
                     weekday++
                 ) {
-                    const day = weekday + week * weekdays.length - firstDay;
+                    let day: number;
+                    if (weekday == 0 && weekArray.length) {
+                        const lastWeek = weekArray[weekArray.length - 1];
+                        day = lastWeek[lastWeek.length - 1].number;
+                    } else if (dayArray.length) {
+                        day = dayArray[dayArray.length - 1].number;
+                    } else {
+                        day = weekday + week * weekdays.length - firstDay;
+                    }
                     if (day >= days && this.month.type == "intercalary") break;
                     const leapday = leapDays.find(
                         (leapday) => leapday.after == day
