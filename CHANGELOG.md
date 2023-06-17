@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1-b10](https://github.com/javalent/the-calendarium/compare/1.0.0-b10...1.0.1-b10) (2023-06-17)
+
+
+### Bug Fixes
+
+* fixes week navigation ([fe20d7a](https://github.com/javalent/the-calendarium/commit/fe20d7a92a97ce05eb5977ae76bf343e7b40f830))
+* re-enable week numbers ([e050603](https://github.com/javalent/the-calendarium/commit/e050603071295e25687f81241a26b3e1e696560f))
+
 ## [1.0.0-b10](https://github.com/javalent/the-calendarium/compare/1.0.0-b9...1.0.0-b10) (2023-06-02)
 
 
