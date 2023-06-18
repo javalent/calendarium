@@ -2,19 +2,14 @@ import { Platform, Plugin, WorkspaceLeaf } from "obsidian";
 
 import CalendariumSettings from "./settings/settings";
 
-import type { Calendar, CalendariumData } from "./@types";
-
-/* import CalendariumView, {
-    VIEW_TYPE,
-    FULL_VIEW
-} from "./view/view"; */
+import type { Calendar } from "./@types";
 import CalendariumView, { VIEW_TYPE } from "./calendar/view";
 
 import { CalendarEventTree, Watcher } from "./watcher/watcher";
 import { API } from "./api/api";
 import SettingsService from "./settings/settings.service";
-import { CalEventHelper } from "./helper/event.helper";
 import { CalendarStore, createCalendarStore } from "./stores/calendar.store";
+import { CodeBlockService } from "./calendar/codeblock";
 
 declare module "obsidian" {
     interface App {
@@ -137,6 +132,9 @@ export default class Calendarium extends Plugin {
             VIEW_TYPE,
             (leaf: WorkspaceLeaf) => new CalendariumView(leaf, this)
         );
+
+        new CodeBlockService(this).load();
+
         this.app.workspace.onLayoutReady(async () => {
             this.watcher.load();
 

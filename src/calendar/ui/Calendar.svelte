@@ -9,7 +9,6 @@
     import Week from "./Week/Week.svelte";
     import { writable } from "svelte/store";
     import Weekdays from "./Week/Weekdays.svelte";
-    import { wrap } from "src/utils/functions";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -49,9 +48,11 @@
                     const newStore = plugin.getStore(calendar.id);
                     global.set(newStore);
                     ephemeral.set(newStore.ephemeralStore);
-                    view.store = newStore;
-                    view.calendar = calendar.id;
-                    app.workspace.requestSaveLayout();
+                    if (view) {
+                        view.store = newStore;
+                        view.calendar = calendar.id;
+                        app.workspace.requestSaveLayout();
+                    }
                 })
             );
         }

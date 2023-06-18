@@ -8,7 +8,7 @@
 
     export let store: CalendarStore;
     export let plugin: Calendarium;
-    export let view: CalendariumView;
+    export let view: CalendariumView | null = null;
     export let full: boolean;
     setTypedContext("plugin", plugin);
     setTypedContext("view", view);

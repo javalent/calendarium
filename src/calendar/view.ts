@@ -14,7 +14,7 @@ export const VIEW_TYPE = "CALENDARIUM";
 
 interface CalendarContext {
     store: Writable<CalendarStore>;
-    view: CalendariumView;
+    view: CalendariumView | null;
     plugin: Calendarium;
     ephemeralStore: Writable<EphemeralStore>;
     full: Writable<boolean>;
