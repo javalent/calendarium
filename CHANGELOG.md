@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0-b11](https://github.com/javalent/the-calendarium/compare/1.0.1-b10...1.0.0-b11) (2023-06-18)
+
+
+### Features
+
+* very basic in-note code block `calendarium` ([957a358](https://github.com/javalent/the-calendarium/commit/957a358dc851ee3a4a8ccf468f5dd549ee0f2155))
+
+
+### Bug Fixes
+
+* sticky nav panel (close [#38](https://github.com/javalent/the-calendarium/issues/38)) ([5ef60df](https://github.com/javalent/the-calendarium/commit/5ef60df3d54b4ec91d795119a3ef7cf341bdc082))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b11 ([53ce634](https://github.com/javalent/the-calendarium/commit/53ce634abb5cc792da9faa212161996521d01908))
+
 ## [1.0.1-b10](https://github.com/javalent/the-calendarium/compare/1.0.0-b10...1.0.1-b10) (2023-06-17)
 
 
