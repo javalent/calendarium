@@ -196,9 +196,9 @@ export function areDatesEqual(
 
 export function sortEventList(list: FcEvent[]): FcEvent[] {
     return list.sort((a, b) => {
-        if (a.sort.timestamp === b.sort.timestamp) {
+        if (a.sort?.timestamp === b.sort?.timestamp) {
             return a.sort.order.localeCompare(b.sort.order);
         }
-        return a.sort.timestamp - b.sort.timestamp;
+        return a.sort?.timestamp - b.sort?.timestamp;
     });
 }
