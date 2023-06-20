@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b12](https://github.com/javalent/the-calendarium/compare/1.0.0-b11...1.0.0-b12) (2023-06-20)
+
+
+### Bug Fixes
+
+* null guard event sorting ([3fc8276](https://github.com/javalent/the-calendarium/commit/3fc8276bc49d4f78304abb38cfa5850ddb56e18c))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b12 ([653181e](https://github.com/javalent/the-calendarium/commit/653181e7fe2ebde4d9f5449c73774dd6b4881070))
+
 ## [1.0.0-b11](https://github.com/javalent/the-calendarium/compare/1.0.1-b10...1.0.0-b11) (2023-06-18)
 
 
