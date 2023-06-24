@@ -1,6 +1,6 @@
 import { Loc, Pos } from "obsidian";
 import { FcEvent } from "../src/@types";
-import { CalEventHelper, ParseDate } from "../src/helper/event.helper";
+import { CalEventHelper, ParseDate } from "../src/events/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
 import Moment from 'moment';

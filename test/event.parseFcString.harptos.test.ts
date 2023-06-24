@@ -1,5 +1,5 @@
 import { FcEvent } from "../src/@types";
-import { CalEventHelper, ParseDate } from "../src/helper/event.helper";
+import { CalEventHelper, ParseDate } from "../src/events/event.helper";
 import { sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 

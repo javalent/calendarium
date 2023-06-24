@@ -64,11 +64,11 @@
 
 <div class="calendarium-nav-container">
     <div class="view-state-switcher">
-        <span
+        <!-- <span
             class="view-state"
             class:active={$viewState == ViewState.Day}
             on:click={() => ($viewState = ViewState.Day)}>Day</span
-        >
+        > -->
         <span
             class="view-state"
             class:active={$viewState == ViewState.Week}
