@@ -78,11 +78,7 @@ export function ordinal(i: number) {
     }
     return i + "th";
 }
-export function dateString(
-    date: FcDate,
-    calendar: Calendar,
-    end?: FcDate
-) {
+export function dateString(date: FcDate, calendar: Calendar, end?: FcDate) {
     if (!date || date.day == undefined) {
         return "";
     }
@@ -174,10 +170,7 @@ export function isValidYear(year: number, calendar: Calendar) {
     return true;
 }
 
-export function areDatesEqual(
-    date: FcDate,
-    date2: FcDate
-) {
+export function areDatesEqual(date: FcDate, date2: FcDate) {
     if (date.day != date2.day) return false;
     if (
         date.month != date2.month &&
@@ -196,8 +189,9 @@ export function areDatesEqual(
 
 export function sortEventList(list: FcEvent[]): FcEvent[] {
     return list.sort((a, b) => {
+        if (!("sort" in a) || !("sort" in b)) return 0;
         if (a.sort?.timestamp === b.sort?.timestamp) {
-            return a.sort.order.localeCompare(b.sort.order);
+            return a.sort?.order.localeCompare(b.sort?.order);
         }
         return a.sort?.timestamp - b.sort?.timestamp;
     });
