@@ -227,3 +227,27 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
 .era-event {
     flex-grow: 1;
 }
+
+/** Creator Modal */
+
+.calendarium-creator .check {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    font-size: var(--font-ui-small);
+    --icon-size: var(--font-ui-small);
+}
+.calendarium-creator .additional {
+    color: var(--text-faint);
+}
+.calendarium-creator .save {
+    color: var(--text-error);
+    display: flex;
+    align-items: center;
+}
+.calendarium-creator .save.can-save {
+    color: var(--interactive-success);
+}
+.calendarium-creator .additional.can-save {
+    color: var(--text-normal);
+}

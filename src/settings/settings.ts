@@ -19,13 +19,18 @@ import CalendarCreator from "./creator/Creator.svelte";
 
 import type { Calendar } from "src/@types";
 
-import { confirmDeleteCalendar, confirmWithModal } from "./modals/confirm";
+import {
+    confirmDeleteCalendar,
+    ConfirmExitModal,
+    confirmWithModal,
+} from "./modals/confirm";
 import { FolderSuggestionModal } from "src/suggester/folder";
 import { CalendariumModal } from "./modals/modal";
-import { Writable } from "svelte/store";
+import { get, Writable } from "svelte/store";
 import createStore from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
+import { getMissingNotice, warning } from "./creator/Utilities/utils";
 
 export enum Recurring {
     none = "None",
@@ -571,6 +576,10 @@ export default class CalendariumSettings extends PluginSettingTab {
             try {
                 modal.onClose = () => {
                     if (modal.saved) {
+                        console.log(
+                            "🚀 ~ file: settings.ts:579 ~ modal.saved:",
+                            modal.saved
+                        );
                         calendar = copy(modal.calendar);
                         resolve(calendar);
                     }
@@ -628,36 +637,82 @@ export default class CalendariumSettings extends PluginSettingTab {
 class CreatorModal extends CalendariumModal {
     calendar: Calendar;
     saved = false;
+    store: ReturnType<typeof createStore>;
+    $app: CalendarCreator;
+    valid: boolean;
     constructor(public plugin: Calendarium, calendar: Calendar) {
         super(plugin.app);
+        this.modalEl.addClass("calendarium-creator");
         this.calendar = copy(calendar);
+        this.store = createStore(this.plugin, this.calendar);
+        this.valid = get(this.store.valid);
+    }
+    async checkCanExit() {
+        if (this.valid) return true;
+        if (this.plugin.data.exit.saving) return true;
+        return new Promise((resolve) => {
+            const modal = new ConfirmExitModal(this.plugin);
+            modal.onClose = () => {
+                resolve(modal.confirmed);
+            };
+            modal.open();
+        });
+    }
+    async close() {
+        if (await this.checkCanExit()) {
+            this.saved = this.valid;
+            this.calendar = get(this.store);
+            super.close();
+        }
+    }
+    setTitle() {
+        this.titleEl.setText(
+            createFragment((e) => {
+                e.createSpan({ text: "Calendar Creator" });
+                e.createEl("br");
+                const additional = e.createSpan("check");
+                if (this.valid) {
+                    setIcon(
+                        additional.createSpan("save can-save"),
+                        "checkmark"
+                    );
+                    additional.createSpan({
+                        cls: "additional can-save",
+                        text: "All good! Exit to save calendar.",
+                    });
+                } else {
+                    warning(
+                        additional.createSpan({
+                            cls: "save",
+                            attr: {
+                                "aria-label": getMissingNotice(get(this.store)),
+                            },
+                        })
+                    );
+                    additional.createSpan({
+                        cls: "additional",
+                        text: "Additional information is required to save.",
+                    });
+                }
+            })
+        );
     }
     onOpen() {
-        const $app = new CalendarCreator({
+        this.setTitle();
+        this.store.valid.subscribe((v) => {
+            if (v == this.valid) return;
+            this.valid = v;
+            this.setTitle();
+        });
+
+        this.$app = new CalendarCreator({
             target: this.contentEl,
             props: {
-                base: this.calendar,
+                store: this.store,
                 plugin: this.plugin,
                 width: this.contentEl.clientWidth,
                 top: 0,
             },
         });
-        $app.$on(
-            "exit",
-            (
-                evt: CustomEvent<{
-                    saved: boolean;
-                    calendar: Calendar;
-                }>
-            ) => {
-                if (evt.detail.saved) {
-                    //saved
-                    this.calendar = copy(evt.detail.calendar);
-                    this.saved = true;
-                }
-                this.close();
-                $app.$destroy();
-            }
-        );
     }
 }

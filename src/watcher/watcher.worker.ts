@@ -1,6 +1,6 @@
 import type { CachedMetadata, FrontMatterCache } from "obsidian";
 import type { Calendar, FcEvent, Nullable } from "src/@types";
-import { CalEventHelper } from "src/helper/event.helper";
+import { CalEventHelper } from "src/events/event.helper";
 
 export interface QueueMessage {
     type: "queue";
