@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b13](https://github.com/javalent/the-calendarium/compare/1.0.0-b12...1.0.0-b13) (2023-06-24)
+
+
+### Bug Fixes
+
+* Improves Calendar Creator appearance & behavior ([af90c16](https://github.com/javalent/the-calendarium/commit/af90c167e40c6ffe7699de9e03dc650f657d6971))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b13 ([22d12bf](https://github.com/javalent/the-calendarium/commit/22d12bf020d9ace47a9468191875bd1c14b98e31))
+
 ## [1.0.0-b12](https://github.com/javalent/the-calendarium/compare/1.0.0-b11...1.0.0-b12) (2023-06-20)
 
 
