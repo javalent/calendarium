@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b14](https://github.com/javalent/the-calendarium/compare/1.0.0-b13...1.0.0-b14) (2023-06-24)
+
+
+### Bug Fixes
+
+* remove day view, tests pass ([ddc9f9d](https://github.com/javalent/the-calendarium/commit/ddc9f9dd699dd279329aa04686140d1a54ba7351))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b14 ([05f6831](https://github.com/javalent/the-calendarium/commit/05f683191abb19acc7389ee4d5a1991e8ab907ae))
+
 ## [1.0.0-b13](https://github.com/javalent/the-calendarium/compare/1.0.0-b12...1.0.0-b13) (2023-06-24)
 
 
