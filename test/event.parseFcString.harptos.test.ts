@@ -194,6 +194,18 @@ test("Parse Harptos: 1499-14, Marpenoth", () => {
 });
 // 14 | 15 | 11 | Uktar
 // 15 | 16 |  - | Feast of the Moon
+test("Parse Harptos: 1499-15, Feast of the Moon", () => {
+    const expected: ParseDate = {
+        year: 1499,
+        month: 15,
+        day: 1,
+        order: ''
+    }
+    expect(helper.parseFcDateString("1499-16", file)).toEqual(expected);
+    expect(helper.parseFcDateString("1499-16-01", file)).toEqual(expected);
+    expect(helper.parseFcDateString("1499-The Feast", file)).toEqual(expected);
+    expect(helper.parseFcDateString("1499-The Feast of the Moon-01", file)).toEqual(expected);
+});
 // 16 | 17 | 12 | Nightal
 
 test("Sort Harptos dates", () => {
