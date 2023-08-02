@@ -239,17 +239,25 @@ class Parser {
     createEventHandler(frontmatter: FrontMatterCache, file: { path: string; basename: string }): Nullable<CalEventHelper> {
         if (frontmatter && ! frontmatter["fc-ignore"]) {
             let name = frontmatter?.["fc-calendar"];
+            let calendar;
+            if (!name || !name.length) {
+                // did we get here because a calendar looks for events in this path?
+                calendar = this.calendars.find((calendar) => file.path.startsWith(calendar.path));
+                if (calendar) {
+                    name = calendar.name;
+                }
+            }
             if (this.addToDefaultIfMissing && (!name || !name.length)) {
                 name = this.defaultCalendar;
             }
-            name = name?.toLowerCase();
+            name = name?.trim().toLowerCase();
             if (name) {
-                if (this.debug) console.log("Finding calendar for ", name);
                 let helper = this.eventHelpers.get(name);
                 if (helper) {
                     return helper;
                 } else {
-                    const calendar = this.calendars.find(
+                    if (this.debug) console.log("Finding calendar for", name);
+                    calendar = calendar ? calendar : this.calendars.find(
                         (calendar) => name == calendar.name.toLowerCase()
                     );
                     if (calendar) {
@@ -259,8 +267,7 @@ class Parser {
                         return helper;
                     }
                 }
-            }
-            if (this.debug) {
+            } else if (this.debug) {
                 console.info(
                     `Could not find calendar ${name} associated with file ${file.basename}`
                 );
