@@ -60,6 +60,7 @@ class Parser {
     parsing: boolean = false;
     defaultCalendar: string;
     calendars: Calendar[];
+    pathToName: {};
     format: string;
     parseTitle: boolean = false;
     addToDefaultIfMissing: boolean;
@@ -98,6 +99,19 @@ class Parser {
                 if (event.data.type == "calendars") {
                     const { calendars } = event.data;
                     this.calendars = [...calendars];
+                    // Create a map of path to calenar name for quick lookup
+                    // Sort by name (in reverse: last added to the map wins), then by path length
+                    // When looking for a calendar for a file, we'll start with the longest (most specific) path first
+                    // If two calendars share the same path, the alphabetically first one wins
+                    this.pathToName = Object.fromEntries(
+                        calendars.map((calendar) => [calendar.path, calendar.name])
+                                .sort((a, b) => {
+                                    if (b[0] == a[0]) {
+                                        console.warn(`Calendar ${a[1]} and ${b[1]} have the same path ${a[0]}. The last listed in configuration will be used.`)
+                                    }
+                                    return b[0].length - a[0].length
+                                })
+                    );
                     if (this.debug) {
                         console.debug("Received calendars message");
                     }
@@ -239,12 +253,11 @@ class Parser {
     createEventHandler(frontmatter: FrontMatterCache, file: { path: string; basename: string }): Nullable<CalEventHelper> {
         if (frontmatter && ! frontmatter["fc-ignore"]) {
             let name = frontmatter?.["fc-calendar"];
-            let calendar;
             if (!name || !name.length) {
                 // did we get here because a calendar looks for events in this path?
-                calendar = this.calendars.find((calendar) => file.path.startsWith(calendar.path));
-                if (calendar) {
-                    name = calendar.name;
+                const match = Object.entries(this.pathToName).find((p2n) => file.path.startsWith(p2n[0]));
+                if (match) {
+                    name = match[1];
                 }
             }
             if (this.addToDefaultIfMissing && (!name || !name.length)) {
@@ -257,7 +270,7 @@ class Parser {
                     return helper;
                 } else {
                     if (this.debug) console.log("Finding calendar for", name);
-                    calendar = calendar ? calendar : this.calendars.find(
+                    const calendar = this.calendars.find(
                         (calendar) => name == calendar.name.toLowerCase()
                     );
                     if (calendar) {
