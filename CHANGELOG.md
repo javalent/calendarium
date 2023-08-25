@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0-b15](https://github.com/javalent/the-calendarium/compare/1.0.0-b14...1.0.0-b15) (2023-08-25)
+
+
+### Bug Fixes
+
+* exit sorting events if no sort object on events ([6a9b690](https://github.com/javalent/the-calendarium/commit/6a9b690eb6c2678b0e148c462933206cae456d17))
+* Fix conflict with Default New Tab plugin ([137de2a](https://github.com/javalent/the-calendarium/commit/137de2a49af6a61d2847d38b9903b3a8bfd804f7))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b15 ([b260f78](https://github.com/javalent/the-calendarium/commit/b260f78fa15e8d6d5d546536555350011e9121a1))
+
 ## [1.0.0-b14](https://github.com/javalent/the-calendarium/compare/1.0.0-b13...1.0.0-b14) (2023-06-24)
 
 
