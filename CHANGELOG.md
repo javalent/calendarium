@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b16](https://github.com/javalent/the-calendarium/compare/1.0.0-b15...1.0.0-b16) (2023-08-25)
+
+
+### Features
+
+* Initial API definition started (just events for now) ([4a7f85b](https://github.com/javalent/the-calendarium/commit/4a7f85b22720ba1fe49195c340258a992f3e0c77))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b16 ([a9b3e77](https://github.com/javalent/the-calendarium/commit/a9b3e77da006db9a498a6be9f21623ee2a862a35))
+
 ## [1.0.0-b15](https://github.com/javalent/the-calendarium/compare/1.0.0-b14...1.0.0-b15) (2023-08-25)
 
 
