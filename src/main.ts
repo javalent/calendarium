@@ -84,7 +84,9 @@ export default class Calendarium extends Plugin {
     }
 
     getAPI(calendarName: string): API {
-        const store = this.getStore(calendarName);
+        const store = this.getStore(
+            this.data.calendars.find((c) => c.name == calendarName).id
+        );
         if (!store)
             throw new ReferenceError("No calendar store by that name exists.");
         return new API(store);
