@@ -46,13 +46,12 @@ declare module "obsidian" {
 
 declare global {
     interface Window {
-        CalendariumAPI?: API;
+        Calendarium?: Calendarium;
     }
 }
 export const MODIFIER_KEY = Platform.isMacOS ? "Meta" : "Control";
 
 export default class Calendarium extends Plugin {
-    api = new API();
     watcher: Watcher;
     async addNewCalendar(calendar: Calendar, existing?: Calendar) {
         let shouldParse =
@@ -83,6 +82,14 @@ export default class Calendarium extends Plugin {
     get calendars() {
         return this.$settingsService.getCalendars();
     }
+
+    getAPI(calendarName: string): API {
+        const store = this.getStore(calendarName);
+        if (!store)
+            throw new ReferenceError("No calendar store by that name exists.");
+        return new API(store);
+    }
+
     private readonly stores: WeakMap<Calendar, CalendarStore> = new WeakMap();
     getStore(calendar: string) {
         if (!calendar) return null;
@@ -125,8 +132,8 @@ export default class Calendarium extends Plugin {
         await this.$settingsService.loadData();
 
         this.watcher = new Watcher(this);
-        (window["CalendariumAPI"] = this.api) &&
-            this.register(() => delete window["CalendariumAPI"]);
+        (window["Calendarium"] = this) &&
+            this.register(() => delete window["Calendarium"]);
 
         this.registerView(
             VIEW_TYPE,
