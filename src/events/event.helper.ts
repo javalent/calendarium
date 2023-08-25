@@ -3,17 +3,17 @@ import { nanoid, wrap } from "../utils/functions";
 const { DOMParser } = require("xmldom");
 import type {
     Calendar,
-    FcEvent,
-    FcEventCategory,
-    FcEventDate,
-    FcEventSort,
+    CalEvent,
+    CalEventCategory,
+    CalEventDate,
+    CalEventSort,
     LeapDay,
     Nullable
 } from "../@types";
 
 const inlineDateSpans: RegExp = /<(span|div)[\s\S]*?<\/(span|div)>/g;
 
-export type FcEventCallback = (fcEvent: FcEvent) => void;
+export type CalEventCallback = (fcEvent: CalEvent) => void;
 
 export interface InputDate {
     year?: any,
@@ -59,7 +59,7 @@ export class CalEventHelper {
         data: string,
         file: { path: string; basename: string },
         frontmatter: FrontMatterCache,
-        publish: FcEventCallback
+        publish: CalEventCallback
     ) {
         let fcCategory: string;
         console.log("#### parse file for events", frontmatter);
@@ -91,8 +91,8 @@ export class CalEventHelper {
     parseFrontmatterEvent(
         frontmatter: FrontMatterCache,
         file: { path: string; basename: string },
-        publish: FcEventCallback,
-        category?: FcEventCategory
+        publish: CalEventCallback,
+        category?: CalEventCategory
     ) {
         const dateField = "fc-date" in frontmatter ? "fc-date" : "fc-start";
         let date = frontmatter[dateField]
@@ -121,8 +121,8 @@ export class CalEventHelper {
     parseInlineEvents(
         contents: string,
         file: { path: string; basename: string },
-        publish: FcEventCallback,
-        category?: FcEventCategory
+        publish: CalEventCallback,
+        category?: CalEventCategory
     ) {
         const domparser = new DOMParser();
         // span or div with attributes:
@@ -154,9 +154,9 @@ export class CalEventHelper {
                 continue; // span must contain a date
             }
             // parse date strings, will return with all elements present: year, month, day, hour/order
-            let date = this.parseFcDateString(element.dataset.date, file);
+            let date = this.parseCalDateString(element.dataset.date, file);
             let end = element.dataset.end
-                    ? this.parseFcDateString(element.dataset.end, file)
+                    ? this.parseCalDateString(element.dataset.end, file)
                     : undefined;
 
             if (element.dataset.class) {
@@ -186,7 +186,7 @@ export class CalEventHelper {
 
     parseFilenameDate(file: { path: string; basename: string }): ParseDate {
         // TODO: Filename formatter for this calendar?
-        return this.parseFcDateString(file.basename, file);
+        return this.parseCalDateString(file.basename, file);
     }
 
     parseFrontmatterDate(
@@ -194,7 +194,7 @@ export class CalEventHelper {
         file: { path: string; basename: string }
     ): ParseDate {
         if (typeof date === "string") {
-            return this.parseFcDateString(date, file);
+            return this.parseCalDateString(date, file);
         }
 
         // replace any missing segments with '*'
@@ -223,7 +223,7 @@ export class CalEventHelper {
      * @param file Source file
      * @returns ParseDate instance
      */
-    parseFcDateString(
+    parseCalDateString(
         datestring: string,
         file: { path: string; basename: string }
     ): ParseDate {
@@ -250,7 +250,7 @@ export class CalEventHelper {
      * for the given event date (will not include an order suffix)
      * @returns
      */
-    toFcDateString(date: FcEventDate): string {
+    toCalDateString(date: CalEventDate): string {
         return this.formatString
                 .replace(/[Yy]+/g, `${date.year}`)
                 .replace(/[Mm]{3,}/g, toMonthString(date.month, this.calendar))
@@ -346,7 +346,7 @@ export class CalEventHelper {
         };
     }
 
-    parsedToTimestamp(date: ParseDate): FcEventSort {
+    parsedToTimestamp(date: ParseDate): CalEventSort {
         // put repeating events off to the side
         if (date.year == null || date.month == null || date.day == null) {
             return {
@@ -363,7 +363,7 @@ export class CalEventHelper {
         };
     }
 
-    timestampForFcEvent(event: Partial<FcEvent>, old?: FcEventSort): FcEventSort {
+    timestampForCalEvent(event: Partial<CalEvent>, old?: CalEventSort): CalEventSort {
         if (!old && event.sort) {
             return event.sort;
         }

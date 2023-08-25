@@ -1,14 +1,14 @@
 <script lang="ts">
     import { getTypedContext } from "../../view";
     import Dot from "./Dot.svelte";
-    import type { FcEvent, FcEventCategory } from "src/@types";
+    import type { CalEvent, CalEventCategory } from "src/@types";
 
-    export let events: FcEvent[] = [];
+    export let events: CalEvent[] = [];
 
     const store = getTypedContext("store");
     const { categories } = $store;
 
-    const color = (event: FcEvent) => {
+    const color = (event: CalEvent) => {
         return $categories.find((c) => c.id == event.category)?.color;
     };
     $: overflow = Math.max(events.length - 2, 0);

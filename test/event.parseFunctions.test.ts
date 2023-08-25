@@ -1,5 +1,5 @@
 import { Loc, Pos } from "obsidian";
-import { FcEvent } from "../src/@types";
+import { CalEvent } from "../src/@types";
 import { CalEventHelper, ParseDate } from "../src/events/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 
@@ -24,7 +24,7 @@ const position: Pos = {
 }
 
 test("Bad Year", () => {
-    expect(gregorian.parseFcDateString("", file)).toBeNull();
+    expect(gregorian.parseCalDateString("", file)).toBeNull();
 });
 
 test("Timestamp", () => {
@@ -95,7 +95,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
 
 test("parseFrontmatterEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: FcEvent[] = [];
+    let actual: CalEvent[] = [];
 
     gregorian.parseFrontmatterEvent({
             "fc-start": "1966-05-23",
@@ -139,7 +139,7 @@ test("parseFrontmatterEvent", () => {
 
 test("parseTimelineEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: FcEvent[] = [];
+    let actual: CalEvent[] = [];
 
     gregorian.parseInlineEvents(
         "<span class='ob-timelines'   \n" +
@@ -186,7 +186,7 @@ test("Repeating events", () => {
         day: null,
         order: ''
     };
-    expect(gregorian.parseFcDateString("*-*-*", file)).toEqual(expected);
+    expect(gregorian.parseCalDateString("*-*-*", file)).toEqual(expected);
 
     expect(gregorian.parseFrontmatterDate({}, file)).toEqual(expected);
 
@@ -203,7 +203,7 @@ test("Repeating events with extra", () => {
         day: null,
         order: '01 some extra flavor'
     };
-    expect(gregorian.parseFcDateString("*-*-*-01 some extra flavor", file)).toEqual(expected);
+    expect(gregorian.parseCalDateString("*-*-*-01 some extra flavor", file)).toEqual(expected);
 
     expect(gregorian.parseFrontmatterDate({
             order: '01 some extra flavor'
@@ -222,7 +222,7 @@ test("Repeating events with extra", () => {
         day: null,
         order: '01 some extra flavor'
     };
-    expect(gregorian.parseFcDateString("*-*-*-01 some extra flavor", file)).toEqual(expected);
+    expect(gregorian.parseCalDateString("*-*-*-01 some extra flavor", file)).toEqual(expected);
 
     expect(gregorian.parseFrontmatterDate({
             order: '01 some extra flavor'

@@ -1,4 +1,4 @@
-import type { FcDate } from "src/@types";
+import type { CalDate } from "src/@types";
 import { Readable, Writable, derived, get, writable } from "svelte/store";
 
 abstract class CacheItem<T> {
@@ -53,7 +53,7 @@ export abstract class EntityCache<T> {
     abstract getMonthCache(month: number, year: number): MonthCache<T>;
     abstract getDayCache(day: number, month: number, year: number): DayCache<T>;
 
-    public invalidate(date: FcDate) {
+    public invalidate(date: CalDate) {
         if (!this.cache.has(date.year)) return;
         const year = this.cache.get(date.year);
         year.dirty.set(true);
@@ -66,7 +66,7 @@ export abstract class EntityCache<T> {
         const day = month.cache.get(date.day);
         day.dirty.set(true);
     }
-    public getItemsOrRecalculate(date: FcDate): Readable<T[]> {
+    public getItemsOrRecalculate(date: CalDate): Readable<T[]> {
         const { day, month, year } = date;
         if (!this.cache.has(year)) {
             this.cache.set(year, this.getYearCache(year));

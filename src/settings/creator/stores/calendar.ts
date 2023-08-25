@@ -1,10 +1,10 @@
 import { prepareFuzzySearch } from "obsidian";
 import type {
     Calendar,
-    FcDate,
+    CalDate,
     Day,
-    FcEvent,
-    FcEventCategory,
+    CalEvent,
+    CalEventCategory,
     LeapDay,
     Month,
     Moon,
@@ -100,13 +100,13 @@ function createStore(
         update,
         currentStore: {
             subscribe: currentStore.subscribe,
-            set: (data: FcDate) => {
+            set: (data: CalDate) => {
                 update((calendar) => {
                     calendar.current = { ...data };
                     return calendar;
                 });
             },
-            update: (data: FcDate) =>
+            update: (data: CalDate) =>
                 update((calendar) => {
                     calendar.current = { ...data };
                     return calendar;
@@ -129,7 +129,7 @@ function createStore(
         },
 
         /** Setters */
-        setCurrentDate: (date: FcDate) =>
+        setCurrentDate: (date: CalDate) =>
             update((cal) => {
                 cal.current = { ...date };
                 return cal;
@@ -265,17 +265,17 @@ function createStore(
                     return a.date.day - b.date.day;
                 })
             ),
-            set: (events: FcEvent[]) =>
+            set: (events: CalEvent[]) =>
                 update((data) => {
                     data.events = [...events];
                     return data;
                 }),
-            add: (event: FcEvent) =>
+            add: (event: CalEvent) =>
                 update((data) => {
                     data.events.push({ ...event });
                     return data;
                 }),
-            update: (id: string, event: FcEvent) =>
+            update: (id: string, event: CalEvent) =>
                 update((data) => {
                     const index = data.events.findIndex((e) => e.id === id);
 
@@ -290,17 +290,17 @@ function createStore(
         },
         categoryStore: {
             subscribe: categoryStore.subscribe,
-            set: (categories: FcEventCategory[]) =>
+            set: (categories: CalEventCategory[]) =>
                 update((data) => {
                     data.categories = [...categories];
                     return data;
                 }),
-            add: (category: FcEventCategory) =>
+            add: (category: CalEventCategory) =>
                 update((data) => {
                     data.categories.push({ ...category });
                     return data;
                 }),
-            update: (id: string, category: FcEventCategory) =>
+            update: (id: string, category: CalEventCategory) =>
                 update((data) => {
                     const index = data.categories.findIndex((e) => e.id === id);
 

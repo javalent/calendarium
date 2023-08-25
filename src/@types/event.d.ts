@@ -1,24 +1,24 @@
 import { Nullable } from ".";
 
-export interface FcEventSort {
+export interface CalEventSort {
     timestamp: number;
     order: string;
 }
-export interface FcEventDate {
+export interface CalEventDate {
     year: Nullable<number>,
     month: Nullable<number>,
     day: Nullable<number>
 }
 
-export interface FcEvent {
+export interface CalEvent {
     name: string;
     description: string;
-    date: FcEventDate;
-    end?: FcEventDate;
+    date: CalEventDate;
+    end?: CalEventDate;
     id: string;
     note: string;
     category: string;
-    sort: FcEventSort;
+    sort: CalEventSort;
     formulas?: EventFormula[];
     img?: string;
 }
@@ -30,14 +30,14 @@ interface FormulaInterval {
     timespan: "days";
 }
 
-export interface ColorEvent extends FcEvent {
+export interface ColorEvent extends CalEvent {
     color: string;
 }
 
-export interface FcEventCategory {
+export interface CalEventCategory {
     name: string;
     color: string;
     id: string;
 }
 
-export interface FcEventCondition {}
+export interface CalEventCondition {}

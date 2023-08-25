@@ -1,5 +1,5 @@
 import type { CachedMetadata, FrontMatterCache } from "obsidian";
-import type { Calendar, FcEvent, Nullable } from "src/@types";
+import type { Calendar, CalEvent, Nullable } from "src/@types";
 import { CalEventHelper } from "src/events/event.helper";
 
 export interface QueueMessage {
@@ -34,14 +34,14 @@ export interface UpdateEventMessage {
     type: "update";
     id: string;
     index: number;
-    event: FcEvent;
-    original: FcEvent;
+    event: CalEvent;
+    original: CalEvent;
 }
 export interface DeleteEventMessage {
     type: "delete";
     id: string;
     index: number;
-    event: FcEvent;
+    event: CalEvent;
 }
 
 export interface SaveMessage {
@@ -215,7 +215,7 @@ class Parser {
         let fEvents = 0;
         let tEvents = 0;
 
-        eventHelper.parseFrontmatterEvent(frontmatter, file, (event: FcEvent) => {
+        eventHelper.parseFrontmatterEvent(frontmatter, file, (event: CalEvent) => {
             ctx.postMessage<UpdateEventMessage>({
                 type: "update",
                 id: eventHelper.calendar.id,
@@ -231,7 +231,7 @@ class Parser {
             allTags &&
             allTags.includes(eventHelper.calendar.inlineEventTag)
         ) {
-            eventHelper.parseInlineEvents(data, file, (event: FcEvent) => {
+            eventHelper.parseInlineEvents(data, file, (event: CalEvent) => {
                 ctx.postMessage<UpdateEventMessage>({
                     type: "update",
                     id: eventHelper.calendar.id,

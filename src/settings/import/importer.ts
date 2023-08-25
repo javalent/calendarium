@@ -1,8 +1,8 @@
 import type {
     Calendar,
     Era,
-    FcEvent,
-    FcEventCategory,
+    CalEvent,
+    CalEventCategory,
     LeapDay,
     Month,
     Moon,
@@ -157,9 +157,9 @@ export default class Import {
                     data.dynamic_data.timespan ?? dynamicData.month;
             }
 
-            const events: FcEvent[] = [];
+            const events: CalEvent[] = [];
 
-            const existingCategories: Map<string, FcEventCategory> = new Map();
+            const existingCategories: Map<string, CalEventCategory> = new Map();
             if ("categories" in data) {
                 for (let category of data.categories) {
                     const name = category.name;

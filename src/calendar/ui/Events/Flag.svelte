@@ -3,15 +3,15 @@
 <script lang="ts">
     import { Platform, TFile, setIcon } from "obsidian";
 
-    import type { FcDate, FcEvent, FcEventCategory } from "src/@types";
+    import type { CalDate, CalEvent, CalEventCategory } from "src/@types";
     import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
     import { createEventDispatcher } from "svelte";
     import { getTypedContext } from "../../view";
     import { ViewEventModal } from "../../event-modal";
     const dispatch = createEventDispatcher();
 
-    export let event: FcEvent;
-    export let date: FcDate;
+    export let event: CalEvent;
+    export let date: CalDate;
 
     const plugin = getTypedContext("plugin");
 
@@ -42,7 +42,7 @@
         }
     }
 
-    export let categories: FcEventCategory[];
+    export let categories: CalEventCategory[];
 
     let color =
         categories.find((c) => c.id == event.category)?.color ??

@@ -1,22 +1,27 @@
 <script lang="ts">
     import Flag from "./Flag.svelte";
-    import type { FcDate, FcEvent } from "src/@types";
+    import type { CalDate, CalEvent } from "src/@types";
     import { getTypedContext } from "../../view";
     import { sortEventList } from "src/utils/functions";
     import { onMount } from "svelte";
 
-    export let events: FcEvent[] = [];
+    export let events: CalEvent[] = [];
     export let dayView: boolean = false;
-    export let date: FcDate;
+    export let date: CalDate;
 
     const store = getTypedContext("store");
     const { categories } = $store;
 
+    let height: number;
+    let target: Element;
+
     $: events = sortEventList([...events]);
+    console.log("🚀 ~ file: Flags.svelte:19 ~ events:", events);
+
     let overflow: number = 0;
     let previousHeight = 0;
 
-    const addEvents = (height: number, target: Element) => {
+    const addEvents = () => {
         if (events.length && target) {
             if (
                 !dayView &&
@@ -46,7 +51,7 @@
                             (a, b) => b.getBoundingClientRect().height + a,
                             0
                         );
-                    if (remaining < 0) {
+                    if (remaining < 0 && height != 0) {
                         target.lastElementChild.detach();
                         overflow = events.length - events.indexOf(event);
                         break;
@@ -60,29 +65,26 @@
     };
 
     let container: HTMLElement;
-    const observer = new ResizeObserver((entries) =>
-        addEvents(entries[0].contentRect?.height, entries[0]?.target)
-    );
+    const observer = new ResizeObserver((entries) => {
+        height = entries[0].contentRect?.height;
+        target = entries[0]?.target;
+    });
+    $: {
+        console.log(
+            "🚀 ~ file: Flags.svelte:74 ~ dayView || (height != undefined && target)) && events:",
+            (dayView || (height != undefined && target)) && events
+        );
+        if ((dayView || (height != undefined && target)) && events) {
+            addEvents();
+        }
+    }
     onMount(() => {
         observer.observe(container);
     });
 </script>
 
 <div class="flags-container">
-    {#key events}
-        <div class="flag-container" bind:this={container} />
-        <!-- {#each events.slice(0, 3) as event}
-                <Flag
-                    {event}
-                    categories={$categories}
-                    {dayView}
-                    {date}
-                    on:event-click
-                    on:event-mouseover
-                    on:event-context
-                />
-            {/each} -->
-    {/key}
+    <div class="flag-container" bind:this={container} />
     <div class="overflow">
         {#if overflow > 0}
             <span>+{overflow}</span>

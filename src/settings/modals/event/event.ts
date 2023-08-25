@@ -8,7 +8,7 @@ import {
     TextAreaComponent,
     TFile,
 } from "obsidian";
-import type { Calendar, FcEvent } from "../../../@types";
+import type { Calendar, CalEvent } from "../../../@types";
 
 import { dateString, nanoid } from "../../../utils/functions";
 
@@ -23,7 +23,7 @@ import { CalEventHelper } from "src/events/event.helper";
 
 export class CreateEventModal extends CalendariumModal {
     saved = false;
-    event: FcEvent = {
+    event: CalEvent = {
         name: null,
         description: null,
         date: {
@@ -54,7 +54,7 @@ export class CreateEventModal extends CalendariumModal {
     constructor(
         public plugin: Calendarium,
         public calendar: Calendar,
-        event?: FcEvent,
+        event?: CalEvent,
         date?: { month: number; day: number; year: number }
     ) {
         super(plugin.app);
@@ -104,7 +104,7 @@ export class CreateEventModal extends CalendariumModal {
                         );
 
                         // refresh timestamp for date change
-                        this.event.sort = helper.timestampForFcEvent(
+                        this.event.sort = helper.timestampForCalEvent(
                             this.event,
                             this.event.sort
                         );
@@ -166,13 +166,13 @@ export class CreateEventModal extends CalendariumModal {
 
                             const frontmatter = [
                                 `fc-calendar: ${this.calendar.name}`,
-                                `fc-date: ${helper.toFcDateString(
+                                `fc-date: ${helper.toCalDateString(
                                     this.event.date
                                 )}`,
                             ];
                             if (this.event.end) {
                                 frontmatter.push(
-                                    `fc-end: ${helper.toFcDateString(
+                                    `fc-end: ${helper.toCalDateString(
                                         this.event.end
                                     )}`
                                 );

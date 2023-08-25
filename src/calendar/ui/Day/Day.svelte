@@ -3,7 +3,7 @@
     import { getTypedContext } from "../../view";
     import Dots from "../Events/Dots.svelte";
     import { Menu, TFile } from "obsidian";
-    import type { DayOrLeapDay, FcEvent } from "src/@types";
+    import type { DayOrLeapDay, CalEvent } from "src/@types";
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Flags from "../Events/Flags.svelte";
@@ -80,7 +80,7 @@
                 });
             })
         );
-        let notes: { event: FcEvent; file: TFile }[] = [];
+        let notes: { event: CalEvent; file: TFile }[] = [];
         for (const event of $events) {
             if (!event.note) continue;
             const file = app.vault.getAbstractFileByPath(event.note);
@@ -189,4 +189,9 @@
     .opened {
         border: 2px solid var(--background-modifier-border);
     }
+
+    /* .moon-container {
+        display: flex;
+        flex-flow: row;
+    } */
 </style>

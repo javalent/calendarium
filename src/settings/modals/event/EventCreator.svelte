@@ -1,12 +1,12 @@
 <script lang="ts">
-    import type { Calendar, FcEvent } from "src/@types";
+    import type { Calendar, CalEvent } from "src/@types";
     import type Calendarium from "src/main";
 
     import { TextComponent, TFile } from "obsidian";
     import PathSuggestionModal from "src/suggester/path";
     import { nanoid } from "src/utils/functions";
 
-    export let event: FcEvent;
+    export let event: CalEvent;
     export let calendar: Calendar;
     export let plugin: Calendarium;
 

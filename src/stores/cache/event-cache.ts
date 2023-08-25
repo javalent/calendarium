@@ -1,9 +1,9 @@
-import type { FcEvent } from "src/@types";
+import type { CalEvent } from "src/@types";
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
 import { Readable, derived, get, writable } from "svelte/store";
 
-class YearEventCache extends YearCache<FcEvent> {
-    update([events, dirty]: [FcEvent[], boolean]) {
+class YearEventCache extends YearCache<CalEvent> {
+    update([events, dirty]: [CalEvent[], boolean]) {
         if (dirty && events) {
             this.derived = events.filter((event) => {
                 const date = { ...event.date };
@@ -33,8 +33,8 @@ class YearEventCache extends YearCache<FcEvent> {
         return this.derived;
     }
 }
-class MonthEventCache extends MonthCache<FcEvent> {
-    update([events, dirty]: [FcEvent[], boolean]) {
+class MonthEventCache extends MonthCache<CalEvent> {
+    update([events, dirty]: [CalEvent[], boolean]) {
         if (dirty && events) {
             this.derived = events.filter((event) => {
                 const date = { ...event.date };
@@ -80,8 +80,8 @@ class MonthEventCache extends MonthCache<FcEvent> {
         return this.derived;
     }
 }
-class DayEventCache extends DayCache<FcEvent> {
-    update([events, dirty]: [FcEvent[], boolean]) {
+class DayEventCache extends DayCache<CalEvent> {
+    update([events, dirty]: [CalEvent[], boolean]) {
         if (dirty && events) {
             this.derived = events.filter((event) => {
                 if (
@@ -97,17 +97,17 @@ class DayEventCache extends DayCache<FcEvent> {
     }
 }
 
-export class EventCache extends EntityCache<FcEvent> {
-    getYearCache(year: number): YearCache<FcEvent> {
+export class EventCache extends EntityCache<CalEvent> {
+    getYearCache(year: number): YearCache<CalEvent> {
         if (this.cache.has(year)) return this.cache.get(year);
         return new YearEventCache(year, this.entities);
     }
-    getMonthCache(month: number, year: number): MonthCache<FcEvent> {
+    getMonthCache(month: number, year: number): MonthCache<CalEvent> {
         const yearCache = this.getYearCache(year);
         if (yearCache.cache.has(month)) return yearCache.cache.get(month);
         return new MonthEventCache(month, year, yearCache.entities);
     }
-    getDayCache(day: number, month: number, year: number): DayCache<FcEvent> {
+    getDayCache(day: number, month: number, year: number): DayCache<CalEvent> {
         const monthCache = this.getMonthCache(month, year);
         if (monthCache.cache.has(day)) return monthCache.cache.get(day);
         return new DayEventCache(day, month, year, monthCache.entities);

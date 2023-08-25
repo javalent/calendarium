@@ -1,7 +1,7 @@
 import { Moon } from ".";
-import { FcEvent, FcEventCategory } from ".";
+import { CalEvent, CalEventCategory } from ".";
 
-export interface FcDate {
+export interface CalDate {
     day: number;
     month: number;
     year: number;
@@ -12,9 +12,9 @@ export interface Calendar {
     name: string;
     description: string;
     static: StaticCalendarData;
-    current: FcDate;
-    events: FcEvent[];
-    categories: FcEventCategory[];
+    current: CalDate;
+    events: CalEvent[];
+    categories: CalEventCategory[];
     date?: number;
     displayWeeks?: boolean;
     autoParse: boolean;
@@ -39,7 +39,7 @@ export interface StaticCalendarData {
     years?: Year[];
 }
 
-export interface FcDate {
+export interface CalDate {
     year: number;
     month: number;
     day: number;
@@ -133,7 +133,7 @@ export interface Era {
     restart: boolean;
     endsYear: boolean;
     event: boolean;
-    start: FcDate;
+    start: CalDate;
     eventDescription?: string;
     eventCategory?: string;
 }

@@ -1,6 +1,6 @@
-import { FcDate } from "src/@types";
+import { CalDate } from "src/@types";
 
-export function hash(date: Partial<FcDate>, max: number) {
+export function hash(date: Partial<CalDate>, max: number) {
     if (date.year == null || date.month == null || date.day == null)
         return null;
     const months = `${this.data.months.length}`.length;

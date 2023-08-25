@@ -1,4 +1,4 @@
-import type { Calendar, FcDate, MoonState } from "src/@types";
+import type { Calendar, CalDate, MoonState } from "src/@types";
 import { Readable, Writable, derived, get, writable } from "svelte/store";
 import { YearCalculatorCache, YearStoreCache } from "./years.store";
 import { dateString, wrap } from "src/utils/functions";
@@ -63,14 +63,14 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         currentDisplay: derived([current, store], ([current, calendar]) => {
             return dateString(current, calendar);
         }),
-        setCurrentDate: (date: FcDate) =>
+        setCurrentDate: (date: CalDate) =>
             store.update((cal) => {
                 cal.current = { ...date };
                 return cal;
             }),
         updateCalendar: (calendar: Calendar) => update((cal) => calendar),
         eventCache,
-        addEvent: (date: FcDate) => {
+        addEvent: (date: CalDate) => {
             const modal = new CreateEventModal(plugin, calendar, null, date);
 
             modal.onClose = async () => {
@@ -115,8 +115,8 @@ export interface EphemeralState {
     displayMoons: boolean;
     displayWeeks: boolean;
     displayDayNumber: boolean;
-    displaying: FcDate;
-    viewing: FcDate;
+    displaying: CalDate;
+    viewing: CalDate;
 }
 export function getEphemeralStore(
     store: Writable<Calendar>,
@@ -125,7 +125,7 @@ export function getEphemeralStore(
     yearCalculator: YearStoreCache
 ) {
     const displaying = writable({ ...base.current });
-    const viewing = writable<FcDate | null>();
+    const viewing = writable<CalDate | null>();
 
     const displayMoons = writable(base.static.displayMoons);
     const displayDayNumber = writable(base.static.displayDayNumber);
@@ -173,7 +173,7 @@ export function getEphemeralStore(
         //Displayed Date
         displaying,
         goToToday: () => displaying.set({ ...base.current }),
-        displayDate: (date: FcDate = base.current) =>
+        displayDate: (date: CalDate = base.current) =>
             displaying.set({ ...date }),
         displayingDisplay: derived(
             [displaying, store],
@@ -397,7 +397,7 @@ function createStaticStore(store: Writable<Calendar>) {
     };
 }
 
-function incrementMonth(date: FcDate, yearCalculator: YearStoreCache) {
+function incrementMonth(date: CalDate, yearCalculator: YearStoreCache) {
     const next = { ...date };
     const year = yearCalculator.getYearFromCache(date.year);
     const months = get(year.months);
@@ -409,7 +409,7 @@ function incrementMonth(date: FcDate, yearCalculator: YearStoreCache) {
     }
     return next;
 }
-function decrementMonth(date: FcDate, yearCalculator: YearStoreCache) {
+function decrementMonth(date: CalDate, yearCalculator: YearStoreCache) {
     const next = { ...date };
     if (next.month == 0) {
         next.year = next.year - 1;
@@ -422,7 +422,7 @@ function decrementMonth(date: FcDate, yearCalculator: YearStoreCache) {
     return next;
 }
 
-function incrementDay(date: FcDate, yearCalculator: YearStoreCache) {
+function incrementDay(date: CalDate, yearCalculator: YearStoreCache) {
     let next = { ...date };
     const days = get(
         yearCalculator.getYearFromCache(next.year).getMonthFromCache(next.month)
@@ -436,7 +436,7 @@ function incrementDay(date: FcDate, yearCalculator: YearStoreCache) {
     }
     return next;
 }
-function decrementDay(date: FcDate, yearCalculator: YearStoreCache) {
+function decrementDay(date: CalDate, yearCalculator: YearStoreCache) {
     let next = { ...date };
 
     if (next.day - 1 <= 0) {

@@ -1,7 +1,7 @@
-import { Calendar, FcDate } from "src/@types";
+import { Calendar, CalDate } from "src/@types";
 import { YearStoreCache } from "./years.store";
 
 
-export function getDateStore(date: FcDate, base: Calendar, yearCalculator: YearStoreCache) {
+export function getDateStore(date: CalDate, base: Calendar, yearCalculator: YearStoreCache) {
 
 }   

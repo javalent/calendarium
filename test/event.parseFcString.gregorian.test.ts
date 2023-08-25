@@ -1,4 +1,4 @@
-import { FcEvent } from "../src/@types";
+import { CalEvent } from "../src/@types";
 import { CalEventHelper, ParseDate } from "../src/events/event.helper";
 import { sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
@@ -30,11 +30,11 @@ test("Parse January", () => {
         order: ''
     };
     // Mess around with year 0 for fun
-    expect(helper.parseFcDateString("0", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-01", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-01-01", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-Jan", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-January-01", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-01", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-01-01", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-Jan", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-January-01", file)).toEqual(expected);
 });
 test("Parse February", () => {
     const expected: ParseDate = {
@@ -43,14 +43,14 @@ test("Parse February", () => {
         day: 1,
         order: ''
     };
-    expect(helper.parseFcDateString("0-02", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-02-01", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-Feb", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-February-01", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-02", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-02-01", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-Feb", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-February-01", file)).toEqual(expected);
     // brought into range
-    expect(helper.parseFcDateString("0-02-00", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-02-00", file)).toEqual(expected);
     // Bad day
-    expect(helper.parseFcDateString("1900-Feb-30", file)).toBeNull();
+    expect(helper.parseCalDateString("1900-Feb-30", file)).toBeNull();
 });
 test("Parse February: Leap year", () => {
     const expected: ParseDate = {
@@ -61,22 +61,22 @@ test("Parse February: Leap year", () => {
     };
 
     // Leap years
-    expect(helper.parseFcDateString("1996-February-29", file)).toEqual({
+    expect(helper.parseCalDateString("1996-February-29", file)).toEqual({
         ...expected,
         year: 1996
     });
-    expect(helper.parseFcDateString("1600-February-29", file)).toEqual({
+    expect(helper.parseCalDateString("1600-February-29", file)).toEqual({
         ...expected,
         year: 1600
     });
-    expect(helper.parseFcDateString("2000-February-29", file)).toEqual({
+    expect(helper.parseCalDateString("2000-February-29", file)).toEqual({
         ...expected,
         year: 2000
     });
     // Not leap years
-    expect(helper.parseFcDateString("1700-Feb-29", file)).toBeNull();
-    expect(helper.parseFcDateString("1800-Feb-29", file)).toBeNull();
-    expect(helper.parseFcDateString("1900-Feb-29", file)).toBeNull();
+    expect(helper.parseCalDateString("1700-Feb-29", file)).toBeNull();
+    expect(helper.parseCalDateString("1800-Feb-29", file)).toBeNull();
+    expect(helper.parseCalDateString("1900-Feb-29", file)).toBeNull();
 });
 test("Parse March", () => {
     const expected: ParseDate = {
@@ -86,24 +86,24 @@ test("Parse March", () => {
         order: 'some extra'
     };
     // Mess around with year 0 for fun
-    expect(helper.parseFcDateString("0-03-31-some extra", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-Mar-31-some extra", file)).toEqual(expected);
-    expect(helper.parseFcDateString("0-March-31-some extra", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-03-31-some extra", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-Mar-31-some extra", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-March-31-some extra", file)).toEqual(expected);
 });
 
 
 test("Sort Gregorian dates", () => {
     const events = [
-        helper.parseFcDateString("1954-January-01-all the things happened", file), // 0
-        helper.parseFcDateString("1954-January-01-misc", file), // 1
-        helper.parseFcDateString("1954-January-01", file), // 2
-        helper.parseFcDateString("0-February-01-other stuff", file), // 3
-        helper.parseFcDateString("0-February-01-02", file), // 4
-        helper.parseFcDateString("2000-February-29", file), // 5
-        helper.parseFcDateString("0-March-31-some extra", file), // 6
+        helper.parseCalDateString("1954-January-01-all the things happened", file), // 0
+        helper.parseCalDateString("1954-January-01-misc", file), // 1
+        helper.parseCalDateString("1954-January-01", file), // 2
+        helper.parseCalDateString("0-February-01-other stuff", file), // 3
+        helper.parseCalDateString("0-February-01-02", file), // 4
+        helper.parseCalDateString("2000-February-29", file), // 5
+        helper.parseCalDateString("0-March-31-some extra", file), // 6
     ];
 
-    const fcEvents: FcEvent[] = events.map((x) => {
+    const fcEvents: CalEvent[] = events.map((x) => {
         return {
             date: x,
             description: "Test",

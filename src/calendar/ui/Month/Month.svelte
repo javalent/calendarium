@@ -51,6 +51,9 @@
     .month-container {
         height: min-content;
     }
+    .month-container.full {
+        height: 100%;
+    }
 
     .month-header {
         margin: 0;
@@ -63,7 +66,7 @@
             var(--calendar-row-size)
         );
     }
-    .full {
+    .full .month {
         height: 100%;
     }
 </style>

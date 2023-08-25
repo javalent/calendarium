@@ -1,4 +1,4 @@
-import type { Calendar, FcDate, FcEvent, LeapDay, Month } from "../@types";
+import type { Calendar, CalDate, CalEvent, LeapDay, Month } from "../@types";
 
 export function daysBetween(date1: Date, date2: Date) {
     const d1 = window.moment(date1);
@@ -78,7 +78,7 @@ export function ordinal(i: number) {
     }
     return i + "th";
 }
-export function dateString(date: FcDate, calendar: Calendar, end?: FcDate) {
+export function dateString(date: CalDate, calendar: Calendar, end?: CalDate) {
     if (!date || date.day == undefined) {
         return "";
     }
@@ -170,7 +170,7 @@ export function isValidYear(year: number, calendar: Calendar) {
     return true;
 }
 
-export function areDatesEqual(date: FcDate, date2: FcDate) {
+export function areDatesEqual(date: CalDate, date2: CalDate) {
     if (date.day != date2.day) return false;
     if (
         date.month != date2.month &&
@@ -187,7 +187,7 @@ export function areDatesEqual(date: FcDate, date2: FcDate) {
     return true;
 }
 
-export function sortEventList(list: FcEvent[]): FcEvent[] {
+export function sortEventList(list: CalEvent[]): CalEvent[] {
     return list.sort((a, b) => {
         if (!("sort" in a) || !("sort" in b)) return 0;
         if (a.sort?.timestamp === b.sort?.timestamp) {

@@ -20,11 +20,11 @@
     $: daysBeforeMonth = displayedMonth.daysBefore;
     $: daysBeforeDay = $daysBeforeMonth + $viewing.day;
     $: events = store.eventCache.getItemsOrRecalculate($viewing);
+    $: console.log("🚀 ~ file: DayView.svelte:23 ~ events:", $events);
     $: moons = store.moonCache.getItemsOrRecalculate($viewing);
     $: displayDayNumber = $ephemeral.displayDayNumber;
     $: displayMoons = $ephemeral.displayMoons;
 
-    const dispatch = createEventDispatcher();
 
     const close = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon("cross").setTooltip("Close");
