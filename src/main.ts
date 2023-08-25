@@ -173,7 +173,7 @@ export default class Calendarium extends Plugin {
     async addCalendarView(startup: boolean = false) {
         if (startup && this.app.workspace.getLeavesOfType(VIEW_TYPE)?.length)
             return;
-        const leaf = await this.app.workspace.getRightLeaf(false);
+        const leaf = this.app.workspace.getRightLeaf(false);
         leaf.setViewState({
             type: VIEW_TYPE,
         });
