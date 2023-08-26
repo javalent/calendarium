@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b17](https://github.com/javalent/the-calendarium/compare/1.0.0-b16...1.0.0-b17) (2023-08-25)
+
+
+### Bug Fixes
+
+* use name to get calendar API vs id ([9f2a3e3](https://github.com/javalent/the-calendarium/commit/9f2a3e3c56aa698711b4f9afdcdecfbbbaf85a7f))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b17 ([b7226ab](https://github.com/javalent/the-calendarium/commit/b7226ab0abc69bf70efb1278c64b1f5dde544a48))
+
 ## [1.0.0-b16](https://github.com/javalent/the-calendarium/compare/1.0.0-b15...1.0.0-b16) (2023-08-25)
 
 
