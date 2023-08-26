@@ -20,6 +20,14 @@ export class API {
         return { day, month, year };
     }
 
+    /**
+     * Get the current date.
+     * @returns {CalDate} The current date specified on the calendar.
+     */
+    getCurrentDate(): CalDate {
+        return get(this.#store.current);
+    }
+
     /** Get all events for the loaded calendar. */
     getEvents(): CalEvent[] {
         return get(this.#store.eventCache.entities);
