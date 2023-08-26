@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b18](https://github.com/javalent/the-calendarium/compare/1.0.0-b17...1.0.0-b18) (2023-08-26)
+
+
+### Bug Fixes
+
+* Added getCurrentDate to API ([9d48d6b](https://github.com/javalent/the-calendarium/commit/9d48d6b83e834c17d9c442198bf3b1c9cfc9818b))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b18 ([a82ce43](https://github.com/javalent/the-calendarium/commit/a82ce4372356de5b3243dad58b4dd8c739c46119))
+
 ## [1.0.0-b17](https://github.com/javalent/the-calendarium/compare/1.0.0-b16...1.0.0-b17) (2023-08-25)
 
 
