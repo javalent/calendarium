@@ -157,16 +157,12 @@ export class CalEventHelper {
             let end = element.dataset.end
                 ? this.parseCalDateString(element.dataset.end, file)
                 : undefined;
-
+            let cat: CalEventCategory;
             if (element.dataset.class) {
-                let cat = this.calendar.categories.find(
+                cat = this.calendar.categories.find(
                     (cat) => cat?.name == element.dataset.class
                 );
-                if (cat) {
-                    category = cat;
-                }
             }
-
             if (date) {
                 publish({
                     id: nanoid(6),
@@ -176,7 +172,7 @@ export class CalEventHelper {
                     end,
                     sort: this.parsedToTimestamp(date),
                     note: file.path,
-                    category: category?.id,
+                    category: (cat ?? category)?.id,
                     img: element.dataset.img,
                 });
             }

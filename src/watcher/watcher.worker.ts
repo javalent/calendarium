@@ -227,13 +227,6 @@ class Parser {
             }
         );
 
-        console.log(
-            "🚀 ~ file: watcher.worker.ts:233 ~ eventHelper.calendar.inlineEventTag:",
-            eventHelper.calendar.supportInlineEvents,
-            allTags,
-            allTags.includes(eventHelper.calendar.inlineEventTag) ||
-                allTags.includes(`#${eventHelper.calendar.inlineEventTag}`)
-        );
         if (
             eventHelper.calendar.supportInlineEvents &&
             allTags &&
