@@ -29,6 +29,7 @@
         month: $index,
         year: year.year,
     });
+    $: console.log("🚀 ~ file: Day.svelte:32 ~ events:", events);
     $: displayMoons = $ephemeral.displayMoons;
 
     $: moons = $store.moonCache.getItemsOrRecalculate({
@@ -138,14 +139,16 @@
                         {/each}
                     </div>
                 {/if}
-                <Flags
-                    events={$events}
-                    date={{
-                        day: day.number,
-                        month: $index,
-                        year: year.year,
-                    }}
-                />
+                {#key $events}
+                    <Flags
+                        events={$events}
+                        date={{
+                            day: day.number,
+                            month: $index,
+                            year: year.year,
+                        }}
+                    />
+                {/key}
             {:else}
                 <Dots events={$events} />
             {/if}
