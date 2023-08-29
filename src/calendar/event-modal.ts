@@ -1,4 +1,4 @@
-import { MarkdownRenderer } from "obsidian";
+import { Component, MarkdownRenderer } from "obsidian";
 import type { CalEvent } from "src/@types";
 import type FantasyCalendar from "src/main";
 import { CalendariumModal } from "src/settings/modals/modal";
@@ -16,7 +16,7 @@ export class ViewEventModal extends CalendariumModal {
             this.event.description,
             this.contentEl,
             this.event.note,
-            null
+            new Component()
         );
     }
     async onOpen() {
