@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Event, Calendar } from "src/@types";
+    import type { CalEvent, Calendar } from "src/@types";
     import { dateString } from "src/utils/functions";
 
     import EventInstance from "./EventInstance.svelte";
@@ -50,13 +50,13 @@
         events.slice(0, 100 * slicer)
     );
 
-    const deleteEvent = (item: Event) => {
+    const deleteEvent = (item: CalEvent) => {
         eventStore.delete(item.id);
     };
     const getCategory = (category: string) => {
         return $calendar.categories.find(({ id }) => id == category);
     };
-    const add = (event?: Event) => {
+    const add = (event?: CalEvent) => {
         const modal = new CreateEventModal(plugin, $calendar, event);
         modal.onClose = () => {
             if (!modal.saved) return;

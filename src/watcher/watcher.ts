@@ -6,7 +6,7 @@ import {
     TFolder,
     Vault,
     getAllTags,
-    FuzzySuggestModal
+    FuzzySuggestModal,
 } from "obsidian";
 import type { Calendar, CalEvent } from "src/@types";
 import type Calendarium from "src/main";
@@ -20,7 +20,7 @@ import Worker, {
     QueueMessage,
     UpdateEventMessage,
     SaveMessage,
-    DeleteEventMessage
+    DeleteEventMessage,
 } from "./watcher.worker";
 
 declare global {
@@ -67,6 +67,7 @@ export class Watcher extends Component {
 
     worker = new Worker();
     onload() {
+        /** Rescan for events for all calendars */
         this.plugin.addCommand({
             id: "rescan-events",
             name: "Rescan Events",
@@ -75,8 +76,10 @@ export class Watcher extends Component {
                     console.info("Beginning full rescan for calendar events");
                 }
                 this.start();
-            }
+            },
         });
+
+        /** Rescan for events for a specific calendar. */
         this.plugin.addCommand({
             id: "rescan-events-for-calendar",
             name: "Rescan Events for Calendar",
@@ -90,26 +93,29 @@ export class Watcher extends Component {
                                     modal.chosen.name
                             );
                         }
-                        this.start(modal.chosen);
+                        this.start({ ...modal.chosen, autoParse: true });
                     }
                 };
                 modal.open();
-            }
+            },
         });
 
         /** Send the worker the calendars so I don't have to with every message. */
         this.worker.postMessage<CalendarsMessage>({
             type: "calendars",
-            calendars: this.calendars
+            calendars: this.calendars,
         });
+
+        /** Plugin's saveCalendars method was called (calendar settings updated). */
         this.registerEvent(
             this.plugin.app.workspace.on("calendarium-updated", () => {
                 this.worker.postMessage<CalendarsMessage>({
                     type: "calendars",
-                    calendars: this.calendars
+                    calendars: this.calendars,
                 });
             })
         );
+
         /** Send the workers the options so I don't have to with every message. */
         this.worker.postMessage<OptionsMessage>({
             type: "options",
@@ -117,23 +123,20 @@ export class Watcher extends Component {
             addToDefaultIfMissing: this.plugin.data.addToDefaultIfMissing,
             format: this.plugin.format,
             defaultCalendar: this.plugin.defaultCalendar?.name,
-            debug: this.plugin.data.debug
+            debug: this.plugin.data.debug,
         });
         this.registerEvent(
-            this.plugin.app.workspace.on(
-                "calendarium-settings-change",
-                () => {
-                    this.worker.postMessage<OptionsMessage>({
-                        type: "options",
-                        parseTitle: this.plugin.data.parseDates,
-                        addToDefaultIfMissing:
-                            this.plugin.data.addToDefaultIfMissing,
-                        format: this.plugin.format,
-                        defaultCalendar: this.plugin.defaultCalendar?.name,
-                        debug: this.plugin.data.debug
-                    });
-                }
-            )
+            this.plugin.app.workspace.on("calendarium-settings-change", () => {
+                this.worker.postMessage<OptionsMessage>({
+                    type: "options",
+                    parseTitle: this.plugin.data.parseDates,
+                    addToDefaultIfMissing:
+                        this.plugin.data.addToDefaultIfMissing,
+                    format: this.plugin.format,
+                    defaultCalendar: this.plugin.defaultCalendar?.name,
+                    debug: this.plugin.data.debug,
+                });
+            })
         );
 
         /** Metadata for a file has changed and the file should be checked. */
@@ -150,13 +153,13 @@ export class Watcher extends Component {
                 if (!this.calendars.length) return;
                 if (!(abstractFile instanceof TFile)) return;
                 for (const calendar of this.calendars) {
-                    calendar.events = calendar.events.filter(
-                        (event) => event.note != oldPath
-                    );
+                    const store = this.plugin.getStoreByCalendar(calendar);
+                    if (!store) continue;
+                    store.eventStore.removeEventsFromFile(oldPath);
                 }
                 this.worker.postMessage<CalendarsMessage>({
                     type: "calendars",
-                    calendars: this.calendars
+                    calendars: this.calendars,
                 });
                 this.startParsing([abstractFile.path]);
             })
@@ -166,22 +169,11 @@ export class Watcher extends Component {
             this.vault.on("delete", async (abstractFile) => {
                 if (!(abstractFile instanceof TFile)) return;
                 for (let calendar of this.calendars) {
-                    const events = calendar.events.filter(
-                        (event) => event.note === abstractFile.path
-                    );
-                    calendar.events = calendar.events.filter(
-                        (event) => event.note != abstractFile.path
-                    );
-                    for (const event of events) {
-                        this.addToTree(calendar, event);
-                    }
+                    const store = this.plugin.getStoreByCalendar(calendar);
+                    if (!store) continue;
+                    store.eventStore.removeEventsFromFile(abstractFile.path);
                 }
                 await this.plugin.saveCalendars();
-                this.plugin.app.workspace.trigger(
-                    "calendarium-event-update",
-                    this.tree
-                );
-                this.tree = new Map();
             })
         );
 
@@ -205,7 +197,7 @@ export class Watcher extends Component {
                             cache,
                             file: { path: file.path, basename: file.basename },
                             allTags,
-                            data
+                            data,
                         });
                     } else if (file instanceof TFolder) {
                         const paths = file.children.map((f) => f.path);
@@ -225,48 +217,42 @@ export class Watcher extends Component {
                     const calendar = this.calendars.find((c) => c.id == id);
 
                     if (!calendar) return;
-                    if (index == -1) {
-                        if (this.plugin.data.debug)
+                    const store = this.plugin.getStore(calendar.id);
+                    if (!store) return;
+
+                    if (this.plugin.data.debug) {
+                        if (index == -1) {
                             console.debug(
                                 `Adding '${event.name}' to ${calendar.name}`
                             );
-                        calendar.events.push(event);
-                    } else {
-                        if (this.plugin.data.debug)
+                        } else {
                             console.debug(
                                 `Updating '${event.name}' in calendar ${calendar.name}`
                             );
-                        calendar.events.splice(
-                            index,
-                            index >= 0 ? 1 : 0,
-                            event
-                        );
+                        }
                     }
 
-                    this.addToTree(calendar, event);
-                    if (original) {
-                        this.addToTree(calendar, original);
-                    }
+                    store.eventStore.insertEventsFromFile(event.note, event);
                 }
             }
         );
 
+        /** An event needs to be removed. */
         this.worker.addEventListener(
             "message",
             async (evt: MessageEvent<DeleteEventMessage>) => {
                 if (evt.data.type == "delete") {
-                    const { id, index, event } = evt.data;
-                    if (!event) return;
+                    const { id, path } = evt.data;
+                    if (!path) return;
                     const calendar = this.calendars.find((c) => c.id == id);
                     if (!calendar) return;
                     if (this.plugin.data.debug)
                         console.debug(
-                            `Removing '${event.name}' from ${calendar.name}`
+                            `Removing events for ${path} from ${calendar.name}`
                         );
-                    calendar.events = calendar.events.filter(
-                        (e) => e.id != event.id
-                    );
-                    this.addToTree(calendar, event);
+                    const store = this.plugin.getStore(calendar.id);
+                    if (!store) return;
+                    store.eventStore.removeEventsFromFile(path);
                 }
             }
         );
@@ -279,12 +265,6 @@ export class Watcher extends Component {
                     if (this.plugin.data.debug) {
                         console.debug("Received save event from file watcher");
                     }
-                    this.plugin.app.workspace.trigger(
-                        "calendarium-event-update",
-                        this.tree
-                    );
-                    this.tree = new Map();
-                    await this.plugin.saveCalendars();
                 }
             }
         );
@@ -341,7 +321,7 @@ export class Watcher extends Component {
         }
         this.worker.postMessage<QueueMessage>({
             type: "queue",
-            paths
+            paths,
         });
     }
     onunload() {

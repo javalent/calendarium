@@ -7,21 +7,24 @@
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Flags from "../Events/Flags.svelte";
+    import { addEventWithModal } from "src/settings/modals/event/event";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
     export let adjacent: boolean;
 
+    const plugin = getTypedContext("plugin");
     const store = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
     const full = getTypedContext("full");
+    $: calendar = $store;
     $: index = month.index;
     $: year = month.year;
     $: current = $store.current;
-    $: eventCache = $store.eventCache;
+    $: eventStore = $store.eventStore;
     $: viewing = $ephemeral.viewing;
     $: viewState = $ephemeral.viewState;
-    $: events = eventCache.getItemsOrRecalculate({
+    $: events = eventStore.getEventsForDate({
         day: day.number,
         month: $index,
         year: year.year,
@@ -73,7 +76,7 @@
         });
         menu.addItem((item) =>
             item.setTitle("New Event").onClick(() => {
-                $store.addEvent({
+                addEventWithModal(plugin, $calendar, {
                     day: day.number,
                     month: $index,
                     year: year.year,

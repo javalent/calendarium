@@ -1,4 +1,4 @@
-import { Platform, Plugin, WorkspaceLeaf } from "obsidian";
+import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
 
 import CalendariumSettings from "./settings/settings";
 
@@ -10,6 +10,11 @@ import { API } from "./api/api";
 import SettingsService from "./settings/settings.service";
 import { CalendarStore, createCalendarStore } from "./stores/calendar.store";
 import { CodeBlockService } from "./calendar/codeblock";
+import {/* 
+    EVENT_LINKED_TO_NOTE,
+    EVENT_LINKED_TO_NOTE_ICON, */
+    REVEAL_ICON,
+} from "./utils/constants";
 
 declare module "obsidian" {
     interface App {
@@ -93,14 +98,18 @@ export default class Calendarium extends Plugin {
     }
 
     private readonly stores: WeakMap<Calendar, CalendarStore> = new WeakMap();
-    getStore(calendar: string) {
+    public getStoreByCalendar(calendar: Calendar) {
+        if (!this.stores.has(calendar)) {
+            this.stores.set(calendar, createCalendarStore(calendar, this));
+        }
+        return this.stores.get(calendar);
+    }
+    /** Get a store by ID */
+    public getStore(calendar: string) {
         if (!calendar) return null;
         const cal = this.data.calendars.find((c) => c.id == calendar);
         if (!cal) return null;
-        if (!this.stores.has(cal)) {
-            this.stores.set(cal, createCalendarStore(cal, this));
-        }
-        return this.stores.get(cal);
+        return this.getStoreByCalendar(cal);
     }
     get canUseDailyNotes() {
         return this.dailyNotes._loaded;
@@ -132,6 +141,14 @@ export default class Calendarium extends Plugin {
         console.log("Loading Calendarium v" + this.manifest.version);
         this.$settingsService = new SettingsService(this, this.manifest);
         await this.$settingsService.loadData();
+
+        /** Add Icons */
+        addIcon(
+            REVEAL_ICON,
+            `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="calendar-day" class="svg-inline--fa fa-calendar-day fa-w-14" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm64-192c0-8.8 7.2-16 16-16h96c8.8 0 16 7.2 16 16v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"/></svg>`
+        );
+
+        /* addIcon(EVENT_LINKED_TO_NOTE, EVENT_LINKED_TO_NOTE_ICON); */
 
         this.watcher = new Watcher(this);
         (window["Calendarium"] = this) &&

@@ -1,10 +1,14 @@
 <svelte:options accessors />
 
 <script lang="ts">
-    import { Platform, TFile, setIcon } from "obsidian";
+    import { Menu, Platform, TFile, setIcon } from "obsidian";
 
     import type { CalDate, CalEvent, CalEventCategory } from "src/@types";
-    import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
+    import {
+        DEFAULT_CATEGORY_COLOR,
+        EVENT_FROM_FRONTMATTER,
+        EVENT_LINKED_TO_NOTE,
+    } from "src/utils/constants";
     import { createEventDispatcher } from "svelte";
     import { getTypedContext } from "../../view";
     import { ViewEventModal } from "../../event-modal";
@@ -14,6 +18,7 @@
     export let date: CalDate;
 
     const plugin = getTypedContext("plugin");
+    const store = getTypedContext("store");
 
     export let dayView: boolean = false;
     let multi = false,
@@ -55,7 +60,11 @@
     const meta = Platform.isMacOS ? "Meta" : "Control";
 
     const note = (node: HTMLElement) => {
-        setIcon(node, "note-glyph");
+        if ($store.eventStore.isRemovable(event.id)) {
+            setIcon(node, EVENT_LINKED_TO_NOTE);
+        } else {
+            setIcon(node, EVENT_FROM_FRONTMATTER);
+        }
     };
 
     const openNote = (evt: MouseEvent) => {
@@ -74,6 +83,25 @@
     };
 
     export let flag: HTMLElement = null;
+
+    const contextMenu = (evt: MouseEvent) => {
+        evt.stopPropagation();
+        const menu = new Menu();
+        console.log(
+            "🚀 ~ file: Flag.svelte:83 ~ $store.eventStore.isRemovable(event.id):",
+            $store.eventStore.isRemovable(event.id)
+        );
+        if ($store.eventStore.isRemovable(event.id)) {
+            if (!event.note) {
+                menu.addItem((item) => {
+                    item.setTitle("Create Note");
+                });
+            }
+            menu.addItem((item) => item.setTitle("Edit Event"));
+            menu.addItem((item) => item.setTitle("Delete Event"));
+        }
+        menu.showAtMouseEvent(evt);
+    };
 </script>
 
 <div
@@ -93,10 +121,7 @@
     on:mouseover={(evt) =>
         dispatch("event-mouseover", { target: evt.target, event })}
     on:focus={() => {}}
-    on:contextmenu={(evt) => {
-        evt.stopPropagation();
-        dispatch("event-context", { evt: evt, event });
-    }}
+    on:contextmenu={contextMenu}
 >
     <div class="flag-content">
         <span class:clamp={!dayView} class:day-view={dayView}>

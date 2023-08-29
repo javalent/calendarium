@@ -8,7 +8,7 @@ import {
     TextAreaComponent,
     TFile,
 } from "obsidian";
-import type { Calendar, CalEvent } from "../../../@types";
+import type { CalDate, Calendar, CalEvent } from "../../../@types";
 
 import { dateString, nanoid } from "../../../utils/functions";
 
@@ -17,9 +17,9 @@ import PathSuggestionModal from "../../../suggester/path";
 /* import EventCreator from "./EventCreator.svelte"; */
 
 import copy from "fast-copy";
-import Calendarium from "src/main";
 import { CalendariumModal } from "../modal";
 import { CalEventHelper } from "src/events/event.helper";
+import Calendarium from "src/main";
 
 export class CreateEventModal extends CalendariumModal {
     saved = false;
@@ -52,12 +52,11 @@ export class CreateEventModal extends CalendariumModal {
     startEl: HTMLDivElement;
     endEl: HTMLDivElement;
     constructor(
-        public plugin: Calendarium,
         public calendar: Calendar,
         event?: CalEvent,
         date?: { month: number; day: number; year: number }
     ) {
-        super(plugin.app);
+        super(app);
         if (event) {
             this.event = copy(event);
             this.editing = true;
@@ -71,15 +70,6 @@ export class CreateEventModal extends CalendariumModal {
     async display() {
         this.contentEl.empty();
         this.titleEl.setText(this.editing ? "Edit Event" : "New Event");
-
-        /*         new EventCreator({
-            target: this.contentEl,
-            props: {
-                event: this.event,
-                calendar: this.calendar,
-                plugin: this.plugin
-            }
-        }); */
 
         this.infoEl = this.contentEl.createDiv("event-info");
         this.buildInfo();
@@ -97,11 +87,7 @@ export class CreateEventModal extends CalendariumModal {
                             return;
                         }
 
-                        const helper = new CalEventHelper(
-                            this.calendar,
-                            false,
-                            this.plugin.format
-                        );
+                        const helper = new CalEventHelper(this.calendar, false);
 
                         // refresh timestamp for date change
                         this.event.sort = helper.timestampForCalEvent(
@@ -151,11 +137,7 @@ export class CreateEventModal extends CalendariumModal {
                         this.saved = true;
 
                         // Saving this note to frontmatter
-                        if (
-                            false
-                            /* this.plugin.data.eventFrontmatter &&
-                            this.event.note */
-                        ) {
+                        if (false) {
                             const [path, subpath] =
                                 this.event.note.split(/[#^]/);
                             const note =
@@ -471,4 +453,25 @@ export class CreateEventModal extends CalendariumModal {
     async onOpen() {
         await this.display();
     }
+}
+
+export async function addEventWithModal(
+    plugin: Calendarium,
+    calendar: Calendar,
+    date: CalDate,
+    event?: CalEvent
+) {
+    const modal = new CreateEventModal(calendar, event, date);
+
+    modal.onClose = async () => {
+        if (!modal.saved) return;
+        const store = plugin.getStoreByCalendar(calendar);
+
+        calendar.events.push(modal.event);
+        store.eventStore.insertEvents(modal.event);
+
+        await plugin.saveCalendars();
+    };
+
+    modal.open();
 }

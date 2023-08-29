@@ -6,6 +6,7 @@ import { EventCache } from "./cache/event-cache";
 import { MoonCache } from "./cache/moon-cache";
 import Calendarium from "src/main";
 import { CreateEventModal } from "src/settings/modals/event/event";
+import { EventStore } from "./events.store";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -23,7 +24,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
 
     /** Event Cache */
     /** This cache is a Map< year number, year event cache > */
-    const eventCache = new EventCache(derived(store, (cal) => cal.events));
+    const eventStore = new EventStore(calendar);
     const categories = derived(store, (c) => c.categories);
 
     /** Year Calculator Cache */
@@ -36,9 +37,6 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             })
     );
     const moonCache = new MoonCache(moonStates, yearCalculator);
-
-    //@ts-expect-error
-    window.yearCache = yearCalculator;
 
     let ephemeralStore = getEphemeralStore(
         store,
@@ -69,8 +67,8 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
                 return cal;
             }),
         updateCalendar: (calendar: Calendar) => update((cal) => calendar),
-        eventCache,
-        addEvent: (date: CalDate) => {
+        eventStore,
+        /* addEvent: (date: CalDate) => {
             const modal = new CreateEventModal(plugin, calendar, null, date);
 
             modal.onClose = async () => {
@@ -82,7 +80,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             };
 
             modal.open();
-        },
+        }, */
 
         moonCache,
         categories,

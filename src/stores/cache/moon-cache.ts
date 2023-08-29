@@ -6,13 +6,13 @@ import { MOON_PHASES } from "src/utils/constants";
 import { wrap } from "src/utils/functions";
 
 class YearMoonCache extends YearCache<MoonState> {
-    update([moons, dirty]: [MoonState[], boolean]) {
+    update(moons: MoonState[]) {
         //pass through...
         return moons;
     }
 }
 class MonthMoonCache extends MonthCache<MoonState> {
-    update([moons, dirty]: [MoonState[], boolean]) {
+    update(moons: MoonState[]) {
         //pass through
         return moons;
     }
@@ -27,8 +27,8 @@ class DayMoonCache extends DayCache<MoonState> {
     ) {
         super(day, month, year, toConsider);
     }
-    update([moons, dirty]: [MoonState[], boolean]) {
-        if (dirty && moons) {
+    update(moons: MoonState[]) {
+        if (this.dirty && moons) {
             this.derived = [];
             const year = this.yearCalculator.getYearFromCache(this.year);
             const month = year.getMonthFromCache(this.month);

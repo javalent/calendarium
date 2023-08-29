@@ -30,10 +30,10 @@ export class API {
 
     /** Get all events for the loaded calendar. */
     getEvents(): CalEvent[] {
-        return get(this.#store.eventCache.entities);
+        return this.#store.eventStore.getEvents();
     }
     /** Get all events on a specific date. */
     getEventsOnDay(day: CalDate): CalEvent[] {
-        return get(this.#store.eventCache.getItemsOrRecalculate(day));
+        return get(this.#store.eventStore.getEventsForDate(day));
     }
 }

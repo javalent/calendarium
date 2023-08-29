@@ -16,7 +16,6 @@
     let target: Element;
 
     $: events = sortEventList([...events]);
-    console.log("🚀 ~ file: Flags.svelte:19 ~ events:", events);
 
     let overflow: number = 0;
     let previousHeight = 0;
@@ -70,10 +69,6 @@
         target = entries[0]?.target;
     });
     $: {
-        console.log(
-            "🚀 ~ file: Flags.svelte:74 ~ dayView || (height != undefined && target)) && events:",
-            (dayView || (height != undefined && target)) && events
-        );
         if ((dayView || (height != undefined && target)) && events) {
             addEvents();
         }

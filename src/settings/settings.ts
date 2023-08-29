@@ -576,10 +576,6 @@ export default class CalendariumSettings extends PluginSettingTab {
             try {
                 modal.onClose = () => {
                     if (modal.saved) {
-                        console.log(
-                            "🚀 ~ file: settings.ts:579 ~ modal.saved:",
-                            modal.saved
-                        );
                         calendar = copy(modal.calendar);
                         resolve(calendar);
                     }

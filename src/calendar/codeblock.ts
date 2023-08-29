@@ -118,7 +118,6 @@ export class CalendariumEditorSuggester extends EditorSuggest<string> {
         if (!match) return null;
 
         const [_, query] = match;
-        console.log("🚀 ~ file: codeblock.ts:122 ~ query:", query);
 
         if (
             this.plugin.calendars

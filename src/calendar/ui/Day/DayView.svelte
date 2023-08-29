@@ -19,8 +19,7 @@
         .getMonthFromCache($viewing.month);
     $: daysBeforeMonth = displayedMonth.daysBefore;
     $: daysBeforeDay = $daysBeforeMonth + $viewing.day;
-    $: events = store.eventCache.getItemsOrRecalculate($viewing);
-    $: console.log("🚀 ~ file: DayView.svelte:23 ~ events:", $events);
+    $: events = store.eventStore.getEventsForDate($viewing);
     $: moons = store.moonCache.getItemsOrRecalculate($viewing);
     $: displayDayNumber = $ephemeral.displayDayNumber;
     $: displayMoons = $ephemeral.displayMoons;
@@ -57,7 +56,7 @@
                     $ephemeral.displayDate($viewing);
                 }}
             />
-            <div use:event on:click={() => store.addEvent($viewing)} />
+            <!-- <div use:event on:click={() => store.addEvent($viewing)} /> -->
         </div>
         <div use:close on:click={() => ($viewing = null)} />
     </div>

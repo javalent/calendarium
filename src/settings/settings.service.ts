@@ -44,7 +44,7 @@ export default class SettingsService {
     constructor(private plugin: Calendarium, public manifest: PluginManifest) {
         this.app.workspace.onLayoutReady(() => (this.layoutReady = true));
         this.onLayoutReadyAndSettingsLoad(() => {
-            this.checkFCSettings();
+            this.checkSettings();
         });
     }
     public async onLayoutReadyAndSettingsLoad(callback: () => any) {
@@ -149,7 +149,7 @@ export default class SettingsService {
         }
     }
     notice: Notice;
-    private async checkFCSettings() {
+    private async checkSettings() {
         if (this.#data.askedToMoveFC) return;
 
         if (!this.app.plugins.plugins["fantasy-calendar"]) return;
