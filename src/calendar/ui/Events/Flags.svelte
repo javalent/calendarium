@@ -38,7 +38,6 @@
                     target,
                     props: {
                         event,
-                        categories: $categories,
                         dayView,
                         date,
                     },

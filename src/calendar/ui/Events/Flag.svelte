@@ -47,14 +47,14 @@
         }
     }
 
-    export let categories: CalEventCategory[];
+    $: categories = $store.categories;
 
     let color =
-        categories.find((c) => c.id == event.category)?.color ??
+        $categories?.find((c) => c.id == event.category)?.color ??
         DEFAULT_CATEGORY_COLOR;
 
     $: color =
-        categories.find((c) => c.id == event.category)?.color ??
+        $categories?.find((c) => c.id == event.category)?.color ??
         DEFAULT_CATEGORY_COLOR;
 
     const meta = Platform.isMacOS ? "Meta" : "Control";
