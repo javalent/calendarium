@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+git commit --allow-empty -m "chore: release $1" -m "Release-As: $1"

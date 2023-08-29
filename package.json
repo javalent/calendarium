@@ -6,6 +6,7 @@
     "scripts": {
         "build": "node ./esbuild.config.mjs production && npm test",
         "dev": "node ./esbuild.config.mjs",
+        "release-as": "scripty",
         "test": "jest"
     },
     "keywords": [],
@@ -32,6 +33,7 @@
         "jest": "^27.2.5",
         "moment": "2.29.4",
         "obsidian": "^1.2.8",
+        "scripty": "^2.1.1",
         "standard-version": "^9.3.2",
         "svelte": "^3.49.0",
         "svelte-dnd-action": "^0.9.11",
