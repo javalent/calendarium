@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b19](https://github.com/javalent/the-calendarium/compare/1.0.0-b18...1.0.0-b19) (2023-08-29)
+
+
+### Bug Fixes
+
+* Event management has been rewritten, events from notes now appear on calendar correctly ([1c16209](https://github.com/javalent/the-calendarium/commit/1c16209c30b343c6d870642e989fdd345196adac))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b19 ([fdad374](https://github.com/javalent/the-calendarium/commit/fdad374da3f443ff6d2489cecd7b73c86f493b63))
+
 ## [1.0.0-b18](https://github.com/javalent/the-calendarium/compare/1.0.0-b17...1.0.0-b18) (2023-08-26)
 
 
