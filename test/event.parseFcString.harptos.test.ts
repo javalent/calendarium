@@ -7,7 +7,7 @@ import Moment from 'moment';
 Object.defineProperty(window, 'moment', { value: Moment });
 
 const HARPTOS = PRESET_CALENDARS.find((p) => p.name == "Calendar of Harptos");
-const helper = new CalEventHelper(HARPTOS, false, 'YYYY-MM-DD');
+const helper = new CalEventHelper(HARPTOS, false);
 const file = {
     path: "path",
     basename: "basename"

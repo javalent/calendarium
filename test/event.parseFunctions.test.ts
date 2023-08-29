@@ -7,7 +7,7 @@ import Moment from 'moment';
 Object.defineProperty(window, 'moment', { value: Moment });
 
 const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
-const gregorian = new CalEventHelper(GREGORIAN, true, 'YYYY-MM-DD');
+const gregorian = new CalEventHelper(GREGORIAN, true);
 
 const file = {
     path: "path",

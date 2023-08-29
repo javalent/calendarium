@@ -18,14 +18,15 @@ const input: CalEventDate = {
 };
 
 test("YYYY-MM-DD", () => {
-    const YMD = new CalEventHelper(GREGORIAN, true, 'YYYY-MM-DD');
+    const YMD = new CalEventHelper(GREGORIAN, true);
     const datestring = '1400-02-28';
     expect(YMD.formatDigest).toEqual('YMD');
     expect(YMD.toCalDateString(input)).toEqual(datestring);
     expect(YMD.parseCalDateString(datestring, file)).toEqual(expect.objectContaining(input));
 });
 test("YYYY-MMM-DD", () => {
-    const YMD = new CalEventHelper(GREGORIAN, true, 'YYYY-MMM-DD');
+    GREGORIAN.dateFormat = "YYYY-MMM-DD";
+    const YMD = new CalEventHelper(GREGORIAN, true);
     const datestring = '1400-February-28';
     expect(YMD.formatDigest).toEqual('YMD');
     expect(YMD.toCalDateString(input)).toEqual(datestring);
@@ -33,7 +34,8 @@ test("YYYY-MMM-DD", () => {
 });
 
 test("M-D-Y", () => {
-    const MDY = new CalEventHelper(GREGORIAN, true, 'M-D-Y');
+    GREGORIAN.dateFormat = "M-D-Y";
+    const MDY = new CalEventHelper(GREGORIAN, true);
     const datestring = "2-28-1400";
     expect(MDY.formatDigest).toEqual('MDY');
     expect(MDY.toCalDateString(input)).toEqual(datestring);
@@ -41,7 +43,8 @@ test("M-D-Y", () => {
 });
 
 test("MM-D-Y", () => {
-    const MDY = new CalEventHelper(GREGORIAN, true, 'MM-D-Y');
+    GREGORIAN.dateFormat = "MM-D-Y";
+    const MDY = new CalEventHelper(GREGORIAN, true);
     const datestring = "02-28-1400";
     expect(MDY.formatDigest).toEqual('MDY');
     expect(MDY.toCalDateString(input)).toEqual(datestring);
@@ -49,7 +52,8 @@ test("MM-D-Y", () => {
 });
 
 test("DD-M-Y", () => {
-    const DMY = new CalEventHelper(GREGORIAN, true, 'DD-M-Y');
+    GREGORIAN.dateFormat = "DD-M-Y";
+    const DMY = new CalEventHelper(GREGORIAN, true);
     const datestring = "28-2-1400";
     expect(DMY.formatDigest).toEqual('DMY');
     expect(DMY.toCalDateString(input)).toEqual(datestring);
@@ -57,7 +61,8 @@ test("DD-M-Y", () => {
 });
 
 test("DD-MMM-Y", () => {
-    const DMY = new CalEventHelper(GREGORIAN, true, 'DD-MMM-Y');
+    GREGORIAN.dateFormat = "DD-MMM-Y";
+    const DMY = new CalEventHelper(GREGORIAN, true);
     const datestring = "28-February-1400";
     expect(DMY.formatDigest).toEqual('DMY');
     expect(DMY.toCalDateString(input)).toEqual(datestring);
