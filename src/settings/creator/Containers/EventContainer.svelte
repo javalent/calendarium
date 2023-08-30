@@ -15,10 +15,18 @@
         prepareFuzzySearch,
         FuzzyMatch,
         debounce,
-        SearchComponent
+        SearchComponent,
+        normalizePath,
+        TFolder,
+        TextComponent as ObsidianTextComponent,
+        ExtraButtonComponent,
     } from "obsidian";
     import { getContext } from "svelte";
     import { derived, writable } from "svelte/store";
+    import ToggleComponent from "../Settings/ToggleComponent.svelte";
+    import TextComponent from "../Settings/TextComponent.svelte";
+    import { FolderSuggestionModal } from "src/suggester/folder";
+    import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
 
     export let plugin: Calendarium;
 
@@ -29,6 +37,82 @@
     const slicer = writable(1);
     let filtered = false;
     let nameFilter = writable<string>("");
+
+    $: autoParse = $calendar.autoParse;
+
+    $: supportInlineEvents = $calendar.supportInlineEvents;
+    if (!$calendar.inlineEventTag)
+        $calendar.inlineEventTag = DEFAULT_CALENDAR.inlineEventTag;
+
+    let path = writable(DEFAULT_CALENDAR.path[0]);
+    const folder = (node: HTMLElement) => {
+        let folders = plugin.app.vault
+            .getAllLoadedFiles()
+            .filter(
+                (f) =>
+                    f instanceof TFolder &&
+                    !$calendar.path.find((p) => f.path.startsWith(p))
+            );
+        const text = new ObsidianTextComponent(node);
+        if (!$calendar.path) $calendar.path = ["/"];
+        text.setPlaceholder($calendar.path[0] ?? "/");
+        const modal = new FolderSuggestionModal(plugin.app, text, [
+            ...(folders as TFolder[]),
+        ]);
+
+        modal.onClose = async () => {
+            const v = text.inputEl.value?.trim()
+                ? text.inputEl.value.trim()
+                : "/";
+            $path = normalizePath(v);
+        };
+
+        text.inputEl.onblur = async () => {
+            const v = text.inputEl.value?.trim()
+                ? text.inputEl.value.trim()
+                : "/";
+            $path = normalizePath(v);
+        };
+    };
+
+    const addPathButton = (node: HTMLElement) => {
+        new ExtraButtonComponent(node).setIcon("plus-with-circle");
+    };
+    const addPath = () => {
+        if ($path.length && !$calendar.path.includes($path)) {
+            $calendar.path = [...$calendar.path, $path];
+        }
+    };
+    const pathSetting = (node: HTMLElement, path: string) => {
+        new Setting(node).setName(path).addExtraButton((b) =>
+            b.setIcon("trash").onClick(() => {
+                $calendar.path = $calendar.path.filter((p) => p != path);
+            })
+        );
+    };
+    $: inlineEventTagDesc = createFragment((e) => {
+        e.createSpan({
+            text: "Tag to specify which notes to scan for inline events, e.g. ",
+        });
+        e.createEl("code", { text: "inline-events" });
+        e.createSpan({
+            text: " to use the ",
+        });
+        e.createEl("code", { text: "#inline-events" });
+        e.createSpan({
+            text: " tag.",
+        });
+    });
+
+    const inlineEventTagSetting = (node: HTMLElement) => {
+        const text = new ObsidianTextComponent(node);
+        text.setValue(
+            `${$calendar.inlineEventTag ?? ""}`.replace("#", "")
+        ).onChange(async (v) => {
+            $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
+            await plugin.saveSettings();
+        });
+    };
 
     const sorted = derived([sortedStore, nameFilter], ([events, filter]) => {
         if (!filter || !filter.length) {
@@ -57,7 +141,7 @@
         return $calendar.categories.find(({ id }) => id == category);
     };
     const add = (event?: CalEvent) => {
-        const modal = new CreateEventModal(plugin, $calendar, event);
+        const modal = new CreateEventModal($calendar, event);
         modal.onClose = () => {
             if (!modal.saved) return;
             if (modal.editing) {
@@ -117,6 +201,51 @@
     desc={`Displaying ${$sorted.length}/${$calendar.events.length} events.`}
     open={false}
 >
+    <ToggleComponent
+        name={"Parse Files for Events"}
+        desc={"The plugin will automatically parse files in the vault for events for this calendar."}
+        value={autoParse}
+        on:click={() => {
+            $calendar.autoParse = !$calendar.autoParse;
+        }}
+    />
+    {#if autoParse}
+        <TextComponent
+            name={"Events Folders"}
+            desc={"The plugin will only parse files in these folders for events."}
+            value={$calendar.path[0]}
+        >
+            <div use:folder />
+            <div use:addPathButton on:click={addPath} />
+        </TextComponent>
+        <div class="existing-paths">
+            {#each $calendar.path as path (path)}
+                <div class="existing-path" use:pathSetting={path} />
+            {/each}
+        </div>
+        <ToggleComponent
+            name={"Support Inline Events"}
+            desc={"Look for <span> tags defining events in notes."}
+            value={supportInlineEvents}
+            on:click={() => {
+                $calendar.supportInlineEvents = !$calendar.supportInlineEvents;
+            }}
+        />
+        {#if supportInlineEvents}
+            {#key $calendar.supportInlineEvents}
+                <TextComponent
+                    name={"Default Inline Events Tag"}
+                    desc={inlineEventTagDesc}
+                    value={""}
+                >
+                    <div
+                        use:inlineEventTagSetting
+                        class="setting-item-control"
+                    />
+                </TextComponent>
+            {/key}
+        {/if}
+    {/if}
     <ButtonComponent
         name={"Delete All Events"}
         icon="trash"
@@ -156,5 +285,10 @@
         text-decoration: underline;
         font-style: italic;
         cursor: pointer;
+    }
+    .existing-paths {
+        padding: 1rem 2rem;
+        display: flex;
+        flex-flow: column;
     }
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import type { Event, EventCategory } from "src/@types";
+    import type { CalEvent, CalEventCategory } from "src/@types";
     import { ExtraButtonComponent } from "obsidian";
     import Dot from "../Utilities/Dot.svelte";
 
@@ -15,8 +15,8 @@
     const edit = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon("pencil").setTooltip("Edit");
     };
-    export let event: Event;
-    export let category: EventCategory;
+    export let event: CalEvent;
+    export let category: CalEventCategory;
     export let date: string;
 </script>
 

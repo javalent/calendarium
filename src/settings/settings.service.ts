@@ -104,6 +104,10 @@ export default class SettingsService {
                     calendar.id = `${nanoid(10)}`;
                     dirty = true;
                 }
+                if (!Array.isArray(calendar.path)) {
+                    calendar.path = [calendar.path];
+                    dirty = true;
+                }
             }
             if (!this.#data.defaultCalendar && this.#data.calendars.length) {
                 this.#data.defaultCalendar = this.#data.calendars[0].id;

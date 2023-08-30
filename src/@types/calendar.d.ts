@@ -18,7 +18,7 @@ export interface Calendar {
     date?: number;
     displayWeeks?: boolean;
     autoParse: boolean;
-    path: string;
+    path: string[];
     supportInlineEvents: boolean;
     inlineEventTag: string;
     dateFormat?: string;

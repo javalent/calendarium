@@ -34,8 +34,8 @@
             .getAllLoadedFiles()
             .filter((f) => f instanceof TFolder);
         const text = new ObsidianTextComponent(node);
-        if (!$calendar.path) $calendar.path = "/";
-        text.setPlaceholder($calendar.path ?? "/");
+        if (!$calendar.path) $calendar.path = ["/"];
+        text.setPlaceholder($calendar.path[0] ?? "/");
         const modal = new FolderSuggestionModal(plugin.app, text, [
             ...(folders as TFolder[]),
         ]);
@@ -44,14 +44,14 @@
             const v = text.inputEl.value?.trim()
                 ? text.inputEl.value.trim()
                 : "/";
-            $calendar.path = normalizePath(v);
+            $calendar.path = [normalizePath(v)];
         };
 
         text.inputEl.onblur = async () => {
             const v = text.inputEl.value?.trim()
                 ? text.inputEl.value.trim()
                 : "/";
-            $calendar.path = normalizePath(v);
+            $calendar.path = [normalizePath(v)];
         };
     };
 
@@ -118,46 +118,6 @@
                 $calendar.static.incrementDay = !$calendar.static.incrementDay;
             }}
         />
-        <ToggleComponent
-            name={"Parse Files for Events"}
-            desc={"The plugin will automatically parse files in the vault for events."}
-            value={autoParse}
-            on:click={() => {
-                $calendar.autoParse = !$calendar.autoParse;
-            }}
-        />
-        {#if autoParse}
-            <TextComponent
-                name={"Events Folder"}
-                desc={"The plugin will only parse files in this folder for events."}
-                value={$calendar.path}
-            >
-                <div use:folder />
-            </TextComponent>
-            <ToggleComponent
-                name={"Support Inline Events"}
-                desc={"Look for <span> tags defining events in notes."}
-                value={supportInlineEvents}
-                on:click={() => {
-                    $calendar.supportInlineEvents =
-                        !$calendar.supportInlineEvents;
-                }}
-            />
-            {#if supportInlineEvents}
-                {#key $calendar.supportInlineEvents}
-                    <TextComponent
-                        name={"Default Inline Events Tag"}
-                        desc={inlineEventTagDesc}
-                        value={""}
-                    >
-                        <div
-                            use:inlineEventTagSetting
-                            class="setting-item-control"
-                        />
-                    </TextComponent>
-                {/key}
-            {/if}
-        {/if}
     </div>
 </Details>
 

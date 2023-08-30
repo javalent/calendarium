@@ -568,7 +568,8 @@ export default class CalendariumSettings extends PluginSettingTab {
     ): Promise<Calendar | void> {
         /* this.containerEl.empty(); */
         const clone = copy(calendar);
-        clone.id = `ID_${nanoid(10)}`;
+        const original = calendar.id;
+        clone.id = `${nanoid(10)}`;
 
         /* if (Platform.isMobile) { */
         const modal = new CreatorModal(this.plugin, clone);
@@ -577,6 +578,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 modal.onClose = () => {
                     if (modal.saved) {
                         calendar = copy(modal.calendar);
+                        calendar.id = original;
                         resolve(calendar);
                     }
                     resolve();
