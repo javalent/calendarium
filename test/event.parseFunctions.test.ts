@@ -139,11 +139,12 @@ test("parseFrontmatterEvent", () => {
 
 test("parseTimelineEvent", () => {
     let category = gregorian.calendar.categories[0];
+    console.log("🚀 ~ file: event.parseFunctions.test.ts:142 ~ category:", category);
     let actual: CalEvent[] = [];
 
     gregorian.parseInlineEvents(
         "<span class='ob-timelines'   \n" +
-        " data-category='natural-events' \n" +
+        " data-category='Natural Events' \n" +
         " data-date='1966-05-23-00'\n" +
         " data-end='1966-08-1-00'  \n" +
         " data-img='attachments/thing.png'  \n" +

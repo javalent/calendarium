@@ -49,10 +49,6 @@
 
     $: categories = $store.categories;
 
-    let color =
-        $categories?.find((c) => c.id == event.category)?.color ??
-        DEFAULT_CATEGORY_COLOR;
-
     $: color =
         $categories?.find((c) => c.id == event.category)?.color ??
         DEFAULT_CATEGORY_COLOR;
@@ -87,10 +83,6 @@
     const contextMenu = (evt: MouseEvent) => {
         evt.stopPropagation();
         const menu = new Menu();
-        console.log(
-            "🚀 ~ file: Flag.svelte:83 ~ $store.eventStore.isRemovable(event.id):",
-            $store.eventStore.isRemovable(event.id)
-        );
         if ($store.eventStore.isRemovable(event.id)) {
             if (!event.note) {
                 menu.addItem((item) => {

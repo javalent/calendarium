@@ -21,6 +21,7 @@ import Worker, {
     UpdateEventMessage,
     SaveMessage,
     DeleteEventMessage,
+    NewCategoryMessage,
 } from "./watcher.worker";
 
 declare global {
@@ -236,6 +237,21 @@ export class Watcher extends Component {
                 }
             }
         );
+        this.worker.addEventListener(
+            "message",
+            async (evt: MessageEvent<NewCategoryMessage>) => {
+                if (evt.data.type == "category") {
+                    const { id, category } = evt.data;
+                    const calendar = this.calendars.find((c) => c.id == id);
+                    if (!calendar) return;
+                    const store = this.plugin.getStore(calendar.id);
+                    if (!store) return;
+                    if (store.hasCategory(category.id)) return;
+                    store.addCategory(category);
+                    await this.plugin.saveCalendars();
+                }
+            }
+        );
 
         /** An event needs to be removed. */
         this.worker.addEventListener(
@@ -299,22 +315,7 @@ export class Watcher extends Component {
         }
         this.startParsing([...folders]);
     }
-    addToTree(calendar: Calendar, event: CalEvent) {
-        if (!this.tree.has(calendar.id)) {
-            this.tree.set(calendar.id, new Set());
-        }
-        const calendarTree = this.tree.get(calendar.id);
 
-        if (calendarTree.has(event.date.year)) return;
-
-        calendarTree.add(event.date.year);
-
-        if (event.end && event.end.year != event.date.year) {
-            for (let i = event.date.year + 1; i <= event.end.year; i++) {
-                calendarTree.add(event.date.year);
-            }
-        }
-    }
     startParsing(paths: string[]) {
         for (const path of paths) {
             this.queue.add(path);

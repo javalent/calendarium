@@ -1,12 +1,18 @@
-import type { Calendar, CalDate, MoonState } from "src/@types";
+import type {
+    Calendar,
+    CalDate,
+    MoonState,
+    CalEventCategory,
+} from "src/@types";
 import { Readable, Writable, derived, get, writable } from "svelte/store";
 import { YearCalculatorCache, YearStoreCache } from "./years.store";
-import { dateString, wrap } from "src/utils/functions";
+import { dateString, nanoid, wrap } from "src/utils/functions";
 import { EventCache } from "./cache/event-cache";
 import { MoonCache } from "./cache/moon-cache";
 import Calendarium from "src/main";
 import { CreateEventModal } from "src/settings/modals/event/event";
 import { EventStore } from "./events.store";
+import randomColor from "randomcolor";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -98,6 +104,14 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             return ephemeralStore;
         },
         yearCalculator,
+        hasCategory: (category: string) =>
+            get(categories).find((f) => f.id === category) != null,
+        addCategory: (category: CalEventCategory) => {
+            update((store) => {
+                store.categories.push(category);
+                return store;
+            });
+        },
     };
 }
 

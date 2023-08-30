@@ -29,7 +29,6 @@
         month: $index,
         year: year.year,
     });
-    $: console.log("🚀 ~ file: Day.svelte:32 ~ events:", events);
     $: displayMoons = $ephemeral.displayMoons;
 
     $: moons = $store.moonCache.getItemsOrRecalculate({

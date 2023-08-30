@@ -20,7 +20,6 @@
     $: daysBeforeMonth = displayedMonth.daysBefore;
     $: daysBeforeDay = $daysBeforeMonth + $viewing.day;
     $: events = store.eventStore.getEventsForDate($viewing);
-    $: console.log("🚀 ~ file: DayView.svelte:23 ~ events:", $events);
     $: moons = store.moonCache.getItemsOrRecalculate($viewing);
     $: displayDayNumber = $ephemeral.displayDayNumber;
     $: displayMoons = $ephemeral.displayMoons;

@@ -3,7 +3,7 @@
     import { createEventDispatcher, getContext } from "svelte";
     import randomColor from "randomcolor";
 
-    import type { Calendar, EventCategory } from "src/@types";
+    import type { Calendar, CalEventCategory } from "src/@types";
     import { nanoid } from "src/utils/functions";
     import AddNew from "../Utilities/AddNew.svelte";
     import NoExistingItems from "../Utilities/NoExistingItems.svelte";
@@ -16,7 +16,7 @@
 
     $: categories = $calendar.categories;
 
-    const name = (node: HTMLElement, category: EventCategory) => {
+    const name = (node: HTMLElement, category: CalEventCategory) => {
         const comp = new TextComponent(node)
             .setValue(category.name)
             .setPlaceholder("Name")
@@ -26,12 +26,12 @@
             });
         comp.inputEl.setAttr("style", "width: 100%;");
     };
-    const trash = (node: HTMLElement, item: EventCategory) => {
+    const trash = (node: HTMLElement, item: CalEventCategory) => {
         new ExtraButtonComponent(node).setIcon("trash").onClick(() => {
             categoryStore.delete(item.id);
         });
     };
-    const updateColor = (event: Event, category: EventCategory) => {
+    const updateColor = (event: Event, category: CalEventCategory) => {
         const { target } = event;
         if (!(target instanceof HTMLInputElement)) return;
         category.color = target.value;

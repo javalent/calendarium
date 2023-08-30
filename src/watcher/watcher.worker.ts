@@ -1,5 +1,10 @@
 import type { CachedMetadata, FrontMatterCache } from "obsidian";
-import type { Calendar, CalEvent, Nullable } from "src/@types";
+import type {
+    Calendar,
+    CalEvent,
+    CalEventCategory,
+    Nullable,
+} from "src/@types";
 import { CalEventHelper } from "src/events/event.helper";
 
 export interface QueueMessage {
@@ -29,6 +34,11 @@ export interface FileCacheMessage {
 export interface GetFileCacheMessage {
     type: "get";
     path: string;
+}
+export interface NewCategoryMessage {
+    type: "category";
+    id: string;
+    category: CalEventCategory;
 }
 export interface UpdateEventMessage {
     type: "update";
@@ -233,16 +243,27 @@ class Parser {
             (allTags.includes(eventHelper.calendar.inlineEventTag) ||
                 allTags.includes(`#${eventHelper.calendar.inlineEventTag}`))
         ) {
-            eventHelper.parseInlineEvents(data, file, (event: CalEvent) => {
-                ctx.postMessage<UpdateEventMessage>({
-                    type: "update",
-                    id: eventHelper.calendar.id,
-                    index: -1,
-                    event,
-                    original: undefined,
-                });
-                tEvents++;
-            });
+            eventHelper.parseInlineEvents(
+                data,
+                file,
+                (event: CalEvent, newCategory?: CalEventCategory) => {
+                    if (newCategory) {
+                        ctx.postMessage<NewCategoryMessage>({
+                            type: "category",
+                            id: eventHelper.calendar.id,
+                            category: newCategory,
+                        });
+                    }
+                    ctx.postMessage<UpdateEventMessage>({
+                        type: "update",
+                        id: eventHelper.calendar.id,
+                        index: -1,
+                        event,
+                        original: undefined,
+                    });
+                    tEvents++;
+                }
+            );
         }
 
         if (this.debug && fEvents + tEvents > 0) {

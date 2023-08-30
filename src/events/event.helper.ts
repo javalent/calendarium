@@ -11,10 +11,14 @@ import type {
     Nullable,
 } from "../@types";
 import { DEFAULT_FORMAT } from "../utils/constants";
+import randomColor from "randomcolor";
 
 const inlineDateSpans: RegExp = /<(span|div)[\s\S]*?<\/(span|div)>/g;
 
-export type CalEventCallback = (fcEvent: CalEvent) => void;
+export type CalEventCallback = (
+    fcEvent: CalEvent,
+    category?: CalEventCategory
+) => void;
 
 export interface InputDate {
     year?: any;
@@ -102,6 +106,21 @@ export class CalEventHelper {
             ? this.parseFrontmatterDate(frontmatter["fc-end"], file)
             : null;
 
+        let cat: CalEventCategory, newCategory: boolean;
+        if (frontmatter?.["fc-category"] && !category) {
+            cat = this.calendar.categories.find(
+                (cat) => cat?.name == frontmatter["fc-category"]
+            );
+            if (!cat) {
+                cat = {
+                    id: nanoid(6),
+                    color: randomColor(),
+                    name: frontmatter["fc-category"],
+                };
+                newCategory = true;
+                this.calendar.categories.push(cat);
+            }
+        }
         if (date) {
             publish({
                 id: nanoid(6),
@@ -111,7 +130,7 @@ export class CalEventHelper {
                 end,
                 sort: this.parsedToTimestamp(date),
                 note: file.path,
-                category: category?.id,
+                category: (cat ?? category)?.id,
                 img: frontmatter["fc-img"],
             });
         }
@@ -157,24 +176,36 @@ export class CalEventHelper {
             let end = element.dataset.end
                 ? this.parseCalDateString(element.dataset.end, file)
                 : undefined;
-            let cat: CalEventCategory;
+            let cat: CalEventCategory, newCategory: boolean;
             if (element.dataset.class) {
                 cat = this.calendar.categories.find(
                     (cat) => cat?.name == element.dataset.class
                 );
+                if (!cat) {
+                    cat = {
+                        id: nanoid(6),
+                        color: randomColor(),
+                        name: element.dataset.class,
+                    };
+                    newCategory = true;
+                    this.calendar.categories.push(cat);
+                }
             }
             if (date) {
-                publish({
-                    id: nanoid(6),
-                    name: element.dataset.title ?? file.basename,
-                    description: element.content,
-                    date,
-                    end,
-                    sort: this.parsedToTimestamp(date),
-                    note: file.path,
-                    category: (cat ?? category)?.id,
-                    img: element.dataset.img,
-                });
+                publish(
+                    {
+                        id: nanoid(6),
+                        name: element.dataset.title ?? file.basename,
+                        description: element.content,
+                        date,
+                        end,
+                        sort: this.parsedToTimestamp(date),
+                        note: file.path,
+                        category: (cat ?? category)?.id,
+                        img: element.dataset.img,
+                    },
+                    newCategory ? cat : null
+                );
             }
         }
     }
