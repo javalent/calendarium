@@ -1,7 +1,7 @@
 {
     "id": "calendarium",
     "name": "Calendarium",
-    "version": "1.0.0-b21",
+    "version": "1.0.0-b22",
     "minAppVersion": "1.2.8",
     "author": "Jeremy Valentine",
     "description": "The ultimate Obsidian plugin for crafting mind-bending fantasy and sci-fi calendars",
