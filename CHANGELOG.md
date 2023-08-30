@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.0-b21](https://github.com/javalent/the-calendarium/compare/1.0.0-b20...1.0.0-b21) (2023-08-30)
+
+
+### Features
+
+* Calendars will now auto-generate categories if they don't exist for events defined in notes ([e78a9ce](https://github.com/javalent/the-calendarium/commit/e78a9ce41c6310ab6b365f2255e7812ff45d7cad))
+
+
+### Bug Fixes
+
+* fixes issue where category would persist incorrectly in span events ([02d0107](https://github.com/javalent/the-calendarium/commit/02d010771847be1e1f2bdf4f48111427f769973a))
+* fixes issue where some events would not color correctly ([#44](https://github.com/javalent/the-calendarium/issues/44)) ([ccc191d](https://github.com/javalent/the-calendarium/commit/ccc191d309ca09d4de56cc239fb09dbf5dfccb76))
+* key flags by events so they refresh when empty ([#44](https://github.com/javalent/the-calendarium/issues/44)) ([b79b233](https://github.com/javalent/the-calendarium/commit/b79b233f52330f46fb95e7e2883273b07bfcd2f9))
+* pass component to render markdown ([#44](https://github.com/javalent/the-calendarium/issues/44)) ([ecde883](https://github.com/javalent/the-calendarium/commit/ecde883b8c0b40e4a66d2015d31617874b399edf))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b21 ([ad3fc64](https://github.com/javalent/the-calendarium/commit/ad3fc648c330cb2b8e5613ce203fd964ec8aae62))
+
 ## [1.0.0-b20](https://github.com/javalent/the-calendarium/compare/1.0.0-b19...1.0.0-b20) (2023-08-29)
 
 
