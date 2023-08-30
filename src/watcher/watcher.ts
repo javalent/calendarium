@@ -51,6 +51,7 @@ class CalendarPickerModal extends FuzzySuggestModal<Calendar> {
 
 export class Watcher extends Component {
     queue: Set<string> = new Set();
+    paths: Set<string> = new Set();
     get calendars() {
         return this.plugin.data.calendars;
     }
@@ -143,6 +144,7 @@ export class Watcher extends Component {
         /** Metadata for a file has changed and the file should be checked. */
         this.registerEvent(
             this.metadataCache.on("changed", (file) => {
+                /** Already being parsed. */
                 if (this.queue.has(file.path)) return;
                 this.startParsing([file.path]);
             })
@@ -294,11 +296,17 @@ export class Watcher extends Component {
         for (const calendar of calendars) {
             if (!calendar) continue;
             if (!calendar.autoParse) continue;
-            const folder = this.vault.getAbstractFileByPath(calendar.path);
-            if (!folder || !(folder instanceof TFolder)) continue;
-            for (const child of folder.children) {
-                folders.add(child.path);
+            for (const path of calendar.path) {
+                const folder = this.vault.getAbstractFileByPath(path);
+                if (!folder || !(folder instanceof TFolder)) continue;
+                for (const child of folder.children) {
+                    folders.add(child.path);
+                }
             }
+            //remove events associated with files.
+            const store = this.plugin.getStoreByCalendar(calendar);
+            if (!store) continue;
+            store.eventStore.removeAllFileEvents();
         }
 
         if (!folders.size) return;
@@ -325,6 +333,7 @@ export class Watcher extends Component {
             paths,
         });
     }
+
     onunload() {
         this.worker.terminate();
         this.worker = null;

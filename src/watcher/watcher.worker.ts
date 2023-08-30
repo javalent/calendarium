@@ -112,17 +112,25 @@ class Parser {
                     // Sort by name (in reverse: last added to the map wins), then by path length
                     // When looking for a calendar for a file, we'll start with the longest (most specific) path first
                     // If two calendars share the same path, the alphabetically first one wins
+                    const entries: Array<[string, string]> = [];
+                    for (const calendar of calendars) {
+                        for (const path of calendar.path) {
+                            entries.push([path, calendar.name]);
+                        }
+                    }
                     this.pathToName = Object.fromEntries(
-                        calendars
-                            .map((calendar) => [calendar.path, calendar.name])
-                            .sort((a, b) => {
-                                if (b[0] == a[0]) {
-                                    console.warn(
-                                        `Calendar ${a[1]} and ${b[1]} have the same path ${a[0]}. The last listed in configuration will be used.`
-                                    );
-                                }
-                                return b[0].length - a[0].length;
-                            })
+                        entries.sort((a, b) => {
+                            if (b[0] == a[0]) {
+                                console.warn(
+                                    `Calendar ${a[1]} and ${b[1]} have the same path ${a[0]}. The last listed in configuration will be used.`
+                                );
+                            }
+                            return b[0].length - a[0].length;
+                        })
+                    );
+                    console.log(
+                        "🚀 ~ file: watcher.worker.ts:131 ~ this.pathToName:",
+                        this.pathToName
                     );
                     if (this.debug) {
                         console.debug("Received calendars message");
@@ -214,7 +222,7 @@ class Parser {
         // Always clear existing events for a changed file
         this.removeEventsFromFile(file.path);
 
-        const eventHelper = this.createEventHandler(frontmatter, file);
+        const eventHelper = this.createEventHandler(frontmatter, allTags, file);
         if (!eventHelper) {
             return; // no calendar for this file, events removed
         }
@@ -274,9 +282,10 @@ class Parser {
     }
     createEventHandler(
         frontmatter: FrontMatterCache,
+        allTags: string[],
         file: { path: string; basename: string }
     ): Nullable<CalEventHelper> {
-        if (frontmatter && !frontmatter["fc-ignore"]) {
+        if (!frontmatter?.["fc-ignore"]) {
             let name = frontmatter?.["fc-calendar"];
             if (!name || !name.length) {
                 // did we get here because a calendar looks for events in this path?
@@ -290,19 +299,33 @@ class Parser {
             if (this.addToDefaultIfMissing && (!name || !name.length)) {
                 name = this.defaultCalendar;
             }
+            const calendarPath = Object.entries(this.pathToName).find(
+                ([path, calendar]) => calendar === name
+            );
+
+            //This file is not actually associated with the calendar....
+            if (
+                !calendarPath?.length ||
+                (calendarPath[0] !== "/" &&
+                    !file.path.startsWith(calendarPath[0]))
+            ) {
+                return null;
+            }
+
             name = name?.trim().toLowerCase();
             if (name) {
                 let helper = this.eventHelpers.get(name);
+
                 if (helper) {
                     return helper;
                 } else {
-                    if (this.debug) console.log("Finding calendar for", name);
+                    if (this.debug) console.info("Finding calendar for", name);
                     const calendar = this.calendars.find(
                         (calendar) => name == calendar.name.toLowerCase()
                     );
                     if (calendar) {
                         if (this.debug)
-                            console.log(
+                            console.info(
                                 "creating event helper for calendar",
                                 calendar
                             );

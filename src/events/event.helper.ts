@@ -95,6 +95,7 @@ export class CalEventHelper {
         publish: CalEventCallback,
         category?: CalEventCategory
     ) {
+        if (!frontmatter) return;
         const dateField = "fc-date" in frontmatter ? "fc-date" : "fc-start";
         let date = frontmatter[dateField]
             ? this.parseFrontmatterDate(frontmatter[dateField], file)

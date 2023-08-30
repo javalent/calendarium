@@ -4,7 +4,7 @@ import { Readable, derived, get, writable } from "svelte/store";
 
 class YearEventCache extends YearCache<CalEvent> {
     update(events: CalEvent[]) {
-        if (this.dirty && events) {
+        if (events) {
             this.derived = events.filter((event) => {
                 const date = { ...event.date };
                 const end = { ...event.end };
@@ -28,14 +28,13 @@ class YearEventCache extends YearCache<CalEvent> {
 
                 return false;
             });
-            this.dirty = false;
         }
         return this.derived;
     }
 }
 class MonthEventCache extends MonthCache<CalEvent> {
     update(events: CalEvent[]) {
-        if (this.dirty && events) {
+        if (events) {
             this.derived = events.filter((event) => {
                 const date = { ...event.date };
                 const end = { ...event.end };
@@ -75,14 +74,13 @@ class MonthEventCache extends MonthCache<CalEvent> {
 
                 return false;
             });
-            this.dirty = false;
         }
         return this.derived;
     }
 }
 class DayEventCache extends DayCache<CalEvent> {
     update(events: CalEvent[]) {
-        if (this.dirty && events) {
+        if (events) {
             this.derived = events.filter((event) => {
                 if (
                     (!event.date.year || event.date.year == this.year) &&

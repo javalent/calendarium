@@ -28,7 +28,7 @@ class DayMoonCache extends DayCache<MoonState> {
         super(day, month, year, toConsider);
     }
     update(moons: MoonState[]) {
-        if (this.dirty && moons) {
+        if (moons) {
             this.derived = [];
             const year = this.yearCalculator.getYearFromCache(this.year);
             const month = year.getMonthFromCache(this.month);

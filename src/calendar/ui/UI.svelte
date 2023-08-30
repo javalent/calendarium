@@ -29,7 +29,9 @@
     <p>No calendars created! Create one in settings to get started.</p>
 {:else}
     <div class="calendar-container calendarium">
-        <Calendar />
+        {#key store}
+            <Calendar />
+        {/key}
     </div>
 {/if}
 

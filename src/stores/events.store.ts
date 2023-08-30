@@ -81,6 +81,22 @@ export class EventStore {
             return SAVED_EVENTS;
         });
     }
+    public removeAllFileEvents() {
+        this.#events.update((SAVED_EVENTS) => {
+            for (const id of this.#fileEventSet) {
+                if (!SAVED_EVENTS.has(id)) continue;
+                const date = { ...SAVED_EVENTS.get(id).date };
+                SAVED_EVENTS.delete(id);
+                this.#eventCache.invalidate(date);
+                this.#fileEventSet.delete(id);
+            }
+
+            this.#fileEvents = new Map();
+            this.#fileEventSet = new Set();
+
+            return SAVED_EVENTS;
+        });
+    }
 
     public isFileEvent(eventId: string) {
         return this.#fileEventSet.has(eventId);

@@ -5,7 +5,7 @@ export const PRESET_CALENDARS: Calendar[] = [
         name: "Gregorian Calendar",
         description: "A calendar for the real world.",
         autoParse: false,
-        path: "/",
+        path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
         static: {
@@ -452,40 +452,6 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
             },
             {
-                name: "Work on the first version of this calendar started.",
-                description:
-                    "Aecius started work on the first version Gregorian Calendar for Calendarium on this day.",
-                id: "824612",
-                note: null,
-                date: {
-                    day: 23,
-                    year: 2019,
-                    month: 5,
-                },
-                category: "miscellaneous-events",
-                sort: {
-                    timestamp: Number.MIN_VALUE,
-                    order: "",
-                },
-            },
-            {
-                name: "Work on this version of the Gregorian Calendar started.",
-                description:
-                    "On this day, Aecius started to rework the Gregorian Calendar from scratch to make it work with the updates Wasp and Alex implemented since the summer of 2019.",
-                id: "824613",
-                note: null,
-                date: {
-                    day: 21,
-                    year: 2020,
-                    month: 0,
-                },
-                category: "miscellaneous-events",
-                sort: {
-                    timestamp: Number.MIN_VALUE,
-                    order: "",
-                },
-            },
-            {
                 name: "Introduction of the Gregorian Calendar",
                 description:
                     "On this day in 1582 the Gregorian calendar was officially introduced, following Thursday October 4th on the Julian Calendar",
@@ -536,7 +502,7 @@ export const PRESET_CALENDARS: Calendar[] = [
         name: "Calendar of Greyhawk",
         description: "Create the calendar of Oerth",
         autoParse: false,
-        path: "/",
+        path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
         static: {
@@ -1049,7 +1015,7 @@ export const PRESET_CALENDARS: Calendar[] = [
         name: "Calendar of Golarion",
         description: "Calendar for the world of Pathfinder.",
         autoParse: false,
-        path: "/",
+        path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
         static: {
@@ -2725,7 +2691,7 @@ export const PRESET_CALENDARS: Calendar[] = [
         name: "Calendar of Galifar",
         description: "Calendar of the world of Eberron.",
         autoParse: false,
-        path: "/",
+        path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
         static: {
@@ -3517,7 +3483,7 @@ export const PRESET_CALENDARS: Calendar[] = [
         name: "Barovian Calendar",
         description: "Calendar of the realm of Barovia, home of Strahd.",
         autoParse: false,
-        path: "/",
+        path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
         static: {
@@ -3856,7 +3822,7 @@ export const PRESET_CALENDARS: Calendar[] = [
         name: "Exandrian Calendar",
         description: "Calendar of the world of Wildemount.",
         autoParse: false,
-        path: "/",
+        path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
         static: {
@@ -4523,7 +4489,7 @@ export const PRESET_CALENDARS: Calendar[] = [
         name: "Calendar of Harptos",
         description: "Calendar of Faerûn of the Forgotten Realms.",
         autoParse: false,
-        path: "/",
+        path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
         static: {
