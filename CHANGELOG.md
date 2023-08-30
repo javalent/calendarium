@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b20](https://github.com/javalent/the-calendarium/compare/1.0.0-b19...1.0.0-b20) (2023-08-29)
+
+
+### Bug Fixes
+
+* fixes tests ([4b6c95b](https://github.com/javalent/the-calendarium/commit/4b6c95ba9cebf9a92455095c1b33c9fe177c110e))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b20 ([258c657](https://github.com/javalent/the-calendarium/commit/258c657b73a8c55abc4d6a168b3b9dc034303d71))
+
 ## [1.0.0-b19](https://github.com/javalent/the-calendarium/compare/1.0.0-b18...1.0.0-b19) (2023-08-29)
 
 
