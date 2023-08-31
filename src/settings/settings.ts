@@ -355,8 +355,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                             calendar
                         );
                         if (edited) {
-                            this.plugin.addNewCalendar(edited, calendar);
-                            await this.plugin.saveCalendars();
+                            await this.plugin.addNewCalendar(edited, calendar);
                             this.display();
                         }
                     });
