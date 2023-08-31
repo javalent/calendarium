@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0-b22](https://github.com/javalent/the-calendarium/compare/1.0.0-b21...1.0.0-b22) (2023-08-30)
+
+
+### Features
+
+* can now specify multiple calendar event paths ([4d2ee83](https://github.com/javalent/the-calendarium/commit/4d2ee83a88ead7658a043d32de834751bcf31205))
+
+
+### Bug Fixes
+
+* fixes issue where events can be added to calendars despite not being in the path when modifying notes ([81bfbd4](https://github.com/javalent/the-calendarium/commit/81bfbd44c2e5f81f327bf4404a86e14d5bdf8a5c))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b22 ([1fddfc9](https://github.com/javalent/the-calendarium/commit/1fddfc9516cbbe76adf4c336340f1941f7a78670))
+
 ## [1.0.0-b21](https://github.com/javalent/the-calendarium/compare/1.0.0-b20...1.0.0-b21) (2023-08-30)
 
 
