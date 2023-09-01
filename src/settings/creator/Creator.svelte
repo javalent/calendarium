@@ -28,8 +28,6 @@
         ready = true;
     });
 
-    const dispatch = createEventDispatcher();
-
     export let width: number;
     export let plugin: Calendarium;
     export let color: string = null;
