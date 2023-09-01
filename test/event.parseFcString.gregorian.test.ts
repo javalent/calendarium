@@ -1,17 +1,21 @@
+/**
+ * @vitest-environment happy-dom
+ */
 import { CalEvent } from "../src/@types";
 import { CalEventHelper, ParseDate } from "../src/events/event.helper";
 import { sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
+import { vi, test, expect } from "vitest";
 
-import Moment from 'moment';
-Object.defineProperty(window, 'moment', { value: Moment });
+import Moment from "moment";
+Object.defineProperty(window, "moment", { value: Moment });
 
 const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
 const helper = new CalEventHelper(GREGORIAN, false);
 const file = {
     path: "path",
-    basename: "basename"
-}
+    basename: "basename",
+};
 
 // test("Leap Days (Gregorian)", () => {
 //     expect(leapDaysBeforeYear(1, GREGORIAN)).toBe(0);
@@ -27,7 +31,7 @@ test("Parse January", () => {
         year: 0,
         month: 0,
         day: 1,
-        order: ''
+        order: "",
     };
     // Mess around with year 0 for fun
     expect(helper.parseCalDateString("0", file)).toEqual(expected);
@@ -41,7 +45,7 @@ test("Parse February", () => {
         year: 0,
         month: 1,
         day: 1,
-        order: ''
+        order: "",
     };
     expect(helper.parseCalDateString("0-02", file)).toEqual(expected);
     expect(helper.parseCalDateString("0-02-01", file)).toEqual(expected);
@@ -57,21 +61,21 @@ test("Parse February: Leap year", () => {
         year: 0,
         month: 1,
         day: 29,
-        order: ''
+        order: "",
     };
 
     // Leap years
     expect(helper.parseCalDateString("1996-February-29", file)).toEqual({
         ...expected,
-        year: 1996
+        year: 1996,
     });
     expect(helper.parseCalDateString("1600-February-29", file)).toEqual({
         ...expected,
-        year: 1600
+        year: 1600,
     });
     expect(helper.parseCalDateString("2000-February-29", file)).toEqual({
         ...expected,
-        year: 2000
+        year: 2000,
     });
     // Not leap years
     expect(helper.parseCalDateString("1700-Feb-29", file)).toBeNull();
@@ -83,18 +87,26 @@ test("Parse March", () => {
         year: 0,
         month: 2,
         day: 31,
-        order: 'some extra'
+        order: "some extra",
     };
     // Mess around with year 0 for fun
-    expect(helper.parseCalDateString("0-03-31-some extra", file)).toEqual(expected);
-    expect(helper.parseCalDateString("0-Mar-31-some extra", file)).toEqual(expected);
-    expect(helper.parseCalDateString("0-March-31-some extra", file)).toEqual(expected);
+    expect(helper.parseCalDateString("0-03-31-some extra", file)).toEqual(
+        expected
+    );
+    expect(helper.parseCalDateString("0-Mar-31-some extra", file)).toEqual(
+        expected
+    );
+    expect(helper.parseCalDateString("0-March-31-some extra", file)).toEqual(
+        expected
+    );
 });
-
 
 test("Sort Gregorian dates", () => {
     const events = [
-        helper.parseCalDateString("1954-January-01-all the things happened", file), // 0
+        helper.parseCalDateString(
+            "1954-January-01-all the things happened",
+            file
+        ), // 0
         helper.parseCalDateString("1954-January-01-misc", file), // 1
         helper.parseCalDateString("1954-January-01", file), // 2
         helper.parseCalDateString("0-February-01-other stuff", file), // 3
@@ -112,8 +124,8 @@ test("Sort Gregorian dates", () => {
             note: "Test",
             category: "Test",
             sort: helper.parsedToTimestamp(x),
-            type: "Test"
-        }
+            type: "Test",
+        };
     });
 
     const sorted = sortEventList(fcEvents);

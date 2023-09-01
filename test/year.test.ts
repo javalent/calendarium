@@ -4,6 +4,7 @@ import {
     getFirstDayOfYear,
 } from "../src/stores/years.store";
 import { PRESET_CALENDARS } from "../src/utils/presets";
+import { vi, test, expect } from "vitest";
 
 const GREGORIAN: Calendar = PRESET_CALENDARS.find(
     (p) => p.name == "Gregorian Calendar"
