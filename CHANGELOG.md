@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0-b23](https://github.com/javalent/the-calendarium/compare/1.0.0-b22...1.0.0-b23) (2023-09-01)
+
+
+### Bug Fixes
+
+* fix double calendar saving ([d413cfe](https://github.com/javalent/the-calendarium/commit/d413cfe3b90678ac35a3e23f9d7a587c8075e60a))
+* Fixes some issues with the importer not following new schemas ([d0f0d67](https://github.com/javalent/the-calendarium/commit/d0f0d67eaf4ed2b5b1642db87d007c7d04babeb3))
+* remove Create Note option for events (this might return) ([02439b4](https://github.com/javalent/the-calendarium/commit/02439b413ca55a206df1a0d87e5a3a284da7f28b))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b23 ([15bf107](https://github.com/javalent/the-calendarium/commit/15bf107e558025b76eaee7c8c9fb9ce9cea115a8))
+
 ## [1.0.0-b22](https://github.com/javalent/the-calendarium/compare/1.0.0-b21...1.0.0-b22) (2023-08-30)
 
 
