@@ -84,11 +84,11 @@
         evt.stopPropagation();
         const menu = new Menu();
         if ($store.eventStore.isRemovable(event.id)) {
-            if (!event.note) {
+            /* if (!event.note) {
                 menu.addItem((item) => {
                     item.setTitle("Create Note");
                 });
-            }
+            } */
             menu.addItem((item) => item.setTitle("Edit Event"));
             menu.addItem((item) => item.setTitle("Delete Event"));
         }
