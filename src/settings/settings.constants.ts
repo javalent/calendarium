@@ -1,4 +1,4 @@
-import type { Calendar, CalendariumData } from "src/@types";
+import type { Calendar, CalendariumData, FullCalendariumData } from "src/@types";
 
 export const DEFAULT_CALENDAR: Calendar = {
     name: null,
@@ -30,7 +30,7 @@ export const DEFAULT_CALENDAR: Calendar = {
     inlineEventTag: "#inline-events",
 };
 
-export const DEFAULT_DATA: CalendariumData = {
+export const DEFAULT_DATA: FullCalendariumData = {
     addToDefaultIfMissing: true,
     calendars: [],
     configDirectory: null,

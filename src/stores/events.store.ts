@@ -27,6 +27,15 @@ export class EventStore {
     public getEvents() {
         return [...get(this.#events).values()];
     }
+    public getFileEvents() {
+        return derived([this.#events], ([_events]) => {
+            const events = [];
+            for (const event in this.#fileEventSet) {
+                events.push(_events.get(event));
+            }
+            return events;
+        });
+    }
 
     #eventCache: EventCache;
 

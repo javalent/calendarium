@@ -31,6 +31,7 @@ import createStore from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import { getMissingNotice, warning } from "./creator/Utilities/utils";
+import SettingsService from "./settings.service";
 
 export enum Recurring {
     none = "None",
@@ -77,9 +78,9 @@ export default class CalendariumSettings extends PluginSettingTab {
     calendarsEl: HTMLDetailsElement;
     existingEl: HTMLDivElement;
     get data() {
-        return this.plugin.data;
+        return this.settings$.getData();
     }
-    constructor(public plugin: Calendarium) {
+    constructor(public plugin: Calendarium, public settings$: SettingsService) {
         super(plugin.app, plugin);
     }
     async display() {
@@ -140,7 +141,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 });
             });
 
-        new Setting(containerEl)
+        /* new Setting(containerEl)
             .setName(
                 createFragment((e) => {
                     const span = e.createSpan("calendarium-warning");
@@ -216,9 +217,9 @@ export default class CalendariumSettings extends PluginSettingTab {
                         await this.plugin.saveSettings();
                         this.display();
                     });
-            });
+            }); */
     }
-    buildCalendars() {
+    async buildCalendars() {
         this.calendarsEl.empty();
         this.calendarsEl.ontoggle = () => {
             this.data.settingsToggleState.calendars = this.calendarsEl.open;
@@ -268,11 +269,11 @@ export default class CalendariumSettings extends PluginSettingTab {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Import calendar from ",
+                        text: "Import calendar from the ",
                     });
                     e.createEl("a", {
-                        href: "https://app.calendarium.com",
-                        text: "Calendarium",
+                        href: "https://app.fantasy-calendar.com",
+                        text: "Fantasy Calendar website",
                         cls: "external-link",
                     });
                 })
@@ -317,6 +318,23 @@ export default class CalendariumSettings extends PluginSettingTab {
                 b.buttonEl.appendChild(input);
                 b.onClick(() => input.click());
             });
+
+        const deleted = await this.settings$.getDeletedCalendars();
+        if (deleted.length) {
+            new Setting(this.calendarsEl)
+                .setName("Restore Deleted Calendars")
+                .addButton((b) => {
+                    b.setTooltip("Restore").setIcon("archive-restore");
+                    b.buttonEl.setCssStyles({ position: "relative" });
+                    const badge = b.buttonEl.createDiv({
+                        cls: "calendarium-deleted-badge",
+                        attr: {
+                            style: "position: absolute;",
+                        },
+                    });
+                    badge.createSpan().setText(`${deleted.length}`);
+                });
+        }
 
         new Setting(this.calendarsEl)
             .setName("Create New Calendar")
@@ -368,16 +386,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                         )
                             return;
 
-                        this.plugin.data.calendars =
-                            this.plugin.data.calendars.filter(
-                                (c) => c.id != calendar.id
-                            );
-                        if (calendar.id == this.data.defaultCalendar) {
-                            this.plugin.data.defaultCalendar =
-                                this.plugin.data.calendars[0]?.id;
-                            this.plugin.watcher.start();
-                        }
-                        await this.plugin.saveCalendars();
+                        await this.plugin.removeCalendar(calendar);
 
                         this.display();
                     });
@@ -577,7 +586,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 modal.onClose = () => {
                     if (modal.saved) {
                         calendar = copy(modal.calendar);
-                        calendar.id = original;
+                        if (original) calendar.id = original;
                         resolve(calendar);
                     }
                     resolve();

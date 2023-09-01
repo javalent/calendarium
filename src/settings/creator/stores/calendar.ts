@@ -156,6 +156,7 @@ function createStore(
                         type: "day",
                         name: null,
                         id: nanoid(6),
+                        number: null
                     });
                     return data;
                 }),

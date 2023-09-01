@@ -119,6 +119,25 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
     color: var(--text-muted);
 }
 
+.calendarium-deleted-badge {
+    top: 0;
+    right: 0;
+    transform: translate(50%, -25%);
+
+    width: 16px;
+    height: 16px;
+
+    border-radius: 50%;
+
+    background-color: var(--color-accent);
+
+    font-size: var(--font-smallest);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .calendarium-nested-settings .setting-item {
     border: 0px;
     padding-bottom: 0;

@@ -53,7 +53,7 @@ export class Watcher extends Component {
     queue: Set<string> = new Set();
     paths: Set<string> = new Set();
     get calendars() {
-        return this.plugin.data.calendars;
+        return this.plugin.calendars;
     }
     get metadataCache() {
         return this.plugin.app.metadataCache;
@@ -216,11 +216,11 @@ export class Watcher extends Component {
             async (evt: MessageEvent<UpdateEventMessage>) => {
                 if (evt.data.type == "update") {
                     const { id, index, event, original } = evt.data;
-
                     const calendar = this.calendars.find((c) => c.id == id);
 
                     if (!calendar) return;
                     const store = this.plugin.getStore(calendar.id);
+                    
                     if (!store) return;
 
                     if (this.plugin.data.debug) {
@@ -310,6 +310,7 @@ export class Watcher extends Component {
         }
 
         if (!folders.size) return;
+        
         if (this.plugin.data.debug) {
             if (calendar) {
                 console.info(

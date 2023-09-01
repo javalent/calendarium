@@ -1,4 +1,4 @@
-import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
+import { Notice, Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
 
 import CalendariumSettings from "./settings/settings";
 
@@ -10,7 +10,9 @@ import { API } from "./api/api";
 import SettingsService from "./settings/settings.service";
 import { CalendarStore, createCalendarStore } from "./stores/calendar.store";
 import { CodeBlockService } from "./calendar/codeblock";
-import {/* 
+import { around } from "monkey-around";
+import {
+    /* 
     EVENT_LINKED_TO_NOTE,
     EVENT_LINKED_TO_NOTE_ICON, */
     REVEAL_ICON,
@@ -47,6 +49,10 @@ declare module "obsidian" {
         trigger(name: "calendarium-settings-loaded"): void;
         on(name: "calendarium-settings-loaded", callback: () => any): EventRef;
     }
+    interface Plugin {
+        onConfigFileChange: () => void;
+        handleConfigFileChange(): Promise<void>;
+    }
 }
 
 declare global {
@@ -58,6 +64,7 @@ export const MODIFIER_KEY = Platform.isMacOS ? "Meta" : "Control";
 
 export default class Calendarium extends Plugin {
     watcher: Watcher;
+
     async addNewCalendar(calendar: Calendar, existing?: Calendar) {
         let shouldParse =
             !existing ||
@@ -78,7 +85,6 @@ export default class Calendarium extends Plugin {
         }
         if (shouldParse) this.watcher.start(calendar);
         await this.saveCalendars();
-        /* this.watcher.registerCalendar(calendar); */
     }
     private $settingsService: SettingsService;
     get data() {
@@ -86,6 +92,17 @@ export default class Calendarium extends Plugin {
     }
     get calendars() {
         return this.$settingsService.getCalendars();
+    }
+    public async removeCalendar(calendar: Calendar) {
+        this.data.calendars = this.data.calendars.filter(
+            (c) => c.id != calendar.id
+        );
+        if (calendar.id == this.data.defaultCalendar) {
+            this.data.defaultCalendar = this.data.calendars[0]?.id;
+            this.watcher.start();
+        }
+        this.$settingsService.removeCalendar(calendar);
+        await this.saveCalendars();
     }
 
     getAPI(calendarName: string): API {
@@ -125,8 +142,8 @@ export default class Calendarium extends Plugin {
         );
     }
     hasCalendar(calendar: string): boolean {
-        const cal = this.data.calendars.find((c) => c.id == calendar);
-        return !!cal;
+        const cal = this.data.calendars.findIndex((c) => c.id == calendar);
+        return cal > -1;
     }
     get defaultCalendar(): Calendar {
         return (
@@ -137,8 +154,26 @@ export default class Calendarium extends Plugin {
             null
         );
     }
+    onExternalSettingsChange() {
+        if (this.saving) {
+            this.saving = false;
+        } else {
+            new Notice("Test");
+            console.trace();
+        }
+    }
+    private saving = false;
+    public async saveData(data: { config: string; lastSave: number }) {
+        this.saving = true;
+        await super.saveData(data);
+    }
+    async handleConfigFileChange() {
+        await super.handleConfigFileChange();
+        this.onExternalSettingsChange();
+    }
     async onload() {
         console.log("Loading Calendarium v" + this.manifest.version);
+
         this.$settingsService = new SettingsService(this, this.manifest);
         await this.$settingsService.loadData();
 
@@ -170,7 +205,9 @@ export default class Calendarium extends Plugin {
                 this.addCalendarView();
             });
 
-            this.addSettingTab(new CalendariumSettings(this));
+            this.addSettingTab(
+                new CalendariumSettings(this, this.$settingsService)
+            );
 
             this.addCalendarView(true);
         });

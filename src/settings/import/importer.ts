@@ -15,7 +15,7 @@ import { decode } from "he";
 import type { ImportedCalendar } from "src/@types/import";
 import deepmerge from "deepmerge";
 import { DEFAULT_CALENDAR } from "../settings.constants";
-import { nanoid } from "src/utils/functions";
+import { nanoid } from "../../utils/functions";
 
 export default class Import {
     static import(objects: ImportedCalendar[]) {
@@ -82,7 +82,7 @@ export default class Import {
                     const intervals = interval.map((i) => {
                         const ignore = /\+/.test(i);
                         const exclusive = /\!/.test(i);
-                        const interval = i.match(/(\d+)/).first();
+                        const interval = i.match(/(\d+)/)[0];
 
                         return {
                             ignore,

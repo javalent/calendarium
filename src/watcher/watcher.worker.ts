@@ -69,7 +69,7 @@ class Parser {
     parsing: boolean = false;
     defaultCalendar: string;
     calendars: Calendar[];
-    pathToName: {};
+    pathToName: { [key: string]: string };
     format: string;
     parseTitle: boolean = false;
     addToDefaultIfMissing: boolean;
@@ -127,10 +127,6 @@ class Parser {
                             }
                             return b[0].length - a[0].length;
                         })
-                    );
-                    console.log(
-                        "🚀 ~ file: watcher.worker.ts:131 ~ this.pathToName:",
-                        this.pathToName
                     );
                     if (this.debug) {
                         console.debug("Received calendars message");
@@ -223,6 +219,7 @@ class Parser {
         this.removeEventsFromFile(file.path);
 
         const eventHelper = this.createEventHandler(frontmatter, allTags, file);
+
         if (!eventHelper) {
             return; // no calendar for this file, events removed
         }
@@ -306,7 +303,8 @@ class Parser {
             //This file is not actually associated with the calendar....
             if (
                 !calendarPath?.length ||
-                (calendarPath[0] !== "/" &&
+                (this.pathToName["/"] !== name &&
+                    calendarPath[0] !== "/" &&
                     !file.path.startsWith(calendarPath[0]))
             ) {
                 return null;
