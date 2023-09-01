@@ -7,13 +7,15 @@ import type {
     Month,
     Moon,
     StaticCalendarData,
-    Week
+    Week,
 } from "../../@types";
 import distinct from "distinct-colors";
-import { nanoid } from "../../utils/functions";
 
 import { decode } from "he";
 import type { ImportedCalendar } from "src/@types/import";
+import deepmerge from "deepmerge";
+import { DEFAULT_CALENDAR } from "../settings.constants";
+import { nanoid } from "src/utils/functions";
 
 export default class Import {
     static import(objects: ImportedCalendar[]) {
@@ -38,7 +40,8 @@ export default class Import {
                 return {
                     type: "day",
                     name: n,
-                    id: nanoid(6)
+                    id: nanoid(6),
+                    number: null,
                 };
             });
 
@@ -50,12 +53,14 @@ export default class Import {
 
             if (!month_spans || !month_spans.length) continue; */
 
-            const months: Month[] = timespans.map((m: any) => {
+            const months: Month[] = timespans.map((m) => {
                 return {
                     name: decode(m.name),
                     type: m.type,
                     length: m.length,
-                    id: nanoid(6)
+                    id: nanoid(6),
+                    interval: m.interval,
+                    offset: m.offset,
                 };
             });
 
@@ -72,7 +77,7 @@ export default class Import {
                 for (let leap of year_data["leap_days"]) {
                     //build interval
                     const interval: string[] = leap.interval.split(",") ?? [
-                        "1"
+                        "1",
                     ];
                     const intervals = interval.map((i) => {
                         const ignore = /\+/.test(i);
@@ -82,7 +87,7 @@ export default class Import {
                         return {
                             ignore,
                             exclusive,
-                            interval: Number(interval)
+                            interval: Number(interval),
                         };
                     });
                     leapDays.push({
@@ -94,7 +99,8 @@ export default class Import {
                         numbered: !leap.not_numbered,
                         after: leap.day,
                         offset: leap.offset ?? 0,
-                        id: nanoid(6)
+                        id: nanoid(6),
+                        number: null,
                     });
                 }
             }
@@ -108,7 +114,7 @@ export default class Import {
                         offset: moon.shift ?? 0,
                         faceColor: moon.color ?? "#ffffff",
                         shadowColor: moon.shadow_color ?? "#000000",
-                        id: nanoid(6)
+                        id: nanoid(6),
                     });
                 }
             }
@@ -117,6 +123,10 @@ export default class Import {
             if ("eras" in static_data) {
                 for (let era of static_data["eras"]) {
                     eras.push({
+                        id: nanoid(6),
+                        endsYear: era.endsYear,
+                        restart: false,
+                        event: false,
                         name: era.name ?? `Era ${eras.length + 1}`,
                         description: era.description,
                         format:
@@ -124,8 +134,8 @@ export default class Import {
                         start: {
                             year: era.date?.year ?? 1,
                             month: era.date?.timespan ?? 0,
-                            day: era.date?.day ?? 0
-                        }
+                            day: era.date?.day ?? 0,
+                        },
                     });
                 }
             }
@@ -139,13 +149,13 @@ export default class Import {
                 eras,
                 displayMoons: true,
                 incrementDay: false,
-                displayDayNumber: false
+                displayDayNumber: false,
             };
 
             const dynamicData = {
                 year: 1,
                 day: 1,
-                month: 0
+                month: 0,
             };
             if (data.dynamic_data) {
                 dynamicData.year = Math.max(
@@ -190,7 +200,7 @@ export default class Import {
                     const date: any = {
                         day: null,
                         year: null,
-                        month: null
+                        month: null,
                     };
 
                     if (
@@ -246,13 +256,17 @@ export default class Import {
                         date,
                         category:
                             existingCategories.get(event.event_category_id)
-                                ?.id ?? null
+                                ?.id ?? null,
+                        sort: {
+                            order: "",
+                            timestamp: 0,
+                        },
                     });
                 }
             }
 
             const colors = distinct({
-                count: existingCategories.size
+                count: existingCategories.size,
             });
 
             for (let id of existingCategories.keys()) {
@@ -262,15 +276,15 @@ export default class Import {
                 existingCategories.set(id, category);
             }
 
-            const calendarData: Calendar = {
+            const calendarData: Calendar = deepmerge(DEFAULT_CALENDAR, {
                 name,
                 description: null,
                 static: staticData,
                 current: dynamicData,
                 events,
                 id: nanoid(6),
-                categories: Array.from(existingCategories.values())
-            };
+                categories: Array.from(existingCategories.values()),
+            });
 
             calendars.push(calendarData);
         }
@@ -293,5 +307,5 @@ const CalendariumColorMap: Record<string, string> = {
     Lime: "#9e9d24",
     Yellow: "#FFEB3B",
     Orange: "#FF9100",
-    "Blue-Grey": "#455A64"
+    "Blue-Grey": "#455A64",
 };
