@@ -8,6 +8,8 @@ export interface CalDate {
 }
 
 export interface Calendar {
+    deleted?: boolean;
+    deletedTimestamp?: number;
     id: string;
     name: string;
     description: string;
@@ -136,4 +138,5 @@ export interface Era {
     start: CalDate;
     eventDescription?: string;
     eventCategory?: string;
+    description?: string;
 }
