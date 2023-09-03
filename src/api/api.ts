@@ -1,5 +1,6 @@
 import type { Calendar, CalDate, CalEvent } from "src/@types";
 import { CalendarStore } from "src/stores/calendar.store";
+import { compareEvents } from "src/utils/functions";
 import { get } from "svelte/store";
 
 export class API {
@@ -32,8 +33,14 @@ export class API {
     getEvents(): CalEvent[] {
         return this.#store.eventStore.getEvents();
     }
+
     /** Get all events on a specific date. */
     getEventsOnDay(day: CalDate): CalEvent[] {
         return get(this.#store.eventStore.getEventsForDate(day));
+    }
+
+    /** Compare two events */
+    compareEvents(event1: CalEvent, event2: CalEvent): number {
+        return compareEvents(event1, event2);
     }
 }
