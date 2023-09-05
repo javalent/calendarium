@@ -1,0 +1,22 @@
+{
+    "projectName": "the-calendarium",
+    "projectOwner": "javalent",
+    "repoType": "github",
+    "repoHost": "https://github.com",
+    "files": ["README.md"],
+    "imageSize": 100,
+    "commit": true,
+    "commitConvention": "gitmoji",
+    "contributors": [
+        {
+            "login": "ebullient",
+            "name": "Erin Schnabel",
+            "avatar_url": "https://avatars.githubusercontent.com/u/808713?v=4",
+            "profile": "https://www.ebullient.dev/",
+            "contributions": ["code", "design"]
+        }
+    ],
+    "contributorsPerLine": 7,
+    "linkToUsage": false
+}
+
