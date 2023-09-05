@@ -187,12 +187,22 @@ export function areDatesEqual(date: CalDate, date2: CalDate) {
     return true;
 }
 
-export function sortEventList(list: CalEvent[]): CalEvent[] {
-    return list.sort((a, b) => {
-        if (!("sort" in a) || !("sort" in b)) return 0;
-        if (a.sort?.timestamp === b.sort?.timestamp) {
-            return a.sort?.order.localeCompare(b.sort?.order);
+export function compareEvents(a: CalEvent, b: CalEvent) {
+    if (a.sort && b.sort) {
+        if (a.sort.timestamp == b.sort.timestamp) {
+            return a.sort.order.localeCompare(b.sort.order);
         }
-        return a.sort?.timestamp - b.sort?.timestamp;
-    });
+        return a.sort.timestamp - b.sort.timestamp;
+    }
+    if (a.date.year != b.date.year) {
+        return a.date.year - b.date.year;
+    }
+    if (a.date.month != b.date.month) {
+        return a.date.month - b.date.month;
+    }
+    return a.date.day - b.date.day;
+}
+
+export function sortEventList(list: CalEvent[]): CalEvent[] {
+    return list.sort((a, b) => compareEvents(a, b));
 }
