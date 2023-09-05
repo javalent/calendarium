@@ -3,34 +3,44 @@
     "projectOwner": "javalent",
     "repoType": "github",
     "repoHost": "https://github.com",
-    "files": ["README.md"],
+    "files": [
+        "README.md"
+    ],
     "imageSize": 100,
     "commit": true,
     "commitConvention": "gitmoji",
     "contributors": [
         {
+            "login": "javalent",
+            "name": "javalent",
+            "avatar_url": "https://avatars.githubusercontent.com/u/131289534?v=4",
+            "profile": "https://github.com/javalent",
+            "contributions": [
+                "code"
+            ]
+        },
+        {
             "login": "ebullient",
             "name": "Erin Schnabel",
             "avatar_url": "https://avatars.githubusercontent.com/u/808713?v=4",
             "profile": "https://www.ebullient.dev/",
-            "contributions": ["code", "design", "test"]
+            "contributions": [
+                "code",
+                "design",
+                "test"
+            ]
         },
         {
             "login": "sigrunixia",
             "name": "Rebbecca Bishop",
             "avatar_url": "https://avatars.githubusercontent.com/u/68425372?v=4",
             "profile": "https://tenebrousdragon.com/",
-            "contributions": ["doc", "question"]
-        },
-        {
-            "login": "javalent",
-            "name": "javalent",
-            "avatar_url": "https://avatars.githubusercontent.com/u/131289534?v=4",
-            "profile": "https://github.com/javalent",
-            "contributions": ["code"]
+            "contributions": [
+                "doc",
+                "question"
+            ]
         }
     ],
     "contributorsPerLine": 7,
     "linkToUsage": false
 }
-
