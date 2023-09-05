@@ -1,5 +1,5 @@
 import type { FrontMatterCache } from "obsidian";
-import { nanoid, wrap } from "../utils/functions";
+import { nanoid, testLeapDay, toPaddedString, wrap } from "../utils/functions";
 const { DOMParser } = require("xmldom");
 import type {
     Calendar,
@@ -39,8 +39,6 @@ export class CalEventHelper {
     useFilenameForEvents: boolean;
     formatString: string;
     formatDigest: string;
-    padMonth: number;
-    padDays: number;
 
     /**
      * Creates an instance of EventHelper.
@@ -57,13 +55,6 @@ export class CalEventHelper {
             .replace(/M+/g, "M")
             .replace(/D+/g, "D");
         console.log(this.formatString, this.formatDigest);
-        this.padMonth = (calendar.static.months.length + "").length;
-        this.padDays = (
-            calendar.static.months.reduce(
-                (max, month) => (max > month.length ? max : month.length),
-                0
-            ) + ""
-        ).length;
     }
 
     parseFileForEvents(
@@ -255,7 +246,7 @@ export class CalEventHelper {
         datestring: string,
         file: { path: string; basename: string }
     ): ParseDate {
-        let datebits = datestring.split(/(?<!^)-/);
+        let datebits = datestring.split(/(?<!^)[-–—]/);
 
         if (this.formatDigest != "YMD" && datebits.length < 3) {
             logError(
@@ -277,21 +268,6 @@ export class CalEventHelper {
             file,
             datestring
         );
-    }
-
-    /**
-     * Create a formatted date string for this calendar
-     * for the given event date (will not include an order suffix)
-     * @returns
-     */
-    toCalDateString(date: CalEventDate): string {
-        return this.formatString
-            .replace(/[Yy]+/g, `${date.year}`)
-            .replace(/[Mm]{3,}/g, toMonthString(date.month, this.calendar))
-            .replace(/[Mm]{2,}/g, toString(date.month + 1, this.padMonth)) // to human index
-            .replace(/[Mm]/g, `${date.month + 1}`)
-            .replace(/[Dd]{2,}/g, toString(date.day, this.padDays))
-            .replace(/[Dd]/g, `${date.day}`);
     }
 
     /**
@@ -327,7 +303,7 @@ export class CalEventHelper {
         } else if (Number.isNaN(month)) {
             // Name in the month segment
             let m = this.calendar.static.months.find((m) =>
-                m.name.startsWith(input.month)
+                m.name.startsWith(input.month) || m.short?.startsWith(input.month)
             );
             if (m) {
                 month = this.calendar.static.months.indexOf(m);
@@ -408,20 +384,14 @@ export class CalEventHelper {
                 timestamp: Number.MIN_VALUE,
                 order: date.order
                     ? date.order
-                    : `${date.year || "*"}-${toString(
-                          date.month,
-                          this.padMonth
-                      )}-${toString(date.day, this.padDays)}`,
+                    : `${date.year || "*"}-${toPaddedString(date.month, this.calendar, "month")}-${toPaddedString(date.day, this.calendar, "day")}`,
             };
         }
         // otherwise create a date string
         // TODO: pad month by number of months & days by max days
         return {
             timestamp: Number(
-                `${date.year}${toString(date.month, this.padMonth)}${toString(
-                    date.day,
-                    this.padDays
-                )}`
+                `${date.year}${toPaddedString(date.month, this.calendar, "month")}${toPaddedString(date.day, this.calendar, "day")}`
             ),
             order: date.order || "",
         };
@@ -455,7 +425,7 @@ export class CalEventHelper {
                 (l.timespan == month && !l.intercalary) ||
                 (l.intercalary && l.numbered)
         );
-        if (year && !this.testLeapDay(leapday, year)) {
+        if (year && !testLeapDay(leapday, year)) {
             return null;
         }
         const day = cm.length + leapdays.indexOf(leapday) + 1;
@@ -475,7 +445,7 @@ export class CalEventHelper {
 
         if (year) {
             let count = leapdays.filter((l) =>
-                this.testLeapDay(l, year)
+                testLeapDay(l, year)
             ).length;
             return cm.length + count;
         }
@@ -483,39 +453,6 @@ export class CalEventHelper {
         // no year, any date in this rage is plausible
         return cm.length + leapdays.length;
     }
-
-    /**
-     * Test if a leap day occurs in a given year.
-     */
-    testLeapDay(leapday: LeapDay, year: number) {
-        return leapday.interval
-            .sort((a, b) => a.interval - b.interval)
-            .some(({ interval, exclusive }, index, array) => {
-                if (exclusive && index == 0) {
-                    return (year - leapday.offset ?? 0) % interval != 0;
-                }
-
-                if (exclusive) return;
-
-                if (array[index + 1] && array[index + 1].exclusive) {
-                    return (
-                        (year - leapday.offset ?? 0) % interval == 0 &&
-                        (year - leapday.offset ?? 0) %
-                            array[index + 1].interval !=
-                            0
-                    );
-                }
-                return (year - leapday.offset ?? 0) % interval == 0;
-            });
-    }
-}
-
-function toMonthString(month: Nullable<number>, calendar: Calendar): string {
-    return month == null ? "*" : calendar.static.months[month].name;
-}
-
-function toString(data: Nullable<number>, padding: number): string {
-    return data == null ? "*" : String(data).padStart(padding, "0");
 }
 
 /**

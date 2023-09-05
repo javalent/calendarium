@@ -1,9 +1,9 @@
 /**
  * @vitest-environment happy-dom
  */
-import { CalEvent } from "../src/@types";
+import { CalDate, CalEvent } from "../src/@types";
 import { CalEventHelper, ParseDate } from "../src/events/event.helper";
-import { sortEventList } from "../src/utils/functions";
+import { dateString, sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 import { vi, test, expect } from "vitest";
 
@@ -36,6 +36,11 @@ const file = {
 // 15 | 16 |  - | Feast of the Moon
 // 16 | 17 | 12 | Nightal
 
+test("Preset padding", () => {
+    expect(HARPTOS.static.padDays).toEqual(2);
+    expect(HARPTOS.static.padMonths).toEqual(2);
+});
+
 test("daysForMonth", () => {
     expect(helper.daysForMonth(0, 1499)).toEqual(30);
     expect(helper.daysForMonth(1, 1499)).toEqual(1);
@@ -54,11 +59,16 @@ test("Parse Harptos: 1499-01, Hammer", () => {
         day: 1,
         order: "",
     };
+    // em dash and en dash
     expect(helper.parseCalDateString("1499", file)).toEqual(expected);
-    expect(helper.parseCalDateString("1499-01", file)).toEqual(expected);
-    expect(helper.parseCalDateString("1499-01-01", file)).toEqual(expected);
+    expect(helper.parseCalDateString("1499—01", file)).toEqual(expected);
+    expect(helper.parseCalDateString("1499–01-01", file)).toEqual(expected);
     expect(helper.parseCalDateString("1499-Hammer", file)).toEqual(expected);
     expect(helper.parseCalDateString("1499-Hammer-01", file)).toEqual(expected);
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Hammer-01");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("1 Hammer (Deepwinter), 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-01-01");
 });
 //  1 |  2 |  - | Midwinter
 test("Parse Harptos: 1499-02, Midwinter", () => {
@@ -74,6 +84,11 @@ test("Parse Harptos: 1499-02, Midwinter", () => {
     expect(helper.parseCalDateString("1499-Midwinter-01", file)).toEqual(
         expected
     );
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Midwinter");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("Midwinter, 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-02-01");
+
     // Midwinter has only one day...
     expect(helper.parseCalDateString("1499-02-03", file)).toBeNull();
 });
@@ -91,6 +106,10 @@ test("Parse Harptos: 1499-03, Alturiak", () => {
     expect(helper.parseCalDateString("1499-Alturiak-01", file)).toEqual(
         expected
     );
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Alturiak-01");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("1 Alturiak (The Claw of Winter), 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-03-01");
 });
 //  3 |  4 |  3 | Ches
 //  4 |  5 |  4 | Tarsakh
@@ -111,6 +130,10 @@ test("Parse Harptos: 1499-06, Greengrass", () => {
         expected
     );
 
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Greengrass");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("Greengrass, 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-06-01");
+
     const ordered: ParseDate = { ...expected, order: "03" };
     expect(helper.parseCalDateString("1499-Greengrass-01-03", file)).toEqual(
         ordered
@@ -130,6 +153,10 @@ test("Parse Harptos: 1499-06, Mirtul", () => {
     expect(helper.parseCalDateString("1499-07-01", file)).toEqual(expected);
     expect(helper.parseCalDateString("1499-Mir", file)).toEqual(expected);
     expect(helper.parseCalDateString("1499-Mirtul-01", file)).toEqual(expected);
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Mirtul-01");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("1 Mirtul (The Melting), 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-07-01");
 });
 //  7 |  8 |  6 | Kythorn
 //  8 |  9 |  7 | Flamerule
@@ -147,6 +174,10 @@ test("Parse Harptos: 1499-09, Midsummer", () => {
     expect(helper.parseCalDateString("1499-Midsummer-01", file)).toEqual(
         expected
     );
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Midsummer");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("Midsummer, 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-10-01");
 
     const ordered: ParseDate = { ...expected, order: "03" };
     expect(helper.parseCalDateString("1499-Midsummer-01-03", file)).toEqual(
@@ -173,6 +204,10 @@ test("Parse Harptos: 1372-Shieldmeet", () => {
         ordered
     );
 
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1372-Shieldmeet");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("Shieldmeet, 1372");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1372-10-02");
+
     // Shieldmeet is a leapday (not in 1499)
     expect(helper.parseCalDateString("1499-10-02", file)).toBeNull();
 });
@@ -190,6 +225,10 @@ test("Parse Harptos: 1499-11, Eleasis", () => {
     expect(helper.parseCalDateString("1499-Eleasis-01", file)).toEqual(
         expected
     );
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Eleasis-01");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("1 Eleasis (Highsun), 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-11-01");
 });
 // 11 | 12 |  9 | Eleint
 // 12 | 13 |  - | Highharvestide
@@ -206,6 +245,10 @@ test("Parse Harptos: 1499-13, Highharvestide", () => {
     expect(helper.parseCalDateString("1499-Highharvestide-01", file)).toEqual(
         expected
     );
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Highharvestide");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("Highharvestide, 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-13-01");
 });
 // 13 | 14 | 10 | Marpenoth
 test("Parse Harptos: 1499-14, Marpenoth", () => {
@@ -221,6 +264,10 @@ test("Parse Harptos: 1499-14, Marpenoth", () => {
     expect(helper.parseCalDateString("1499-Marpenoth-01", file)).toEqual(
         expected
     );
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-Marpenoth-01");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("1 Marpenoth (Leaffall), 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-14-01");
 });
 // 14 | 15 | 11 | Uktar
 // 15 | 16 |  - | Feast of the Moon
@@ -234,9 +281,15 @@ test("Parse Harptos: 1499-15, Feast of the Moon", () => {
     expect(helper.parseCalDateString("1499-16", file)).toEqual(expected);
     expect(helper.parseCalDateString("1499-16-01", file)).toEqual(expected);
     expect(helper.parseCalDateString("1499-The Feast", file)).toEqual(expected);
+    expect(helper.parseCalDateString("1499-FeastOfTheMoon", file)).toEqual(expected); // short name
     expect(
         helper.parseCalDateString("1499-The Feast of the Moon-01", file)
     ).toEqual(expected);
+
+    expect(dateString(expected as CalDate, HARPTOS)).toEqual("1499-FeastOfTheMoon");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'D MMMM, YYYY')).toEqual("The Feast of the Moon, 1499");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MMMM-DD')).toEqual("1499-The Feast of the Moon");
+    expect(dateString(expected as CalDate, HARPTOS, undefined, 'YYYY-MM-DD')).toEqual("1499-16-01");
 });
 // 16 | 17 | 12 | Nightal
 

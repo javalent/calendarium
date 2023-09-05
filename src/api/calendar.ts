@@ -1,13 +1,14 @@
 import type { Calendar, CalDate, CalEvent } from "src/@types";
 import { CalendarStore } from "src/stores/calendar.store";
-import { compareEvents } from "src/utils/functions";
+import { compareEvents, dateString } from "src/utils/functions";
 import { get } from "svelte/store";
 
 export class CalendarAPI {
     #store: CalendarStore;
     #object: Calendar;
-    constructor(store: CalendarStore) {
+    constructor(store: CalendarStore, object: Calendar) {
         this.#store = store;
+        this.#object = object;
     }
 
     /**
@@ -50,5 +51,28 @@ export class CalendarAPI {
     /** Compare two events */
     compareEvents(event1: CalEvent, event2: CalEvent): number {
         return compareEvents(event1, event2);
+    }
+
+    /**
+     * Return a display string for an event.
+     *
+     * Use the following in your formatting string:
+     *
+     * - `Y` - any number of Y will bring the full year.
+     *     - If your calendar uses named years, you'll get the name.
+     * - `M` - the month as a number.
+     * - `MM` - the month as a number, zero padded, minimum of two digits.
+     * - `MMM` - the month name, abbreviated (if available).
+     * - `MMMM` - the full month name
+     * - `D` - the day of the month, unpadded.
+     * - `DD` - the day of the month, zero padded, minimum of two digits.
+     *
+     * @param date Date to convert to a formatted string
+     * @param end Optional end date for multi-day events
+     * @param dateFormat Optional date format string
+     * @returns formatted string
+     */
+    toDisplayDate(date: CalDate, end?: CalDate, dateFormat?: string): string {
+        return dateString(date, this.#object, end, dateFormat);
     }
 }

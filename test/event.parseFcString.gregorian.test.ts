@@ -1,9 +1,9 @@
 /**
  * @vitest-environment happy-dom
  */
-import { CalEvent } from "../src/@types";
+import { CalDate, CalEvent } from "../src/@types";
 import { CalEventHelper, ParseDate } from "../src/events/event.helper";
-import { sortEventList } from "../src/utils/functions";
+import { dateString, sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 import { vi, test, expect } from "vitest";
 
@@ -81,6 +81,15 @@ test("Parse February: Leap year", () => {
     expect(helper.parseCalDateString("1700-Feb-29", file)).toBeNull();
     expect(helper.parseCalDateString("1800-Feb-29", file)).toBeNull();
     expect(helper.parseCalDateString("1900-Feb-29", file)).toBeNull();
+
+    const formatThis = {
+        ...expected,
+        year: 1996,
+    } as CalDate;
+
+    expect(dateString(formatThis, GREGORIAN)).toEqual("1996-02-29");
+    expect(dateString(formatThis, GREGORIAN, undefined, 'D MMMM, YYYY')).toEqual("29 February, 1996");
+    expect(dateString(formatThis, GREGORIAN, undefined, 'YYYY-MMM-DD')).toEqual("1996-Feb-29");
 });
 test("Parse March", () => {
     const expected: ParseDate = {

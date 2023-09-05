@@ -39,6 +39,8 @@ export interface StaticCalendarData {
     incrementDay: boolean;
     useCustomYears?: boolean;
     years?: Year[];
+    padMonths?:number;
+    padDays?:number;
 }
 
 export interface CalDate {
@@ -69,6 +71,7 @@ export type DefinedDay = Day &
     };
 export type LeapDay = BaseDay & {
     type: "leapday";
+    short?: string; // akin to month
     interval: LeapDayCondition[];
     timespan: number;
     intercalary: boolean;
@@ -90,6 +93,7 @@ interface BaseMonth extends TimeSpan {
     offset: number;
     type: "month" | "intercalary";
     subtitle?: string;
+    short?: string;
 }
 export interface RegularMonth extends BaseMonth {
     type: "month";

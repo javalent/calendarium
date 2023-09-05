@@ -22,6 +22,19 @@ import {
 } from "src/utils/functions";
 import { derived, writable } from "svelte/store";
 
+function padMonth(months: Month[]) {
+    return (months.length + "").length;
+}
+
+function padDay(months: Month[]) {
+    return (
+        months.reduce(
+            (max, month) => (max > month.length ? max : month.length),
+            0
+        ) + ""
+    ).length;
+}
+
 function createStore(
     plugin: Calendarium,
     existing: Calendar = DEFAULT_CALENDAR
@@ -38,6 +51,8 @@ function createStore(
     const staticSet = (data: StaticCalendarData) =>
         update((calendar) => {
             calendar.static = data;
+            calendar.static.padMonths = padMonth(calendar.static.months);
+            calendar.static.padDays = padDay(calendar.static.months);
             return calendar;
         });
 
@@ -196,6 +211,8 @@ function createStore(
                         interval: 1,
                         offset: 0,
                     });
+                    data.static.padMonths = padMonth(data.static.months);
+                    data.static.padDays = padDay(data.static.months);
                     return data;
                 }),
             update: (id: string, month: Month) =>
@@ -205,6 +222,8 @@ function createStore(
                         1,
                         month
                     );
+                    data.static.padMonths = padMonth(data.static.months);
+                    data.static.padDays = padDay(data.static.months);
                     return data;
                 }),
             delete: (id: string) =>
@@ -212,11 +231,15 @@ function createStore(
                     data.static.months = data.static.months.filter(
                         (m) => m.id != id
                     );
+                    data.static.padMonths = padMonth(data.static.months);
+                    data.static.padDays = padDay(data.static.months);
                     return data;
                 }),
             set: (months: Month[]) =>
                 update((data) => {
                     data.static.months = [...months];
+                    data.static.padMonths = padMonth(data.static.months);
+                    data.static.padDays = padDay(data.static.months);
                     return data;
                 }),
         },
