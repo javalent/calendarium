@@ -1,2 +1,50 @@
 @import "./main.css";
 @import "./settings/settings.css";
+/*! @settings
+
+name: Calendarium Style settings
+id: calendarium-settings
+settings:
+  -
+    id: calendarium-nix-spans
+    title: Hide Calendarium date span attributes
+    description: When true, this will hide the data-date and data-name attributes of div or span HTML elements (subsequent style settings will not apply).
+    type: class-toggle
+    default: false
+  -
+    id: calendarium-span-data-style
+    title: Font style for data-date and data-name fields
+    type: variable-select
+    default: italic
+    options:
+        - italic
+        - normal
+  -
+    id: calendarium-span-data-weight
+    title: Font weight for data-date and data-name fields
+    type: variable-number-slider
+    default: 500
+    min: 100
+    max: 900
+    step: 50
+*/
+body {
+  --calendarium-span-data-color: var(--text-accent);
+}
+body:not(.calendarium-nix-spans) span[data-date]:not(.hide-data),
+body:not(.calendarium-nix-spans) div[data-date]:not(.hide-data) {
+  font-style: var(--calendarium-span-data-style, italic);
+  font-weight: var(--calendarium-span-data-weight, 500);
+}
+body:not(.calendarium-nix-spans) span[data-date]:not([data-end]):not(.hide-data)::before,
+body:not(.calendarium-nix-spans) div[data-date]:not([data-end]):not(.hide-data)::before {
+  content: "🔖 " attr(data-date) ": " attr(data-name) ". ";
+  color: var(--calendarium-span-data-color, var(--text-accent));
+  font-weight: 500;
+}
+body:not(.calendarium-nix-spans) span[data-date][data-end]:not(.hide-data)::before,
+body:not(.calendarium-nix-spans) div[data-date][data-end]:not(.hide-data)::before {
+  content: "🔖 " attr(data-date) " to " attr(data-end) ": " attr(data-name) ". ";
+  color: var(--calendarium-span-data-color, var(--text-accent));
+  font-weight: 500;
+}

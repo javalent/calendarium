@@ -10,7 +10,7 @@ import { API } from "./api/api";
 import SettingsService from "./settings/settings.service";
 import { CalendarStore, createCalendarStore } from "./stores/calendar.store";
 import { CodeBlockService } from "./calendar/codeblock";
-import {/* 
+import {/*
     EVENT_LINKED_TO_NOTE,
     EVENT_LINKED_TO_NOTE_ICON, */
     REVEAL_ICON,
@@ -25,6 +25,7 @@ declare module "obsidian" {
         };
     }
     interface Workspace {
+        trigger(name: "parse-style-settings"): void; // trigger style settings
         on(name: "calendarium-updated", callback: () => any): EventRef;
         on(
             name: "calendarium-event-update",
@@ -174,6 +175,8 @@ export default class Calendarium extends Plugin {
 
             this.addCalendarView(true);
         });
+
+        app.workspace.trigger("parse-style-settings")
     }
 
     async onunload() {
