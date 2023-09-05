@@ -3,34 +3,52 @@
     "projectOwner": "javalent",
     "repoType": "github",
     "repoHost": "https://github.com",
-    "files": ["README.md"],
+    "files": [
+        "README.md"
+    ],
     "imageSize": 100,
     "commit": true,
     "commitConvention": "gitmoji",
     "contributors": [
         {
+            "login": "valentine195",
+            "name": "Jeremy Valentine",
+            "avatar_url": "https://avatars.githubusercontent.com/u/38669521?v=4",
+            "profile": "https://www.buymeacoffee.com/valentine195",
+            "contributions": [
+                "code",
+                "design",
+                "test",
+                "doc",
+                "ideas",
+                "infra",
+                "question"
+            ]
+        },
+        {
             "login": "ebullient",
             "name": "Erin Schnabel",
             "avatar_url": "https://avatars.githubusercontent.com/u/808713?v=4",
             "profile": "https://www.ebullient.dev/",
-            "contributions": ["code", "design", "test"]
+            "contributions": [
+                "code",
+                "design",
+                "test"
+            ]
         },
         {
             "login": "sigrunixia",
             "name": "Rebbecca Bishop",
             "avatar_url": "https://avatars.githubusercontent.com/u/68425372?v=4",
             "profile": "https://tenebrousdragon.com/",
-            "contributions": ["doc", "question"]
-        },
-        {
-            "login": "valentine195",
-            "name": "Jeremy Valentine",
-            "avatar_url": "https://avatars.githubusercontent.com/u/38669521?v=4",
-            "profile": "https://www.buymeacoffee.com/valentine195",
-            "contributions": ["code", "test"]
+            "contributions": [
+                "doc",
+                "bug",
+                "tutorial",
+                "question"
+            ]
         }
     ],
     "contributorsPerLine": 7,
     "linkToUsage": false
 }
-
