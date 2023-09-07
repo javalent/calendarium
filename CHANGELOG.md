@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.0-b24](https://github.com/javalent/the-calendarium/compare/1.0.0-b23...1.0.0-b24) (2023-09-07)
+
+
+### Features
+
+* `translate` now takes a CalendarAPI instead of string ([2d66c4f](https://github.com/javalent/the-calendarium/commit/2d66c4f6b37bb0d78b2d70bcb33b29b437004549))
+* Add style settings for displaying span data ([67be760](https://github.com/javalent/the-calendarium/commit/67be760d637c25e0d18bedb9954c649669bc17fa))
+* Adds `translate` method to plugin API ([e9fbfa5](https://github.com/javalent/the-calendarium/commit/e9fbfa5445edec66d234326ef15f09c9a93fd440))
+* Adds compare function to API ([cfb2cd9](https://github.com/javalent/the-calendarium/commit/cfb2cd9787df5a64ac8bd8626d3a29d78199cd69))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b24 ([ed2a63f](https://github.com/javalent/the-calendarium/commit/ed2a63fb2fc0cce4f067f1fa341c283ade07d148))
+
 ## [1.0.0-b23](https://github.com/javalent/the-calendarium/compare/1.0.0-b22...1.0.0-b23) (2023-09-01)
 
 
