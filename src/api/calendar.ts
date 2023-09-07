@@ -11,6 +11,14 @@ export class CalendarAPI {
     }
 
     /**
+     * Access the calendar store.
+     * @returns {CalendarStore}
+     */
+    getStore() {
+        return this.#store;
+    }
+
+    /**
      * Transform a day, month, year definition into a CalDate
      * @param day Day number
      * @param month Month number (0 indexed)

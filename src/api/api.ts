@@ -37,17 +37,21 @@ export class API {
      * @param original
      * @param target
      */
-    translate(date: CalDate, original: string, target: string): CalDate {
+    translate(
+        date: CalDate,
+        original: CalendarAPI,
+        target: CalendarAPI
+    ): CalDate {
         if (date.year == null || date.month == null || date.day == null) {
             throw new Error(
                 "In order for an date to be translated, it must be fully defined."
             );
         }
-        /** Get my stores.
-         * These will throw a reference error if the store cannot be found.
+        /**
+         * Get my stores.
          */
-        const originalStore = this.#getStore(original);
-        const targetStore = this.#getStore(target);
+        const originalStore = original.getStore();
+        const targetStore = target.getStore();
 
         /**
          * Get the number of days before the requested date in the original calendar.
