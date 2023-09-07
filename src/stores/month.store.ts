@@ -5,7 +5,6 @@ import { Readable, derived, readable } from "svelte/store";
 import { wrap } from "../utils/functions";
 
 export class MonthStore {
-    dayCache = new Map<number, MonthStore>();
     constructor(
         public month: Month,
         public year: YearStore,
@@ -140,13 +139,4 @@ export class MonthStore {
             return Math.floor((daysBefore + firstDay) / week.length);
         }
     );
-    getMonthFromCache(day: number) {
-        /* if (!this.dayCache.has(month)) {
-            this.dayCache.set(
-                month,
-                createMonthStore(month, this, this.staticStore)
-            );
-        } */
-        return this.dayCache.get(day);
-    }
 }

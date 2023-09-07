@@ -10,7 +10,8 @@ import { API } from "./api/api";
 import SettingsService from "./settings/settings.service";
 import { CalendarStore, createCalendarStore } from "./stores/calendar.store";
 import { CodeBlockService } from "./calendar/codeblock";
-import {/*
+import {
+    /*
     EVENT_LINKED_TO_NOTE,
     EVENT_LINKED_TO_NOTE_ICON, */
     REVEAL_ICON,
@@ -52,13 +53,14 @@ declare module "obsidian" {
 
 declare global {
     interface Window {
-        Calendarium?: Calendarium;
+        Calendarium?: API;
     }
 }
 export const MODIFIER_KEY = Platform.isMacOS ? "Meta" : "Control";
 
 export default class Calendarium extends Plugin {
     watcher: Watcher;
+    api: API = new API(this);
     async addNewCalendar(calendar: Calendar, existing?: Calendar) {
         let shouldParse =
             !existing ||
@@ -87,15 +89,6 @@ export default class Calendarium extends Plugin {
     }
     get calendars() {
         return this.$settingsService.getCalendars();
-    }
-
-    getAPI(calendarName: string): API {
-        const store = this.getStore(
-            this.data.calendars.find((c) => c.name == calendarName).id
-        );
-        if (!store)
-            throw new ReferenceError("No calendar store by that name exists.");
-        return new API(store);
     }
 
     private readonly stores: WeakMap<Calendar, CalendarStore> = new WeakMap();
@@ -152,7 +145,8 @@ export default class Calendarium extends Plugin {
         /* addIcon(EVENT_LINKED_TO_NOTE, EVENT_LINKED_TO_NOTE_ICON); */
 
         this.watcher = new Watcher(this);
-        (window["Calendarium"] = this) &&
+        
+        (window["Calendarium"] = this.api) &&
             this.register(() => delete window["Calendarium"]);
 
         this.registerView(
@@ -176,7 +170,7 @@ export default class Calendarium extends Plugin {
             this.addCalendarView(true);
         });
 
-        app.workspace.trigger("parse-style-settings")
+        app.workspace.trigger("parse-style-settings");
     }
 
     async onunload() {

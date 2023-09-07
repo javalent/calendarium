@@ -1,46 +1,132 @@
-import type { Calendar, CalDate, CalEvent } from "src/@types";
+import Calendarium from "src/main";
+import { CalendarAPI } from "./calendar";
+import type { CalDate, CalEvent, Calendar } from "src/@types";
 import { CalendarStore } from "src/stores/calendar.store";
-import { compareEvents } from "src/utils/functions";
 import { get } from "svelte/store";
 
 export class API {
-    #store: CalendarStore;
-    #object: Calendar;
-    constructor(store: CalendarStore) {
-        this.#store = store;
+    constructor(private plugin: Calendarium) {}
+    #getStore(calendar: string | Calendar): CalendarStore {
+        let store: CalendarStore;
+        if (typeof calendar === "string") {
+            store = this.plugin.getStore(
+                this.plugin.data.calendars.find((c) => c.name == calendar).id
+            );
+        } else {
+            store = this.plugin.getStoreByCalendar(calendar);
+        }
+        if (!store)
+            throw new ReferenceError("No calendar store by that name exists.");
+        return store;
     }
-
     /**
-     * Transform a day, month, year definition into a CalDate
-     * @param day Day number
-     * @param month Month number (0 indexed)
-     * @param year Year number
-     * @returns {CalDate}
+     * Used to retrieve a Calendar API.
+     * This can be used to obtain calendar-specific information, such as lists of events.
+     *
+     * @param calendarName Name of the calendar you need an API for.
+     * @returns An instance of the Calendar API.
      */
-    getDate(day: number, month: number, year: number): CalDate {
-        return { day, month, year };
+    getAPI(calendarName: string): CalendarAPI {
+        const store = this.#getStore(calendarName);
+        return new CalendarAPI(store);
     }
-
     /**
-     * Get the current date.
-     * @returns {CalDate} The current date specified on the calendar.
+     * Translate an event from one calendar to another.
+     *
+     * @param event
+     * @param original
+     * @param target
      */
-    getCurrentDate(): CalDate {
-        return get(this.#store.current);
-    }
+    translate(date: CalDate, original: string, target: string): CalDate {
+        if (date.year == null || date.month == null || date.day == null) {
+            throw new Error(
+                "In order for an date to be translated, it must be fully defined."
+            );
+        }
+        /** Get my stores.
+         * These will throw a reference error if the store cannot be found.
+         */
+        const originalStore = this.#getStore(original);
+        const targetStore = this.#getStore(target);
 
-    /** Get all events for the loaded calendar. */
-    getEvents(): CalEvent[] {
-        return this.#store.eventStore.getEvents();
-    }
+        /**
+         * Get the number of days before the requested date in the original calendar.
+         */
+        const daysBeforeEvent = originalStore.getDaysBeforeDate(date);
 
-    /** Get all events on a specific date. */
-    getEventsOnDay(day: CalDate): CalEvent[] {
-        return get(this.#store.eventStore.getEventsForDate(day));
-    }
+        /**
+         * My best guess at the new target date.
+         * This is the number of days divided by the basic number of days in a year.
+         * We will modify this best guess date as we go to find the "real" date.
+         */
+        const targetBestGuessDate = {
+            year: Math.floor(
+                daysBeforeEvent / targetStore.staticStore.getDaysInAYear()
+            ),
+            month: 0,
+            day: 1,
+        };
+        /**
+         * Find the days before the above guess on the target calendar.
+         */
+        const daysBeforeBestGuess =
+            targetStore.getDaysBeforeDate(targetBestGuessDate);
 
-    /** Compare two events */
-    compareEvents(event1: CalEvent, event2: CalEvent): number {
-        return compareEvents(event1, event2);
+        /**
+         * Wow, we got really lucky.
+         */
+        if (daysBeforeBestGuess === daysBeforeEvent) {
+            return targetBestGuessDate;
+        }
+        /**
+         * If the best guess is *higher* than the original epoch, we should look backwards.
+         */
+        let direction = daysBeforeBestGuess > daysBeforeEvent ? -1 : 1;
+
+        /**
+         * This is used in the iteration to determine if we need to fix the daysBeforeBestGuess variable.
+         */
+        let modified = false;
+
+        function compare(
+            iterativeDaysBefore: number,
+            daysBeforeEvent: number,
+            direction: number
+        ) {
+            if (direction === 1) {
+                return iterativeDaysBefore < daysBeforeEvent;
+            } else {
+                return iterativeDaysBefore > daysBeforeEvent;
+            }
+        }
+        /**
+         * Iteratively find the year and the month *just before* being past the original epoch.
+         */
+        for (const timespan of [
+            "year",
+            "month",
+        ] as (keyof typeof targetBestGuessDate)[]) {
+            let iterativeDaysBefore =
+                targetStore.getDaysBeforeDate(targetBestGuessDate);
+            while (compare(iterativeDaysBefore, daysBeforeEvent, direction)) {
+                iterativeDaysBefore = targetStore.getDaysBeforeDate({
+                    ...targetBestGuessDate,
+                    [timespan]: targetBestGuessDate[timespan] + direction,
+                });
+                if (!modified) modified = true;
+                if (iterativeDaysBefore > daysBeforeEvent) break;
+                targetBestGuessDate[timespan] =
+                    targetBestGuessDate[timespan] + direction;
+            }
+        }
+        /**
+         * Set the day for the event.
+         * 1 needs to be added because these are the days BEFORE the date.
+         */
+        targetBestGuessDate.day =
+            daysBeforeEvent -
+            targetStore.getDaysBeforeDate(targetBestGuessDate) +
+            1;
+        return targetBestGuessDate;
     }
 }

@@ -5,14 +5,12 @@ import type {
     CalEventCategory,
 } from "src/@types";
 import { Readable, Writable, derived, get, writable } from "svelte/store";
-import { YearCalculatorCache, YearStoreCache } from "./years.store";
-import { dateString, nanoid, wrap } from "src/utils/functions";
-import { EventCache } from "./cache/event-cache";
+import { YearStoreCache } from "./years.store";
+import { dateString } from "src/utils/functions";
 import { MoonCache } from "./cache/moon-cache";
 import Calendarium from "src/main";
 import { CreateEventModal } from "src/settings/modals/event/event";
 import { EventStore } from "./events.store";
-import randomColor from "randomcolor";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -67,6 +65,25 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         currentDisplay: derived([current, store], ([current, calendar]) => {
             return dateString(current, calendar);
         }),
+        getDaysBeforeDate: (date: CalDate) => {
+            return (
+                get(yearCalculator.getYearFromCache(date.year).daysBefore) +
+                get(
+                    yearCalculator
+                        .getYearFromCache(date.year)
+                        .getMonthFromCache(date.month).daysBeforeAll
+                ) +
+                date.day
+            );
+        },
+        getYearStoreForDate: (date: CalDate) => {
+            return yearCalculator.getYearFromCache(date.year);
+        },
+        getMonthStoreForDate: (date: CalDate) => {
+            return yearCalculator
+                .getYearFromCache(date.year)
+                .getMonthFromCache(date.month);
+        },
         setCurrentDate: (date: CalDate) =>
             store.update((cal) => {
                 cal.current = { ...date };
@@ -390,6 +407,10 @@ function createStaticStore(store: Writable<Calendar>) {
     const weekdays = derived(staticData, (data) => data.weekdays);
     const years = derived(staticData, (data) => data.years);
 
+    function getDaysInAYear() {
+        return get(months).reduce((a, b) => a + b.length, 0);
+    }
+
     const staticConfiguration = derived(staticData, (data) => {
         return {
             firstWeekDay: data.firstWeekDay,
@@ -400,6 +421,9 @@ function createStaticStore(store: Writable<Calendar>) {
         };
     });
     return {
+        getDaysInAYear,
+        
+        staticData,
         leapDays,
         months,
         moons,
