@@ -53,14 +53,32 @@ export interface TimeSpan {
     id: string;
 }
 
-interface BaseDay extends TimeSpan {
+export type BaseDay = TimeSpan & {
     type: "day" | "leapday";
+};
+export type DefinedeDay = {
     number: number;
-}
-export interface Day extends BaseDay {
+};
+export type Day = BaseDay & {
     type: "day";
-}
-export type DayOrLeapDay = Day | LeapDay;
+};
+export type DefinedDay = Day &
+    DefinedDay & {
+        type: "day";
+    };
+export type LeapDay = BaseDay & {
+    type: "leapday";
+    interval: LeapDayCondition[];
+    timespan: number;
+    intercalary: boolean;
+    offset: number;
+    numbered?: boolean;
+    after?: number;
+};
+
+export type DefinedLeapDay = LeapDay & DefinedDay;
+
+export type DayOrLeapDay = DefinedDay | DefinedLeapDay;
 export interface Year extends TimeSpan {}
 
 export type Week = Day[];
@@ -70,6 +88,7 @@ interface BaseMonth extends TimeSpan {
     interval: number;
     offset: number;
     type: "month" | "intercalary";
+    subtitle?: string;
 }
 export interface RegularMonth extends BaseMonth {
     type: "month";
@@ -110,15 +129,6 @@ Example Condition
 ]
 
  */
-export interface LeapDay extends BaseDay {
-    type: "leapday";
-    interval: LeapDayCondition[];
-    timespan: number;
-    intercalary: boolean;
-    offset: number;
-    numbered?: boolean;
-    after?: number;
-}
 
 export interface Season {
     name: string;

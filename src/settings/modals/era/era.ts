@@ -41,13 +41,13 @@ export class CreateEraModal extends CalendariumModal {
             });
         });
 
-        new CurrentDate({
+        /* new CurrentDate({
             target: this.contentEl.createDiv(),
             props: {
                 calendar: this.calendar,
                 date: this.era.start
             }
-        });
+        }); */
 
         const advanced = this.contentEl.createEl("details", {
             cls: "calendarium-nested-settings",

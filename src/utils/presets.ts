@@ -19,43 +19,36 @@ export const PRESET_CALENDARS: Calendar[] = [
                     type: "day",
                     name: "Sunday",
                     id: "ID_19ea684b4a08",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Monday",
                     id: "ID_2928b90ab949",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Tuesday",
                     id: "ID_0ad9a8f9e95b",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Wednesday",
                     id: "ID_195a4b290bc9",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Thursday",
                     id: "ID_abe8c89b0999",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Friday",
                     id: "ID_2b5b8a79fa4a",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Saturday",
                     id: "ID_1a78cb79c8cb",
-                    number: null,
                 },
             ],
             months: [
@@ -170,7 +163,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 {
                     name: "Leap Day",
                     type: "leapday",
-                    number: null,
+
                     interval: [
                         {
                             ignore: false,
@@ -516,43 +509,36 @@ export const PRESET_CALENDARS: Calendar[] = [
                     type: "day",
                     name: "Starday",
                     id: "ID_a8e979984938",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Sunday",
                     id: "ID_1b68bb78ca1b",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Moonday",
                     id: "ID_c8b86aea0998",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Godsday",
                     id: "ID_b8097a18e95b",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Waterday",
                     id: "ID_1918c99949ca",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Earthday",
                     id: "ID_fa295a1bab89",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Freeday",
                     id: "ID_6a485ada3ae8",
-                    number: null,
                 },
             ],
             months: [
@@ -1029,43 +1015,36 @@ export const PRESET_CALENDARS: Calendar[] = [
                     type: "day",
                     name: "Moonday",
                     id: "ID_db8af8f85b8a",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Toilday",
                     id: "ID_f87a094b2849",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Wealday",
                     id: "ID_2a5bb88b3ae8",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Oathday",
                     id: "ID_c93a0be8981b",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Fireday",
                     id: "ID_2b7b59794a0b",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Starday",
                     id: "ID_baaa6a89ca1b",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Sunday",
                     id: "ID_f9baca088b28",
-                    number: null,
                 },
             ],
             months: [
@@ -1180,7 +1159,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 {
                     name: "Leap Day",
                     type: "leapday",
-                    number: null,
+
                     interval: [
                         {
                             ignore: false,
@@ -2705,43 +2684,36 @@ export const PRESET_CALENDARS: Calendar[] = [
                     type: "day",
                     name: "Sul",
                     id: "ID_598a7bd9b8b9",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Mol",
                     id: "ID_69088ac8f818",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Zol",
                     id: "ID_a8c85a98f8fa",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Wir",
                     id: "ID_fa4b687aaba9",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Zor",
                     id: "ID_58e9a82a6bc8",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Far",
                     id: "ID_9a18cb889ada",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Sar",
                     id: "ID_3b9bfa38c979",
-                    number: null,
                 },
             ],
             months: [
@@ -3497,43 +3469,36 @@ export const PRESET_CALENDARS: Calendar[] = [
                     type: "day",
                     name: "Monday",
                     id: "ID_6a183b08c8eb",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Tuesday",
                     id: "ID_892b7b7a5ae9",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Wednesday",
                     id: "ID_6bb98899ba68",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Thursday",
                     id: "ID_4a7b683aea19",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Friday",
                     id: "ID_78690a099b89",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Saturday",
                     id: "ID_ba5b09ba5a89",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Sunday",
                     id: "ID_29b90acaead9",
-                    number: null,
                 },
             ],
             months: [
@@ -3648,7 +3613,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 {
                     name: "Leap Day",
                     type: "leapday",
-                    number: null,
+
                     interval: [
                         {
                             ignore: false,
@@ -3836,43 +3801,36 @@ export const PRESET_CALENDARS: Calendar[] = [
                     type: "day",
                     name: "Miresen",
                     id: "ID_3b38aaa81bca",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Grissen",
                     id: "ID_da6b19882baa",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Whelsen",
                     id: "ID_a9cae8f88b98",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Conthsen",
                     id: "ID_e87859eb5aaa",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Folsen",
                     id: "ID_59180abbea8a",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Yulisen",
                     id: "ID_98082bd8d8ca",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "Da'leysen",
                     id: "ID_da4ba92b299a",
-                    number: null,
                 },
             ],
             months: [
@@ -4503,61 +4461,51 @@ export const PRESET_CALENDARS: Calendar[] = [
                     type: "day",
                     name: "I",
                     id: "ID_9999882bb94a",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "II",
                     id: "ID_8a0b4b79d888",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "III",
                     id: "ID_da483aca8bf9",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "IV",
                     id: "ID_a8fbea39cac8",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "V",
                     id: "ID_9b19d9787b0b",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "VI",
                     id: "ID_382a590a8a28",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "VII",
                     id: "ID_fbca0ab80afb",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "VIII",
                     id: "ID_ca093bca5ad9",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "IX",
                     id: "ID_d95b39098bf8",
-                    number: null,
                 },
                 {
                     type: "day",
                     name: "X",
                     id: "ID_389bfb5858db",
-                    number: null,
                 },
             ],
             months: [
@@ -4712,7 +4660,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 {
                     name: "Shieldmeet",
                     type: "leapday",
-                    number: null,
+
                     interval: [
                         {
                             ignore: false,

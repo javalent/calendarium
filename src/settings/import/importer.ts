@@ -100,7 +100,6 @@ export default class Import {
                         after: leap.day,
                         offset: leap.offset ?? 0,
                         id: nanoid(6),
-                        number: null,
                     });
                 }
             }
