@@ -1,4 +1,11 @@
-import type { Calendar, CalDate, CalEvent, LeapDay, Month } from "../@types";
+import type {
+    Calendar,
+    CalDate,
+    CalEvent,
+    LeapDay,
+    Month,
+    Day,
+} from "../@types";
 
 export function daysBetween(date1: Date, date2: Date) {
     const d1 = window.moment(date1);
@@ -205,4 +212,8 @@ export function compareEvents(a: CalEvent, b: CalEvent) {
 
 export function sortEventList(list: CalEvent[]): CalEvent[] {
     return list.sort((a, b) => compareEvents(a, b));
+}
+
+export function getAbbreviation(day: Day) {
+    return day.abbreviation ? day.abbreviation : day.name.slice(0, 3);
 }

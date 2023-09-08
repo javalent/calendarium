@@ -1,22 +1,57 @@
 <script lang="ts">
     import { createEventDispatcher, getContext } from "svelte";
     import { flip } from "svelte/animate";
-    import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
+    import {
+        dndzone,
+        SHADOW_PLACEHOLDER_ITEM_ID,
+        SOURCES,
+        TRIGGERS,
+    } from "svelte-dnd-action";
     import { ExtraButtonComponent, setIcon, TextComponent } from "obsidian";
     import type { Day } from "src/@types";
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
     import AddNew from "../Utilities/AddNew.svelte";
     import NoExistingItems from "../Utilities/NoExistingItems.svelte";
     import Details from "../Utilities/Details.svelte";
+    import SettingItem from "../Settings/SettingItem.svelte";
+    import { WeekdayModal } from "src/settings/modals/weekday/weekday";
+    import copy from "fast-copy";
+    import { getAbbreviation } from "src/utils/functions";
+
     const calendar = getContext("store");
 
     const { staticStore, weekdayStore } = calendar;
 
     $: overflow = $staticStore.overflow;
+    $: items = copy($weekdayStore);
+
     let firstWeekday = $staticStore.firstWeekDay;
 
     const grip = (node: HTMLElement) => {
-        setIcon(node, "calendarium-grip");
+        setIcon(node, "grip-horizontal");
+    };
+
+    const add = () => {
+        const modal = new WeekdayModal();
+
+        modal.onCancel = () => {}; //no op;
+        modal.onClose = () => {
+            if (!modal.item.name) return;
+            weekdayStore.add(modal.item);
+        };
+
+        modal.open();
+    };
+    const advanced = (node: HTMLElement, item: Day) => {
+        new ExtraButtonComponent(node).setIcon("wrench").onClick(() => {
+            const modal = new WeekdayModal(item);
+            modal.onCancel = () => {}; //no op;
+            modal.onClose = () => {
+                if (!modal.item.name) return;
+                weekdayStore.update(item.id, modal.item);
+            };
+            modal.open();
+        });
     };
 
     const trash = (node: HTMLElement, item: Day) => {
@@ -34,7 +69,7 @@
     function handleConsider(e: CustomEvent<GenericDndEvent<Day>>) {
         const {
             items: newItems,
-            info: { source, trigger }
+            info: { source, trigger },
         } = e.detail;
         weekdayStore.set(newItems);
         // Ensure dragging is stopped on drag finish via keyboard
@@ -45,7 +80,7 @@
     function handleFinalize(e: CustomEvent<GenericDndEvent<Day>>) {
         const {
             items: newItems,
-            info: { source }
+            info: { source },
         } = e.detail;
         weekdayStore.set(newItems);
         // Ensure dragging is stopped on drag finish via pointer (mouse, touch)
@@ -53,24 +88,15 @@
             dragDisabled = true;
         }
     }
-
-    const name = (node: HTMLElement, item: Day) => {
-        new TextComponent(node)
-            .setValue(item.name)
-            .setPlaceholder("Name")
-            .onChange((v) => {
-                item.name = v;
-                weekdayStore.update(item.id, item);
-            })
-            .inputEl.setAttr("style", "width: 100%;");
-    };
 </script>
 
 <Details
     name={"Weekdays"}
     warn={!$weekdayStore?.length}
     label={"At least one weekday is required"}
-    desc={`${$weekdayStore.length} weekday${$weekdayStore.length != 1 ? "s" : ""}`}
+    desc={`${$weekdayStore.length} weekday${
+        $weekdayStore.length != 1 ? "s" : ""
+    }`}
     open={false}
 >
     <ToggleComponent
@@ -81,18 +107,28 @@
             staticStore.setProperty("overflow", !$staticStore.overflow)}
     />
 
-    <AddNew on:click={() => weekdayStore.add()} />
+    <AddNew
+        on:click={() => {
+            add();
+        }}
+    />
 
     {#if !$weekdayStore.length}
         <NoExistingItems message={"Create a new weekday to see it here."} />
     {:else}
         <div
-            use:dndzone={{ items: $weekdayStore, flipDurationMs, dragDisabled }}
+            use:dndzone={{
+                items,
+                flipDurationMs,
+                dragDisabled,
+                dropFromOthersDisabled: true,
+                type: "weeks",
+            }}
             class="existing-items"
             on:consider={handleConsider}
             on:finalize={handleFinalize}
         >
-            {#each $weekdayStore as item (item.id)}
+            {#each items.filter((x) => x.id !== SHADOW_PLACEHOLDER_ITEM_ID) as item (item.id)}
                 <div
                     animate:flip={{ duration: flipDurationMs }}
                     class="weekday"
@@ -102,11 +138,22 @@
                         use:grip
                         on:mousedown={startDrag}
                         on:touchstart={startDrag}
+                        style={dragDisabled
+                            ? "cursor: grab"
+                            : "cursor: grabbing"}
                     />
 
-                    <div use:name={item} />
+                    <SettingItem>
+                        <div slot="name">{item.name}</div>
+                        <div slot="desc" style="text-transform: uppercase">
+                            {getAbbreviation(item)}
+                        </div>
+                    </SettingItem>
 
-                    <div class="icon" use:trash={item} />
+                    <div class="icons">
+                        <div class="icon" use:advanced={item} />
+                        <div class="icon" use:trash={item} />
+                    </div>
                 </div>
             {/each}
         </div>
@@ -155,7 +202,12 @@
         width: 100%;
     }
 
+    .icons {
+        display: flex;
+        align-items: center;
+    }
     .weekday .icon {
+        display: flex;
         align-items: center;
     }
     .weekday {

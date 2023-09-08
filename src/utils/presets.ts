@@ -18,6 +18,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 {
                     type: "day",
                     name: "Sunday",
+                    abbreviation: "abc",
                     id: "ID_19ea684b4a08",
                 },
                 {

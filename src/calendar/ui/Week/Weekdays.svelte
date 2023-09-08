@@ -1,5 +1,7 @@
 <script lang="ts">
+    import type { Day } from "src/@types";
     import { getTypedContext } from "src/calendar/view";
+    import { getAbbreviation } from "src/utils/functions";
 
     export let year: number;
     export let month: number;
@@ -24,7 +26,7 @@
     {/if}
     {#each $weekdays as day}
         <div class="weekday calendarium">
-            {day.name.slice(0, 3).toUpperCase()}
+            {getAbbreviation(day)}
         </div>
     {/each}
 </div>

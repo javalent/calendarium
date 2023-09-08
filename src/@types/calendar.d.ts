@@ -61,6 +61,7 @@ export type DefinedeDay = {
 };
 export type Day = BaseDay & {
     type: "day";
+    abbreviation?: string;
 };
 export type DefinedDay = Day &
     DefinedDay & {

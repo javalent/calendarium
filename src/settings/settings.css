@@ -251,3 +251,8 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
 .calendarium-creator .additional.can-save {
     color: var(--text-normal);
 }
+
+/** Generic Modal */
+.calendarium-modal-buttons {
+    justify-content: flex-end;
+}

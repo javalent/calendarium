@@ -150,13 +150,15 @@ function createStore(
         },
         weekdayStore: {
             subscribe: weekStore.subscribe,
-            add: () =>
+            add: (item?: Day) =>
                 update((data) => {
-                    data.static.weekdays.push({
-                        type: "day",
-                        name: null,
-                        id: nanoid(6),
-                    });
+                    data.static.weekdays.push(
+                        item ?? {
+                            type: "day",
+                            name: null,
+                            id: nanoid(6),
+                        }
+                    );
                     return data;
                 }),
 

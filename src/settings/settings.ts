@@ -588,46 +588,6 @@ export default class CalendariumSettings extends PluginSettingTab {
                 reject();
             }
         });
-        /* } else {
-            this.containerEl.addClass("calendarium-creator-open");
-            return new Promise((resolve) => {
-                const color = getComputedStyle(
-                    this.containerEl.closest(".modal")
-                ).backgroundColor;
-                const $app = new CalendarCreator({
-                    target: this.containerEl,
-                    props: {
-                        base: clone,
-                        plugin: this.plugin,
-                        width: this.contentEl.clientWidth,
-                        color,
-                        top: this.containerEl.scrollTop,
-                    },
-                });
-                const observer = new ResizeObserver(() => {
-                    $app.$set({ width: this.contentEl.clientWidth });
-                });
-                observer.observe(this.contentEl);
-                $app.$on(
-                    "exit",
-                    (
-                        evt: CustomEvent<{ saved: boolean; calendar: Calendar }>
-                    ) => {
-                        this.containerEl.removeClass(
-                            "calendarium-creator-open"
-                        );
-                        $app.$destroy();
-                        if (evt.detail.saved) {
-                            //saved
-                            calendar = copy(evt.detail.calendar);
-                            observer.disconnect();
-                            resolve(calendar);
-                        }
-                        resolve();
-                    }
-                );
-            });
-        } */
     }
 }
 
@@ -694,7 +654,8 @@ class CreatorModal extends CalendariumModal {
             })
         );
     }
-    onOpen() {
+    async display() {
+        this.modalEl.onscroll = () => console.trace();
         this.setTitle();
         this.store.valid.subscribe((v) => {
             if (v == this.valid) return;

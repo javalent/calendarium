@@ -60,6 +60,7 @@
                         };
                         modal.open();
                     });
+                b.buttonEl.setAttr("tabindex", "-1");
             });
     };
 
@@ -86,42 +87,12 @@
             class="inherit calendarium-creator-inner"
             style={!mobile ? `width: ${width + 4}px;` : ""}
         >
-            <!-- <div class="top-nav">
-                <div class="icons">
-                    <div class="left">
-                        <div class="check">
-                            {#if $valid}
-                                <div
-                                    class="save can-save"
-                                    use:savedEl
-                                    aria-label={missing}
-                                />
-                                <span class="additional can-save">
-                                    All good! Exit to save calendar
-                                </span>
-                            {:else}
-                                <div
-                                    class="save"
-                                    use:savedEl
-                                    aria-label={missing}
-                                />
-                                <span class="additional">
-                                    Additional information is required before
-                                    saving
-                                </span>
-                            {/if}
-                        </div>
-                    </div>
-                </div>
-            </div> -->
             <div class="calendarium-creator-app">
                 <div use:preset />
                 <Info {plugin} />
                 <WeekdayContainer />
                 <MonthContainer />
                 <YearContainer app={plugin.app} />
-                <!-- 
-            -->
                 <!--<EraContainer {plugin} {calendar} />-->
                 <CurrentDate />
                 <EventContainer {plugin} />
