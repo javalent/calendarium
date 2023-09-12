@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1-b25](https://github.com/javalent/the-calendarium/compare/1.0.0-b25...1.0.1-b25) (2023-09-12)
+
+
+### Bug Fixes
+
+* poke ([fabf477](https://github.com/javalent/the-calendarium/commit/fabf47795390c48f62f87ad2e7c240f1efa937ad))
+
 ## [1.0.0-b25](https://github.com/javalent/the-calendarium/compare/1.0.0-b24...1.0.0-b25) (2023-09-12)
 
 
