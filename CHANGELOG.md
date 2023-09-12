@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.0.0-b25](https://github.com/javalent/the-calendarium/compare/1.0.0-b24...1.0.0-b25) (2023-09-12)
+
+
+### Features
+
+* Can now specify Weekday Abbreviations ([#45](https://github.com/javalent/the-calendarium/issues/45)) ([ac5928f](https://github.com/javalent/the-calendarium/commit/ac5928f1ba9aa9d3412af53f03515f9a4b12fe14))
+
+
+### Bug Fixes
+
+* Better date formatting behavior ([9d8bea1](https://github.com/javalent/the-calendarium/commit/9d8bea1e07f6f8daf089ebedbaf564233a097db5))
+* fix typings of Day and LeapDay to avoid unnecessary number field ([1792393](https://github.com/javalent/the-calendarium/commit/1792393d629bd9ff0dc7e9c4e703f626f2276236))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b25 ([a118912](https://github.com/javalent/the-calendarium/commit/a1189121e9e5ba590ac96cf4bb862bd9708d5c7e))
+
 ## [1.0.0-b24](https://github.com/javalent/the-calendarium/compare/1.0.0-b23...1.0.0-b24) (2023-09-07)
 
 
