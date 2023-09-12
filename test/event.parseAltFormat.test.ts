@@ -34,7 +34,7 @@ test("YYYY-MM-DD", () => {
 test("YYYY-MMM-DD", () => {
     GREGORIAN.dateFormat = "YYYY-MMM-DD";
     const YMD = new CalEventHelper(GREGORIAN, true);
-    const datestring = "1400-February-28";
+    const datestring = "1400-Feb-28";
     expect(YMD.formatDigest).toEqual("YMD");
     expect(dateString(input, GREGORIAN, undefined, "YYYY-MMM-DD")).toEqual(datestring);
     expect(YMD.parseCalDateString(datestring, file)).toEqual(
@@ -78,7 +78,7 @@ test("DD-M-Y", () => {
 test("DD-MMM-Y", () => {
     GREGORIAN.dateFormat = "DD-MMM-Y";
     const DMY = new CalEventHelper(GREGORIAN, true);
-    const datestring = "28-February-1400";
+    const datestring = "28-Feb-1400";
     expect(DMY.formatDigest).toEqual("DMY");
     expect(dateString(input, GREGORIAN, undefined, "DD-MMM-Y")).toEqual(datestring);
     expect(DMY.parseCalDateString(datestring, file)).toEqual(
@@ -99,7 +99,7 @@ test("Date Range: Different year", () => {
         month: 1,
         day: 28,
     };
-    expect(dateString(start, GREGORIAN, end, "DD-MMM-Y")).toEqual("28-February-1400 — 28-February-1401");
+    expect(dateString(start, GREGORIAN, end, "DD-MMMM-Y")).toEqual("28-February-1400 — 28-February-1401");
 });
 
 test("Date Range: Same year, different month", () => {
