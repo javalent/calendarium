@@ -217,6 +217,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
             ],
             offset: 0,
+            padDays: 2,
+            padMonths: 2
         },
         current: {
             year: null,
@@ -505,6 +507,8 @@ export const PRESET_CALENDARS: Calendar[] = [
             displayMoons: true,
             firstWeekDay: 0,
             overflow: false,
+            padDays: 2,
+            padMonths: 2,
             weekdays: [
                 {
                     type: "day",
@@ -1011,6 +1015,8 @@ export const PRESET_CALENDARS: Calendar[] = [
             incrementDay: false,
             displayMoons: true,
             overflow: true,
+            padDays: 2,
+            padMonths: 2,
             weekdays: [
                 {
                     type: "day",
@@ -2680,6 +2686,8 @@ export const PRESET_CALENDARS: Calendar[] = [
             incrementDay: false,
             displayMoons: true,
             overflow: false,
+            padDays: 2,
+            padMonths: 2,
             weekdays: [
                 {
                     type: "day",
@@ -3465,6 +3473,8 @@ export const PRESET_CALENDARS: Calendar[] = [
             incrementDay: false,
             displayMoons: true,
             overflow: true,
+            padDays: 2,
+            padMonths: 2,
             weekdays: [
                 {
                     type: "day",
@@ -3797,6 +3807,8 @@ export const PRESET_CALENDARS: Calendar[] = [
             incrementDay: false,
             displayMoons: true,
             overflow: true,
+            padDays: 2,
+            padMonths: 2,
             weekdays: [
                 {
                     type: "day",
@@ -4451,12 +4463,15 @@ export const PRESET_CALENDARS: Calendar[] = [
         path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
+        dateFormat: "YYYY-MMM-DD",
         static: {
             displayDayNumber: false,
             firstWeekDay: 0,
             incrementDay: false,
             displayMoons: true,
             overflow: false,
+            padDays: 2,
+            padMonths: 2,
             weekdays: [
                 {
                     type: "day",
@@ -4512,6 +4527,8 @@ export const PRESET_CALENDARS: Calendar[] = [
             months: [
                 {
                     name: "Hammer (Deepwinter)",
+                    short: "Hammer",
+                    subtitle: "Deepwinter",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4520,6 +4537,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Midwinter",
+                    short: "Midwinter",
                     type: "intercalary",
                     length: 1,
                     interval: 1,
@@ -4528,6 +4546,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Alturiak (The Claw of Winter)",
+                    short: "Alturiak",
+                    subtitle: "The Claw of Winter",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4536,6 +4556,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Ches (The Claw of the Sunsets)",
+                    short: "Ches",
+                    subtitle: "The Claw of the Sunsets",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4544,6 +4566,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Tarsakh (The Claw of Storms)",
+                    short: "Tarsakh",
+                    subtitle: "The Claw of Storms",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4552,6 +4576,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Greengrass",
+                    short: "Greengrass",
                     type: "intercalary",
                     length: 1,
                     interval: 1,
@@ -4560,6 +4585,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Mirtul (The Melting)",
+                    short: "Mirtul",
+                    subtitle: "The Melting",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4568,6 +4595,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Kythorn (The Time of Flowers)",
+                    short: "Kythorn",
+                    subtitle: "The Time of Flowers",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4576,6 +4605,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Flamerule (Summertide)",
+                    short: "Flamerule",
+                    subtitle: "Summertide",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4584,6 +4615,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Midsummer",
+                    short: "Midsummer",
                     type: "intercalary",
                     length: 1,
                     interval: 1,
@@ -4592,6 +4624,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Eleasis (Highsun)",
+                    short: "Eleasis",
+                    subtitle: "Highsun",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4600,6 +4634,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Eleint (The Fading)",
+                    short: "Eleint",
+                    subtitle: "The Fading",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4608,6 +4644,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Highharvestide",
+                    short: "Highharvestide",
                     type: "intercalary",
                     length: 1,
                     interval: 1,
@@ -4616,6 +4653,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Marpenoth (Leaffall)",
+                    short: "Marpenoth",
+                    subtitle: "Leaffall",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4624,6 +4663,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Uktar (The Rotting)",
+                    short: "Uktar",
+                    subtitle: "The Rotting",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4632,6 +4673,7 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "The Feast of the Moon",
+                    short: "FeastOfTheMoon",
                     type: "intercalary",
                     length: 1,
                     interval: 1,
@@ -4640,6 +4682,8 @@ export const PRESET_CALENDARS: Calendar[] = [
                 },
                 {
                     name: "Nightal (The Drawing Down)",
+                    short: "Nightal",
+                    subtitle: "The Drawing Down",
                     type: "month",
                     length: 30,
                     interval: 1,
@@ -4660,8 +4704,8 @@ export const PRESET_CALENDARS: Calendar[] = [
             leapDays: [
                 {
                     name: "Shieldmeet",
+                    short: "Shieldmeet",
                     type: "leapday",
-
                     interval: [
                         {
                             ignore: false,

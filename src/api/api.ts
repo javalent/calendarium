@@ -16,7 +16,7 @@ export class API {
             store = this.plugin.getStoreByCalendar(calendar);
         }
         if (!store)
-            throw new ReferenceError("No calendar store by that name exists.");
+            throw new ReferenceError("No calendar by that name exists.");
         return store;
     }
     /**
@@ -27,8 +27,11 @@ export class API {
      * @returns An instance of the Calendar API.
      */
     getAPI(calendarName: string): CalendarAPI {
-        const store = this.#getStore(calendarName);
-        return new CalendarAPI(store);
+        const calendar = this.plugin.data.calendars.find((c) => c.name == calendarName);
+        if (!calendar)
+            throw new ReferenceError("No calendar store by that name exists.");
+        const store = this.#getStore(calendar);
+        return new CalendarAPI(store, calendar);
     }
     /**
      * Translate an event from one calendar to another.

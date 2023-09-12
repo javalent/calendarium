@@ -11,6 +11,7 @@ import SettingsService from "./settings/settings.service";
 import { CalendarStore, createCalendarStore } from "./stores/calendar.store";
 import { CodeBlockService } from "./calendar/codeblock";
 import {
+    DEFAULT_FORMAT,
     /*
     EVENT_LINKED_TO_NOTE,
     EVENT_LINKED_TO_NOTE_ICON, */
@@ -115,7 +116,7 @@ export default class Calendarium extends Plugin {
         return (
             (this.data.dailyNotes && this.canUseDailyNotes
                 ? this.dailyNotes.instance.options.format
-                : this.data.dateFormat) ?? "YYYY-MM-DD"
+                : this.data.dateFormat) ?? DEFAULT_FORMAT
         );
     }
     hasCalendar(calendar: string): boolean {
@@ -145,7 +146,7 @@ export default class Calendarium extends Plugin {
         /* addIcon(EVENT_LINKED_TO_NOTE, EVENT_LINKED_TO_NOTE_ICON); */
 
         this.watcher = new Watcher(this);
-        
+
         (window["Calendarium"] = this.api) &&
             this.register(() => delete window["Calendarium"]);
 

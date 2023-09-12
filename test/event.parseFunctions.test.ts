@@ -2,7 +2,7 @@
  * @vitest-environment happy-dom
  */
 import { Loc, Pos } from "obsidian";
-import { CalEvent } from "../src/@types";
+import { CalEvent, Calendar } from "../src/@types";
 import { CalEventHelper, ParseDate } from "../src/events/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 import { test, expect } from "vitest";
@@ -10,7 +10,7 @@ import { test, expect } from "vitest";
 import Moment from "moment";
 Object.defineProperty(window, "moment", { value: Moment });
 
-const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
+const GREGORIAN: Calendar = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
 const gregorian = new CalEventHelper(GREGORIAN, true);
 
 const file = {
@@ -27,6 +27,11 @@ const position: Pos = {
     end: loc,
 };
 
+test("Preset padding", () => {
+    expect(GREGORIAN.static.padDays).toEqual(2);
+    expect(GREGORIAN.static.padMonths).toEqual(2);
+});
+
 test("Bad Year", () => {
     expect(gregorian.parseCalDateString("", file)).toBeNull();
 });
@@ -39,8 +44,6 @@ test("Timestamp", () => {
         order: "",
     };
 
-    expect(gregorian.padDays).toEqual(2);
-    expect(gregorian.padMonth).toEqual(2);
     expect(gregorian.parsedToTimestamp(expected)).toEqual({
         timestamp: 19660301,
         order: "",
