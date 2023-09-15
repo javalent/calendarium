@@ -1,6 +1,7 @@
-import type { Calendar, CalendariumData } from "src/@types";
+import type { CalendariumData, PresetCalendar } from "src/@types";
+import { SyncBehavior } from "src/schemas/data";
 
-export const DEFAULT_CALENDAR: Calendar = {
+export const DEFAULT_CALENDAR: PresetCalendar = {
     name: null,
     description: null,
     id: null,
@@ -58,4 +59,6 @@ export const DEFAULT_DATA: CalendariumData = {
     },
     debug: false,
     askedToMoveFC: false,
+    askedAboutSync: false,
+    syncBehavior: SyncBehavior.enum.Ask,
 };
