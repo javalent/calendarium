@@ -39,8 +39,8 @@ export interface StaticCalendarData {
     incrementDay: boolean;
     useCustomYears?: boolean;
     years?: Year[];
-    padMonths?:number;
-    padDays?:number;
+    padMonths?: number;
+    padDays?: number;
 }
 
 export interface CalDate {
@@ -58,7 +58,7 @@ export interface TimeSpan {
 export type BaseDay = TimeSpan & {
     type: "day" | "leapday";
 };
-export type DefinedeDay = {
+export type DefinedBaseDay = {
     number: number;
 };
 export type Day = BaseDay & {
@@ -66,7 +66,7 @@ export type Day = BaseDay & {
     abbreviation?: string;
 };
 export type DefinedDay = Day &
-    DefinedDay & {
+    DefinedBaseDay & {
         type: "day";
     };
 export type LeapDay = BaseDay & {
