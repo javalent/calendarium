@@ -1,4 +1,12 @@
-import type { Calendar, CalDate, CalEvent, Day, LeapDay, Nullable } from "../@types";
+import type {
+    Calendar,
+    CalDate,
+    CalEvent,
+    Day,
+    LeapDay,
+    Nullable,
+    CalEventDate,
+} from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
 
 export function daysBetween(date1: Date, date2: Date) {
@@ -80,7 +88,12 @@ export function ordinal(i: number) {
     return i + "th";
 }
 
-export function dateString(date: Partial<CalDate>, calendar: Calendar, end?: Partial<CalDate>, dateFormat?: string) {
+export function dateString(
+    date: CalEventDate,
+    calendar: Calendar,
+    end?: CalEventDate | null,
+    dateFormat?: string
+) {
     if (!date || date.day == undefined) {
         return "";
     }
@@ -92,7 +105,7 @@ export function dateString(date: Partial<CalDate>, calendar: Calendar, end?: Par
     const { months, years, useCustomYears } = calendar.static;
 
     let startY: string = `${year}`;
-    if (useCustomYears) {
+    if (useCustomYears && years?.length && year) {
         startY = years[year - 1].name;
     }
     if (month != undefined && !months[month]) return "Invalid Date";
@@ -105,19 +118,34 @@ export function dateString(date: Partial<CalDate>, calendar: Calendar, end?: Par
         const endMonth = end.month;
         const endYear = end.year;
         let endY: string = `${endYear}`;
-        if (useCustomYears) {
+        if (useCustomYears && years?.length && endYear) {
             endY = years[endYear - 1]?.name;
         }
         const endM = endMonth == undefined ? endMonth : months[endMonth].name;
         const endD = ordinal(endDay);
 
         // \u2014 is em dash
-        if (month != undefined && endMonth != undefined && year != undefined && year != endYear) {
-            const startStr = format(calendar, dateFormat, startY, date as CalDate);
+        if (
+            month != undefined &&
+            endMonth != undefined &&
+            year != undefined &&
+            year != endYear
+        ) {
+            const startStr = format(
+                calendar,
+                dateFormat,
+                startY,
+                date as CalDate
+            );
             const endStr = format(calendar, dateFormat, endY, end as CalDate);
             return `${startStr} — ${endStr}`;
         }
-        if (month != undefined && endMonth != undefined && year != undefined && endMonth != month) {
+        if (
+            month != undefined &&
+            endMonth != undefined &&
+            year != undefined &&
+            endMonth != month
+        ) {
             return `${startM} ${startD} — ${endM} ${endD}, ${startY}`;
         }
         if (month != undefined && endMonth != undefined && year != undefined) {
@@ -141,23 +169,31 @@ export function dateString(date: Partial<CalDate>, calendar: Calendar, end?: Par
     return `${startD} of every month`;
 }
 
-function format(calendar: Calendar, dateFormat: string, year: string|number, date: CalDate): string {
+function format(
+    calendar: Calendar,
+    dateFormat: string,
+    year: string | number,
+    date: CalDate
+): string {
     let format = dateFormat
-        .replace(/[Yy]+/g, '🂡')
-        .replace(/[Mm]{4,}/g, '🂢') // MMMM
-        .replace(/[Mm]{3,}/g, '🂣') // MMM
-        .replace(/[Mm]{2,}/g, '🂤') // MM
-        .replace(/[Mm]/g, '🂥')     // M
-        .replace(/[Dd]{2,}/g, '🂦')
-        .replace(/[Dd]/g, '🂧');
+        .replace(/[Yy]+/g, "🂡")
+        .replace(/[Mm]{4,}/g, "🂢") // MMMM
+        .replace(/[Mm]{3,}/g, "🂣") // MMM
+        .replace(/[Mm]{2,}/g, "🂤") // MM
+        .replace(/[Mm]/g, "🂥") // M
+        .replace(/[Dd]{2,}/g, "🂦")
+        .replace(/[Dd]/g, "🂧");
 
     // If we have an intercalary month and are using "pretty names", well...
-    if (format.match(/🂢|🂣/g) && calendar.static.months[date.month].type == "intercalary") {
+    if (
+        format.match(/🂢|🂣/g) &&
+        calendar.static.months[date.month].type == "intercalary"
+    ) {
         // It's an intercalary month with only one day? Remove the day.
         if (calendar.static.months[date.month].length == 1 && date.day == 1) {
             format = format
-                .replace(/^🂦|🂧[ -]/g, '') // day at the beginning
-                .replace(/[ -]🂦|🂧/g, ''); // day in the middle or end
+                .replace(/^🂦|🂧[ -]/g, "") // day at the beginning
+                .replace(/[ -]🂦|🂧/g, ""); // day in the middle or end
         } else {
             const leapday = calendar.static.leapDays.find(
                 (l: LeapDay) => l.timespan == date.month
@@ -166,22 +202,25 @@ function format(calendar: Calendar, dateFormat: string, year: string|number, dat
                 // It's a well-known intercalary leap day! Huzzah!
                 // Use that as the month name, and remove the day.
                 format = format
-                    .replace('🂢', leapday.name) // MMMM
-                    .replace('🂣', shorten(leapday.short, leapday.name)) // MMM
-                    .replace(/^🂦|🂧[ -]/g, '') // day at the beginning
-                    .replace(/[ -]🂦|🂧/g, ''); // day in the middle or end
-                }
+                    .replace("🂢", leapday.name ?? "") // MMMM
+                    .replace(
+                        "🂣",
+                        shorten(leapday.short ?? "", leapday.name ?? "")
+                    ) // MMM
+                    .replace(/^🂦|🂧[ -]/g, "") // day at the beginning
+                    .replace(/[ -]🂦|🂧/g, ""); // day in the middle or end
+            }
         }
     }
 
     return format
-        .replace('🂡', `${year}`)
-        .replace('🂢', toMonthString(date.month, calendar)) // MMMM
-        .replace('🂣', toShortMonthString(date.month, calendar)) // MMM
-        .replace('🂤', toPaddedString(date.month + 1, calendar, "month")) // to human index (intercalary?)
-        .replace('🂥', `${date.month + 1}`) // M
-        .replace('🂦', toPaddedString(date.day, calendar, "day"))
-        .replace('🂧', `${date.day}`)
+        .replace("🂡", `${year}`)
+        .replace("🂢", toMonthString(date.month, calendar)) // MMMM
+        .replace("🂣", toShortMonthString(date.month, calendar)) // MMM
+        .replace("🂤", toPaddedString(date.month + 1, calendar, "month")) // to human index (intercalary?)
+        .replace("🂥", `${date.month + 1}`) // M
+        .replace("🂦", toPaddedString(date.day, calendar, "day"))
+        .replace("🂧", `${date.day}`)
         .trim();
 }
 
@@ -189,18 +228,33 @@ function shorten(short: string, name: string) {
     return short ? short : name.slice(0, 3);
 }
 
-export function toMonthString(month: Nullable<number>, calendar: Calendar): string {
+export function toMonthString(
+    month: Nullable<number>,
+    calendar: Calendar
+): string {
     return month == null ? "*" : calendar.static.months[month].name;
 }
 
-export function toShortMonthString(month: Nullable<number>, calendar: Calendar): string {
-    return month == null ? "*"
-        : shorten(calendar.static.months[month].short, calendar.static.months[month].name);
+export function toShortMonthString(
+    month: Nullable<number>,
+    calendar: Calendar
+): string {
+    return month == null
+        ? "*"
+        : shorten(
+              calendar.static.months[month].short ?? "",
+              calendar.static.months[month].name
+          );
 }
 
-export function toPaddedString(data: Nullable<number>, calendar: Calendar, field: string): string {
-    const padding = field == "month" ? calendar.static.padMonths : calendar.static.padDays;
-    return data == null ? "*" : String(data).padStart(padding, "0");
+export function toPaddedString(
+    data: Nullable<number>,
+    calendar: Calendar,
+    field: string
+): string {
+    const padding =
+        field == "month" ? calendar.static.padMonths : calendar.static.padDays;
+    return data == null ? "*" : String(data).padStart(padding ?? 0, "0");
 }
 
 export function isValidDay(day: number, calendar: Calendar) {
@@ -249,8 +303,7 @@ export function testLeapDay(leapday: LeapDay, year: number) {
             if (array[index + 1] && array[index + 1].exclusive) {
                 return (
                     (year - leapday.offset ?? 0) % interval == 0 &&
-                    (year - leapday.offset ?? 0) %
-                        array[index + 1].interval !=
+                    (year - leapday.offset ?? 0) % array[index + 1].interval !=
                         0
                 );
             }
@@ -283,12 +336,18 @@ export function compareEvents(a: CalEvent, b: CalEvent) {
         return a.sort.timestamp - b.sort.timestamp;
     }
     if (a.date.year != b.date.year) {
-        return a.date.year - b.date.year;
+        return (
+            (a.date.year ?? Number.MIN_VALUE) -
+            (b.date.year ?? Number.MIN_VALUE)
+        );
     }
     if (a.date.month != b.date.month) {
-        return a.date.month - b.date.month;
+        return (
+            (a.date.month ?? Number.MIN_VALUE) -
+            (b.date.month ?? Number.MIN_VALUE)
+        );
     }
-    return a.date.day - b.date.day;
+    return (a.date.day ?? Number.MIN_VALUE) - (b.date.day ?? Number.MIN_VALUE);
 }
 
 export function sortEventList(list: CalEvent[]): CalEvent[] {
@@ -296,5 +355,5 @@ export function sortEventList(list: CalEvent[]): CalEvent[] {
 }
 
 export function getAbbreviation(day: Day) {
-    return day.abbreviation ? day.abbreviation : day.name.slice(0, 3);
+    return day.abbreviation ? day.abbreviation : (day.name ?? "").slice(0, 3);
 }

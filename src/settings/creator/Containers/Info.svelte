@@ -98,7 +98,7 @@
         />
         <TextAreaComponent
             name={"Calendar Description"}
-            value={$calendar.description}
+            value={$calendar.description ?? ""}
             on:blur={(evt) => ($calendar.description = evt.detail)}
         />
         <ToggleComponent

@@ -63,17 +63,17 @@ export class MoonCache extends EntityCache<MoonState> {
         super(entities);
     }
     getYearCache(year: number): YearCache<MoonState> {
-        if (this.cache.has(year)) return this.cache.get(year);
+        if (this.cache.has(year)) return this.cache.get(year)!;
         return new YearMoonCache(year, this.entities);
     }
     getMonthCache(month: number, year: number): MonthCache<MoonState> {
         const yearCache = this.getYearCache(year);
-        if (yearCache.cache.has(month)) return yearCache.cache.get(month);
+        if (yearCache.cache.has(month)) return yearCache.cache.get(month)!;
         return new MonthMoonCache(month, year, yearCache.entities);
     }
     getDayCache(day: number, month: number, year: number): DayCache<MoonState> {
         const monthCache = this.getMonthCache(month, year);
-        if (monthCache.cache.has(day)) return monthCache.cache.get(day);
+        if (monthCache.cache.has(day)) return monthCache.cache.get(day)!;
         return new DayMoonCache(
             day,
             month,

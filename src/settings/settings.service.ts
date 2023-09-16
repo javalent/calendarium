@@ -17,7 +17,7 @@ import { nanoid } from "src/utils/functions";
 import Calendarium from "src/main";
 import copy from "fast-copy";
 import { CalendariumNotice } from "src/utils/notice";
-import { calendariumDataSchema, SyncBehavior } from "src/schemas/data";
+import { calendariumDataSchema, SyncBehavior } from "src/schemas";
 
 const SPLITTER = "--- BEGIN DATA ---";
 const HEADER = `This file is used by Calendarium to manage its data.

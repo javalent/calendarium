@@ -18,7 +18,7 @@ import Importer from "./import/importer";
 import CalendarCreator from "./creator/Creator.svelte";
 
 import type { Calendar, PresetCalendar } from "src/@types";
-import { SyncBehavior } from "src/schemas/data";
+import { SyncBehavior } from "src/schemas";
 
 import {
     confirmDeleteCalendar,
@@ -612,7 +612,16 @@ export default class CalendariumSettings extends PluginSettingTab {
                     if (modal.saved) {
                         calendar = copy(modal.calendar);
                         if (original) calendar.id = original;
-                        resolve(calendar);
+                        resolve({
+                            ...calendar,
+                            id: calendar.id ?? nanoid(8),
+                            name: calendar.name ?? "New Calendar",
+                            current: {
+                                day: calendar.current.day ?? 1,
+                                month: calendar.current.month ?? 0,
+                                year: calendar.current.year ?? 1,
+                            },
+                        });
                     }
                     resolve();
                 };

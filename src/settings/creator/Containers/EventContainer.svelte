@@ -40,7 +40,7 @@
 
     $: autoParse = $calendar.autoParse;
 
-    $: supportInlineEvents = $calendar.supportInlineEvents;
+    $: supportInlineEvents = !!$calendar.supportInlineEvents;
     if (!$calendar.inlineEventTag)
         $calendar.inlineEventTag = DEFAULT_CALENDAR.inlineEventTag;
 
@@ -137,14 +137,14 @@
     const deleteEvent = (item: CalEvent) => {
         eventStore.delete(item.id);
     };
-    const getCategory = (category: string) => {
+    const getCategory = (category: string | null) => {
         return $calendar.categories.find(({ id }) => id == category);
     };
     const add = (event?: CalEvent) => {
         const modal = new CreateEventModal($calendar, event);
         modal.onClose = () => {
             if (!modal.saved) return;
-            if (modal.editing) {
+            if (modal.editing && event) {
                 eventStore.update(event.id, { ...modal.event });
             } else {
                 eventStore.add({ ...modal.event });

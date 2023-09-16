@@ -82,7 +82,7 @@ export default class Import {
                     const intervals = interval.map((i) => {
                         const ignore = /\+/.test(i);
                         const exclusive = /\!/.test(i);
-                        const interval = i.match(/(\d+)/)[0];
+                        const interval = i.match(/(\d+)/)?.[0];
 
                         return {
                             ignore,
@@ -179,7 +179,7 @@ export default class Import {
                     if (!(color in CalendariumColorMap)) {
                         color = color.split("-").join("");
                         const canvas = createEl("canvas");
-                        const ctx = canvas.getContext("2d");
+                        const ctx = canvas.getContext("2d")!;
                         ctx.fillStyle = color;
                         color = ctx.fillStyle;
                         canvas.detach();
@@ -240,11 +240,11 @@ export default class Import {
                         } catch (e) {}
                     }
 
-                    let description: string;
+                    let description: string = "";
                     if (event.description) {
                         const descriptionEl = createDiv();
                         descriptionEl.innerHTML = event.description;
-                        description = descriptionEl.textContent;
+                        description = descriptionEl.textContent ?? "";
                     }
 
                     events.push({
@@ -269,9 +269,9 @@ export default class Import {
             });
 
             for (let id of existingCategories.keys()) {
-                const category = existingCategories.get(id);
+                const category = existingCategories.get(id)!;
                 if (category.color) continue;
-                category.color = colors.shift().hex();
+                category.color = colors.shift()!.hex();
                 existingCategories.set(id, category);
             }
 
@@ -283,7 +283,7 @@ export default class Import {
                 events,
                 id: nanoid(6),
                 categories: Array.from(existingCategories.values()),
-            });
+            }) as Calendar;
 
             calendars.push(calendarData);
         }

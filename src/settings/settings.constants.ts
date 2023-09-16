@@ -1,5 +1,5 @@
 import type { CalendariumData, PresetCalendar } from "src/@types";
-import { SyncBehavior } from "src/schemas/data";
+import { SyncBehavior } from "../schemas";
 
 export const DEFAULT_CALENDAR: PresetCalendar = {
     name: null,
@@ -7,7 +7,7 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
     id: null,
     static: {
         incrementDay: false,
-        firstWeekDay: null,
+        firstWeekDay: 0,
         overflow: true,
         weekdays: [],
         months: [],

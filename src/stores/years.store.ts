@@ -14,7 +14,7 @@ export class YearStoreCache {
         if (!this.cache.has(year)) {
             this.cache.set(year, new YearStore(year, this.staticStore));
         }
-        return this.cache.get(year);
+        return this.cache.get(year)!;
     }
 }
 
@@ -85,13 +85,13 @@ export class YearStore {
         );
     });
     getMonthFromCache(month: number) {
+        const monthStore =
+            this.monthCache.get(month) ??
+            new MonthStore(get(this.months)[month], this, this.staticStore);
         if (!this.monthCache.has(month)) {
-            this.monthCache.set(
-                month,
-                new MonthStore(get(this.months)[month], this, this.staticStore)
-            );
+            this.monthCache.set(month, monthStore);
         }
-        return this.monthCache.get(month);
+        return monthStore;
     }
 }
 

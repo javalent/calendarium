@@ -12,7 +12,7 @@ import {
 import CalendariumSettings from "./settings/settings";
 
 import type { Calendar, CalendariumData } from "./@types";
-import { SyncBehavior } from "src/schemas/data";
+import { SyncBehavior } from "src/schemas";
 import CalendariumView, { VIEW_TYPE } from "./calendar/view";
 
 import { CalendarEventTree, Watcher } from "./watcher/watcher";

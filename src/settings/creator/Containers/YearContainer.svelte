@@ -8,7 +8,7 @@
         ExtraButtonComponent,
         setIcon,
         Setting,
-        TextComponent
+        TextComponent,
     } from "obsidian";
     import type { Calendar, Year } from "src/@types";
 
@@ -49,12 +49,12 @@
 
     const customDesc = createFragment((el) => {
         el.createSpan({
-            text: "Create custom years to display instead of incrementing from 1."
+            text: "Create custom years to display instead of incrementing from 1.",
         });
         el.createEl("br");
         el.createSpan({ text: "If on, " });
         el.createEl("strong", {
-            text: "only the years added below will be displayed."
+            text: "only the years added below will be displayed.",
         });
         return el;
     });
@@ -83,7 +83,7 @@
     function handleConsider(e: CustomEvent<GenericDndEvent<Year>>) {
         const {
             items: newItems,
-            info: { source, trigger }
+            info: { source, trigger },
         } = e.detail;
         yearStore.set(newItems);
         // Ensure dragging is stopped on drag finish via keyboard
@@ -94,7 +94,7 @@
     function handleFinalize(e: CustomEvent<GenericDndEvent<Year>>) {
         const {
             items: newItems,
-            info: { source }
+            info: { source },
         } = e.detail;
         yearStore.set(newItems);
         // Ensure dragging is stopped on drag finish via pointer (mouse, touch)
@@ -113,7 +113,7 @@
     <ToggleComponent
         name="Use Custom Years"
         desc={customDesc}
-        value={$customYears}
+        value={$customYears ?? false}
         on:click={() => confirmCustom()}
     />
 
@@ -131,7 +131,7 @@
                 use:dndzone={{
                     items: $yearStore,
                     flipDurationMs,
-                    dragDisabled
+                    dragDisabled,
                 }}
                 class="existing-items"
                 on:consider={handleConsider}

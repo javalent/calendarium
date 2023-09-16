@@ -6,7 +6,7 @@
     export let name: string;
     export let desc: string = "";
     export let warn: boolean = false;
-    export let label: string = null;
+    export let label: string | null = null;
     const details = (node: HTMLElement) => {
         if (open) node.setAttr("open", "open");
     };

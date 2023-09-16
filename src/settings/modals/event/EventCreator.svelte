@@ -26,16 +26,18 @@
         modal.onClose = async () => {
             text.inputEl.blur();
 
-            event.note = modal.file.path;
+            if (modal.file) {
+                event.note = modal.file.path;
 
-            tryParse(modal.file);
+                tryParse(modal.file);
+            }
         };
     };
     const tryParse = async (file: TFile) => {
         event.name = file.basename;
         const cache = plugin.app.metadataCache.getFileCache(file);
 
-        const { frontmatter } = cache;
+        const { frontmatter } = cache ?? {};
         if (frontmatter) {
             if ("fc-date" in frontmatter) {
                 const { day, month, year } = frontmatter["fc-date"];
@@ -64,12 +66,13 @@
                     calendar.categories.push({
                         name: frontmatter["fc-category"],
                         color: "#808080",
-                        id: nanoid(6)
+                        id: nanoid(6),
                     });
                 }
-                event.category = calendar.categories.find(
-                    (c) => c.name === frontmatter["fc-category"]
-                )?.id;
+                event.category =
+                    calendar.categories.find(
+                        (c) => c.name === frontmatter["fc-category"]
+                    )?.id ?? null;
             }
         }
     };

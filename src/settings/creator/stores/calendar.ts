@@ -35,10 +35,7 @@ function padDay(months: Month[]) {
     ).length;
 }
 
-function createStore(
-    plugin: Calendarium,
-    existing: Calendar = DEFAULT_CALENDAR
-) {
+function createStore(plugin: Calendarium, existing: Calendar) {
     const store = writable<Calendar>(existing);
     const { subscribe, set, update } = store;
 
@@ -67,14 +64,14 @@ function createStore(
     const categoryStore = derived(store, (data) => data.categories);
     const validMonths = derived(staticStore, (data) => {
         return (
-            data.months?.length &&
-            data.months?.every((m) => m.name?.length) &&
+            data.months?.length > 0 &&
+            data.months?.every((m) => m.name?.length > 0) &&
             data.months?.every((m) => m.length > 0)
         );
     });
     const validWeekdays = derived(staticStore, (data) => {
         return (
-            data.weekdays?.length &&
+            data.weekdays?.length > 0 &&
             data.weekdays?.every((d) => d.name?.length) &&
             data.firstWeekDay < (data.weekdays?.length ?? Infinity)
         );
@@ -83,11 +80,12 @@ function createStore(
         return (
             !data.useCustomYears ||
             (data.useCustomYears &&
-                data.years?.length &&
+                data.years != null &&
+                data.years.length > 0 &&
                 data.years.every((y) => y.name?.length))
         );
     });
-    const validName = derived(store, (calendar) => calendar.name?.length);
+    const validName = derived(store, (calendar) => calendar.name?.length > 0);
 
     const validDay = derived([store, currentStore], ([calendar, current]) => {
         return isValidDay(current.day, calendar);
@@ -205,8 +203,8 @@ function createStore(
                 update((data) => {
                     data.static.months.push({
                         type: "month",
-                        name: null,
-                        length: null,
+                        name: "",
+                        length: 0,
                         id: nanoid(6),
                         interval: 1,
                         offset: 0,
@@ -248,15 +246,21 @@ function createStore(
             subscribe: yearStore.subscribe,
             add: () =>
                 update((data) => {
+                    if (!data.static.years) {
+                        data.static.years = [];
+                    }
                     data.static.years.push({
                         type: "year",
-                        name: null,
+                        name: "",
                         id: nanoid(6),
                     });
                     return data;
                 }),
             update: (id: string, year: Year) =>
                 update((data) => {
+                    if (!data.static.years) {
+                        data.static.years = [];
+                    }
                     data.static.years.splice(
                         data.static.years.findIndex((m) => m.id == id),
                         1,
@@ -266,6 +270,9 @@ function createStore(
                 }),
             delete: (id: string) =>
                 update((data) => {
+                    if (!data.static.years) {
+                        data.static.years = [];
+                    }
                     data.static.years = data.static.years.filter(
                         (m) => m.id != id
                     );
@@ -282,12 +289,21 @@ function createStore(
             sortedStore: derived(eventStore, (events) =>
                 events.sort((a, b) => {
                     if (a.date.year != b.date.year) {
-                        return a.date.year - b.date.year;
+                        return (
+                            (a.date.year ?? Number.MIN_VALUE) -
+                            (b.date.year ?? Number.MIN_VALUE)
+                        );
                     }
                     if (a.date.month != b.date.month) {
-                        return a.date.month - b.date.month;
+                        return (
+                            (a.date.month ?? Number.MIN_VALUE) -
+                            (b.date.month ?? Number.MIN_VALUE)
+                        );
                     }
-                    return a.date.day - b.date.day;
+                    return (
+                        (a.date.day ?? Number.MIN_VALUE) -
+                        (b.date.day ?? Number.MIN_VALUE)
+                    );
                 })
             ),
             set: (events: CalEvent[]) =>

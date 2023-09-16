@@ -20,6 +20,7 @@
     import { getMissingNotice, warning } from "./Utilities/utils";
     import { ConfirmExitModal } from "../modals/confirm";
     import createStore from "./stores/calendar";
+    import { nanoid } from "src/utils/functions";
 
     const mobile = Platform.isMobile;
     let ready = mobile;
@@ -30,7 +31,7 @@
 
     export let width: number;
     export let plugin: Calendarium;
-    export let color: string = null;
+    export let color: string | null = null;
     export let top: number;
     export let store: ReturnType<typeof createStore>;
     setContext<Writable<Calendar>>("store", store);
@@ -47,7 +48,16 @@
                         const modal = new CalendarPresetModal(plugin.app);
                         modal.onClose = () => {
                             if (!modal.saved) return;
-                            $store = copy(modal.preset);
+                            $store = {
+                                ...copy(modal.preset),
+                                id: nanoid(8),
+                                name: modal.preset.name!,
+                                current: {
+                                    day: modal.preset.current.day!,
+                                    month: modal.preset.current.month!,
+                                    year: modal.preset.current.year!,
+                                },
+                            };
                             if ($store?.name == "Gregorian Calendar") {
                                 const today = new Date();
 

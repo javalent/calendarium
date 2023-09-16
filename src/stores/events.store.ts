@@ -52,7 +52,8 @@ export class EventStore {
             return SAVED_EVENTS;
         });
     }
-    public insertEventsFromFile(path: string, ...events: CalEvent[]) {
+    public insertEventsFromFile(path: string | null, ...events: CalEvent[]) {
+        if (!path) return;
         this.#fileEvents.set(path, [
             ...(this.#fileEvents.get(path) ?? []),
             ...events.map((e) => e.id),
@@ -70,7 +71,7 @@ export class EventStore {
         this.#events.update((SAVED_EVENTS) => {
             for (const id of eventIds) {
                 if (!SAVED_EVENTS.has(id)) continue;
-                const date = { ...SAVED_EVENTS.get(id).date };
+                const date = { ...SAVED_EVENTS.get(id)!.date };
                 SAVED_EVENTS.delete(id);
                 this.#eventCache.invalidate(date);
                 this.#fileEventSet.delete(id);
@@ -85,7 +86,7 @@ export class EventStore {
         this.#events.update((SAVED_EVENTS) => {
             for (const id of this.#fileEventSet) {
                 if (!SAVED_EVENTS.has(id)) continue;
-                const date = { ...SAVED_EVENTS.get(id).date };
+                const date = { ...SAVED_EVENTS.get(id)!.date };
                 SAVED_EVENTS.delete(id);
                 this.#eventCache.invalidate(date);
                 this.#fileEventSet.delete(id);

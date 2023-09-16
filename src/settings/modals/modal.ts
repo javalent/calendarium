@@ -12,9 +12,7 @@ export abstract class CalendariumModal extends Modal {
     abstract display(): Promise<void>;
 }
 
-export abstract class CanceableCalendariumModal<
-    T extends TimeSpan
-> extends CalendariumModal {
+export abstract class CanceableCalendariumModal<T> extends CalendariumModal {
     constructor() {
         super(app);
         this.containerEl.addClasses(["has-buttons", "cancelable"]);

@@ -1,4 +1,4 @@
-import type { CalDate } from "src/@types";
+import type { CalDate, CalEventDate } from "src/@types";
 import { Readable, Writable, derived, get, writable } from "svelte/store";
 
 abstract class CacheItem<T> {
@@ -55,17 +55,20 @@ export abstract class EntityCache<T> {
     abstract getMonthCache(month: number, year: number): MonthCache<T>;
     abstract getDayCache(day: number, month: number, year: number): DayCache<T>;
 
-    public invalidate(date: CalDate) {
+    public invalidate(date: CalEventDate) {
+        if (!date.year) return;
         if (!this.cache.has(date.year)) return;
-        const year = this.cache.get(date.year);
+        const year = this.cache.get(date.year)!;
         year.dirty.set(true);
 
+        if (!date.month) return;
         if (!year.cache.has(date.month)) return;
-        const month = year.cache.get(date.month);
+        const month = year.cache.get(date.month)!;
         month.dirty.set(true);
 
+        if (!date.day) return;
         if (!month.cache.has(date.day)) return;
-        const day = month.cache.get(date.day);
+        const day = month.cache.get(date.day)!;
         day.dirty.set(true);
     }
     public getItemsOrRecalculate(date: CalDate): Readable<T[]> {
@@ -73,12 +76,12 @@ export abstract class EntityCache<T> {
         if (!this.cache.has(year)) {
             this.cache.set(year, this.getYearCache(year));
         }
-        const yearCache = this.cache.get(year);
+        const yearCache = this.cache.get(year)!;
         let dirtyYear = get(yearCache.dirty);
         if (!yearCache.cache.has(month)) {
             yearCache.cache.set(month, this.getMonthCache(month, year));
         }
-        const monthCache = yearCache.cache.get(month);
+        const monthCache = yearCache.cache.get(month)!;
         let dirtyMonth = get(monthCache.dirty);
         if (dirtyYear && !dirtyMonth) {
             monthCache.dirty.set(true);
@@ -87,10 +90,10 @@ export abstract class EntityCache<T> {
         if (!monthCache.cache.has(day)) {
             monthCache.cache.set(day, this.getDayCache(day, month, year));
         }
-        const dayCache = monthCache.cache.get(day);
+        const dayCache = monthCache.cache.get(day)!;
         if (dirtyMonth && !get(dayCache.dirty)) {
             dayCache.dirty.set(true);
         }
-        return monthCache.cache.get(day).entities;
+        return dayCache.entities;
     }
 }

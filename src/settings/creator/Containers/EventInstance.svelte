@@ -16,7 +16,7 @@
         new ExtraButtonComponent(node).setIcon("pencil").setTooltip("Edit");
     };
     export let event: CalEvent;
-    export let category: CalEventCategory;
+    export let category: CalEventCategory | undefined;
     export let date: string;
 </script>
 

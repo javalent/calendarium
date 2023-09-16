@@ -7,7 +7,7 @@
     export let label: string;
 
     export let options: Array<[string, string | number]>;
-    export let selected: string | number = null;
+    export let selected: string | number | null = null;
 </script>
 
 <div class="setting-item">

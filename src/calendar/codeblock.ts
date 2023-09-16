@@ -92,22 +92,22 @@ export class CalendariumEditorSuggester extends EditorSuggest<string> {
         cursor: EditorPosition,
         editor: Editor,
         file: TFile
-    ): EditorSuggestTriggerInfo {
+    ): EditorSuggestTriggerInfo | null {
         const range = editor.getRange({ line: 0, ch: 0 }, cursor);
 
-        if (range.indexOf("```calendarium\n") === -1) return;
+        if (range.indexOf("```calendarium\n") === -1) return null;
 
         const split = range.split("\n").reverse();
 
         let inBlock = false;
         for (const line of split) {
-            if (/^```$/.test(line)) return;
+            if (/^```$/.test(line)) return null;
             if (/^```calendarium/.test(line)) {
                 inBlock = true;
                 break;
             }
         }
-        if (!inBlock) return;
+        if (!inBlock) return null;
 
         const line = editor.getLine(cursor.line);
         //not inside the bracket

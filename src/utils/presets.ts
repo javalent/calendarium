@@ -1,6 +1,6 @@
-import type { Calendar } from "src/@types";
+import type { PresetCalendar } from "src/@types";
 
-export const PRESET_CALENDARS: Calendar[] = [
+export const PRESET_CALENDARS: PresetCalendar[] = [
     {
         name: "Gregorian Calendar",
         description: "A calendar for the real world.",
@@ -218,7 +218,7 @@ export const PRESET_CALENDARS: Calendar[] = [
             ],
             offset: 0,
             padDays: 2,
-            padMonths: 2
+            padMonths: 2,
         },
         current: {
             year: null,

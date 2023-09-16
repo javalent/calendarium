@@ -45,7 +45,7 @@ export interface UpdateEventMessage {
     id: string;
     index: number;
     event: CalEvent;
-    original: CalEvent;
+    original: CalEvent | undefined;
 }
 export interface DeleteEventMessage {
     type: "delete";
@@ -167,6 +167,7 @@ class Parser {
                     `Parsing ${path} for calendar events (${this.queue.length} to go)`
                 );
             }
+            if (!path) break;
             await this.getFileData(path);
         }
         this.parsing = false;
@@ -247,6 +248,7 @@ class Parser {
 
         if (
             eventHelper.calendar.supportInlineEvents &&
+            eventHelper.calendar.inlineEventTag &&
             allTags &&
             (allTags.includes(eventHelper.calendar.inlineEventTag) ||
                 allTags.includes(`#${eventHelper.calendar.inlineEventTag}`))
@@ -281,7 +283,7 @@ class Parser {
         }
     }
     createEventHandler(
-        frontmatter: FrontMatterCache,
+        frontmatter: FrontMatterCache | undefined,
         allTags: string[],
         file: { path: string; basename: string }
     ): Nullable<CalEventHelper> {

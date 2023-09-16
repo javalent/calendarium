@@ -47,7 +47,7 @@
             const modal = new WeekdayModal(item);
             modal.onCancel = () => {}; //no op;
             modal.onClose = () => {
-                if (!modal.item.name) return;
+                if (!modal.item.name || !item.id) return;
                 weekdayStore.update(item.id, modal.item);
             };
             modal.open();
@@ -57,7 +57,7 @@
     const trash = (node: HTMLElement, item: Day) => {
         new ExtraButtonComponent(node)
             .setIcon("trash")
-            .onClick(() => weekdayStore.delete(item.id));
+            .onClick(() => weekdayStore.delete(item.id ?? ""));
     };
     function startDrag(e: Event) {
         e.preventDefault();

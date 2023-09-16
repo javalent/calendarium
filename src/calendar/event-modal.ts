@@ -13,9 +13,9 @@ export class ViewEventModal extends CalendariumModal {
         this.contentEl.createEl("h4", { text: this.event.name });
 
         await MarkdownRenderer.renderMarkdown(
-            this.event.description,
+            this.event.description ?? "",
             this.contentEl,
-            this.event.note,
+            this.event.note ?? "",
             new Component()
         );
     }

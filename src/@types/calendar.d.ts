@@ -104,10 +104,10 @@ export interface IntercalaryMonth extends BaseMonth {
 }
 export type Month = RegularMonth | IntercalaryMonth;
 
-interface LeapDayCondition {
-    ignore: boolean; //ignore offset
-    exclusive: boolean; //causes failure if true
-    interval: number; //how many years between checking
+export interface LeapDayCondition {
+    ignore: boolean | null; //ignore offset
+    exclusive: boolean | null; //causes failure if true
+    interval: number | null; //how many years between checking
 }
 
 /**

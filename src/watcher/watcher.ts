@@ -191,7 +191,7 @@ export class Watcher extends Component {
                     const file =
                         this.plugin.app.vault.getAbstractFileByPath(path);
                     if (file instanceof TFile) {
-                        const cache = this.metadataCache.getFileCache(file);
+                        const cache = this.metadataCache.getFileCache(file) ?? {};
                         const allTags = getAllTags(cache);
                         const data = await this.vault.cachedRead(file);
                         this.worker.postMessage<FileCacheMessage>({

@@ -145,7 +145,7 @@ export interface EphemeralState {
     displayWeeks: boolean;
     displayDayNumber: boolean;
     displaying: CalDate;
-    viewing: CalDate;
+    viewing: CalDate | null;
 }
 export function getEphemeralStore(
     store: Writable<Calendar>,
@@ -202,8 +202,10 @@ export function getEphemeralStore(
         //Displayed Date
         displaying,
         goToToday: () => displaying.set({ ...base.current }),
-        displayDate: (date: CalDate = base.current) =>
-            displaying.set({ ...date }),
+        displayDate: (date: CalDate | null) => {
+            if (!date) date = base.current;
+            displaying.set({ ...date });
+        },
         displayingDisplay: derived(
             [displaying, store],
             ([display, calendar]) => {
@@ -258,7 +260,7 @@ export function getEphemeralStore(
                         let month = year.getMonthFromCache(next.month);
                         let weekArray = get(month.daysAsWeeks);
                         let weekIndex = weekArray.findIndex((w) =>
-                            w.find((d) => d.number == displaying.day)
+                            w.find((d) => d && d.number == displaying.day)
                         );
                         if (weekIndex < 1) {
                             next = decrementMonth(next, yearCalculator);
@@ -269,7 +271,7 @@ export function getEphemeralStore(
                             let monthLength = get(month.days);
                             while (
                                 !weekArray[weekIndex - 1].every(
-                                    (d) => d.number <= monthLength
+                                    (d) => d && d.number <= monthLength
                                 )
                             ) {
                                 weekIndex--;
@@ -285,7 +287,7 @@ export function getEphemeralStore(
                                 }
                             }
                         }
-                        next.day = weekArray[weekIndex - 1][0].number;
+                        next.day = weekArray[weekIndex - 1][0]!.number;
 
                         return next;
                     }
@@ -336,13 +338,13 @@ export function getEphemeralStore(
                         let month = year.getMonthFromCache(next.month);
                         let weekArray = get(month.daysAsWeeks);
                         let weekIndex = weekArray.findIndex((w) =>
-                            w.find((d) => d.number == displaying.day)
+                            w.find((d) => d && d.number == displaying.day)
                         );
                         let monthLength = get(month.days);
                         if (
                             weekIndex + 1 >= weekArray.length ||
                             weekArray[weekIndex].some(
-                                (d) => d.number >= monthLength
+                                (d) => d && d.number >= monthLength
                             )
                         ) {
                             next = incrementMonth(next, yearCalculator);
@@ -351,13 +353,13 @@ export function getEphemeralStore(
                             weekArray = get(month.daysAsWeeks);
                             weekIndex =
                                 weekArray.findIndex((w) =>
-                                    w.every((d) => d.number > 0)
+                                    w.every((d) => d && d.number > 0)
                                 ) - 1;
                             monthLength = get(month.days);
 
                             while (
                                 weekArray[weekIndex + 1].some(
-                                    (d) => d.number > monthLength
+                                    (d) => d && d.number > monthLength
                                 )
                             ) {
                                 weekIndex++;
@@ -373,7 +375,7 @@ export function getEphemeralStore(
                                 }
                             }
                         }
-                        next.day = weekArray[weekIndex + 1][0].number;
+                        next.day = weekArray[weekIndex + 1][0]!.number;
                         return next;
                     }
                     case ViewState.Month:
@@ -405,7 +407,7 @@ function createStaticStore(store: Writable<Calendar>) {
     const months = derived(staticData, (data) => data.months);
     const moons = derived(staticData, (data) => data.moons);
     const weekdays = derived(staticData, (data) => data.weekdays);
-    const years = derived(staticData, (data) => data.years);
+    const years = derived(staticData, (data) => data.years ?? []);
 
     function getDaysInAYear() {
         return get(months).reduce((a, b) => a + b.length, 0);
@@ -422,7 +424,7 @@ function createStaticStore(store: Writable<Calendar>) {
     });
     return {
         getDaysInAYear,
-        
+
         staticData,
         leapDays,
         months,

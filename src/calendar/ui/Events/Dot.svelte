@@ -1,7 +1,7 @@
 <script lang="ts">
     export let isFilled: boolean = true;
     export let isActive: boolean = false;
-    export let color: string;
+    export let color: string | undefined;
 </script>
 
 <svg

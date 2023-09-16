@@ -6,7 +6,7 @@
     export let label: boolean = true;
     export let size = 28;
 
-    $: path = SHADOW_MAP[moon.phase];
+    $: path = SHADOW_MAP[moon.phase ?? "New Moon"];
 </script>
 
 <svg

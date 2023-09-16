@@ -1,4 +1,10 @@
-import type { Day, DayOrLeapDay, LeapDay, Month } from "src/@types";
+import type {
+    Day,
+    DayOrLeapDay,
+    DefinedLeapDay,
+    LeapDay,
+    Month,
+} from "src/@types";
 import { StaticStore } from "./calendar.store";
 import { YearStore } from "./years.store";
 import { Readable, derived, readable } from "svelte/store";
@@ -80,7 +86,7 @@ export class MonthStore {
     daysAsWeeks: Readable<Array<(DayOrLeapDay | null)[]>> = derived(
         [this.weeks, this.weekdays, this.days, this.firstDay, this.leapDays],
         ([weeks, weekdays, days, firstDay, leapDays]) => {
-            let weekArray: DayOrLeapDay[][] = [];
+            let weekArray: (DayOrLeapDay | null)[][] = [];
             for (let week = 0; week < weeks; week++) {
                 let dayArray: (DayOrLeapDay | null)[] = [];
                 let intercals = 0;
@@ -92,9 +98,9 @@ export class MonthStore {
                     let day: number;
                     if (weekday == 0 && weekArray.length) {
                         const lastWeek = weekArray[weekArray.length - 1];
-                        day = lastWeek[lastWeek.length - 1].number;
+                        day = lastWeek[lastWeek.length - 1]!.number;
                     } else if (dayArray.length) {
-                        day = dayArray[dayArray.length - 1].number;
+                        day = dayArray[dayArray.length - 1]!.number;
                     } else {
                         day = weekday + week * weekdays.length - firstDay;
                     }
@@ -103,11 +109,17 @@ export class MonthStore {
                         (leapday) => leapday.after == day
                     );
                     if (leapday) {
-                        leapday.number = day + 1;
+                        const definedLeapDay: DefinedLeapDay = {
+                            ...leapday,
+                            number: day + 1,
+                        };
                         if (leapday.intercalary) {
                             if (dayArray.length) weekArray.push(dayArray);
-                            weekArray.push([leapday]);
-                            if (leapday.after > 0) {
+                            weekArray.push([definedLeapDay]);
+                            if (
+                                definedLeapDay.after &&
+                                definedLeapDay.after > 0
+                            ) {
                                 dayArray = [
                                     ...Array(dayArray.length + 1).keys(),
                                 ].map((k) => null);
@@ -116,7 +128,7 @@ export class MonthStore {
                                 dayArray = [];
                             }
                         } else {
-                            dayArray.push(leapday);
+                            dayArray.push(definedLeapDay);
                         }
                     } else {
                         dayArray.push({

@@ -46,6 +46,10 @@
             menu.addItem((item) =>
                 item.setTitle(calendar.name).onClick(() => {
                     const newStore = plugin.getStore(calendar.id);
+                    if (!newStore)
+                        throw new Error(
+                            "Could not find a calendar by that name"
+                        );
                     global.set(newStore);
                     ephemeral.set(newStore.ephemeralStore);
                     if (view) {
@@ -59,11 +63,11 @@
         menu.showAtMouseEvent(evt);
     };
     $: weekForDay = $daysAsWeeks.find((w) =>
-        w.find((day) => day.number == $displaying.day)
-    );
+        w.find((day) => day && day.number == $displaying.day)
+    ) ?? [];
     $: weekNumber =
         $daysAsWeeks.findIndex((w) =>
-            w.find((day) => day.number == $displaying.day)
+            w.find((day) => day && day.number == $displaying.day)
         ) +
         $firstWeekNumber +
         1;

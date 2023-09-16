@@ -50,7 +50,7 @@
                             0
                         );
                     if (remaining < 0 && height != 0) {
-                        target.lastElementChild.detach();
+                        target.lastElementChild?.detach();
                         overflow = events.length - events.indexOf(event);
                         break;
                     } else if (remaining == 0) {
