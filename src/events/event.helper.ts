@@ -305,6 +305,8 @@ export class CalEventHelper {
         } else if (month != null && Number.isInteger(month)) {
             month = wrap(month - 1, this.calendar.static.months.length);
         } else if (Number.isNaN(month)) {
+            // Note: Number.isNaN(null) == false
+            // A null input month will not enter this block.
             // Name in the month segment
             let m = this.calendar.static.months.find(
                 (m) =>
