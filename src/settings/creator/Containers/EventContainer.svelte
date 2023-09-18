@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CalEvent, Calendar } from "src/@types";
+    import type { CalEvent } from "src/@types";
     import { dateString } from "src/utils/functions";
 
     import EventInstance from "./EventInstance.svelte";
@@ -13,7 +13,6 @@
     import {
         Setting,
         prepareFuzzySearch,
-        FuzzyMatch,
         debounce,
         SearchComponent,
         normalizePath,
@@ -108,10 +107,12 @@
         const text = new ObsidianTextComponent(node);
         text.setValue(
             `${$calendar.inlineEventTag ?? ""}`.replace("#", "")
-        ).onChange(async (v) => {
-            $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
-            await plugin.saveSettings();
-        });
+        ).onChange(
+            debounce(async (v) => {
+                $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
+                await plugin.saveSettings();
+            }, 100)
+        );
     };
 
     const sorted = derived([sortedStore, nameFilter], ([events, filter]) => {

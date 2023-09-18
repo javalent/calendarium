@@ -128,10 +128,6 @@ class Parser {
                             return b[0].length - a[0].length;
                         })
                     );
-                    console.log(
-                        "🚀 ~ file: watcher.worker.ts:131 ~ this.pathToName:",
-                        this.pathToName
-                    );
                     if (this.debug) {
                         console.debug("Received calendars message");
                     }

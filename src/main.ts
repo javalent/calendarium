@@ -90,28 +90,7 @@ export default class Calendarium extends Plugin {
 
     watcher: Watcher;
     api: API = new API(this);
-    async addNewCalendar(calendar: Calendar, existing?: Calendar) {
-        let shouldParse =
-            !existing ||
-            calendar.name != existing?.name ||
-            (calendar.autoParse && !existing?.autoParse) ||
-            calendar.path != existing?.path;
-        if (existing == null) {
-            this.data.calendars.push(calendar);
-        } else {
-            this.data.calendars.splice(
-                this.data.calendars.indexOf(existing),
-                1,
-                calendar
-            );
-        }
-        if (!this.data.defaultCalendar) {
-            this.data.defaultCalendar = calendar.id;
-        }
-        if (shouldParse) this.watcher.start(calendar);
-        await this.saveCalendars();
-        /* this.watcher.registerCalendar(calendar); */
-    }
+
     /**
      * Settings
      */
@@ -128,29 +107,23 @@ export default class Calendarium extends Plugin {
     get calendars() {
         return this.settings$.getCalendars();
     }
+    async addNewCalendar(calendar: Calendar, existing?: Calendar) {
+        this.settings$.addCalendar(calendar, existing);
+    }
     public async removeCalendar(calendar: Calendar) {
-        this.data.calendars = this.data.calendars.filter(
-            (c) => c.id != calendar.id
-        );
-        if (calendar.id == this.data.defaultCalendar) {
-            this.data.defaultCalendar = this.data.calendars[0]?.id;
-            this.watcher.start();
-        }
-        await this.saveCalendars();
+        this.settings$.removeCalendar(calendar);
     }
     public onSettingsLoaded(callback: () => any) {
         this.settings$.onSettingsLoaded(callback);
     }
     public async saveCalendars() {
-        await this.saveSettings();
-        this.app.workspace.trigger("calendarium-updated");
+        await this.settings$.saveAndTrigger();
     }
     public async saveSettings() {
-        await this.settings$.saveData();
+        await this.settings$.save();
     }
     public hasCalendar(calendar: string): boolean {
-        const cal = this.data.calendars.find((c) => c.id == calendar);
-        return !!cal;
+        return this.settings$.hasCalendar(calendar);
     }
     get defaultCalendar(): Calendar {
         return (
@@ -161,11 +134,14 @@ export default class Calendarium extends Plugin {
             null
         );
     }
-    async onExternalSettingsChange() {
-        this.settings$.onExternalSettingsChange();
-    }
+    /**
+     * This is here so that I can properly type the data being saved.
+     */
     public async saveData(data: CalendariumData) {
         await super.saveData(data);
+    }
+    async onExternalSettingsChange() {
+        this.settings$.onExternalSettingsChange();
     }
     async handleConfigFileChange() {
         await super.handleConfigFileChange();

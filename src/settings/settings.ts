@@ -136,12 +136,12 @@ export default class CalendariumSettings extends PluginSettingTab {
             )
             .addButton((b) => {
                 b.setIcon("reset").onClick(async () => {
-                    this.plugin.data.exit = {
+                    this.data.exit = {
                         saving: false,
                         event: false,
                         calendar: false,
                     };
-                    await this.plugin.saveSettings();
+                    await this.settings$.save();
                 });
             });
         new Setting(containerEl)
@@ -156,95 +156,17 @@ export default class CalendariumSettings extends PluginSettingTab {
                     .setValue(this.data.syncBehavior)
                     .onChange(async (v: SyncBehavior) => {
                         this.data.syncBehavior = v;
-                        await this.settings$.saveData();
+                        await this.settings$.save();
                     });
             });
-
-        /* new Setting(containerEl)
-            .setName(
-                createFragment((e) => {
-                    const span = e.createSpan("calendarium-warning");
-                    setIcon(
-                        span.createSpan("calendarium-warning"),
-                        "calendarium-warning"
-                    );
-                    span.createSpan({ text: "Default Config Directory" });
-                })
-            )
-            .setDesc(
-                createFragment((e) => {
-                    e.createSpan({
-                        text: "Please back up your data before changing this setting. Hidden directories must be manually entered.",
-                    });
-                    e.createEl("br");
-                    e.createSpan({
-                        text: `Current directory: `,
-                    });
-                    const configDirectory =
-                        this.data.configDirectory ?? this.app.vault.configDir;
-                    e.createEl("code", {
-                        text: configDirectory,
-                    });
-                })
-            )
-            .addText(async (text) => {
-                let folders = this.app.vault
-                    .getAllLoadedFiles()
-                    .filter((f) => f instanceof TFolder);
-
-                text.setPlaceholder(
-                    this.data.configDirectory ?? this.app.vault.configDir
-                );
-                const modal = new FolderSuggestionModal(this.app, text, [
-                    ...(folders as TFolder[]),
-                ]);
-
-                modal.onClose = async () => {
-                    if (!text.inputEl.value) {
-                        this.data.configDirectory = null;
-                    } else {
-                        const exists = await this.app.vault.adapter.exists(
-                            text.inputEl.value
-                        );
-
-                        if (!exists) {
-                            this.data.configDirectory = text.inputEl.value;
-                            await this.plugin.saveSettings();
-                        }
-                    }
-                };
-
-                text.inputEl.onblur = async () => {
-                    if (!text.inputEl.value) {
-                        return;
-                    }
-                    const exists = await this.app.vault.adapter.exists(
-                        text.inputEl.value
-                    );
-
-                    this.data.configDirectory = text.inputEl.value;
-
-                    await this.plugin.saveSettings();
-                    this.display();
-                };
-            })
-            .addExtraButton((b) => {
-                b.setTooltip("Reset to Default")
-                    .setIcon("reset")
-                    .onClick(async () => {
-                        this.data.configDirectory = null;
-                        await this.plugin.saveSettings();
-                        this.display();
-                    });
-            }); */
     }
     async buildCalendars() {
         this.calendarsEl.empty();
-        this.calendarsEl.onClickEvent(async () => {
-            this.data.settingsToggleState.calendars = this.calendarsEl.open;
-            await this.settings$.saveData();
-        });
         const summary = this.calendarsEl.createEl("summary");
+        summary.onClickEvent(async () => {
+            this.data.settingsToggleState.calendars = this.calendarsEl.open;
+            await this.plugin.saveSettings();
+        });
         new Setting(summary).setHeading().setName("Calendar Management");
 
         setIcon(
@@ -260,7 +182,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.showIntercalary).onChange(async (v) => {
                     this.data.showIntercalary = v;
-                    await this.plugin.saveCalendars();
+                    await this.settings$.saveAndTrigger();
                 });
             });
         new Setting(this.calendarsEl)
@@ -271,16 +193,16 @@ export default class CalendariumSettings extends PluginSettingTab {
                 for (let calendar of this.data.calendars) {
                     d.addOption(calendar.id, calendar.name);
                 }
-                d.setValue(this.plugin.data.defaultCalendar ?? "none");
+                d.setValue(this.data.defaultCalendar ?? "none");
                 d.onChange(async (v) => {
                     if (v === "none") {
-                        this.plugin.data.defaultCalendar = null;
-                        await this.plugin.saveSettings();
+                        this.data.defaultCalendar = null;
+                        await this.settings$.saveAndTrigger();
                         return;
                     }
 
-                    this.plugin.data.defaultCalendar = v;
-                    await this.plugin.saveSettings();
+                    this.data.defaultCalendar = v;
+                    await this.settings$.saveAndTrigger();
                     this.plugin.watcher.start();
                 });
             });
@@ -401,12 +323,12 @@ export default class CalendariumSettings extends PluginSettingTab {
                 .addExtraButton((b) => {
                     b.setIcon("trash").onClick(async () => {
                         if (
-                            !this.plugin.data.exit.calendar &&
+                            !this.data.exit.calendar &&
                             !(await confirmDeleteCalendar(this.plugin))
                         )
                             return;
 
-                        await this.plugin.removeCalendar(calendar);
+                        await this.settings$.removeCalendar(calendar);
 
                         this.display();
                     });
@@ -416,11 +338,11 @@ export default class CalendariumSettings extends PluginSettingTab {
 
     buildEvents(containerEl: HTMLDetailsElement) {
         containerEl.empty();
-        containerEl.onClickEvent(async () => {
-            this.data.settingsToggleState.events = containerEl.open;
-            await this.settings$.saveData();
-        });
         const summary = containerEl.createEl("summary");
+        summary.onClickEvent(async () => {
+            this.data.settingsToggleState.events = containerEl.open;
+            await this.settings$.save();
+        });
         new Setting(summary).setHeading().setName("Events");
 
         setIcon(
@@ -443,7 +365,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 t.setValue(this.data.addToDefaultIfMissing).onChange(
                     async (v) => {
                         this.data.addToDefaultIfMissing = v;
-                        await this.plugin.saveSettings();
+                        await this.settings$.saveAndTrigger();
                         this.plugin.watcher.start();
                     }
                 );
@@ -456,10 +378,11 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.eventPreview).onChange(async (v) => {
                     this.data.eventPreview = v;
-                    await this.plugin.saveSettings();
+                    await this.settings$.save();
                 });
             });
-        new Setting(containerEl)
+
+        /*         new Setting(containerEl)
             .setName("Write Event Data to Frontmatter")
             .setDesc("This setting is temporarily disabled.")
             .addToggle((t) => {
@@ -467,9 +390,9 @@ export default class CalendariumSettings extends PluginSettingTab {
                     .setDisabled(true)
                     .onChange(async (v) => {
                         this.data.eventFrontmatter = v;
-                        await this.plugin.saveSettings();
+                        await this.settings$.save();
                     });
-            });
+            }); */
 
         new Setting(containerEl)
             .setName("Parse Note Titles for Event Dates")
@@ -477,7 +400,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.parseDates).onChange(async (v) => {
                     this.data.parseDates = v;
-                    await this.plugin.saveSettings();
+                    await this.settings$.saveAndTrigger();
                     this.plugin.watcher.start();
                 });
             });
@@ -536,7 +459,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     .setValue(this.plugin.format)
                     .onChange(async (v) => {
                         this.data.dateFormat = v;
-                        await this.plugin.saveSettings();
+                        await this.settings$.save();
                     });
                 t.inputEl.onblur = () => this.buildEvents(containerEl);
             })
@@ -564,11 +487,11 @@ export default class CalendariumSettings extends PluginSettingTab {
     }
     buildAdvanced(containerEl: HTMLDetailsElement) {
         containerEl.empty();
-        containerEl.onClickEvent(async () => {
-            this.data.settingsToggleState.advanced = containerEl.open;
-            await this.settings$.saveData();
-        });
         const summary = containerEl.createEl("summary");
+        summary.onClickEvent(async () => {
+            this.data.settingsToggleState.advanced = containerEl.open;
+            await this.settings$.save();
+        });
         new Setting(summary).setHeading().setName("Advanced");
 
         setIcon(
@@ -588,7 +511,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.debug).onChange(async (v) => {
                     this.data.debug = v;
-                    await this.plugin.saveSettings();
+                    await this.settings$.save();
                 });
             });
     }

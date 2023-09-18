@@ -291,7 +291,6 @@ export const calendarSchema = z.object({
     dateFormat: z.string().optional(),
 });
 export type PresetCalendar = z.infer<typeof presetCalendarSchema>;
-console.log("🚀 ~ file: calendar.ts:37 ~ calDateSchema:", calDateSchema);
 export const presetCalendarSchema = calendarSchema.extend({
     id: z.string().nullable(),
     name: z.string().nullable(),

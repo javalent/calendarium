@@ -28,10 +28,13 @@ ${SPLITTER}
 `;
 
 export default class SettingsService {
+    static DataFile = "_data.md";
+
     loaded = false;
-    config_path: string;
-    #prompting: boolean;
-    #saving: any;
+
+    #prompting: boolean = false;
+    #saving: boolean = false;
+
     get app() {
         return this.plugin.app;
     }
@@ -56,6 +59,9 @@ export default class SettingsService {
             setTimeout(() => this.checkFCSettings(), 2000);
         });
     }
+    /**
+     * Register a callback to be executed when Obsidian's workspace layout is ready AND my settings have been loaded.
+     */
     public async onLayoutReadyAndSettingsLoad(callback: () => any) {
         if (this.loaded && this.layoutReady) {
             callback();
@@ -67,6 +73,9 @@ export default class SettingsService {
             );
         }
     }
+    /**
+     * Register a callback to be executed when my settings have been loaded.
+     */
     public async onSettingsLoaded(callback: () => any) {
         if (this.loaded) {
             callback();
@@ -78,30 +87,49 @@ export default class SettingsService {
             );
         }
     }
-    public async onExternalSettingsChange() {
+    /**
+     * This method is called whenever Obsidian detects that my data.json file has been modified.
+     */
+    public async onExternalSettingsChange(): Promise<void> {
+        // If I was the source of my data file change, just ignore this.
         if (this.#saving) {
             setTimeout(() => {
                 this.#saving = false;
             }, 500);
             return;
         }
+        // If the user doesn't want their data synced, just ignore this.
         if (this.#data.syncBehavior === "Never") {
+            console.debug(
+                "Calendarium: Ignoring external data change event due to syncBehavior being 'Never'"
+            );
             return;
         }
+        // If the user wants it automatically synced, reload it.
         if (this.#data.syncBehavior === "Always") {
+            console.debug(
+                "Calendarium: Automatically reloading data due to syncBehavior being 'Always'"
+            );
             await this.loadData(true);
             return;
         }
+        // If I am already asking, I shouldn't ask again.
         if (this.#prompting) return;
+
+        console.debug(
+            "Calendarium: External data change detected. Prompting for behavior."
+        );
         this.#prompting = true;
-        console.trace();
         const prompt = async () => {
             if (this.#data.askedAboutSync && this.#data.syncBehavior !== "Ask")
                 return;
             if (!this.#data.askedAboutSync) {
                 this.#data.askedAboutSync = true;
-                await this.saveData();
+                await this.saveData(this.#data);
             }
+            console.debug(
+                "Calendarium: Asking user how to handle external data change events in the future."
+            );
             const notice = new CalendariumNotice(
                 createFragment((f) => {
                     const c = f.createDiv("calendarium-notice");
@@ -127,7 +155,7 @@ export default class SettingsService {
                         .setValue(this.#data.syncBehavior)
                         .onChange(async (v: SyncBehavior) => {
                             this.#data.syncBehavior = v;
-                            await this.saveData();
+                            await this.saveData(this.#data);
                             notice.hide();
                         });
                     drop.selectEl.setAttr("tabindex", 99);
@@ -201,17 +229,57 @@ export default class SettingsService {
             patch: split[2],
         };
     }
-    public async saveData(data: CalendariumData = this.#data) {
-        this.#saving = true;
-        this.#data = data;
-        this.#data.version = this.version;
-        await this.plugin.saveData(data);
-        this.plugin.app.workspace.trigger("calendarium-settings-change");
-        await this.guardFile();
-        /* await this.adapter.write(this.path, this.transformData(this.#data)); */
+
+    /**
+     *
+     */
+    public async save() {
+        await this.saveData(this.#data);
     }
 
+    /**
+     *
+     */
+    public async saveAndTrigger() {
+        await this.saveData(this.#data, true);
+    }
+    /**
+     *
+     * @param {CalendariumData} data Calendar data to be saved.
+     * @param {boolean} triggerCalendar Trigger a calendar update event.
+     */
+    public async saveData(data: CalendariumData, triggerCalendar = false) {
+        console.debug("Calendarium: Saving data.");
+        /** This flag is used to know that an internal event caused my settings to change. */
+        this.#saving = true;
+
+        /** Sync my data. */
+        this.#data = data;
+
+        /** Keep version in sync. */
+        this.#data.version = this.version;
+
+        /** Perform the I/O operation */
+        await this.plugin.saveData(data);
+
+        /** Tell things that Calendarium settings have changed. */
+        this.plugin.app.workspace.trigger("calendarium-settings-change");
+
+        /** If necessary, tell things that one or more calendars have been updated. */
+        if (triggerCalendar) {
+            console.debug(
+                "Calendarium: Triggering calendar updates due to a save event effecting calendar display."
+            );
+            this.app.workspace.trigger("calendarium-updated");
+        }
+    }
+
+    /**
+     * Load my data.json file.
+     * @param {boolean} external Whether or not this load request is due to an external settings change (e.g., sync)
+     */
     public async loadData(external?: boolean) {
+        console.debug("Calendarium: Loading data.");
         await this.load();
         this.loaded = true;
         this.app.workspace.trigger("calendarium-settings-loaded");
@@ -222,15 +290,17 @@ export default class SettingsService {
         const pluginData: unknown | CalendariumData =
             (await this.plugin.loadData()) ?? {};
         if (!pluginData || !Object.keys(pluginData).length) {
+            console.debug(
+                "Calendarium: No data file could be loaded. Saving default data."
+            );
             await this.saveData(copy(DEFAULT_DATA));
             return;
         }
-        /** Check to see if the data has been transitioned to the new config file / calendar files. */
+        /** Check to see if the data is in the old markdown file. */
         if (
             /** Plugin data is not null. */
             pluginData &&
             typeof pluginData == "object" &&
-            /** There are some keys in the data. */
             "transitioned" in pluginData
         ) {
             /** Plugin data is in markdown format. Load it, then transition it to new format. */
@@ -240,11 +310,12 @@ export default class SettingsService {
         /**
          * At this point, pluginData should be CalendariumData, but should be validated.
          */
+        console.debug("Calendarium: Ensuring data matches the schema.");
         const parsed = calendariumDataSchema.safeParse(pluginData);
         let data: CalendariumData | null = null;
         if (!parsed.success) {
             console.debug(
-                "Calendarium data did not pass validation. Merging existing data with defaults." +
+                "Calendarium data did not pass validation. Trying to merge existing data with default data." +
                     "\n\n" +
                     parsed.error
             );
@@ -255,28 +326,73 @@ export default class SettingsService {
                 );
             } catch (e) {}
         } else {
+            console.debug("Calendarium: Data passed validation.");
             data = parsed.data;
         }
         if (!data) data = copy(DEFAULT_DATA);
         let dirty = this.updateDataToNewSchema(data);
         if (dirty) {
+            console.debug(
+                "Calendarium: Data was modified during loading process. Saving data."
+            );
             await this.saveData(data);
         } else {
             this.#data = data;
         }
     }
-    public async saveCalendars() {
-        this.app.workspace.trigger("calendarium-updated");
-    }
-    public async loadCalendar() {}
 
-    private async guardFile() {
-        if (!(await this.adapter.exists(this.plugin.configDir))) {
-            await this.adapter.mkdir(this.plugin.configDir);
+    /** These methods are used to manage calendars in settings. */
+    async addCalendar(calendar: Calendar, existing?: Calendar) {
+        let shouldParse =
+            !existing ||
+            calendar.name != existing?.name ||
+            (calendar.autoParse && !existing?.autoParse) ||
+            calendar.path != existing?.path;
+        if (existing == null) {
+            this.#data.calendars.push(calendar);
+        } else {
+            this.#data.calendars.splice(
+                this.#data.calendars.indexOf(existing),
+                1,
+                calendar
+            );
         }
+        if (!this.#data.defaultCalendar) {
+            this.#data.defaultCalendar = calendar.id;
+        }
+        if (shouldParse) this.plugin.watcher.start(calendar);
+        await this.saveData(this.#data, true);
     }
+    /**
+     * Remove a calendar from settings.
+     * @param {Calendar} calendar Calendar to be removed.
+     */
+    public async removeCalendar(calendar: Calendar) {
+        this.#data.calendars = this.#data.calendars.filter(
+            (c) => c.id != calendar.id
+        );
+        if (calendar.id == this.#data.defaultCalendar) {
+            this.#data.defaultCalendar = this.#data.calendars[0]?.id;
+            this.plugin.watcher.start();
+        }
+        await this.saveData(this.#data, true);
+    }
+
+    /**
+     * @param {string} calendar Calendar ID to find.
+     * @returns {boolean}
+     */
+    hasCalendar(calendar: string): boolean {
+        const cal = this.#data.calendars.find((c) => c.id == calendar);
+        return !!cal;
+    }
+
+    /** Whether or not I am currently asking to migrate FC data. */
     #asking = false;
-    private async checkFCSettings() {
+    /**
+     * Check to see if I should prompt to migrate Fantasy Calendar settings.
+     */
+    private async checkFCSettings(): Promise<void> {
         if (this.#data.askedToMoveFC) return;
 
         if (!this.app.plugins.plugins["fantasy-calendar"]) return;
@@ -332,10 +448,44 @@ export default class SettingsService {
         );
         notice.registerOnHide(() => (this.#asking = false));
         this.plugin.registerNotice(notice);
-
-        return;
     }
+    /**
+     * Migrate Fantasy Calendar settings.
+     */
+    private async migrateFCData() {
+        console.debug("Calendarium: Migrating Fantasy Calendar plugin data.");
+        //transform data;
+        let fcData: CalendariumData;
+        if (
+            await this.adapter.exists(
+                ".obsidian/plugins/fantasy-calendar/_data.md"
+            )
+        ) {
+            const contents = (
+                (
+                    await this.adapter.read(
+                        ".obsidian/plugins/fantasy-calendar/_data.md"
+                    )
+                )
+                    .split(SPLITTER)
+                    .pop() ?? ""
+            ).trim();
+            fcData = parseYaml(contents);
+        } else {
+            fcData = await this.app.plugins.plugins[
+                "fantasy-calendar"
+            ].loadData();
+        }
+        const data = merge(DEFAULT_DATA, fcData ?? {});
+        data.askedToMoveFC = true;
+        await this.updateDataToNewSchema(data);
+        await this.saveData(data, true);
+    }
+    /**
+     * Transition data from the old `_data.md` format.
+     */
     private async transitionMarkdownSettings() {
+        console.debug("Calendarium: Migrating Markdown file data.");
         let data: MarkdownCalendariumData | null = null;
         let markdownPath = this.manifest.dir + "/" + SettingsService.DataFile;
         if (await this.adapter.exists(markdownPath)) {
@@ -352,6 +502,23 @@ export default class SettingsService {
 
         await this.updateCalendarsToNewSchema(data?.calendars ?? []);
         await this.saveData(data);
+    }
+    private updateDataToNewSchema(
+        data: MarkdownCalendariumData | CalendariumData
+    ) {
+        let dirty = this.updateCalendarsToNewSchema(data.calendars);
+        if (!data.defaultCalendar && data.calendars.length) {
+            data.defaultCalendar = data.calendars[0].id;
+            dirty = true;
+        }
+        if (
+            data.calendars.length &&
+            !data.calendars.find((cal) => cal.id == data.defaultCalendar)
+        ) {
+            data.defaultCalendar = data.calendars[0].id;
+            dirty = true;
+        }
+        return dirty;
     }
     private updateCalendarsToNewSchema(calendars: Calendar[]): boolean {
         let dirty = false;
@@ -389,51 +556,4 @@ export default class SettingsService {
         }
         return dirty;
     }
-    private updateDataToNewSchema(
-        data: MarkdownCalendariumData | CalendariumData
-    ) {
-        let dirty = this.updateCalendarsToNewSchema(data.calendars);
-        if (!data.defaultCalendar && data.calendars.length) {
-            data.defaultCalendar = data.calendars[0].id;
-            dirty = true;
-        }
-        if (
-            data.calendars.length &&
-            !data.calendars.find((cal) => cal.id == data.defaultCalendar)
-        ) {
-            data.defaultCalendar = data.calendars[0].id;
-            dirty = true;
-        }
-        return dirty;
-    }
-    private async migrateFCData() {
-        //transform data;
-        let fcData: CalendariumData;
-        if (
-            await this.adapter.exists(
-                ".obsidian/plugins/fantasy-calendar/_data.md"
-            )
-        ) {
-            const contents = (
-                (
-                    await this.adapter.read(
-                        ".obsidian/plugins/fantasy-calendar/_data.md"
-                    )
-                )
-                    .split(SPLITTER)
-                    .pop() ?? ""
-            ).trim();
-            fcData = parseYaml(contents);
-        } else {
-            fcData = await this.app.plugins.plugins[
-                "fantasy-calendar"
-            ].loadData();
-        }
-        const data = merge(DEFAULT_DATA, fcData ?? {});
-        data.askedToMoveFC = true;
-        await this.updateDataToNewSchema(data);
-        await this.saveData(data);
-        this.saveCalendars();
-    }
-    static DataFile = "_data.md";
 }
