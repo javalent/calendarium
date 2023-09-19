@@ -493,7 +493,7 @@ function logError(
     datestring?: string
 ) {
     console.log(
-        "FC Calendar: %s. From '%s', date value: %o",
+        "Calendarium: %s. From '%s', date value: %o",
         message,
         file.path,
         datestring ? datestring : input
@@ -507,7 +507,7 @@ function logWarning(
     datestring?: string
 ) {
     console.log(
-        "FC Calendar: %s. From '%s', date value: '%o'",
+        "Calendarium: %s. From '%s', date value: '%o'",
         message,
         file.path,
         datestring ? datestring : input
