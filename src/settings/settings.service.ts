@@ -504,7 +504,7 @@ export default class SettingsService {
         }
         if (!data) data = copy(DEFAULT_DATA);
 
-        await this.updateCalendarsToNewSchema(data?.calendars ?? []);
+        await this.updateDataToNewSchema(data);
         await this.saveData(data);
     }
     private updateDataToNewSchema(
@@ -520,6 +520,10 @@ export default class SettingsService {
             !data.calendars.find((cal) => cal.id == data.defaultCalendar)
         ) {
             data.defaultCalendar = data.calendars[0].id;
+            dirty = true;
+        }
+        if (!data.deletedCalendars) {
+            data.deletedCalendars = [];
             dirty = true;
         }
         return dirty;

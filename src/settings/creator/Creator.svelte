@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Calendar } from "src/@types";
+    import type { CalDate, Calendar } from "src/@types";
     import type Calendarium from "src/main";
     import copy from "fast-copy";
     import { ExtraButtonComponent, Platform, setIcon, Setting } from "obsidian";
@@ -29,7 +29,6 @@
         ready = true;
     });
 
-    export let width: number;
     export let plugin: Calendarium;
     export let color: string | null = null;
     export let top: number;
@@ -48,25 +47,24 @@
                         const modal = new CalendarPresetModal(plugin.app);
                         modal.onClose = () => {
                             if (!modal.saved) return;
-                            $store = {
-                                ...copy(modal.preset),
-                                id: nanoid(8),
-                                name: modal.preset.name!,
-                                current: {
-                                    day: modal.preset.current.day!,
-                                    month: modal.preset.current.month!,
-                                    year: modal.preset.current.year!,
-                                },
+                            const current: CalDate = {
+                                day: modal.preset.current.day!,
+                                month: modal.preset.current.month!,
+                                year: modal.preset.current.year!,
                             };
                             if ($store?.name == "Gregorian Calendar") {
                                 const today = new Date();
 
-                                store.setCurrentDate({
-                                    year: today.getFullYear(),
-                                    month: today.getMonth(),
-                                    day: today.getDate(),
-                                });
+                                current.year = today.getFullYear();
+                                current.month = today.getMonth();
+                                current.day = today.getDate();
                             }
+                            $store = {
+                                ...copy(modal.preset),
+                                id: nanoid(8),
+                                name: modal.preset.name!,
+                                current: { ...current },
+                            };
                         };
                         modal.open();
                     });
@@ -93,13 +91,10 @@
     style="--creator-background-color: {color}; --top: {top}px;"
 >
     {#if ready}
-        <div
-            class="inherit calendarium-creator-inner"
-            style={!mobile ? `width: ${width + 4}px;` : ""}
-        >
+        <div class="inherit calendarium-creator-inner">
             <div class="calendarium-creator-app">
                 <div use:preset />
-                <Info {plugin} />
+                <Info />
                 <WeekdayContainer />
                 <MonthContainer />
                 <YearContainer app={plugin.app} />

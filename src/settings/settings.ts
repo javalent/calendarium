@@ -16,6 +16,7 @@ import type Calendarium from "../main";
 import Importer from "./import/importer";
 
 import CalendarCreator from "./creator/Creator.svelte";
+import CreatorTitle from "./creator/CreatorTitle.svelte";
 
 import type { Calendar, PresetCalendar } from "src/@types";
 import { SyncBehavior } from "src/schemas";
@@ -276,7 +277,20 @@ export default class CalendariumSettings extends PluginSettingTab {
                         .createSpan()
                         .setText(`${this.data.deletedCalendars.length}`);
                     b.onClick(() => {
-                        const modal = new RestoreCalendarModal(app);
+                        const modal = new RestoreCalendarModal(
+                            this.data.deletedCalendars
+                        );
+                        modal.onSave = async () => {
+                            if (modal.item?.length) {
+                                for (let restoring of modal.item) {
+                                    this.data.deletedCalendars.remove(
+                                        restoring
+                                    );
+                                    await this.settings$.addCalendar(restoring);
+                                }
+                                this.display();
+                            }
+                        };
                         modal.open();
                     });
                 });
@@ -613,6 +627,12 @@ class CreatorModal extends CalendariumModal {
         this.calendar = copy(calendar);
         this.store = createStore(this.plugin, this.calendar);
         this.valid = get(this.store.valid);
+        this.scope.register([Platform.isMacOS ? "Meta" : "Ctrl"], "z", () => {
+            if (get(this.store.canUndo)) this.store.undo();
+        });
+        this.scope.register([Platform.isMacOS ? "Meta" : "Ctrl"], "y", () => {
+            if (get(this.store.canRedo)) this.store.redo();
+        });
     }
     async checkCanExit() {
         if (this.valid) return true;
@@ -632,52 +652,16 @@ class CreatorModal extends CalendariumModal {
             super.close();
         }
     }
-    setTitle() {
-        this.titleEl.setText(
-            createFragment((e) => {
-                e.createSpan({ text: "Calendar Creator" });
-                e.createEl("br");
-                const additional = e.createSpan("check");
-                if (this.valid) {
-                    setIcon(
-                        additional.createSpan("save can-save"),
-                        "checkmark"
-                    );
-                    additional.createSpan({
-                        cls: "additional can-save",
-                        text: "All good! Exit to save calendar.",
-                    });
-                } else {
-                    warning(
-                        additional.createSpan({
-                            cls: "save",
-                            attr: {
-                                "aria-label": getMissingNotice(get(this.store)),
-                            },
-                        })
-                    );
-                    additional.createSpan({
-                        cls: "additional",
-                        text: "Additional information is required to save.",
-                    });
-                }
-            })
-        );
-    }
     async display() {
-        this.setTitle();
-        this.store.valid.subscribe((v) => {
-            if (v == this.valid) return;
-            this.valid = v;
-            this.setTitle();
+        new CreatorTitle({
+            target: this.titleEl,
+            props: { store: this.store },
         });
-
         this.$app = new CalendarCreator({
             target: this.contentEl,
             props: {
                 store: this.store,
                 plugin: this.plugin,
-                width: this.contentEl.clientWidth,
                 top: 0,
             },
         });

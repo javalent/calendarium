@@ -2,8 +2,8 @@ import type { CalendariumData, PresetCalendar } from "src/@types";
 import { SyncBehavior } from "../schemas";
 
 export const DEFAULT_CALENDAR: PresetCalendar = {
-    name: null,
-    description: null,
+    name: "",
+    description: "",
     id: null,
     static: {
         incrementDay: false,

@@ -245,6 +245,24 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
 }
 
 /** Creator Modal */
+.modal.calendarium-creator {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+}
+
+.modal.calendarium-creator .modal-title {
+    padding: 0 var(--size-4-4) var(--size-4-4) var(--size-4-4);
+    border-bottom: 1px solid var(--background-modifier-border);
+    margin-bottom: 0;
+}
+
+.modal.calendarium-creator .modal-content {
+    padding: 0 var(--size-4-4);
+    padding-top: var(--size-4-4);
+    overflow-y: auto;
+}
 
 .calendarium-creator .check {
     display: flex;

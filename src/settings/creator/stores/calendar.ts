@@ -1,4 +1,3 @@
-import { prepareFuzzySearch } from "obsidian";
 import type {
     Calendar,
     CalDate,
@@ -13,7 +12,6 @@ import type {
     Year,
 } from "src/@types";
 import type Calendarium from "src/main";
-import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
 import {
     isValidDay,
     isValidMonth,
@@ -21,6 +19,7 @@ import {
     nanoid,
 } from "src/utils/functions";
 import { derived, writable } from "svelte/store";
+import copy from "fast-copy";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -38,6 +37,53 @@ function padDay(months: Month[]) {
 function createStore(plugin: Calendarium, existing: Calendar) {
     const store = writable<Calendar>(existing);
     const { subscribe, set, update } = store;
+
+    const history = writable<Calendar[]>([]);
+
+    let index = 0;
+    let isHistoryEvent = false;
+    const canRedo = derived(
+        [history],
+        ([history]) => index > 0 && history.length
+    );
+    const redo = () =>
+        history.update((h) => {
+            if (index > 0 && h.length > 0) {
+                index--;
+                isHistoryEvent = true;
+                update((cal) => h[index]);
+            }
+            return h;
+        });
+    const canUndo = derived(
+        [history],
+        ([history]) => history.length > 0 && index < history.length - 1
+    );
+    const undo = () =>
+        history.update((h) => {
+            if (h.length > 0 && index < h.length - 1) {
+                index++;
+                isHistoryEvent = true;
+                update((cal) => h[index]);
+            }
+            return h;
+        });
+    subscribe((cal) =>
+        history.update((h) => {
+            if (isHistoryEvent) {
+                isHistoryEvent = false;
+                return h;
+            }
+            if (index > 0) {
+                for (let i = 0; i <= index; i++) {
+                    h.shift();
+                }
+            }
+            index = 0;
+            h.unshift(copy(cal));
+            return h;
+        })
+    );
 
     const staticStore = derived(store, (data) => data.static);
     const currentStore = derived(store, (data) => {
@@ -427,6 +473,11 @@ function createStore(plugin: Calendarium, existing: Calendar) {
                     return data;
                 }),
         },
+        /** History */
+        canRedo,
+        redo,
+        canUndo,
+        undo,
     };
 }
 

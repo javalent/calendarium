@@ -23,20 +23,26 @@
     label={"The calendar must have a name"}
 >
     <div class="calendarium-info">
-        <TextComponent
-            name={"Calendar Name"}
-            warn={!validName}
-            desc={!validName ? "The calendar must have a name" : ""}
-            value={$calendar.name}
-            on:blur={(evt) => {
-                $calendar.name = evt.detail;
-            }}
-            on:change={(evt) => ($calendar.name = evt.detail)}
-        />
+        {#key $calendar.name}
+            <TextComponent
+                name={"Calendar Name"}
+                warn={!validName}
+                desc={!validName ? "The calendar must have a name" : ""}
+                value={$calendar.name}
+                on:blur={(evt) => {
+                    if (evt.detail === $calendar.name) return;
+                    $calendar.name = evt.detail;
+                }}
+            />
+        {/key}
+        <!-- on:change={(evt) => ($calendar.name = evt.detail)} -->
         <TextAreaComponent
             name={"Calendar Description"}
             value={$calendar.description ?? ""}
-            on:blur={(evt) => ($calendar.description = evt.detail)}
+            on:blur={(evt) => {
+                if (evt.detail === $calendar.description) return;
+                $calendar.description = evt.detail;
+            }}
         />
         <ToggleComponent
             name={"Display Day Number"}
