@@ -33,6 +33,7 @@ import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import { getMissingNotice, warning } from "./creator/Utilities/utils";
 import SettingsService from "./settings.service";
+import { RestoreCalendarModal } from "./modals/restore";
 
 export enum Recurring {
     none = "None",
@@ -174,6 +175,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             "chevron-right"
         );
 
+        // TODO: MOVE THIS TO CALENDAR SETTING
         new Setting(this.calendarsEl)
             .setName("Show Intercalary Months Separately")
             .setDesc(
@@ -261,8 +263,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 b.onClick(() => input.click());
             });
 
-        /* const deleted = await this.settings$.getDeletedCalendars();
-        if (deleted.length) {
+        if (this.data.deletedCalendars?.length) {
             new Setting(this.calendarsEl)
                 .setName("Restore Deleted Calendars")
                 .addButton((b) => {
@@ -270,13 +271,16 @@ export default class CalendariumSettings extends PluginSettingTab {
                     b.buttonEl.setCssStyles({ position: "relative" });
                     const badge = b.buttonEl.createDiv({
                         cls: "calendarium-deleted-badge",
-                        attr: {
-                            style: "position: absolute;",
-                        },
                     });
-                    badge.createSpan().setText(`${deleted.length}`);
+                    badge
+                        .createSpan()
+                        .setText(`${this.data.deletedCalendars.length}`);
+                    b.onClick(() => {
+                        const modal = new RestoreCalendarModal(app);
+                        modal.open();
+                    });
                 });
-        } */
+        }
 
         new Setting(this.calendarsEl)
             .setName("Create New Calendar")

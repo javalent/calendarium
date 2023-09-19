@@ -273,8 +273,6 @@ export const staticCalendarDataSchema = z.object({
  */
 export type Calendar = z.infer<typeof calendarSchema>;
 export const calendarSchema = z.object({
-    deleted: z.boolean().optional(),
-    deletedTimestamp: z.number().optional(),
     id: z.string(),
     name: z.string(),
     description: z.string().nullable(),
@@ -289,6 +287,10 @@ export const calendarSchema = z.object({
     supportInlineEvents: z.boolean().nullish(),
     inlineEventTag: z.string().nullish(),
     dateFormat: z.string().optional(),
+});
+export type DeletedCalendar = z.infer<typeof deletedCalendarSchema>;
+export const deletedCalendarSchema = calendarSchema.extend({
+    deletedTimestamp: z.number(),
 });
 export type PresetCalendar = z.infer<typeof presetCalendarSchema>;
 export const presetCalendarSchema = calendarSchema.extend({
@@ -319,6 +321,7 @@ export type SyncBehavior = z.infer<typeof SyncBehavior>;
 export const calendariumDataSchema = z.object({
     addToDefaultIfMissing: z.boolean(),
     calendars: z.array(calendarSchema),
+    deletedCalendars: z.array(deletedCalendarSchema),
     configDirectory: z.string().nullable(),
     dailyNotes: z.boolean(),
     dateFormat: z.string(),

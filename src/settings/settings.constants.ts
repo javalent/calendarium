@@ -34,6 +34,7 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
 export const DEFAULT_DATA: CalendariumData = {
     addToDefaultIfMissing: true,
     calendars: [],
+    deletedCalendars: [],
     configDirectory: null,
     dailyNotes: false,
     dateFormat: "YYYY-MM-DD",

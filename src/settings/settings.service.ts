@@ -375,6 +375,10 @@ export default class SettingsService {
             this.#data.defaultCalendar = this.#data.calendars[0]?.id;
             this.plugin.watcher.start();
         }
+        this.#data.deletedCalendars.push({
+            ...copy(calendar),
+            deletedTimestamp: Date.now(),
+        });
         await this.saveData(this.#data, true);
     }
 
