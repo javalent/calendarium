@@ -17,7 +17,6 @@
 
     $: overflow = $staticStore.overflow;
     $: items = copy($weekdayStore);
-    $: console.log("🚀 ~ file: WeekdayContainer.svelte:20 ~ items:", items);
 
     let firstWeekday = $staticStore.firstWeekDay;
 

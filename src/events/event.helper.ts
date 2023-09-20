@@ -54,7 +54,6 @@ export class CalEventHelper {
             .replace(/Y+/g, "Y")
             .replace(/M+/g, "M")
             .replace(/D+/g, "D");
-        console.log(this.formatString, this.formatDigest);
     }
 
     parseFileForEvents(
