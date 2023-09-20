@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.0-b26](https://github.com/javalent/the-calendarium/compare/1.0.1-b25...1.0.0-b26) (2023-09-20)
+
+
+### Features
+
+* Can now specify weekday abbreviations (close [#45](https://github.com/javalent/the-calendarium/issues/45)) ([96cd824](https://github.com/javalent/the-calendarium/commit/96cd82431a7b42d6914fcc2f7958076ac9f0fbfa))
+* Enables restoration of deleted calendars for up to 7 days ([96cd824](https://github.com/javalent/the-calendarium/commit/96cd82431a7b42d6914fcc2f7958076ac9f0fbfa))
+* Enables undo/redo history in the Creator ([96cd824](https://github.com/javalent/the-calendarium/commit/96cd82431a7b42d6914fcc2f7958076ac9f0fbfa))
+* When using a sync service, the plugin will monitor the data file and prompt for reloading data ([96cd824](https://github.com/javalent/the-calendarium/commit/96cd82431a7b42d6914fcc2f7958076ac9f0fbfa))
+
+
+### Bug Fixes
+
+* Fixes drag-and-drop causing the Creator to jump (close [#49](https://github.com/javalent/the-calendarium/issues/49)) ([96cd824](https://github.com/javalent/the-calendarium/commit/96cd82431a7b42d6914fcc2f7958076ac9f0fbfa))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b26 ([b311e22](https://github.com/javalent/the-calendarium/commit/b311e22bcdc8c3c7bf494515e11921ee6b558122))
+
 ## [1.0.1-b25](https://github.com/javalent/the-calendarium/compare/1.0.0-b25...1.0.1-b25) (2023-09-12)
 
 
