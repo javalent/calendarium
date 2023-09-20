@@ -128,7 +128,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             })
         );
     }
-    buildInfo(containerEl: HTMLElement) {
+    async buildInfo(containerEl: HTMLElement) {
         containerEl.empty();
 
         new Setting(containerEl)
@@ -161,6 +161,39 @@ export default class CalendariumSettings extends PluginSettingTab {
                         await this.settings$.save();
                     });
             });
+        if (await this.settings$.markdownFileExists()) {
+            new Setting(containerEl)
+                .setName(`Load Previous Data File`)
+                .setDesc(
+                    createFragment((e) => {
+                        e.createSpan({
+                            text: "A file from a previous version of Calendarium was detected on your system.",
+                        });
+                        e.createEl("br");
+                        e.createEl("br");
+                        e.createSpan({
+                            text: `This will overwrite your existing data file.`,
+                        });
+                    })
+                )
+                .addButton((b) => {
+                    b.setIcon("import").onClick(async () => {
+                        if (
+                            await confirmWithModal(
+                                app,
+                                "This will overwrite your settings. Are you sure?",
+                                {
+                                    cta: "Import",
+                                    secondary: "Cancel",
+                                }
+                            )
+                        ) {
+                            await this.settings$.transitionMarkdownSettings();
+                            await this.display();
+                        }
+                    });
+                });
+        }
     }
     async buildCalendars() {
         this.calendarsEl.empty();

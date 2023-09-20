@@ -512,14 +512,20 @@ export default class SettingsService {
     /**
      * Transition data from the old `_data.md` format.
      */
-    private async transitionMarkdownSettings() {
+    get markdownPath() {
+        return this.manifest.dir + "/" + SettingsService.DataFile;
+    }
+    public async markdownFileExists() {
+        return await this.adapter.exists(this.markdownPath);
+    }
+    public async transitionMarkdownSettings() {
         console.debug("Calendarium: Migrating Markdown file data.");
         let data: MarkdownCalendariumData | null = null;
-        let markdownPath = this.manifest.dir + "/" + SettingsService.DataFile;
-        if (await this.adapter.exists(markdownPath)) {
+        if (await this.markdownFileExists()) {
             const contents = (
-                (await this.adapter.read(markdownPath)).split(SPLITTER).pop() ??
-                ""
+                (await this.adapter.read(this.markdownPath))
+                    .split(SPLITTER)
+                    .pop() ?? ""
             ).trim();
             data =
                 contents && contents.length
