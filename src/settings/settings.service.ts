@@ -55,8 +55,32 @@ export default class SettingsService {
     private layoutReady = false;
     constructor(private plugin: Calendarium, public manifest: PluginManifest) {
         this.app.workspace.onLayoutReady(() => (this.layoutReady = true));
-        this.onLayoutReadyAndSettingsLoad(() => {
+        this.onLayoutReadyAndSettingsLoad(async () => {
             setTimeout(() => this.checkFCSettings(), 2000);
+            const permanentlyDelete: string[] = [];
+
+            console.debug(
+                `Calendarium: Checking deleted calendars for any to permanently delete.`
+            );
+            for (const calendar of this.#data.deletedCalendars) {
+                if (
+                    Date.now() - calendar.deletedTimestamp >
+                    7 * 24 * 60 * 60 * 1000
+                ) {
+                    permanentlyDelete.push(calendar.id);
+                }
+            }
+
+            if (permanentlyDelete.length) {
+                console.debug(
+                    `Calendarium: Found ${permanentlyDelete.length} deleted calendars more than 7 days old. Removing them.`
+                );
+                this.#data.deletedCalendars =
+                    this.#data.deletedCalendars.filter(
+                        (d) => !permanentlyDelete.includes(d.id)
+                    );
+                await this.saveData(this.#data);
+            }
         });
     }
     /**
