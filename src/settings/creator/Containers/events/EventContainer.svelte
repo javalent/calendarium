@@ -1,19 +1,18 @@
 <script lang="ts">
-    import type { CalEvent, Calendar } from "src/@types";
+    import type { CalEvent } from "src/@types";
     import { dateString } from "src/utils/functions";
 
     import EventInstance from "./EventInstance.svelte";
-    import AddNew from "../Utilities/AddNew.svelte";
-    import NoExistingItems from "../Utilities/NoExistingItems.svelte";
+    import AddNew from "../../Utilities/AddNew.svelte";
+    import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
     import type Calendarium from "src/main";
     import { CreateEventModal } from "src/settings/modals/event/event";
-    import Details from "../Utilities/Details.svelte";
-    import ButtonComponent from "../Settings/ButtonComponent.svelte";
+    import Details from "../../Utilities/Details.svelte";
+    import ButtonComponent from "../../Settings/ButtonComponent.svelte";
     import { confirmWithModal } from "src/settings/modals/confirm";
     import {
         Setting,
         prepareFuzzySearch,
-        FuzzyMatch,
         debounce,
         SearchComponent,
         normalizePath,
@@ -23,8 +22,8 @@
     } from "obsidian";
     import { getContext } from "svelte";
     import { derived, writable } from "svelte/store";
-    import ToggleComponent from "../Settings/ToggleComponent.svelte";
-    import TextComponent from "../Settings/TextComponent.svelte";
+    import ToggleComponent from "../../Settings/ToggleComponent.svelte";
+    import TextComponent from "../../Settings/TextComponent.svelte";
     import { FolderSuggestionModal } from "src/suggester/folder";
     import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
 
@@ -40,7 +39,7 @@
 
     $: autoParse = $calendar.autoParse;
 
-    $: supportInlineEvents = $calendar.supportInlineEvents;
+    $: supportInlineEvents = !!$calendar.supportInlineEvents;
     if (!$calendar.inlineEventTag)
         $calendar.inlineEventTag = DEFAULT_CALENDAR.inlineEventTag;
 
@@ -108,10 +107,12 @@
         const text = new ObsidianTextComponent(node);
         text.setValue(
             `${$calendar.inlineEventTag ?? ""}`.replace("#", "")
-        ).onChange(async (v) => {
-            $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
-            await plugin.saveSettings();
-        });
+        ).onChange(
+            debounce(async (v) => {
+                $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
+                await plugin.saveSettings();
+            }, 100)
+        );
     };
 
     const sorted = derived([sortedStore, nameFilter], ([events, filter]) => {
@@ -137,14 +138,14 @@
     const deleteEvent = (item: CalEvent) => {
         eventStore.delete(item.id);
     };
-    const getCategory = (category: string) => {
+    const getCategory = (category: string | null) => {
         return $calendar.categories.find(({ id }) => id == category);
     };
     const add = (event?: CalEvent) => {
         const modal = new CreateEventModal($calendar, event);
         modal.onClose = () => {
             if (!modal.saved) return;
-            if (modal.editing) {
+            if (modal.editing && event) {
                 eventStore.update(event.id, { ...modal.event });
             } else {
                 eventStore.add({ ...modal.event });

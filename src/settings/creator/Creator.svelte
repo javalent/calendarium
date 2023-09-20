@@ -1,25 +1,25 @@
 <script lang="ts">
-    import type { Calendar } from "src/@types";
+    import type { CalDate, Calendar } from "src/@types";
     import type Calendarium from "src/main";
     import copy from "fast-copy";
-    import { ExtraButtonComponent, Platform, setIcon, Setting } from "obsidian";
+    import { Platform, setIcon, Setting } from "obsidian";
     import { CalendarPresetModal } from "../modals/preset";
-    import { createEventDispatcher, setContext } from "svelte";
-    import { fly, FlyParams } from "svelte/transition";
+    import { setContext } from "svelte";
     import { onMount } from "svelte";
     import CurrentDate from "./Containers/CurrentDate.svelte";
     import Info from "./Containers/Info.svelte";
-    import WeekdayContainer from "./Containers/WeekdayContainer.svelte";
-    import MonthContainer from "./Containers/MonthContainer.svelte";
+    import WeekdayContainer from "./Containers/weekday/WeekdayContainer.svelte";
+    import MonthContainer from "./Containers/months/MonthContainer.svelte";
     import YearContainer from "./Containers/YearContainer.svelte";
-    import EventContainer from "./Containers/EventContainer.svelte";
+    import EventContainer from "./Containers/events/EventContainer.svelte";
     import CategoryContainer from "./Containers/CategoryContainer.svelte";
     import MoonContainer from "./Containers/MoonContainer.svelte";
     import LeapDayContainer from "./Containers/LeapDayContainer.svelte";
     import { Writable } from "svelte/store";
     import { getMissingNotice, warning } from "./Utilities/utils";
-    import { ConfirmExitModal } from "../modals/confirm";
+
     import createStore from "./stores/calendar";
+    import { nanoid } from "src/utils/functions";
 
     const mobile = Platform.isMobile;
     let ready = mobile;
@@ -28,9 +28,8 @@
         ready = true;
     });
 
-    export let width: number;
     export let plugin: Calendarium;
-    export let color: string = null;
+    export let color: string | null = null;
     export let top: number;
     export let store: ReturnType<typeof createStore>;
     setContext<Writable<Calendar>>("store", store);
@@ -47,20 +46,29 @@
                         const modal = new CalendarPresetModal(plugin.app);
                         modal.onClose = () => {
                             if (!modal.saved) return;
-                            $store = copy(modal.preset);
-                            if ($store?.name == "Gregorian Calendar") {
+                            const current: CalDate = {
+                                day: modal.preset.current.day!,
+                                month: modal.preset.current.month!,
+                                year: modal.preset.current.year!,
+                            };
+                            if (modal.preset?.name == "Gregorian Calendar") {
                                 const today = new Date();
 
-                                store.setCurrentDate({
-                                    year: today.getFullYear(),
-                                    month: today.getMonth(),
-                                    day: today.getDate(),
-                                });
+                                current.year = today.getFullYear();
+                                current.month = today.getMonth();
+                                current.day = today.getDate();
                             }
+                            $store = {
+                                ...copy(modal.preset),
+                                id: nanoid(8),
+                                name: $store.name?.length
+                                    ? $store.name
+                                    : modal.preset.name!,
+                                current: { ...current },
+                            };
                         };
                         modal.open();
                     });
-                b.buttonEl.setAttr("tabindex", "-1");
             });
     };
 
@@ -83,13 +91,10 @@
     style="--creator-background-color: {color}; --top: {top}px;"
 >
     {#if ready}
-        <div
-            class="inherit calendarium-creator-inner"
-            style={!mobile ? `width: ${width + 4}px;` : ""}
-        >
+        <div class="inherit calendarium-creator-inner">
             <div class="calendarium-creator-app">
                 <div use:preset />
-                <Info {plugin} />
+                <Info />
                 <WeekdayContainer />
                 <MonthContainer />
                 <YearContainer app={plugin.app} />

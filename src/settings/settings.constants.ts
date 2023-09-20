@@ -1,12 +1,13 @@
-import type { Calendar, CalendariumData } from "src/@types";
+import type { CalendariumData, PresetCalendar } from "src/@types";
+import { SyncBehavior } from "../schemas";
 
-export const DEFAULT_CALENDAR: Calendar = {
-    name: null,
-    description: null,
+export const DEFAULT_CALENDAR: PresetCalendar = {
+    name: "",
+    description: "",
     id: null,
     static: {
         incrementDay: false,
-        firstWeekDay: null,
+        firstWeekDay: 0,
         overflow: true,
         weekdays: [],
         months: [],
@@ -33,6 +34,7 @@ export const DEFAULT_CALENDAR: Calendar = {
 export const DEFAULT_DATA: CalendariumData = {
     addToDefaultIfMissing: true,
     calendars: [],
+    deletedCalendars: [],
     configDirectory: null,
     dailyNotes: false,
     dateFormat: "YYYY-MM-DD",
@@ -58,4 +60,6 @@ export const DEFAULT_DATA: CalendariumData = {
     },
     debug: false,
     askedToMoveFC: false,
+    askedAboutSync: false,
+    syncBehavior: SyncBehavior.enum.Ask,
 };

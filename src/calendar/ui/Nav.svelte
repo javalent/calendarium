@@ -105,7 +105,7 @@
                 />
                 <div
                     class="reset-button calendar-clickable"
-                    on:click={() => $ephemeral.displayDate()}
+                    on:click={() => $ephemeral.displayDate(null)}
                     aria-label="Today is {$currentDisplay}"
                 >
                     <span>Today</span>

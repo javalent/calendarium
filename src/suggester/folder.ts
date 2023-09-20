@@ -50,7 +50,7 @@ export class FolderSuggestionModal extends SuggestionModal<TFolder> {
         });
         if (!item) {
             content.setText(this.emptyStateText);
-            content.parentElement.addClass("is-selected");
+            content.parentElement?.addClass("is-selected");
             return;
         }
 

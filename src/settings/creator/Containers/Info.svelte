@@ -1,19 +1,12 @@
 <script lang="ts">
-    import type Calendarium from "src/main";
-    import {
-        normalizePath,
-        TextComponent as ObsidianTextComponent,
-        TFolder,
-    } from "obsidian";
-    import { FolderSuggestionModal } from "src/suggester/folder";
     import { getContext } from "svelte";
     import TextAreaComponent from "../Settings/TextAreaComponent.svelte";
     import TextComponent from "../Settings/TextComponent.svelte";
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
     import Details from "../Utilities/Details.svelte";
     import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
-
-    export let plugin: Calendarium;
+    import { Setting, setIcon } from "obsidian";
+    import { DEFAULT_FORMAT } from "src/utils/constants";
 
     const calendar = getContext("store");
 
@@ -22,62 +15,26 @@
 
     $: validName = $calendar.name != null && $calendar.name.length;
 
-    $: autoParse = $calendar.autoParse;
-
-    $: supportInlineEvents = $calendar.supportInlineEvents;
-
     if (!$calendar.inlineEventTag)
         $calendar.inlineEventTag = DEFAULT_CALENDAR.inlineEventTag;
 
-    const folder = (node: HTMLElement) => {
-        let folders = plugin.app.vault
-            .getAllLoadedFiles()
-            .filter((f) => f instanceof TFolder);
-        const text = new ObsidianTextComponent(node);
-        if (!$calendar.path) $calendar.path = ["/"];
-        text.setPlaceholder($calendar.path[0] ?? "/");
-        const modal = new FolderSuggestionModal(plugin.app, text, [
-            ...(folders as TFolder[]),
-        ]);
-
-        modal.onClose = async () => {
-            const v = text.inputEl.value?.trim()
-                ? text.inputEl.value.trim()
-                : "/";
-            $calendar.path = [normalizePath(v)];
-        };
-
-        text.inputEl.onblur = async () => {
-            const v = text.inputEl.value?.trim()
-                ? text.inputEl.value.trim()
-                : "/";
-            $calendar.path = [normalizePath(v)];
-        };
-    };
-
-    $: inlineEventTagDesc = createFragment((e) => {
-        e.createSpan({
-            text: "Tag to specify which notes to scan for inline events, e.g. ",
+    const descFormat = () =>
+        createFragment((e) => {
+            e.createSpan({
+                text: "Event dates will be parsed using this format.",
+            });
+            e.createEl("br");
+            e.createSpan({
+                text: "Information on how the format works can be seen ",
+            });
+            e.createEl("a", {
+                href: "https://plugins.javalent.com/calendarium/create-calendar#Date+Format",
+                text: "here",
+            });
+            e.createSpan({
+                text: ".",
+            });
         });
-        e.createEl("code", { text: "inline-events" });
-        e.createSpan({
-            text: " to use the ",
-        });
-        e.createEl("code", { text: "#inline-events" });
-        e.createSpan({
-            text: " tag.",
-        });
-    });
-
-    const inlineEventTagSetting = (node: HTMLElement) => {
-        const text = new ObsidianTextComponent(node);
-        text.setValue(
-            `${$calendar.inlineEventTag ?? ""}`.replace("#", "")
-        ).onChange(async (v) => {
-            $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
-            await plugin.saveSettings();
-        });
-    };
 </script>
 
 <Details
@@ -86,20 +43,26 @@
     label={"The calendar must have a name"}
 >
     <div class="calendarium-info">
-        <TextComponent
-            name={"Calendar Name"}
-            warn={!validName}
-            desc={!validName ? "The calendar must have a name" : ""}
-            value={$calendar.name}
-            on:blur={(evt) => {
-                $calendar.name = evt.detail;
-            }}
-            on:change={(evt) => ($calendar.name = evt.detail)}
-        />
+        {#key $calendar.name}
+            <TextComponent
+                name={"Calendar Name"}
+                warn={!validName}
+                desc={!validName ? "The calendar must have a name" : ""}
+                value={$calendar.name}
+                on:blur={(evt) => {
+                    if (evt.detail === $calendar.name) return;
+                    $calendar.name = evt.detail;
+                }}
+            />
+        {/key}
+        <!-- on:change={(evt) => ($calendar.name = evt.detail)} -->
         <TextAreaComponent
             name={"Calendar Description"}
-            value={$calendar.description}
-            on:blur={(evt) => ($calendar.description = evt.detail)}
+            value={$calendar.description ?? ""}
+            on:blur={(evt) => {
+                if (evt.detail === $calendar.description) return;
+                $calendar.description = evt.detail;
+            }}
         />
         <ToggleComponent
             name={"Display Day Number"}
@@ -110,14 +73,23 @@
                     !$calendar.static.displayDayNumber;
             }}
         />
-        <ToggleComponent
+        <TextComponent
+            name={"Date Format"}
+            desc={descFormat()}
+            value={$calendar.dateFormat ?? DEFAULT_FORMAT}
+            on:blur={(evt) => {
+                if (evt.detail === $calendar.dateFormat) return;
+                $calendar.dateFormat = evt.detail;
+            }}
+        />
+        <!-- <ToggleComponent
             name={"Auto Increment Day"}
             desc={"Automatically increment the current day every real-world day."}
             value={incrementDay}
             on:click={() => {
                 $calendar.static.incrementDay = !$calendar.static.incrementDay;
             }}
-        />
+        /> -->
     </div>
 </Details>
 

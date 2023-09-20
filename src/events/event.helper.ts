@@ -54,7 +54,6 @@ export class CalEventHelper {
             .replace(/Y+/g, "Y")
             .replace(/M+/g, "M")
             .replace(/D+/g, "D");
-        console.log(this.formatString, this.formatDigest);
     }
 
     parseFileForEvents(
@@ -81,7 +80,7 @@ export class CalEventHelper {
     }
 
     parseFrontmatterEvent(
-        frontmatter: FrontMatterCache,
+        frontmatter: FrontMatterCache | undefined,
         file: { path: string; basename: string },
         publish: CalEventCallback,
         category?: CalEventCategory
@@ -98,7 +97,7 @@ export class CalEventHelper {
             ? this.parseFrontmatterDate(frontmatter["fc-end"], file)
             : null;
 
-        let cat: CalEventCategory, newCategory: boolean;
+        let cat: CalEventCategory | undefined, newCategory: boolean;
         if (frontmatter?.["fc-category"] && !category) {
             cat = this.calendar.categories.find(
                 (cat) => cat?.name == frontmatter["fc-category"]
@@ -122,7 +121,7 @@ export class CalEventHelper {
                 end,
                 sort: this.parsedToTimestamp(date),
                 note: file.path,
-                category: (cat ?? category)?.id,
+                category: (cat ?? category)?.id ?? null,
                 img: frontmatter["fc-img"],
             });
         }
@@ -168,7 +167,8 @@ export class CalEventHelper {
             let end = element.dataset.end
                 ? this.parseCalDateString(element.dataset.end, file)
                 : undefined;
-            let cat: CalEventCategory, newCategory: boolean;
+            let cat: CalEventCategory | undefined,
+                newCategory: boolean = false;
             if (element.dataset.class) {
                 cat = this.calendar.categories.find(
                     (cat) => cat?.name == element.dataset.class
@@ -193,16 +193,19 @@ export class CalEventHelper {
                         end,
                         sort: this.parsedToTimestamp(date),
                         note: file.path,
-                        category: (cat ?? category)?.id,
+                        category: (cat ?? category)?.id ?? null,
                         img: element.dataset.img,
                     },
-                    newCategory ? cat : null
+                    newCategory ? cat : undefined
                 );
             }
         }
     }
 
-    parseFilenameDate(file: { path: string; basename: string }): ParseDate {
+    parseFilenameDate(file: {
+        path: string;
+        basename: string;
+    }): ParseDate | null {
         // TODO: Filename formatter for this calendar?
         return this.parseCalDateString(file.basename, file);
     }
@@ -210,7 +213,7 @@ export class CalEventHelper {
     parseFrontmatterDate(
         date: string | InputDate,
         file: { path: string; basename: string }
-    ): ParseDate {
+    ): ParseDate | null {
         if (typeof date === "string") {
             return this.parseCalDateString(date, file);
         }
@@ -245,7 +248,7 @@ export class CalEventHelper {
     parseCalDateString(
         datestring: string,
         file: { path: string; basename: string }
-    ): ParseDate {
+    ): ParseDate | null {
         let datebits = datestring.split(/(?<!^)[-–—]/);
 
         if (this.formatDigest != "YMD" && datebits.length < 3) {
@@ -283,7 +286,7 @@ export class CalEventHelper {
         input: InputDate,
         file: { path: string; basename: string },
         datestring?: string
-    ): ParseDate {
+    ): ParseDate | null {
         const year = wildNullNumber(input.year);
         let month = wildNullNumber(input.month);
         let day = wildNullNumber(input.day);
@@ -295,22 +298,26 @@ export class CalEventHelper {
             return null;
         }
 
-        let leapday: LeapDay;
+        let leapday: LeapDay | undefined;
         if (input.month === "*") {
             // repeating, this is fine
-        } else if (Number.isInteger(month)) {
+        } else if (month != null && Number.isInteger(month)) {
             month = wrap(month - 1, this.calendar.static.months.length);
         } else if (Number.isNaN(month)) {
+            // Note: Number.isNaN(null) == false
+            // A null input month will not enter this block.
             // Name in the month segment
-            let m = this.calendar.static.months.find((m) =>
-                m.name.startsWith(input.month) || m.short?.startsWith(input.month)
+            let m = this.calendar.static.months.find(
+                (m) =>
+                    m.name.startsWith(input.month) ||
+                    m.short?.startsWith(input.month)
             );
             if (m) {
                 month = this.calendar.static.months.indexOf(m);
             } else {
                 // Is this a well-known leapday?
-                leapday = this.calendar.static.leapDays.find((l) =>
-                    l.name.startsWith(input.month)
+                leapday = this.calendar.static.leapDays.find(
+                    (l) => l.name && l.name.startsWith(input.month)
                 );
                 if (leapday) {
                     month = leapday.timespan;
@@ -323,7 +330,7 @@ export class CalEventHelper {
 
         if (input.day === "*") {
             // repeating, this is fine
-        } else if (Number.isInteger(day)) {
+        } else if (day != null && Number.isInteger(day)) {
             if (day < 1) {
                 logWarning(
                     `Must specify a valid day. Using 1`,
@@ -345,7 +352,7 @@ export class CalEventHelper {
                     return null;
                 }
             }
-        } else if (leapday) {
+        } else if (leapday && month != null && year != null) {
             // short form (omitted date), but a well-known leapday (e.g. Harptos Shieldmeet)
             day = this.findLeapDay(leapday, month, year);
             if (day == null) {
@@ -384,14 +391,22 @@ export class CalEventHelper {
                 timestamp: Number.MIN_VALUE,
                 order: date.order
                     ? date.order
-                    : `${date.year || "*"}-${toPaddedString(date.month, this.calendar, "month")}-${toPaddedString(date.day, this.calendar, "day")}`,
+                    : `${date.year || "*"}-${toPaddedString(
+                          date.month,
+                          this.calendar,
+                          "month"
+                      )}-${toPaddedString(date.day, this.calendar, "day")}`,
             };
         }
         // otherwise create a date string
         // TODO: pad month by number of months & days by max days
         return {
             timestamp: Number(
-                `${date.year}${toPaddedString(date.month, this.calendar, "month")}${toPaddedString(date.day, this.calendar, "day")}`
+                `${date.year}${toPaddedString(
+                    date.month,
+                    this.calendar,
+                    "month"
+                )}${toPaddedString(date.day, this.calendar, "day")}`
             ),
             order: date.order || "",
         };
@@ -406,7 +421,7 @@ export class CalEventHelper {
         }
         // rebuild the timestamp
         return this.parsedToTimestamp({
-            ...event.date,
+            ...event.date!,
             order: old?.order || "",
         });
     }
@@ -444,9 +459,7 @@ export class CalEventHelper {
         );
 
         if (year) {
-            let count = leapdays.filter((l) =>
-                testLeapDay(l, year)
-            ).length;
+            let count = leapdays.filter((l) => testLeapDay(l, year)).length;
             return cm.length + count;
         }
 
@@ -474,12 +487,12 @@ function wildNullNumber(data: any): Nullable<number> {
 
 function logError(
     message: string,
-    input: InputDate,
+    input: InputDate | null,
     file: { path: string; basename: string },
     datestring?: string
 ) {
     console.log(
-        "FC Calendar: %s. From '%s', date value: %o",
+        "Calendarium: %s. From '%s', date value: %o",
         message,
         file.path,
         datestring ? datestring : input
@@ -493,7 +506,7 @@ function logWarning(
     datestring?: string
 ) {
     console.log(
-        "FC Calendar: %s. From '%s', date value: '%o'",
+        "Calendarium: %s. From '%s', date value: '%o'",
         message,
         file.path,
         datestring ? datestring : input

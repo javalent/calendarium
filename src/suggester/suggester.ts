@@ -165,7 +165,7 @@ export abstract class SuggestionModal<T> extends FuzzySuggestModal<T> {
     onInputChanged(): void {
         if (this.shouldNotOpen) return;
         const inputStr = this.modifyInput(this.inputEl.value);
-        const suggestions = this.getSuggestions(inputStr);
+        const suggestions = this.getSuggestions(inputStr ?? "");
         if (suggestions.length > 0) {
             this.suggester.setSuggestions(suggestions.slice(0, this.limit));
         } else {
@@ -177,15 +177,11 @@ export abstract class SuggestionModal<T> extends FuzzySuggestModal<T> {
         this.shouldNotOpen = false;
         this.onInputChanged();
     }
-    modifyInput(input: string): string {
+    modifyInput(input: string): string | undefined {
         return input;
     }
     onNoSuggestion() {
         this.empty();
-        this.renderSuggestion(
-            null,
-            this.contentEl.createDiv("suggestion-item")
-        );
     }
     open(): void {
         // TODO: Figure out a better way to do this. Idea from Periodic Notes plugin

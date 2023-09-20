@@ -24,7 +24,7 @@ import Calendarium from "src/main";
 export class CreateEventModal extends CalendariumModal {
     saved = false;
     event: CalEvent = {
-        name: null,
+        name: "",
         description: null,
         date: {
             month: null,
@@ -35,8 +35,8 @@ export class CreateEventModal extends CalendariumModal {
         note: null,
         category: null,
         sort: {
-            timestamp: null,
-            order: null,
+            timestamp: Number.MIN_VALUE,
+            order: "",
         },
     };
     editing: boolean;
@@ -118,14 +118,14 @@ export class CreateEventModal extends CalendariumModal {
                                 maxDays * this.calendar.static.months.length;
 
                             const dateNumber =
-                                (date.year - 1) * totalDays +
+                                (date.year! - 1) * totalDays +
                                 (date.month ?? -1) * maxDays +
-                                date.day;
+                                date.day!;
 
                             const endNumber =
-                                (end.year - 1) * totalDays +
+                                (end.year! - 1) * totalDays +
                                 (end.month ?? -1) * maxDays +
-                                end.day;
+                                end.day!;
 
                             if (dateNumber > endNumber) {
                                 const temp = { ...this.event.end };
@@ -137,7 +137,7 @@ export class CreateEventModal extends CalendariumModal {
                         this.saved = true;
 
                         // Saving this note to frontmatter
-                        if (false) {
+                        /* if (false) {
                             const [path, subpath] =
                                 this.event.note.split(/[#^]/);
                             const note =
@@ -200,7 +200,7 @@ export class CreateEventModal extends CalendariumModal {
                                     `---${frontmatter.join("\n")}---`
                                 );
                             }
-                        }
+                        } */
 
                         this.close();
                     });
@@ -251,8 +251,17 @@ export class CreateEventModal extends CalendariumModal {
         new Setting(formulas)
             .setName("Event Interval")
             .addText((t) => {
-                t.setValue(`${this.event.formulas[0].number}`)
+                t.setValue(`${this.event.formulas?.[0].number ?? ""}`)
                     .onChange((v) => {
+                        if (!this.event.formulas) {
+                            this.event.formulas = [
+                                {
+                                    type: "interval",
+                                    number: 1,
+                                    timespan: "days",
+                                },
+                            ];
+                        }
                         this.event.formulas[0].number = Number(v);
                     })
                     .inputEl.setAttr("type", "number");
@@ -317,7 +326,7 @@ export class CreateEventModal extends CalendariumModal {
                 if (v === "select") field.month = null;
                 const index = this.calendar.static.months.find(
                     (m) => m.name == v
-                );
+                )!;
                 field.month = this.calendar.static.months.indexOf(index);
                 this.buildDateString();
             });
@@ -329,7 +338,7 @@ export class CreateEventModal extends CalendariumModal {
             .setValue(`${field.year}`)
             .onChange((v) => {
                 if (!v || v == undefined) {
-                    field.year = undefined;
+                    field.year = null;
                 } else {
                     field.year = Number(v);
                 }
@@ -367,8 +376,7 @@ export class CreateEventModal extends CalendariumModal {
                 modal.onClose = async () => {
                     text.inputEl.blur();
                     if (modal.file) this.event.note = modal.file.path;
-
-                    this.tryParse(modal.file);
+                    if (modal.file) this.tryParse(modal.file);
                 };
             });
 
@@ -385,7 +393,7 @@ export class CreateEventModal extends CalendariumModal {
         descriptionEl.createEl("label", { text: "Event Description" });
         new TextAreaComponent(descriptionEl)
             .setPlaceholder("Event Description")
-            .setValue(this.event.description)
+            .setValue(this.event.description ?? "")
             .onChange((v) => {
                 this.event.description = v;
             });
@@ -398,7 +406,7 @@ export class CreateEventModal extends CalendariumModal {
             );
 
             d.addOptions(options)
-                .setValue(this.event.category)
+                .setValue(this.event.category ?? "")
                 .onChange((v) => (this.event.category = v));
         });
     }
@@ -406,7 +414,7 @@ export class CreateEventModal extends CalendariumModal {
         this.event.name = file.basename;
         const cache = this.app.metadataCache.getFileCache(file);
 
-        const { frontmatter } = cache;
+        const { frontmatter } = cache ?? {};
         if (frontmatter) {
             if ("fc-display-name" in frontmatter) {
                 this.event.name = frontmatter["fc-display-name"];
@@ -442,9 +450,10 @@ export class CreateEventModal extends CalendariumModal {
                         id: nanoid(6),
                     });
                 }
-                this.event.category = this.calendar.categories.find(
-                    (c) => c.name === frontmatter["fc-category"]
-                )?.id;
+                this.event.category =
+                    this.calendar.categories.find(
+                        (c) => c.name === frontmatter["fc-category"]
+                    )?.id ?? null;
             }
         }
 
@@ -466,7 +475,7 @@ export async function addEventWithModal(
     modal.onClose = async () => {
         if (!modal.saved) return;
         const store = plugin.getStoreByCalendar(calendar);
-
+        if (!store) return;
         calendar.events.push(modal.event);
         store.eventStore.insertEvents(modal.event);
 

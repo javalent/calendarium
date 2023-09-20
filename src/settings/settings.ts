@@ -16,8 +16,10 @@ import type Calendarium from "../main";
 import Importer from "./import/importer";
 
 import CalendarCreator from "./creator/Creator.svelte";
+import CreatorTitle from "./creator/CreatorTitle.svelte";
 
-import type { Calendar } from "src/@types";
+import type { Calendar, PresetCalendar } from "src/@types";
+import { SyncBehavior } from "src/schemas";
 
 import {
     confirmDeleteCalendar,
@@ -31,6 +33,8 @@ import createStore from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import { getMissingNotice, warning } from "./creator/Utilities/utils";
+import SettingsService from "./settings.service";
+import { RestoreCalendarModal } from "./modals/restore";
 
 export enum Recurring {
     none = "None",
@@ -77,10 +81,13 @@ export default class CalendariumSettings extends PluginSettingTab {
     calendarsEl: HTMLDetailsElement;
     existingEl: HTMLDivElement;
     get data() {
-        return this.plugin.data;
+        return this.settings$.getData();
     }
-    constructor(public plugin: Calendarium) {
+    constructor(public plugin: Calendarium, public settings$: SettingsService) {
         super(plugin.app, plugin);
+        this.app.workspace.on("calendarium-settings-external-load", () =>
+            this.display()
+        );
     }
     async display() {
         this.containerEl.empty();
@@ -131,99 +138,37 @@ export default class CalendariumSettings extends PluginSettingTab {
             )
             .addButton((b) => {
                 b.setIcon("reset").onClick(async () => {
-                    this.plugin.data.exit = {
+                    this.data.exit = {
                         saving: false,
                         event: false,
                         calendar: false,
                     };
-                    await this.plugin.saveSettings();
+                    await this.settings$.save();
                 });
             });
-
         new Setting(containerEl)
-            .setName(
-                createFragment((e) => {
-                    const span = e.createSpan("calendarium-warning");
-                    setIcon(
-                        span.createSpan("calendarium-warning"),
-                        "calendarium-warning"
-                    );
-                    span.createSpan({ text: "Default Config Directory" });
-                })
-            )
+            .setName(`Settings Sync Behavior`)
             .setDesc(
-                createFragment((e) => {
-                    e.createSpan({
-                        text: "Please back up your data before changing this setting. Hidden directories must be manually entered.",
-                    });
-                    e.createEl("br");
-                    e.createSpan({
-                        text: `Current directory: `,
-                    });
-                    const configDirectory =
-                        this.data.configDirectory ?? this.app.vault.configDir;
-                    e.createEl("code", {
-                        text: configDirectory,
-                    });
-                })
+                `Control how the plugin reloads data when a sync is detected.`
             )
-            .addText(async (text) => {
-                let folders = this.app.vault
-                    .getAllLoadedFiles()
-                    .filter((f) => f instanceof TFolder);
-
-                text.setPlaceholder(
-                    this.data.configDirectory ?? this.app.vault.configDir
-                );
-                const modal = new FolderSuggestionModal(this.app, text, [
-                    ...(folders as TFolder[]),
-                ]);
-
-                modal.onClose = async () => {
-                    if (!text.inputEl.value) {
-                        this.data.configDirectory = null;
-                    } else {
-                        const exists = await this.app.vault.adapter.exists(
-                            text.inputEl.value
-                        );
-
-                        if (!exists) {
-                            this.data.configDirectory = text.inputEl.value;
-                            await this.plugin.saveSettings();
-                        }
-                    }
-                };
-
-                text.inputEl.onblur = async () => {
-                    if (!text.inputEl.value) {
-                        return;
-                    }
-                    const exists = await this.app.vault.adapter.exists(
-                        text.inputEl.value
-                    );
-
-                    this.data.configDirectory = text.inputEl.value;
-
-                    await this.plugin.saveSettings();
-                    this.display();
-                };
-            })
-            .addExtraButton((b) => {
-                b.setTooltip("Reset to Default")
-                    .setIcon("reset")
-                    .onClick(async () => {
-                        this.data.configDirectory = null;
-                        await this.plugin.saveSettings();
-                        this.display();
+            .addDropdown((d) => {
+                d.addOption(SyncBehavior.enum.Ask, "Continue Asking")
+                    .addOption(SyncBehavior.enum.Always, "Always Reload")
+                    .addOption(SyncBehavior.enum.Never, "Never Reload")
+                    .setValue(this.data.syncBehavior)
+                    .onChange(async (v: SyncBehavior) => {
+                        this.data.syncBehavior = v;
+                        await this.settings$.save();
                     });
             });
     }
-    buildCalendars() {
+    async buildCalendars() {
         this.calendarsEl.empty();
-        this.calendarsEl.ontoggle = () => {
-            this.data.settingsToggleState.calendars = this.calendarsEl.open;
-        };
         const summary = this.calendarsEl.createEl("summary");
+        summary.onClickEvent(async () => {
+            this.data.settingsToggleState.calendars = this.calendarsEl.open;
+            await this.plugin.saveSettings();
+        });
         new Setting(summary).setHeading().setName("Calendar Management");
 
         setIcon(
@@ -231,6 +176,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             "chevron-right"
         );
 
+        // TODO: MOVE THIS TO CALENDAR SETTING
         new Setting(this.calendarsEl)
             .setName("Show Intercalary Months Separately")
             .setDesc(
@@ -239,7 +185,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.showIntercalary).onChange(async (v) => {
                     this.data.showIntercalary = v;
-                    await this.plugin.saveCalendars();
+                    await this.settings$.saveAndTrigger();
                 });
             });
         new Setting(this.calendarsEl)
@@ -250,16 +196,16 @@ export default class CalendariumSettings extends PluginSettingTab {
                 for (let calendar of this.data.calendars) {
                     d.addOption(calendar.id, calendar.name);
                 }
-                d.setValue(this.plugin.data.defaultCalendar);
+                d.setValue(this.data.defaultCalendar ?? "none");
                 d.onChange(async (v) => {
                     if (v === "none") {
-                        this.plugin.data.defaultCalendar = null;
-                        await this.plugin.saveSettings();
+                        this.data.defaultCalendar = null;
+                        await this.settings$.saveAndTrigger();
                         return;
                     }
 
-                    this.plugin.data.defaultCalendar = v;
-                    await this.plugin.saveSettings();
+                    this.data.defaultCalendar = v;
+                    await this.settings$.saveAndTrigger();
                     this.plugin.watcher.start();
                 });
             });
@@ -268,11 +214,11 @@ export default class CalendariumSettings extends PluginSettingTab {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Import calendar from ",
+                        text: "Import calendar from the ",
                     });
                     e.createEl("a", {
-                        href: "https://app.calendarium.com",
-                        text: "Calendarium",
+                        href: "https://app.fantasy-calendar.com",
+                        text: "Fantasy Calendar website",
                         cls: "external-link",
                     });
                 })
@@ -290,7 +236,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 input.onchange = async () => {
                     const { files } = input;
 
-                    if (!files.length) return;
+                    if (!files?.length) return;
                     try {
                         const data = [];
                         for (let file of Array.from(files)) {
@@ -310,13 +256,56 @@ export default class CalendariumSettings extends PluginSettingTab {
                         console.error(e);
                     }
 
-                    input.value = null;
+                    input.value = "";
                 };
                 b.setButtonText("Choose Files");
                 b.buttonEl.addClass("calendar-file-upload");
                 b.buttonEl.appendChild(input);
                 b.onClick(() => input.click());
             });
+
+        if (this.data.deletedCalendars?.length) {
+            new Setting(this.calendarsEl)
+                .setName("Restore Deleted Calendars")
+                .addButton((b) => {
+                    b.setTooltip("Restore").setIcon("archive-restore");
+                    b.buttonEl.setCssStyles({ position: "relative" });
+                    const badge = b.buttonEl.createDiv({
+                        cls: "calendarium-deleted-badge",
+                    });
+                    badge
+                        .createSpan()
+                        .setText(`${this.data.deletedCalendars.length}`);
+                    b.onClick(() => {
+                        const modal = new RestoreCalendarModal(
+                            this.data.deletedCalendars
+                        );
+                        modal.onSave = async () => {
+                            if (modal.item?.length) {
+                                for (let restoring of modal.item) {
+                                    this.data.deletedCalendars.remove(
+                                        restoring
+                                    );
+                                    await this.settings$.addCalendar(restoring);
+                                }
+                                this.display();
+                            }
+                            if (modal.permanentlyDelete.length) {
+                                this.data.deletedCalendars =
+                                    this.data.deletedCalendars.filter(
+                                        (d) =>
+                                            !modal.permanentlyDelete.includes(
+                                                d.id
+                                            )
+                                    );
+                                await this.settings$.save();
+                                this.display();
+                            }
+                        };
+                        modal.open();
+                    });
+                });
+        }
 
         new Setting(this.calendarsEl)
             .setName("Create New Calendar")
@@ -363,21 +352,12 @@ export default class CalendariumSettings extends PluginSettingTab {
                 .addExtraButton((b) => {
                     b.setIcon("trash").onClick(async () => {
                         if (
-                            !this.plugin.data.exit.calendar &&
+                            !this.data.exit.calendar &&
                             !(await confirmDeleteCalendar(this.plugin))
                         )
                             return;
 
-                        this.plugin.data.calendars =
-                            this.plugin.data.calendars.filter(
-                                (c) => c.id != calendar.id
-                            );
-                        if (calendar.id == this.data.defaultCalendar) {
-                            this.plugin.data.defaultCalendar =
-                                this.plugin.data.calendars[0]?.id;
-                            this.plugin.watcher.start();
-                        }
-                        await this.plugin.saveCalendars();
+                        await this.settings$.removeCalendar(calendar);
 
                         this.display();
                     });
@@ -387,10 +367,11 @@ export default class CalendariumSettings extends PluginSettingTab {
 
     buildEvents(containerEl: HTMLDetailsElement) {
         containerEl.empty();
-        containerEl.ontoggle = () => {
-            this.data.settingsToggleState.events = containerEl.open;
-        };
         const summary = containerEl.createEl("summary");
+        summary.onClickEvent(async () => {
+            this.data.settingsToggleState.events = containerEl.open;
+            await this.settings$.save();
+        });
         new Setting(summary).setHeading().setName("Events");
 
         setIcon(
@@ -413,7 +394,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 t.setValue(this.data.addToDefaultIfMissing).onChange(
                     async (v) => {
                         this.data.addToDefaultIfMissing = v;
-                        await this.plugin.saveSettings();
+                        await this.settings$.saveAndTrigger();
                         this.plugin.watcher.start();
                     }
                 );
@@ -426,10 +407,11 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.eventPreview).onChange(async (v) => {
                     this.data.eventPreview = v;
-                    await this.plugin.saveSettings();
+                    await this.settings$.save();
                 });
             });
-        new Setting(containerEl)
+
+        /*         new Setting(containerEl)
             .setName("Write Event Data to Frontmatter")
             .setDesc("This setting is temporarily disabled.")
             .addToggle((t) => {
@@ -437,9 +419,9 @@ export default class CalendariumSettings extends PluginSettingTab {
                     .setDisabled(true)
                     .onChange(async (v) => {
                         this.data.eventFrontmatter = v;
-                        await this.plugin.saveSettings();
+                        await this.settings$.save();
                     });
-            });
+            }); */
 
         new Setting(containerEl)
             .setName("Parse Note Titles for Event Dates")
@@ -447,7 +429,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.parseDates).onChange(async (v) => {
                     this.data.parseDates = v;
-                    await this.plugin.saveSettings();
+                    await this.settings$.saveAndTrigger();
                     this.plugin.watcher.start();
                 });
             });
@@ -456,27 +438,6 @@ export default class CalendariumSettings extends PluginSettingTab {
             .setClass(this.data.dailyNotes ? "daily-notes" : "no-daily-notes")
             .setDesc(
                 createFragment((e) => {
-                    e.createSpan({
-                        text: "Event dates will be parsed using this format.",
-                    });
-                    e.createSpan({ text: "Only the " });
-                    e.createEl("code", { text: "Y" });
-                    e.createSpan({
-                        text: ", ",
-                    });
-                    e.createEl("code", { text: "M" });
-                    e.createSpan({
-                        text: ", and ",
-                    });
-                    e.createEl("code", { text: "D" });
-                    e.createEl("a", {
-                        text: "tokens",
-                        href: "https://momentjs.com/docs/#/displaying/format/",
-                        cls: "external-link",
-                    });
-                    e.createSpan({
-                        text: " are supported.",
-                    });
                     if (
                         ["Y", "M", "D"].some(
                             (token) => !this.data.dateFormat.includes(token)
@@ -506,7 +467,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     .setValue(this.plugin.format)
                     .onChange(async (v) => {
                         this.data.dateFormat = v;
-                        await this.plugin.saveSettings();
+                        await this.settings$.save();
                     });
                 t.inputEl.onblur = () => this.buildEvents(containerEl);
             })
@@ -534,10 +495,11 @@ export default class CalendariumSettings extends PluginSettingTab {
     }
     buildAdvanced(containerEl: HTMLDetailsElement) {
         containerEl.empty();
-        containerEl.ontoggle = () => {
-            this.data.settingsToggleState.advanced = containerEl.open;
-        };
         const summary = containerEl.createEl("summary");
+        summary.onClickEvent(async () => {
+            this.data.settingsToggleState.advanced = containerEl.open;
+            await this.settings$.save();
+        });
         new Setting(summary).setHeading().setName("Advanced");
 
         setIcon(
@@ -557,18 +519,21 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.debug).onChange(async (v) => {
                     this.data.debug = v;
-                    await this.plugin.saveSettings();
+                    await this.settings$.save();
                 });
             });
     }
 
     launchCalendarCreator(
-        calendar: Calendar = DEFAULT_CALENDAR
+        calendar: PresetCalendar = DEFAULT_CALENDAR
     ): Promise<Calendar | void> {
         /* this.containerEl.empty(); */
-        const clone = copy(calendar);
+        const clone = copy(calendar) as Calendar;
         const original = calendar.id;
         clone.id = `${nanoid(10)}`;
+        if (!clone.name) {
+            clone.name = "";
+        }
 
         /* if (Platform.isMobile) { */
         const modal = new CreatorModal(this.plugin, clone);
@@ -577,8 +542,17 @@ export default class CalendariumSettings extends PluginSettingTab {
                 modal.onClose = () => {
                     if (modal.saved) {
                         calendar = copy(modal.calendar);
-                        calendar.id = original;
-                        resolve(calendar);
+                        if (original) calendar.id = original;
+                        resolve({
+                            ...calendar,
+                            id: calendar.id ?? nanoid(8),
+                            name: calendar.name ?? "New Calendar",
+                            current: {
+                                day: calendar.current.day ?? 1,
+                                month: calendar.current.month ?? 0,
+                                year: calendar.current.year ?? 1,
+                            },
+                        });
                     }
                     resolve();
                 };
@@ -588,6 +562,46 @@ export default class CalendariumSettings extends PluginSettingTab {
                 reject();
             }
         });
+        /* } else {
+            this.containerEl.addClass("calendarium-creator-open");
+            return new Promise((resolve) => {
+                const color = getComputedStyle(
+                    this.containerEl.closest(".modal")
+                ).backgroundColor;
+                const $app = new CalendarCreator({
+                    target: this.containerEl,
+                    props: {
+                        base: clone,
+                        plugin: this.plugin,
+                        width: this.contentEl.clientWidth,
+                        color,
+                        top: this.containerEl.scrollTop,
+                    },
+                });
+                const observer = new ResizeObserver(() => {
+                    $app.$set({ width: this.contentEl.clientWidth });
+                });
+                observer.observe(this.contentEl);
+                $app.$on(
+                    "exit",
+                    (
+                        evt: CustomEvent<{ saved: boolean; calendar: Calendar }>
+                    ) => {
+                        this.containerEl.removeClass(
+                            "calendarium-creator-open"
+                        );
+                        $app.$destroy();
+                        if (evt.detail.saved) {
+                            //saved
+                            calendar = copy(evt.detail.calendar);
+                            observer.disconnect();
+                            resolve(calendar);
+                        }
+                        resolve();
+                    }
+                );
+            });
+        } */
     }
 }
 
@@ -596,16 +610,20 @@ class CreatorModal extends CalendariumModal {
     saved = false;
     store: ReturnType<typeof createStore>;
     $app: CalendarCreator;
-    valid: boolean;
     constructor(public plugin: Calendarium, calendar: Calendar) {
         super(plugin.app);
         this.modalEl.addClass("calendarium-creator");
         this.calendar = copy(calendar);
         this.store = createStore(this.plugin, this.calendar);
-        this.valid = get(this.store.valid);
+        this.scope.register([Platform.isMacOS ? "Meta" : "Ctrl"], "z", () => {
+            if (get(this.store.canUndo)) this.store.undo();
+        });
+        this.scope.register([Platform.isMacOS ? "Meta" : "Ctrl"], "y", () => {
+            if (get(this.store.canRedo)) this.store.redo();
+        });
     }
     async checkCanExit() {
-        if (this.valid) return true;
+        if (get(this.store.valid)) return true;
         if (this.plugin.data.exit.saving) return true;
         return new Promise((resolve) => {
             const modal = new ConfirmExitModal(this.plugin);
@@ -617,58 +635,21 @@ class CreatorModal extends CalendariumModal {
     }
     async close() {
         if (await this.checkCanExit()) {
-            this.saved = this.valid;
+            this.saved = get(this.store.valid);
             this.calendar = get(this.store);
             super.close();
         }
     }
-    setTitle() {
-        this.titleEl.setText(
-            createFragment((e) => {
-                e.createSpan({ text: "Calendar Creator" });
-                e.createEl("br");
-                const additional = e.createSpan("check");
-                if (this.valid) {
-                    setIcon(
-                        additional.createSpan("save can-save"),
-                        "checkmark"
-                    );
-                    additional.createSpan({
-                        cls: "additional can-save",
-                        text: "All good! Exit to save calendar.",
-                    });
-                } else {
-                    warning(
-                        additional.createSpan({
-                            cls: "save",
-                            attr: {
-                                "aria-label": getMissingNotice(get(this.store)),
-                            },
-                        })
-                    );
-                    additional.createSpan({
-                        cls: "additional",
-                        text: "Additional information is required to save.",
-                    });
-                }
-            })
-        );
-    }
     async display() {
-        this.modalEl.onscroll = () => console.trace();
-        this.setTitle();
-        this.store.valid.subscribe((v) => {
-            if (v == this.valid) return;
-            this.valid = v;
-            this.setTitle();
+        new CreatorTitle({
+            target: this.titleEl,
+            props: { store: this.store },
         });
-
         this.$app = new CalendarCreator({
             target: this.contentEl,
             props: {
                 store: this.store,
                 plugin: this.plugin,
-                width: this.contentEl.clientWidth,
                 top: 0,
             },
         });

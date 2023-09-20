@@ -3,12 +3,12 @@
 
     export let name: string;
     export let desc: string = "";
-    export let label: string = null;
-    export let icon: string = null;
-    export let text: string = null;
+    export let label: string | null = null;
+    export let icon: string | null = null;
+    export let text: string | null = null;
 
     const build = (node: HTMLElement) => {
-        setIcon(node, icon);
+        setIcon(node, icon ?? "");
     };
 </script>
 

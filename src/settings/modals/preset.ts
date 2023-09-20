@@ -1,12 +1,12 @@
 import copy from "fast-copy";
 import { Modal, ButtonComponent, ExtraButtonComponent } from "obsidian";
-import type { Calendar } from "src/@types";
+import type { Calendar, PresetCalendar } from "src/@types";
 import { nanoid } from "src/utils/functions";
 import { PRESET_CALENDARS } from "src/utils/presets";
 import { CalendariumModal } from "./modal";
 
 export class CalendarPresetModal extends CalendariumModal {
-    preset: Calendar;
+    preset: PresetCalendar;
     saved: boolean;
     async onOpen() {
         await this.display();
@@ -15,7 +15,7 @@ export class CalendarPresetModal extends CalendariumModal {
         this.containerEl.addClass("calendarium-choose-preset");
         this.contentEl.empty();
         this.contentEl.createEl("h3", {
-            text: "Choose a Preset Calendar"
+            text: "Choose a Preset Calendar",
         });
 
         const presetEl = this.contentEl.createDiv(
@@ -30,11 +30,11 @@ export class CalendarPresetModal extends CalendariumModal {
             if (this.preset == preset) button.setCta();
             button.buttonEl.createDiv({
                 cls: "setting-item-name",
-                text: preset.name
+                text: preset.name ?? "",
             });
             button.buttonEl.createDiv({
                 cls: "setting-item-description",
-                text: preset.description
+                text: preset.description ?? "",
             });
         }
 

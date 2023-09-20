@@ -3,7 +3,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "importsNotUsedAsValues": "remove",
-
+        "strictNullChecks": true,
         "inlineSources": true,
         "module": "ESNext",
         "target": "es2020",

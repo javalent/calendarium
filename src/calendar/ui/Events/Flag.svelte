@@ -78,7 +78,7 @@
         }
     };
 
-    export let flag: HTMLElement = null;
+    export let flag: HTMLElement | null = null;
 
     const contextMenu = (evt: MouseEvent) => {
         evt.stopPropagation();

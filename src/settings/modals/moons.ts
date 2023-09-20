@@ -7,12 +7,12 @@ import { CalendariumModal } from "./modal";
 export class CreateMoonModal extends CalendariumModal {
     saved = false;
     moon: Moon = {
-        name: null,
-        cycle: null,
-        offset: null,
+        name: "",
+        cycle: 0,
+        offset: 0,
         faceColor: "#fff",
         shadowColor: "#000",
-        id: nanoid(6)
+        id: nanoid(6),
     };
     editing: boolean;
     infoEl: HTMLDivElement;
@@ -28,7 +28,7 @@ export class CreateMoonModal extends CalendariumModal {
     async display() {
         this.contentEl.empty();
         this.contentEl.createEl("h3", {
-            text: this.editing ? "Edit Moon" : "New Moon"
+            text: this.editing ? "Edit Moon" : "New Moon",
         });
 
         this.infoEl = this.contentEl.createDiv("moon-info");

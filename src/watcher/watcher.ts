@@ -171,12 +171,14 @@ export class Watcher extends Component {
         this.registerEvent(
             this.vault.on("delete", async (abstractFile) => {
                 if (!(abstractFile instanceof TFile)) return;
+                let updated = false;
                 for (let calendar of this.calendars) {
                     const store = this.plugin.getStoreByCalendar(calendar);
                     if (!store) continue;
                     store.eventStore.removeEventsFromFile(abstractFile.path);
+                    updated = true;
                 }
-                await this.plugin.saveCalendars();
+                if (updated) await this.plugin.saveCalendars();
             })
         );
 
@@ -191,7 +193,8 @@ export class Watcher extends Component {
                     const file =
                         this.plugin.app.vault.getAbstractFileByPath(path);
                     if (file instanceof TFile) {
-                        const cache = this.metadataCache.getFileCache(file);
+                        const cache =
+                            this.metadataCache.getFileCache(file) ?? {};
                         const allTags = getAllTags(cache);
                         const data = await this.vault.cachedRead(file);
                         this.worker.postMessage<FileCacheMessage>({

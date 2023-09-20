@@ -22,7 +22,7 @@
             if (!modal.saved) return;
             if (!modal.leapday.interval.length) return;
             if (!modal.leapday.name) return;
-            if (modal.editing) {
+            if (modal.editing && leapday != null && leapday.id) {
                 leapDayStore.update(leapday.id, { ...modal.leapday });
             } else {
                 leapDayStore.add({ ...modal.leapday });
@@ -42,7 +42,7 @@
     <AddNew
         on:click={() => add()}
         disabled={$leapDayDisabled}
-        label={$leapDayDisabled ? "At least one named month is required" : null}
+        label={$leapDayDisabled ? "At least one named month is required" : ""}
     />
 
     {#if !$leapDayStore.length}
@@ -53,7 +53,7 @@
                 <LeapDayUI
                     {leapday}
                     on:edit={() => add(leapday)}
-                    on:delete={() => leapDayStore.delete(leapday.id)}
+                    on:delete={() => leapDayStore.delete(leapday.id ?? "")}
                 />
             {/each}
         </div>

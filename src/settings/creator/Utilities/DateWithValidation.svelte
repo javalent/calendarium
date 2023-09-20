@@ -6,7 +6,7 @@
         warning,
         invalidDayLabel,
         invalidMonthLabel,
-        invalidYearLabel
+        invalidYearLabel,
     } from "../Utilities/utils";
 
     const calendar = getContext("store");
@@ -16,7 +16,7 @@
         validMonth,
         validYear,
         yearStore,
-        currentStore
+        currentStore,
     } = calendar;
 </script>
 
@@ -81,7 +81,7 @@
                 bind:value={$currentStore.year}
                 class:invalid={!$validYear}
             >
-                {#each $yearStore?.filter((m) => m.name) as year, index}
+                {#each $yearStore?.filter((m) => m && m.name) ?? [] as year, index}
                     <option value={index + 1}>{year.name}</option>
                 {/each}
             </select>

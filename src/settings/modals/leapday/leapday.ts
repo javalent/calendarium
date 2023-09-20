@@ -17,7 +17,7 @@ export class CreateLeapDayModal extends CalendariumModal {
         intercalary: false,
         timespan: 0,
         offset: 0,
-        type: "leapday"
+        type: "leapday",
     };
     editing: boolean;
     infoEl: HTMLDivElement;
@@ -38,8 +38,8 @@ export class CreateLeapDayModal extends CalendariumModal {
             props: {
                 leapDay: this.leapday,
                 calendar: this.calendar,
-                app: this.app
-            }
+                app: this.app,
+            },
         }).$on("cancel", () => {
             this.saved = false;
             this.close();
@@ -56,7 +56,7 @@ export class IntervalModal extends CalendariumModal {
     condition: LeapDayCondition = {
         interval: null,
         exclusive: false,
-        ignore: false
+        ignore: false,
     };
     buttonsEl: HTMLDivElement;
     constructor(
@@ -71,7 +71,7 @@ export class IntervalModal extends CalendariumModal {
             this.editing = true;
         }
     }
-    onOpen() {
+    async display() {
         this.containerEl.addClasses(["calendarium-nested-settings"]);
         this.contentEl.empty();
         this.titleEl.setText("Leap Day Condition");
@@ -80,8 +80,8 @@ export class IntervalModal extends CalendariumModal {
             target: this.contentEl,
             props: {
                 canBeExclusive: this.canBeExclusive,
-                condition: this.condition
-            }
+                condition: this.condition,
+            },
         });
 
         this.buttonsEl = this.contentEl.createDiv(
@@ -116,7 +116,7 @@ export class IntervalModal extends CalendariumModal {
             .addToggle((t) =>
                 t
                     .setDisabled(!this.canBeExclusive)
-                    .setValue(this.condition.exclusive)
+                    .setValue(this.condition.exclusive ?? false)
                     .onChange((v) => (this.condition.exclusive = v))
             );
         new Setting(this.contentEl)
@@ -126,7 +126,7 @@ export class IntervalModal extends CalendariumModal {
             )
             .addToggle((t) =>
                 t
-                    .setValue(this.condition.ignore)
+                    .setValue(this.condition.ignore ?? false)
                     .onChange((v) => (this.condition.ignore = v))
             );
     }

@@ -11,10 +11,9 @@ export abstract class CalendariumModal extends Modal {
     }
     abstract display(): Promise<void>;
 }
-
-export abstract class CanceableCalendariumModal<
-    T extends TimeSpan
-> extends CalendariumModal {
+export abstract class CanceableCalendariumModal<T> extends CalendariumModal {
+    cancelText = "Cancel";
+    buttonEl: HTMLDivElement;
     constructor() {
         super(app);
         this.containerEl.addClasses(["has-buttons", "cancelable"]);
@@ -22,14 +21,15 @@ export abstract class CanceableCalendariumModal<
     item: T;
     override onOpen(): void {
         this.display();
+        this.buttonEl = this.modalEl.createDiv(
+            "calendarium-modal-buttons setting-item"
+        );
         this.addButtons();
     }
     addButtons() {
-        const buttons = this.modalEl.createDiv(
-            "calendarium-modal-buttons setting-item"
-        );
-        new ButtonComponent(buttons)
-            .setButtonText("Cancel")
+        this.buttonEl.empty();
+        new ButtonComponent(this.buttonEl)
+            .setButtonText(this.cancelText)
             .setCta()
             .onClick(this.cancel.bind(this));
     }
@@ -41,25 +41,22 @@ export abstract class CanceableCalendariumModal<
     onCancel() {}
 }
 export abstract class SaveableCalendariumModal<
-    T extends TimeSpan
+    T
 > extends CanceableCalendariumModal<T> {
+    saveText = "Save";
     constructor() {
         super();
         this.containerEl.addClasses(["saveable"]);
     }
-    override onOpen(): void {
-        this.display();
-        this.addButtons();
-    }
     addButtons() {
-        const buttons = this.modalEl.createDiv("calendarium-modal-buttons");
-        new ButtonComponent(buttons)
-            .setButtonText("Save")
+        this.buttonEl.empty();
+        new ButtonComponent(this.buttonEl)
+            .setButtonText(this.cancelText)
+            .onClick(this.cancel.bind(this));
+        new ButtonComponent(this.buttonEl)
+            .setButtonText(this.saveText)
             .setCta()
             .onClick(this.save.bind(this));
-        new ButtonComponent(buttons)
-            .setButtonText("Cancel")
-            .onClick(this.cancel.bind(this));
     }
     save() {
         this.close();

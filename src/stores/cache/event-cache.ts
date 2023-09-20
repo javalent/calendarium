@@ -22,7 +22,8 @@ class YearEventCache extends YearCache<CalEvent> {
 
                 if (
                     date.year <= this.year &&
-                    (end?.year >= this.year || event.formulas?.length)
+                    ((end?.year && end?.year >= this.year) ||
+                        event.formulas?.length)
                 )
                     return true;
 
@@ -51,7 +52,7 @@ class MonthEventCache extends MonthCache<CalEvent> {
 
                 //Event is after the month
                 if (
-                    date.year > this.year ||
+                    (date.year != null && date.year > this.year) ||
                     (date.year == this.year && date.month > this.month)
                 )
                     return false;
@@ -60,7 +61,8 @@ class MonthEventCache extends MonthCache<CalEvent> {
                 if (
                     !end &&
                     !event.formulas?.length &&
-                    (date.month != this.month || date.year < this.year)
+                    (date.month != this.month ||
+                        (date.year != null && date.year < this.year))
                 )
                     return false;
 
@@ -68,7 +70,10 @@ class MonthEventCache extends MonthCache<CalEvent> {
                 if (
                     (date.year <= this.year || date.month <= this.month) &&
                     (event.formulas?.length ||
-                        (end.year >= this.year && end.month >= this.month))
+                        (end.year != null &&
+                            end.year >= this.year &&
+                            end.month != null &&
+                            end.month >= this.month))
                 )
                     return true;
 
@@ -97,17 +102,17 @@ class DayEventCache extends DayCache<CalEvent> {
 
 export class EventCache extends EntityCache<CalEvent> {
     getYearCache(year: number): YearCache<CalEvent> {
-        if (this.cache.has(year)) return this.cache.get(year);
+        if (this.cache.has(year)) return this.cache.get(year)!;
         return new YearEventCache(year, this.entities);
     }
     getMonthCache(month: number, year: number): MonthCache<CalEvent> {
         const yearCache = this.getYearCache(year);
-        if (yearCache.cache.has(month)) return yearCache.cache.get(month);
+        if (yearCache.cache.has(month)) return yearCache.cache.get(month)!;
         return new MonthEventCache(month, year, yearCache.entities);
     }
     getDayCache(day: number, month: number, year: number): DayCache<CalEvent> {
         const monthCache = this.getMonthCache(month, year);
-        if (monthCache.cache.has(day)) return monthCache.cache.get(day);
+        if (monthCache.cache.has(day)) return monthCache.cache.get(day)!;
         return new DayEventCache(day, month, year, monthCache.entities);
     }
 }

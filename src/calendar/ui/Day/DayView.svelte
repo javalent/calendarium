@@ -12,15 +12,15 @@
     $: store = $global;
     $: viewing = $ephemeral.viewing;
     $: if (!$viewing) viewing = $ephemeral.displaying;
-    $: date = dateString($viewing, $store);
+    $: date = dateString($viewing!, $store);
     $: yearCalculator = store.yearCalculator;
     $: displayedMonth = yearCalculator
-        .getYearFromCache($viewing.year)
-        .getMonthFromCache($viewing.month);
+        .getYearFromCache($viewing!.year)
+        .getMonthFromCache($viewing!.month);
     $: daysBeforeMonth = displayedMonth.daysBefore;
-    $: daysBeforeDay = $daysBeforeMonth + $viewing.day;
-    $: events = store.eventStore.getEventsForDate($viewing);
-    $: moons = store.moonCache.getItemsOrRecalculate($viewing);
+    $: daysBeforeDay = $daysBeforeMonth + $viewing!.day;
+    $: events = store.eventStore.getEventsForDate($viewing!);
+    $: moons = store.moonCache.getItemsOrRecalculate($viewing!);
     $: displayDayNumber = $ephemeral.displayDayNumber;
     $: displayMoons = $ephemeral.displayMoons;
 
@@ -52,6 +52,9 @@
             <div
                 use:reveal
                 on:click={() => {
+                    if (!$viewing) {
+                        viewing = $ephemeral.displaying;
+                    }
                     $ephemeral.displayDate($viewing);
                 }}
             />
@@ -98,14 +101,16 @@
         </div>
     {/if}
     {#key $events}
-        <Flags
-            events={$events}
-            dayView={true}
-            date={$viewing}
-            on:event-click
-            on:event-mouseover
-            on:event-context
-        />
+        {#if $viewing}
+            <Flags
+                events={$events}
+                dayView={true}
+                date={$viewing}
+                on:event-click
+                on:event-mouseover
+                on:event-context
+            />
+        {/if}
     {/key}
 </div>
 

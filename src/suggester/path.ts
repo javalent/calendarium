@@ -7,16 +7,16 @@ import {
     CachedMetadata,
     TextComponent,
     App,
-    TFolder
+    TFolder,
 } from "obsidian";
 
 export default class PathSuggestionModal extends SuggestionModal<
     TFile | BlockCache | HeadingCache
 > {
-    file: TFile;
+    file: TFile | null;
     files: TFile[];
     text: TextComponent;
-    cache: CachedMetadata;
+    cache: CachedMetadata | null;
     constructor(app: App, input: TextComponent, items: TFile[]) {
         super(app, input.inputEl, items);
         this.files = [...items];
@@ -30,25 +30,25 @@ export default class PathSuggestionModal extends SuggestionModal<
         this.createPrompt([
             createSpan({
                 cls: "prompt-instruction-command",
-                text: "Type #"
+                text: "Type #",
             }),
-            createSpan({ text: "to link heading" })
+            createSpan({ text: "to link heading" }),
         ]);
         this.createPrompt([
             createSpan({
                 cls: "prompt-instruction-command",
-                text: "Type ^"
+                text: "Type ^",
             }),
-            createSpan({ text: "to link blocks" })
+            createSpan({ text: "to link blocks" }),
         ]);
         this.createPrompt([
             createSpan({
                 cls: "prompt-instruction-command",
-                text: "Note: "
+                text: "Note: ",
             }),
             createSpan({
-                text: "Blocks must have been created already"
-            })
+                text: "Blocks must have been created already",
+            }),
         ]);
     }
     getFile() {
@@ -71,6 +71,7 @@ export default class PathSuggestionModal extends SuggestionModal<
         if (Object.prototype.hasOwnProperty.call(item, "id")) {
             return (<BlockCache>item).id;
         }
+        return "";
     }
     onChooseItem(item: TFile | HeadingCache | BlockCache) {
         if (item instanceof TFile) {
@@ -79,26 +80,26 @@ export default class PathSuggestionModal extends SuggestionModal<
             this.cache = this.app.metadataCache.getFileCache(this.file);
         } else if (Object.prototype.hasOwnProperty.call(item, "heading")) {
             this.text.setValue(
-                this.file.basename + "#" + (<HeadingCache>item).heading
+                this.file?.basename + "#" + (<HeadingCache>item).heading
             );
         } else if (Object.prototype.hasOwnProperty.call(item, "id")) {
             this.text.setValue(
-                this.file.basename + "^" + (<BlockCache>item).id
+                this.file?.basename + "^" + (<BlockCache>item).id
             );
         }
     }
     link: string;
     selectSuggestion({ item }: FuzzyMatch<TFile | BlockCache | HeadingCache>) {
-        let link: string;
+        let link: string = "";
         if (item instanceof TFile) {
             this.file = item;
             link = item.basename;
         } else if (Object.prototype.hasOwnProperty.call(item, "heading")) {
-            link = this.file.basename + "#" + (<HeadingCache>item).heading;
+            link = this.file?.basename + "#" + (<HeadingCache>item).heading;
         } else if (Object.prototype.hasOwnProperty.call(item, "id")) {
-            link = this.file.basename + "^" + (<BlockCache>item).id;
+            link = this.file?.basename + "^" + (<BlockCache>item).id;
         }
-        const path = this.file.path.split("/").slice(0, -1);
+        const path = this.file?.path.split("/").slice(0, -1) ?? [];
         if (path.length) {
             this.link = path.join("/") + "/" + link;
         } else {
@@ -115,11 +116,11 @@ export default class PathSuggestionModal extends SuggestionModal<
     ) {
         let { item, match: matches } = result || {};
         let content = el.createDiv({
-            cls: "suggestion-content"
+            cls: "suggestion-content",
         });
         if (!item) {
             content.setText(this.emptyStateText);
-            content.parentElement.addClass("is-selected");
+            content.parentElement?.addClass("is-selected");
             return;
         }
 
@@ -147,14 +148,14 @@ export default class PathSuggestionModal extends SuggestionModal<
             }
             el.createDiv({
                 cls: "suggestion-note",
-                text: item.path
+                text: item.path,
             });
         } else if (Object.prototype.hasOwnProperty.call(item, "heading")) {
             content.setText((<HeadingCache>item).heading);
             content.prepend(
                 createSpan({
                     cls: "suggestion-flair",
-                    text: `H${(<HeadingCache>item).level}`
+                    text: `H${(<HeadingCache>item).level}`,
                 })
             );
         } else if (Object.prototype.hasOwnProperty.call(item, "id")) {
@@ -166,14 +167,14 @@ export default class PathSuggestionModal extends SuggestionModal<
         if (!this.cache) {
             this.cache = this.app.metadataCache.getFileCache(this.file);
         }
-        return this.cache.headings || [];
+        return this.cache?.headings ?? [];
     }
     get blocks() {
         if (!this.file) return [];
         if (!this.cache) {
             this.cache = this.app.metadataCache.getFileCache(this.file);
         }
-        return Object.values(this.cache.blocks || {}) || [];
+        return Object.values(this.cache?.blocks ?? {}) ?? [];
     }
     getItems() {
         const v = this.inputEl.value;

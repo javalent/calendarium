@@ -7,10 +7,11 @@ import { get } from "svelte/store";
 export class API {
     constructor(private plugin: Calendarium) {}
     #getStore(calendar: string | Calendar): CalendarStore {
-        let store: CalendarStore;
+        let store: CalendarStore | null = null;
         if (typeof calendar === "string") {
             store = this.plugin.getStore(
-                this.plugin.data.calendars.find((c) => c.name == calendar).id
+                this.plugin.data.calendars.find((c) => c.name == calendar)
+                    ?.id ?? ""
             );
         } else {
             store = this.plugin.getStoreByCalendar(calendar);
@@ -27,7 +28,9 @@ export class API {
      * @returns An instance of the Calendar API.
      */
     getAPI(calendarName: string): CalendarAPI {
-        const calendar = this.plugin.data.calendars.find((c) => c.name == calendarName);
+        const calendar = this.plugin.data.calendars.find(
+            (c) => c.name == calendarName
+        );
         if (!calendar)
             throw new ReferenceError("No calendar store by that name exists.");
         const store = this.#getStore(calendar);

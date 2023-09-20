@@ -32,7 +32,7 @@
         const modal = new CreateMoonModal(plugin.app, $calendar, moon);
         modal.onClose = () => {
             if (!modal.saved) return;
-            if (modal.editing) {
+            if (modal.editing && moon) {
                 moonStore.update(moon.id, { ...modal.moon });
             } else {
                 moonStore.add({ ...modal.moon });

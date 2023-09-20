@@ -1,5 +1,5 @@
 import type { Day } from "src/@types";
-import { CalendariumModal, CanceableCalendariumModal } from "../modal";
+import { CanceableCalendariumModal } from "../modal";
 import { Setting } from "obsidian";
 import { nanoid } from "src/utils/functions";
 
@@ -19,14 +19,16 @@ export class WeekdayModal extends CanceableCalendariumModal<Day> {
             id: nanoid(6),
         };
 
-        this.useAbbr = this.item?.abbreviation?.length > 0;
-        
+        this.useAbbr = (this.item?.abbreviation?.length ?? 0) > 0;
+
         this.titleEl.setText(`${this.creating ? "Create" : "Modify"} Weekday`);
     }
     async display() {
         this.contentEl.empty();
         new Setting(this.contentEl).setName("Name").addText((t) => {
-            t.setValue(this.item.name).onChange((v) => (this.item.name = v));
+            t.setValue(this.item.name ?? "").onChange(
+                (v) => (this.item.name = v)
+            );
         });
         new Setting(this.contentEl)
             .setName("Custom Abbreviation")
@@ -41,7 +43,7 @@ export class WeekdayModal extends CanceableCalendariumModal<Day> {
             });
         if (this.useAbbr) {
             new Setting(this.contentEl).setName("Abbreviation").addText((t) => {
-                t.setValue(this.item.abbreviation).onChange(
+                t.setValue(this.item.abbreviation ?? "").onChange(
                     (v) => (this.item.abbreviation = v)
                 );
             });

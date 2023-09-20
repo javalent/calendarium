@@ -45,7 +45,10 @@
         modal.open();
     };
 
-    $: intervals = leapDay.interval.sort((a, b) => a.interval - b.interval);
+    $: intervals = leapDay.interval.sort(
+        (a, b) =>
+            (a.interval ?? Number.MIN_VALUE) - (b.interval ?? Number.MIN_VALUE)
+    );
     const getIntervalName = (interval: LeapDayCondition) => {
         const name = [`${interval.interval}`];
         if (interval.exclusive) {
@@ -72,7 +75,7 @@
     <TextComponent
         name={"Name"}
         desc={""}
-        value={leapDay.name}
+        value={leapDay.name ?? ""}
         warn={!leapDay.name}
         on:blur={(evt) => (leapDay.name = evt.detail)}
     />
