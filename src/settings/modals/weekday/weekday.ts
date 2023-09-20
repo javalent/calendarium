@@ -1,5 +1,5 @@
 import type { Day } from "src/@types";
-import { CalendariumModal, CanceableCalendariumModal } from "../modal";
+import { CanceableCalendariumModal } from "../modal";
 import { Setting } from "obsidian";
 import { nanoid } from "src/utils/functions";
 
