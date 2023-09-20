@@ -2,23 +2,22 @@
     import type { CalDate, Calendar } from "src/@types";
     import type Calendarium from "src/main";
     import copy from "fast-copy";
-    import { ExtraButtonComponent, Platform, setIcon, Setting } from "obsidian";
+    import { Platform, setIcon, Setting } from "obsidian";
     import { CalendarPresetModal } from "../modals/preset";
-    import { createEventDispatcher, setContext } from "svelte";
-    import { fly, FlyParams } from "svelte/transition";
+    import { setContext } from "svelte";
     import { onMount } from "svelte";
     import CurrentDate from "./Containers/CurrentDate.svelte";
     import Info from "./Containers/Info.svelte";
-    import WeekdayContainer from "./Containers/WeekdayContainer.svelte";
-    import MonthContainer from "./Containers/MonthContainer.svelte";
+    import WeekdayContainer from "./Containers/weekday/WeekdayContainer.svelte";
+    import MonthContainer from "./Containers/months/MonthContainer.svelte";
     import YearContainer from "./Containers/YearContainer.svelte";
-    import EventContainer from "./Containers/EventContainer.svelte";
+    import EventContainer from "./Containers/events/EventContainer.svelte";
     import CategoryContainer from "./Containers/CategoryContainer.svelte";
     import MoonContainer from "./Containers/MoonContainer.svelte";
     import LeapDayContainer from "./Containers/LeapDayContainer.svelte";
     import { Writable } from "svelte/store";
     import { getMissingNotice, warning } from "./Utilities/utils";
-    import { ConfirmExitModal } from "../modals/confirm";
+
     import createStore from "./stores/calendar";
     import { nanoid } from "src/utils/functions";
 
@@ -62,13 +61,14 @@
                             $store = {
                                 ...copy(modal.preset),
                                 id: nanoid(8),
-                                name: modal.preset.name!,
+                                name: $store.name?.length
+                                    ? $store.name
+                                    : modal.preset.name!,
                                 current: { ...current },
                             };
                         };
                         modal.open();
                     });
-                b.buttonEl.setAttr("tabindex", "-1");
             });
     };
 

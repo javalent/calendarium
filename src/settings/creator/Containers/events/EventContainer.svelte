@@ -3,12 +3,12 @@
     import { dateString } from "src/utils/functions";
 
     import EventInstance from "./EventInstance.svelte";
-    import AddNew from "../Utilities/AddNew.svelte";
-    import NoExistingItems from "../Utilities/NoExistingItems.svelte";
+    import AddNew from "../../Utilities/AddNew.svelte";
+    import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
     import type Calendarium from "src/main";
     import { CreateEventModal } from "src/settings/modals/event/event";
-    import Details from "../Utilities/Details.svelte";
-    import ButtonComponent from "../Settings/ButtonComponent.svelte";
+    import Details from "../../Utilities/Details.svelte";
+    import ButtonComponent from "../../Settings/ButtonComponent.svelte";
     import { confirmWithModal } from "src/settings/modals/confirm";
     import {
         Setting,
@@ -22,8 +22,8 @@
     } from "obsidian";
     import { getContext } from "svelte";
     import { derived, writable } from "svelte/store";
-    import ToggleComponent from "../Settings/ToggleComponent.svelte";
-    import TextComponent from "../Settings/TextComponent.svelte";
+    import ToggleComponent from "../../Settings/ToggleComponent.svelte";
+    import TextComponent from "../../Settings/TextComponent.svelte";
     import { FolderSuggestionModal } from "src/suggester/folder";
     import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
 
