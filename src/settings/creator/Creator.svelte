@@ -52,7 +52,7 @@
                                 month: modal.preset.current.month!,
                                 year: modal.preset.current.year!,
                             };
-                            if ($store?.name == "Gregorian Calendar") {
+                            if (modal.preset?.name == "Gregorian Calendar") {
                                 const today = new Date();
 
                                 current.year = today.getFullYear();

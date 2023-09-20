@@ -5,6 +5,8 @@
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
     import Details from "../Utilities/Details.svelte";
     import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
+    import { Setting, setIcon } from "obsidian";
+    import { DEFAULT_FORMAT } from "src/utils/constants";
 
     const calendar = getContext("store");
 
@@ -15,6 +17,24 @@
 
     if (!$calendar.inlineEventTag)
         $calendar.inlineEventTag = DEFAULT_CALENDAR.inlineEventTag;
+
+    const descFormat = () =>
+        createFragment((e) => {
+            e.createSpan({
+                text: "Event dates will be parsed using this format.",
+            });
+            e.createEl("br");
+            e.createSpan({
+                text: "Information on how the format works can be seen ",
+            });
+            e.createEl("a", {
+                href: "https://plugins.javalent.com/calendarium/create-calendar#Date+Format",
+                text: "here",
+            });
+            e.createSpan({
+                text: ".",
+            });
+        });
 </script>
 
 <Details
@@ -51,6 +71,15 @@
             on:click={() => {
                 $calendar.static.displayDayNumber =
                     !$calendar.static.displayDayNumber;
+            }}
+        />
+        <TextComponent
+            name={"Date Format"}
+            desc={descFormat()}
+            value={$calendar.dateFormat ?? DEFAULT_FORMAT}
+            on:blur={(evt) => {
+                if (evt.detail === $calendar.dateFormat) return;
+                $calendar.dateFormat = evt.detail;
             }}
         />
         <!-- <ToggleComponent

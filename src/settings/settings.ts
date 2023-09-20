@@ -427,27 +427,6 @@ export default class CalendariumSettings extends PluginSettingTab {
             .setClass(this.data.dailyNotes ? "daily-notes" : "no-daily-notes")
             .setDesc(
                 createFragment((e) => {
-                    e.createSpan({
-                        text: "Event dates will be parsed using this format.",
-                    });
-                    e.createSpan({ text: "Only the " });
-                    e.createEl("code", { text: "Y" });
-                    e.createSpan({
-                        text: ", ",
-                    });
-                    e.createEl("code", { text: "M" });
-                    e.createSpan({
-                        text: ", and ",
-                    });
-                    e.createEl("code", { text: "D" });
-                    e.createEl("a", {
-                        text: "tokens",
-                        href: "https://momentjs.com/docs/#/displaying/format/",
-                        cls: "external-link",
-                    });
-                    e.createSpan({
-                        text: " are supported.",
-                    });
                     if (
                         ["Y", "M", "D"].some(
                             (token) => !this.data.dateFormat.includes(token)
@@ -620,13 +599,11 @@ class CreatorModal extends CalendariumModal {
     saved = false;
     store: ReturnType<typeof createStore>;
     $app: CalendarCreator;
-    valid: boolean;
     constructor(public plugin: Calendarium, calendar: Calendar) {
         super(plugin.app);
         this.modalEl.addClass("calendarium-creator");
         this.calendar = copy(calendar);
         this.store = createStore(this.plugin, this.calendar);
-        this.valid = get(this.store.valid);
         this.scope.register([Platform.isMacOS ? "Meta" : "Ctrl"], "z", () => {
             if (get(this.store.canUndo)) this.store.undo();
         });
@@ -635,7 +612,7 @@ class CreatorModal extends CalendariumModal {
         });
     }
     async checkCanExit() {
-        if (this.valid) return true;
+        if (get(this.store.valid)) return true;
         if (this.plugin.data.exit.saving) return true;
         return new Promise((resolve) => {
             const modal = new ConfirmExitModal(this.plugin);
@@ -647,7 +624,7 @@ class CreatorModal extends CalendariumModal {
     }
     async close() {
         if (await this.checkCanExit()) {
-            this.saved = this.valid;
+            this.saved = get(this.store.valid);
             this.calendar = get(this.store);
             super.close();
         }
