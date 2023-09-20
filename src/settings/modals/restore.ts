@@ -8,12 +8,15 @@ export class RestoreCalendarModal extends SaveableCalendariumModal<
     constructor(public calendars: DeletedCalendar[]) {
         super();
     }
-    saveText: string = "Restore";
+    permanentlyDelete: string[] = [];
+    saveText: string = "Save";
     async display() {
         this.contentEl.empty();
         if (!this.item) this.item = [];
         this.titleEl.setText("Restore Calendars");
-        for (const calendar of this.calendars) {
+        for (const calendar of this.calendars.filter(
+            (c) => !this.permanentlyDelete.includes(c.id)
+        )) {
             new Setting(this.contentEl)
                 .setName(calendar.name)
                 .setDesc(
@@ -26,6 +29,12 @@ export class RestoreCalendarModal extends SaveableCalendariumModal<
                         } else {
                             this.item.remove(calendar);
                         }
+                    });
+                })
+                .addExtraButton((b) => {
+                    b.setIcon("trash").onClick(() => {
+                        this.permanentlyDelete.push(calendar.id);
+                        this.display();
                     });
                 });
         }

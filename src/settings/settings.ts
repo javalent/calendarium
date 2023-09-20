@@ -290,6 +290,17 @@ export default class CalendariumSettings extends PluginSettingTab {
                                 }
                                 this.display();
                             }
+                            if (modal.permanentlyDelete.length) {
+                                this.data.deletedCalendars =
+                                    this.data.deletedCalendars.filter(
+                                        (d) =>
+                                            !modal.permanentlyDelete.includes(
+                                                d.id
+                                            )
+                                    );
+                                await this.settings$.save();
+                                this.display();
+                            }
                         };
                         modal.open();
                     });
