@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-b27](https://github.com/javalent/the-calendarium/compare/1.0.0-b26...1.0.0-b27) (2023-09-20)
+
+
+### Bug Fixes
+
+* adds ability to import old data file if it doesn't migrate correctly for some reason ([b043802](https://github.com/javalent/the-calendarium/commit/b04380244cab332f1fc436090faad9cd1c222922))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b27 ([4faed5a](https://github.com/javalent/the-calendarium/commit/4faed5a0d3c1692a374a08dfc5981ff0e136f0bd))
+
 ## [1.0.0-b26](https://github.com/javalent/the-calendarium/compare/1.0.1-b25...1.0.0-b26) (2023-09-20)
 
 
