@@ -1,5 +1,5 @@
 import type { CalDate, CalEventDate } from "src/@types";
-import { Readable, Writable, derived, get, writable } from "svelte/store";
+import { type Readable, derived, get, writable } from "svelte/store";
 
 abstract class CacheItem<T> {
     constructor(public toConsider: Readable<T[]>) {}

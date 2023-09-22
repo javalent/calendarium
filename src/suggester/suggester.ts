@@ -1,11 +1,11 @@
 import {
     App,
-    FuzzyMatch,
+    type FuzzyMatch,
     FuzzySuggestModal,
     Scope,
     SuggestModal,
 } from "obsidian";
-import { createPopper, Instance as PopperInstance } from "@popperjs/core";
+import { createPopper, type Instance as PopperInstance } from "@popperjs/core";
 declare module "obsidian" {
     interface App {
         keymap: {
@@ -20,7 +20,7 @@ declare global {
 class Suggester<T> {
     owner: SuggestModal<T>;
     items: T[];
-    suggestions: HTMLDivElement[];
+    suggestions: HTMLElement[];
     selectedItem: number;
     containerEl: HTMLElement;
     constructor(
@@ -68,7 +68,7 @@ class Suggester<T> {
             this.owner.onChooseSuggestion(currentValue, evt);
         }
     }
-    onSuggestionClick(event: MouseEvent, el: HTMLDivElement): void {
+    onSuggestionClick(event: MouseEvent, el: HTMLElement): void {
         event.preventDefault();
         if (!this.suggestions || !this.suggestions.length) return;
 
@@ -77,7 +77,7 @@ class Suggester<T> {
         this.useSelectedItem(event);
     }
 
-    onSuggestionMouseover(event: MouseEvent, el: HTMLDivElement): void {
+    onSuggestionMouseover(event: MouseEvent, el: HTMLElement): void {
         if (!this.suggestions || !this.suggestions.length) return;
         const item = this.suggestions.indexOf(el);
         this.setSelectedItem(item, false);

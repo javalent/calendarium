@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { LeapDayCondition } from "src/schemas";
+    import { type LeapDayCondition } from "src/schemas";
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
 

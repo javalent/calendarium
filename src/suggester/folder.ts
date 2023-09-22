@@ -1,9 +1,9 @@
 import {
     TFolder,
     TextComponent,
-    CachedMetadata,
+    type CachedMetadata,
     App,
-    FuzzyMatch
+    type FuzzyMatch,
 } from "obsidian";
 import { SuggestionModal } from "./suggester";
 
@@ -46,7 +46,7 @@ export class FolderSuggestionModal extends SuggestionModal<TFolder> {
     renderSuggestion(result: FuzzyMatch<TFolder>, el: HTMLElement) {
         let { item, match: matches } = result || {};
         let content = el.createDiv({
-            cls: "suggestion-content"
+            cls: "suggestion-content",
         });
         if (!item) {
             content.setText(this.emptyStateText);
@@ -73,7 +73,7 @@ export class FolderSuggestionModal extends SuggestionModal<TFolder> {
         }
         el.createDiv({
             cls: "suggestion-note",
-            text: item.path
+            text: item.path,
         });
     }
 

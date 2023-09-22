@@ -1,5 +1,5 @@
 import { derived, get } from "svelte/store";
-import { StaticStore } from "./calendar.store";
+import type { StaticStore } from "./calendar.store";
 import type { CalEvent, LeapDay, Month, Week } from "src/@types";
 import { wrap } from "../utils/functions";
 import { MonthStore } from "./month.store";

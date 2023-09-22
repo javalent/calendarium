@@ -1,32 +1,19 @@
-import {
-    ButtonComponent,
-    DropdownComponent,
-    Notice,
-    Platform,
-    Plugin,
-    WorkspaceLeaf,
-    addIcon,
-    setIcon,
-} from "obsidian";
+import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
 
 import CalendariumSettings from "./settings/settings";
 
 import type { Calendar, CalendariumData } from "./@types";
-import { SyncBehavior } from "src/schemas";
 import CalendariumView, { VIEW_TYPE } from "./calendar/view";
 
-import { CalendarEventTree, Watcher } from "./watcher/watcher";
+import { type CalendarEventTree, Watcher } from "./watcher/watcher";
 import { API } from "./api/api";
 import SettingsService from "./settings/settings.service";
-import { CalendarStore, createCalendarStore } from "./stores/calendar.store";
-import { CodeBlockService } from "./calendar/codeblock";
 import {
-    DEFAULT_FORMAT,
-    /*
-    EVENT_LINKED_TO_NOTE,
-    EVENT_LINKED_TO_NOTE_ICON, */
-    REVEAL_ICON,
-} from "./utils/constants";
+    type CalendarStore,
+    createCalendarStore,
+} from "./stores/calendar.store";
+import { CodeBlockService } from "./calendar/codeblock";
+import { DEFAULT_FORMAT, REVEAL_ICON } from "./utils/constants";
 import { CalendariumNotice } from "./utils/notice";
 
 declare module "obsidian" {

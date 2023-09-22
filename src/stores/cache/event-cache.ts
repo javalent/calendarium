@@ -1,7 +1,5 @@
 import type { CalEvent } from "src/@types";
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
-import { Readable, derived, get, writable } from "svelte/store";
-
 class YearEventCache extends YearCache<CalEvent> {
     update(events: CalEvent[]) {
         if (events) {

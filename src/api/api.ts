@@ -1,7 +1,7 @@
 import Calendarium from "src/main";
 import { CalendarAPI } from "./calendar";
 import type { CalDate, CalEvent, Calendar } from "src/@types";
-import { CalendarStore } from "src/stores/calendar.store";
+import type { CalendarStore } from "src/stores/calendar.store";
 import { get } from "svelte/store";
 
 export class API {

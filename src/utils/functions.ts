@@ -41,9 +41,13 @@ export function nanoid(len: number) {
 
 export function getIntervalDescription(leapday: LeapDay) {
     if (!leapday.interval?.length) return "";
-    const intervals = leapday.interval.sort((a, b) => a.interval - b.interval);
+    const intervals = leapday.interval.sort(
+        (a, b) =>
+            (a.interval ?? Number.MIN_VALUE) - (b.interval ?? Number.MIN_VALUE)
+    );
     let description = [];
     for (let interval of intervals) {
+        if (interval.interval == undefined) continue;
         const length = interval.interval;
         const offset =
             leapday.offset && !interval.ignore
@@ -292,8 +296,13 @@ export function isValidYear(year: number, calendar: Calendar) {
  */
 export function testLeapDay(leapday: LeapDay, year: number) {
     return leapday.interval
-        .sort((a, b) => a.interval - b.interval)
+        .sort(
+            (a, b) =>
+                (a.interval ?? Number.MIN_VALUE) -
+                (b.interval ?? Number.MIN_VALUE)
+        )
         .some(({ interval, exclusive }, index, array) => {
+            if (interval == undefined) return false;
             if (exclusive && index == 0) {
                 return (year - leapday.offset ?? 0) % interval != 0;
             }
@@ -303,7 +312,8 @@ export function testLeapDay(leapday: LeapDay, year: number) {
             if (array[index + 1] && array[index + 1].exclusive) {
                 return (
                     (year - leapday.offset ?? 0) % interval == 0 &&
-                    (year - leapday.offset ?? 0) % array[index + 1].interval !=
+                    (year - leapday.offset ?? 0) %
+                        (array[index + 1].interval ?? 0) !=
                         0
                 );
             }

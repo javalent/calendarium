@@ -54,7 +54,7 @@
 
         menu.setNoIcon();
 
-        if (!this.full) {
+        if (!full) {
             menu.addItem((item) => {
                 item.setTitle("Open Day View").onClick(() => {
                     $viewing = {

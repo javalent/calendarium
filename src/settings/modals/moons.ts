@@ -1,4 +1,4 @@
-import { Modal, App, Setting, Notice } from "obsidian";
+import { App, Setting, Notice } from "obsidian";
 import type { Calendar, Moon } from "../../@types";
 
 import { nanoid } from "../../utils/functions";

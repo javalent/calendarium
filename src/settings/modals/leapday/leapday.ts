@@ -1,5 +1,5 @@
 import copy from "fast-copy";
-import { Modal, App, Setting, ButtonComponent } from "obsidian";
+import { App, Setting, ButtonComponent } from "obsidian";
 import type { Calendar, LeapDay, LeapDayCondition } from "../../../@types";
 
 import { nanoid } from "../../../utils/functions";

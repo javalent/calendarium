@@ -1,5 +1,4 @@
 import { App, ButtonComponent, Modal } from "obsidian";
-import type { TimeSpan } from "src/@types";
 
 export abstract class CalendariumModal extends Modal {
     constructor(public app: App) {

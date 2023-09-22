@@ -1,6 +1,4 @@
 <script lang="ts">
-    import type { Calendar, CalDate } from "src/@types";
-
     import { getContext } from "svelte";
     import {
         warning,

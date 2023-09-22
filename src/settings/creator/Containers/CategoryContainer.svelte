@@ -3,7 +3,7 @@
     import { createEventDispatcher, getContext } from "svelte";
     import randomColor from "randomcolor";
 
-    import type { Calendar, CalEventCategory } from "src/@types";
+    import type { CalEventCategory } from "src/@types";
     import { nanoid } from "src/utils/functions";
     import AddNew from "../Utilities/AddNew.svelte";
     import NoExistingItems from "../Utilities/NoExistingItems.svelte";
@@ -51,7 +51,7 @@
             categoryStore.add({
                 id: nanoid(6),
                 color: randomColor(),
-                name: "Category"
+                name: "Category",
             })}
     />
 

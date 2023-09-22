@@ -1,12 +1,16 @@
-import { ItemView, ViewStateResult, WorkspaceLeaf, addIcon } from "obsidian";
+import {
+    ItemView,
+    type ViewStateResult,
+    WorkspaceLeaf,
+    addIcon,
+} from "obsidian";
 import type Calendarium from "src/main";
 import CalendarUI from "./ui/UI.svelte";
 import { getContext, setContext } from "svelte";
 import {
-    CalendarStore,
-    CalendarStoreState,
-    EphemeralState,
-    EphemeralStore,
+    type CalendarStore,
+    type CalendarStoreState,
+    type EphemeralStore,
 } from "src/stores/calendar.store";
 import type { Writable } from "svelte/store";
 
@@ -48,12 +52,15 @@ export default class CalendariumView extends ItemView {
     }
     protected async onOpen(): Promise<void> {}
     calendar: string;
-    store: CalendarStore;
+    store: CalendarStore | null;
     async display() {
         if (!this.calendar) {
             this.calendar = this.plugin.defaultCalendar?.id;
         }
         this.store = this.plugin.getStore(this.calendar);
+
+        if (!this.store) {
+        }
 
         this.ui = new CalendarUI({
             target: this.contentEl,
@@ -97,7 +104,7 @@ export default class CalendariumView extends ItemView {
         super.setState(state, result);
     }
 
-    getState(): CalendarStoreState {
+    getState(): CalendarStoreState | undefined {
         const state = this.store?.getStoreState();
         return state;
     }

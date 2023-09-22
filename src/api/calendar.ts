@@ -1,5 +1,5 @@
 import type { Calendar, CalDate, CalEvent } from "src/@types";
-import { CalendarStore } from "src/stores/calendar.store";
+import type { CalendarStore } from "src/stores/calendar.store";
 import { compareEvents, dateString } from "src/utils/functions";
 import { get } from "svelte/store";
 

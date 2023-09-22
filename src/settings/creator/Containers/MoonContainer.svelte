@@ -1,7 +1,7 @@
 <script lang="ts">
     import { getContext } from "svelte";
 
-    import type { Calendar, Moon } from "src/@types";
+    import type { Moon } from "src/@types";
     import { ExtraButtonComponent } from "obsidian";
     import MoonSVG from "src/calendar/ui/Moon.svelte";
     import AddNew from "../Utilities/AddNew.svelte";

@@ -1,6 +1,6 @@
 import type { CalDate, CalEvent, Calendar } from "src/@types";
 import { EventCache } from "./cache/event-cache";
-import { Writable, derived, get, writable } from "svelte/store";
+import { type Writable, derived, get, writable } from "svelte/store";
 
 export class EventStore {
     /**

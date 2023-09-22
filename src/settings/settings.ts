@@ -26,13 +26,11 @@ import {
     ConfirmExitModal,
     confirmWithModal,
 } from "./modals/confirm";
-import { FolderSuggestionModal } from "src/suggester/folder";
 import { CalendariumModal } from "./modals/modal";
-import { get, Writable } from "svelte/store";
+import { get } from "svelte/store";
 import createStore from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
-import { getMissingNotice, warning } from "./creator/Utilities/utils";
 import SettingsService from "./settings.service";
 import { RestoreCalendarModal } from "./modals/restore";
 
@@ -156,8 +154,8 @@ export default class CalendariumSettings extends PluginSettingTab {
                     .addOption(SyncBehavior.enum.Always, "Always Reload")
                     .addOption(SyncBehavior.enum.Never, "Never Reload")
                     .setValue(this.data.syncBehavior)
-                    .onChange(async (v: SyncBehavior) => {
-                        this.data.syncBehavior = v;
+                    .onChange(async (v) => {
+                        this.data.syncBehavior = v as SyncBehavior;
                         await this.settings$.save();
                     });
             });

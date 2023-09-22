@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ExtraButtonComponent, setIcon } from "obsidian";
+    import { setIcon } from "obsidian";
     import { getMissingNotice, warning } from "./Utilities/utils";
     import createStore from "./stores/calendar";
 

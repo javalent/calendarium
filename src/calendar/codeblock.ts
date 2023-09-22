@@ -1,10 +1,10 @@
 import {
     Component,
     Editor,
-    EditorPosition,
+    type EditorPosition,
     EditorSuggest,
-    EditorSuggestContext,
-    EditorSuggestTriggerInfo,
+    type EditorSuggestContext,
+    type EditorSuggestTriggerInfo,
     TFile,
     parseYaml,
 } from "obsidian";
@@ -37,6 +37,14 @@ export class CodeBlockService extends Component {
         }
 
         const store = this.plugin.getStore(calendar.id);
+        if (!store) {
+            el.replaceWith(
+                createEl("code", {
+                    text: "No calendar by that name was found.",
+                })
+            );
+            return;
+        }
         new Ui({
             target: el,
             props: {

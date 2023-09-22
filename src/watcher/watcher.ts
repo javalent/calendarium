@@ -13,15 +13,15 @@ import type Calendarium from "src/main";
 //have to ignore until i fix typing issue
 //@ts-expect-error
 import Worker, {
-    CalendarsMessage,
-    GetFileCacheMessage,
-    FileCacheMessage,
-    OptionsMessage,
-    QueueMessage,
-    UpdateEventMessage,
-    SaveMessage,
-    DeleteEventMessage,
-    NewCategoryMessage,
+    type CalendarsMessage,
+    type GetFileCacheMessage,
+    type FileCacheMessage,
+    type OptionsMessage,
+    type QueueMessage,
+    type UpdateEventMessage,
+    type SaveMessage,
+    type DeleteEventMessage,
+    type NewCategoryMessage,
 } from "./watcher.worker";
 
 declare global {

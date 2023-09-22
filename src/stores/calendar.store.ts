@@ -4,12 +4,17 @@ import type {
     MoonState,
     CalEventCategory,
 } from "src/@types";
-import { Readable, Writable, derived, get, writable } from "svelte/store";
+import {
+    type Readable,
+    type Writable,
+    derived,
+    get,
+    writable,
+} from "svelte/store";
 import { YearStoreCache } from "./years.store";
 import { dateString } from "src/utils/functions";
 import { MoonCache } from "./cache/moon-cache";
-import Calendarium from "src/main";
-import { CreateEventModal } from "src/settings/modals/event/event";
+import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;

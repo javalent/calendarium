@@ -1,7 +1,7 @@
 /**
  * @vitest-environment happy-dom
  */
-import { CalDate, CalEvent } from "../src/@types";
+import type { CalDate, CalEvent } from "../src/@types";
 import { CalEventHelper, ParseDate } from "../src/events/event.helper";
 import { dateString, sortEventList } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
@@ -88,8 +88,12 @@ test("Parse February: Leap year", () => {
     } as CalDate;
 
     expect(dateString(formatThis, GREGORIAN)).toEqual("1996-02-29");
-    expect(dateString(formatThis, GREGORIAN, undefined, 'D MMMM, YYYY')).toEqual("29 February, 1996");
-    expect(dateString(formatThis, GREGORIAN, undefined, 'YYYY-MMM-DD')).toEqual("1996-Feb-29");
+    expect(
+        dateString(formatThis, GREGORIAN, undefined, "D MMMM, YYYY")
+    ).toEqual("29 February, 1996");
+    expect(dateString(formatThis, GREGORIAN, undefined, "YYYY-MMM-DD")).toEqual(
+        "1996-Feb-29"
+    );
 });
 test("Parse March", () => {
     const expected: ParseDate = {
@@ -126,13 +130,13 @@ test("Sort Gregorian dates", () => {
 
     const fcEvents: CalEvent[] = events.map((x) => {
         return {
-            date: x,
+            date: x!,
             description: "Test",
             id: "test",
             name: "Test",
             note: "Test",
             category: "Test",
-            sort: helper.parsedToTimestamp(x),
+            sort: helper.parsedToTimestamp(x!),
             type: "Test",
         };
     });

@@ -47,7 +47,7 @@
                         const indexer =
                             calendar.static.months?.find(
                                 (m) => m.name == month
-                            ) ?? this.calendar.static.months?.[0];
+                            ) ?? calendar.static.months?.[0];
                         event.date.month =
                             calendar.static.months?.indexOf(indexer);
                     }

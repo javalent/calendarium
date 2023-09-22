@@ -1,12 +1,11 @@
 <script lang="ts">
-    import type { Calendar as CalendarInterface } from "src/@types";
     import type Calendarium from "src/main";
     import Calendar from "./Calendar.svelte";
     import CalendariumView, { setTypedContext } from "../view";
     import { writable } from "svelte/store";
-    import { CalendarStore } from "src/stores/calendar.store";
+    import { type CalendarStore } from "src/stores/calendar.store";
 
-    export let store: CalendarStore;
+    export let store: CalendarStore | null;
     export let plugin: Calendarium;
     export let view: CalendariumView | null = null;
     export let full: boolean;

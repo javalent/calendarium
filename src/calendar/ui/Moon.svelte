@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { MoonState } from "src/@types";
-    import { Phase, SHADOW_MAP } from "src/utils/constants";
+    import { SHADOW_MAP } from "src/utils/constants";
 
     export let moon: MoonState;
     export let label: boolean = true;

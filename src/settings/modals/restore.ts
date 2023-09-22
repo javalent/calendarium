@@ -1,5 +1,5 @@
-import { DeletedCalendar } from "src/schemas";
-import { CalendariumModal, SaveableCalendariumModal } from "./modal";
+import { type DeletedCalendar } from "src/schemas";
+import { SaveableCalendariumModal } from "./modal";
 import { Setting } from "obsidian";
 
 export class RestoreCalendarModal extends SaveableCalendariumModal<

@@ -1,6 +1,6 @@
 import copy from "fast-copy";
-import { Modal, ButtonComponent, ExtraButtonComponent } from "obsidian";
-import type { Calendar, PresetCalendar } from "src/@types";
+import { ButtonComponent, ExtraButtonComponent } from "obsidian";
+import type { PresetCalendar } from "src/@types";
 import { nanoid } from "src/utils/functions";
 import { PRESET_CALENDARS } from "src/utils/presets";
 import { CalendariumModal } from "./modal";

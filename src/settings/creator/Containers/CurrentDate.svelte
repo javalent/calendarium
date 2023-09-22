@@ -1,13 +1,6 @@
 <script lang="ts">
-    import type { Calendar } from "src/@types";
-    import {
-        dateString,
-        isValidDay,
-        isValidMonth,
-        isValidYear
-    } from "src/utils/functions";
+    import { dateString } from "src/utils/functions";
     import { getContext } from "svelte";
-    import { Writable } from "svelte/store";
     import DateWithValidation from "../Utilities/DateWithValidation.svelte";
     import Details from "../Utilities/Details.svelte";
 

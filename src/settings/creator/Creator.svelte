@@ -15,7 +15,7 @@
     import CategoryContainer from "./Containers/CategoryContainer.svelte";
     import MoonContainer from "./Containers/MoonContainer.svelte";
     import LeapDayContainer from "./Containers/LeapDayContainer.svelte";
-    import { Writable } from "svelte/store";
+    import { type Writable } from "svelte/store";
     import { getMissingNotice, warning } from "./Utilities/utils";
 
     import createStore from "./stores/calendar";

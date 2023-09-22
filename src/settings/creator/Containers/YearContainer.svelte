@@ -1,18 +1,15 @@
 <script lang="ts">
-    import { createEventDispatcher, getContext } from "svelte";
+    import { getContext } from "svelte";
     import { flip } from "svelte/animate";
     import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
     import {
         App,
-        ButtonComponent,
         ExtraButtonComponent,
         setIcon,
-        Setting,
         TextComponent,
     } from "obsidian";
     import type { Calendar, Year } from "src/@types";
 
-    import { nanoid } from "src/utils/functions";
     import { confirmWithModal } from "../../modals/confirm";
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
     import AddNew from "../Utilities/AddNew.svelte";

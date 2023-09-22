@@ -1,12 +1,7 @@
 <script lang="ts">
     import { ExtraButtonComponent, Scope, setIcon } from "obsidian";
-    import {
-        SHADOW_PLACEHOLDER_ITEM_ID,
-        SOURCES,
-        TRIGGERS,
-        dndzone,
-    } from "svelte-dnd-action";
-    import { ComponentType, createEventDispatcher } from "svelte";
+    import { SHADOW_PLACEHOLDER_ITEM_ID, dndzone } from "svelte-dnd-action";
+    import { type ComponentType, createEventDispatcher } from "svelte";
     import { flip } from "svelte/animate";
 
     type T = $$Generic<TimeSpan>;

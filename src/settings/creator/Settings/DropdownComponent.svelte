@@ -1,7 +1,4 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-
-    const dispatch = createEventDispatcher();
     export let name: string;
     export let desc = "";
     export let label: string;

@@ -1,13 +1,12 @@
 <script lang="ts">
-    import { createEventDispatcher, getContext } from "svelte";
-
-    import type { Calendar, LeapDay } from "src/@types";
+    import { getContext } from "svelte";
+    import type { LeapDay } from "src/@types";
     import LeapDayUI from "./LeapDayInstance.svelte";
     import AddNew from "../Utilities/AddNew.svelte";
     import NoExistingItems from "../Utilities/NoExistingItems.svelte";
     import { CreateLeapDayModal } from "src/settings/modals/leapday/leapday";
     import type Calendarium from "src/main";
-    import { Writable } from "svelte/store";
+
     import Details from "../Utilities/Details.svelte";
 
     export let plugin: Calendarium;

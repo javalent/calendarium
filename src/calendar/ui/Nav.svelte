@@ -1,13 +1,10 @@
 <script lang="ts">
     import { ExtraButtonComponent, Menu } from "obsidian";
-    import { createEventDispatcher } from "svelte";
     import { getTypedContext } from "../view";
     import { ViewState } from "src/stores/calendar.store";
-    import Month from "./Month/Month.svelte";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
-    const plugin = getTypedContext("plugin");
     const store = $global;
     const { displayingMonth, displayingYear } = $ephemeral;
     const { currentDisplay } = store;

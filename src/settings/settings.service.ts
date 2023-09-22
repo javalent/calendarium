@@ -1,8 +1,7 @@
 import {
     ButtonComponent,
     DropdownComponent,
-    Notice,
-    PluginManifest,
+    type PluginManifest,
     parseYaml,
     setIcon,
 } from "obsidian";
@@ -177,8 +176,8 @@ export default class SettingsService {
                         .addOption(SyncBehavior.enum.Always, "Always Reload")
                         .addOption(SyncBehavior.enum.Never, "Never Reload")
                         .setValue(this.#data.syncBehavior)
-                        .onChange(async (v: SyncBehavior) => {
-                            this.#data.syncBehavior = v;
+                        .onChange(async (v) => {
+                            this.#data.syncBehavior = v as SyncBehavior;
                             await this.saveData(this.#data);
                             notice.hide();
                         });

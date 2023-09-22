@@ -1,13 +1,12 @@
 import { SuggestionModal } from "./suggester";
 import {
-    FuzzyMatch,
+    type FuzzyMatch,
     TFile,
-    BlockCache,
-    HeadingCache,
-    CachedMetadata,
+    type BlockCache,
+    type HeadingCache,
+    type CachedMetadata,
     TextComponent,
     App,
-    TFolder,
 } from "obsidian";
 
 export default class PathSuggestionModal extends SuggestionModal<

@@ -1,10 +1,10 @@
 import esbuild from "esbuild";
-import process from "process";
-import builtins from "builtin-modules";
 import sveltePlugin from "esbuild-svelte";
 import sveltePreprocess from "svelte-preprocess";
-import inlineWorkerPlugin from "esbuild-plugin-inline-worker";
+import process from "process";
+import builtins from "builtin-modules";
 import { config } from "dotenv";
+import inlineWorkerPlugin from "esbuild-plugin-inline-worker";
 
 config();
 
@@ -18,57 +18,66 @@ const prod = process.argv[2] === "production";
 
 const dir = prod ? "./" : process.env.OUTDIR;
 
-esbuild
-    .build({
-        banner: {
-            js: banner
-        },
-        entryPoints: ["src/main.ts", "src/styles.css"],
-        bundle: true,
-        external: [
-            "obsidian",
-            "electron",
-            "codemirror",
-            "@codemirror/autocomplete",
-            "@codemirror/closebrackets",
-            "@codemirror/collab",
-            "@codemirror/commands",
-            "@codemirror/comment",
-            "@codemirror/fold",
-            "@codemirror/gutter",
-            "@codemirror/highlight",
-            "@codemirror/history",
-            "@codemirror/language",
-            "@codemirror/lint",
-            "@codemirror/matchbrackets",
-            "@codemirror/panel",
-            "@codemirror/rangeset",
-            "@codemirror/rectangular-selection",
-            "@codemirror/search",
-            "@codemirror/state",
-            "@codemirror/stream-parser",
-            "@codemirror/text",
-            "@codemirror/tooltip",
-            "@codemirror/view",
-            "moment",
-            ...builtins
-        ],
-        format: "cjs",
-        watch: !prod,
-        target: "es2020",
-        logLevel: "info",
-        sourcemap: prod ? false : "inline",
-        minify: prod,
-        treeShaking: true,
-        outdir: dir,
-        plugins: [
-            sveltePlugin({
-                compilerOptions: { css: true },
-                preprocess: sveltePreprocess()
-            }),
-            inlineWorkerPlugin({ workerName: "Calendarium File Watcher" })
-        ]
-    })
-    .catch(() => {
+const parameters = {
+    banner: {
+        js: banner,
+    },
+    entryPoints: ["src/main.ts", "src/styles.css"],
+    bundle: true,
+    external: [
+        "obsidian",
+        "electron",
+        "codemirror",
+        "@codemirror/autocomplete",
+        "@codemirror/closebrackets",
+        "@codemirror/collab",
+        "@codemirror/commands",
+        "@codemirror/comment",
+        "@codemirror/fold",
+        "@codemirror/gutter",
+        "@codemirror/highlight",
+        "@codemirror/history",
+        "@codemirror/language",
+        "@codemirror/lint",
+        "@codemirror/matchbrackets",
+        "@codemirror/panel",
+        "@codemirror/rangeset",
+        "@codemirror/rectangular-selection",
+        "@codemirror/search",
+        "@codemirror/state",
+        "@codemirror/stream-parser",
+        "@codemirror/text",
+        "@codemirror/tooltip",
+        "@codemirror/view",
+        "moment",
+        ...builtins,
+    ],
+    format: "cjs",
+    target: "es2020",
+    logLevel: "info",
+    sourcemap: prod ? false : "inline",
+    minify: prod,
+    treeShaking: true,
+    outdir: dir,
+    plugins: [
+        sveltePlugin({
+            compilerOptions: { css: true },
+            preprocess: sveltePreprocess(),
+        }),
+        inlineWorkerPlugin({ workerName: "Calendarium File Watcher" }),
+    ],
+};
+
+if (prod) {
+    await esbuild.build(parameters).catch((x) => {
+        if (x.errors) {
+            console.error(x.errors);
+        } else {
+            console.error(x);
+        }
         process.exit(1);
     });
+} else {
+    let ctx = await esbuild.context(parameters);
+    await ctx.watch();
+}

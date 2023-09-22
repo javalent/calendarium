@@ -40,11 +40,10 @@ export class MonthModal extends CanceableCalendariumModal<Month> {
         new Setting(this.contentEl).setName("Type").addDropdown((d) => {
             d.addOption("month", "Month");
             d.addOption("intercalary", "Intercalary");
-            d.setValue(this.item.type).onChange(
-                (v: "month" | "intercalary") => {
-                    this.item.type = v;
-                }
-            );
+            d.setValue(this.item.type).onChange((v) => {
+                if (v != "month" && v != "intercalary") return;
+                this.item.type = v;
+            });
         });
     }
 }

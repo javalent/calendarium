@@ -1,13 +1,7 @@
-import type {
-    Day,
-    DayOrLeapDay,
-    DefinedLeapDay,
-    LeapDay,
-    Month,
-} from "src/@types";
-import { StaticStore } from "./calendar.store";
+import type { DayOrLeapDay, DefinedLeapDay, Month } from "src/@types";
+import { type StaticStore } from "./calendar.store";
 import { YearStore } from "./years.store";
-import { Readable, derived, readable } from "svelte/store";
+import { type Readable, derived } from "svelte/store";
 import { wrap } from "../utils/functions";
 
 export class MonthStore {

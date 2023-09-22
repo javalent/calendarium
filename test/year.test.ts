@@ -1,10 +1,7 @@
-import { Calendar } from "../src/@types";
-import {
-    daysBeforeYear,
-    getFirstDayOfYear,
-} from "../src/stores/years.store";
+import type { Calendar } from "../src/@types";
+import { daysBeforeYear, getFirstDayOfYear } from "../src/stores/years.store";
 import { PRESET_CALENDARS } from "../src/utils/presets";
-import { vi, test, expect } from "vitest";
+import { test, expect } from "vitest";
 
 const GREGORIAN: Calendar = PRESET_CALENDARS.find(
     (p) => p.name == "Gregorian Calendar"

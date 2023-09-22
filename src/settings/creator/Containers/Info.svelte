@@ -5,7 +5,6 @@
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
     import Details from "../Utilities/Details.svelte";
     import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
-    import { Setting, setIcon } from "obsidian";
     import { DEFAULT_FORMAT } from "src/utils/constants";
 
     const calendar = getContext("store");

@@ -4,6 +4,8 @@
         "baseUrl": ".",
         "importsNotUsedAsValues": "remove",
         "strictNullChecks": true,
+        "strictPropertyInitialization": false,
+        "noImplicitThis": true,
         "inlineSources": true,
         "module": "ESNext",
         "target": "es2020",

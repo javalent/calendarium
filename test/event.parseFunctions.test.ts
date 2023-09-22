@@ -1,8 +1,8 @@
 /**
  * @vitest-environment happy-dom
  */
-import { Loc, Pos } from "obsidian";
-import { CalEvent, Calendar } from "../src/@types";
+import type { Loc, Pos } from "obsidian";
+import type { CalEvent, Calendar } from "../src/@types";
 import { CalEventHelper, ParseDate } from "../src/events/event.helper";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 import { test, expect } from "vitest";
@@ -193,7 +193,7 @@ test("parseTimelineEvent", () => {
     expect(actual.length).toEqual(1);
     expect(actual[0].id).toBeDefined();
     expect(actual[0].name).toEqual("Pretty name");
-    expect(actual[0].description.trim()).toEqual("Fun text");
+    expect(actual[0].description?.trim()).toEqual("Fun text");
     expect(actual[0].date).toEqual(
         expect.objectContaining({
             year: 1966,

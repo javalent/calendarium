@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { Day } from "src/@types";
     import { getTypedContext } from "src/calendar/view";
     import { getAbbreviation } from "src/utils/functions";
 
