@@ -26,11 +26,9 @@ jobs:
               with:
                   command: manifest
     run-test:
-        runs-on: ubuntu-latest
         needs: release-please
         if: ${{ !needs.release-please.outputs.release_created }}
-        steps:
-            - uses: ./.github/workflows/tests.yml
+        uses: ./.github/workflows/tests.yml
     upload-build:
         runs-on: ubuntu-latest
         needs: release-please
