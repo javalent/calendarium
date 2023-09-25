@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0-b28](https://github.com/javalent/the-calendarium/compare/1.0.0-b27...1.0.0-b28) (2023-09-25)
+
+
+### Bug Fixes
+
+* Can now Cmd (Mac) / Control (PC) click the Calendarium ribbon icon to open in the main Obsidian window ([a8ae97b](https://github.com/javalent/the-calendarium/commit/a8ae97babc0f4b388f824acee5e245c005d12ff5))
+* custom token for releasing ([50ec6a1](https://github.com/javalent/the-calendarium/commit/50ec6a1b64b1c2ee14f6f11b4daebb05e5b5c4e6))
+* update release to include testing ([db26175](https://github.com/javalent/the-calendarium/commit/db261754d8a3404f0ad2f7177a9631046a1dcec7))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b28 ([52c4c1b](https://github.com/javalent/the-calendarium/commit/52c4c1b7a7ae0473e530f688a8e4f40db78c7344))
+
 ## [1.0.0-b27](https://github.com/javalent/the-calendarium/compare/1.0.0-b26...1.0.0-b27) (2023-09-20)
 
 
