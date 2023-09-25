@@ -198,19 +198,17 @@ export default class Calendarium extends Plugin {
             this.addCommands();
 
             this.addRibbonIcon(VIEW_TYPE, "Open Calendarium", (evt) => {
-                if (
-                    evt.getModifierState(Platform.isMacOS ? "Meta" : "Control")
-                ) {
-                    this.addFullCalendarView();
-                } else {
-                    this.addCalendarView();
-                }
+                this.addCalendarView({
+                    full: evt.getModifierState(
+                        Platform.isMacOS ? "Meta" : "Control"
+                    ),
+                });
             });
         });
         this.settings$.onLayoutReadyAndSettingsLoad(() => {
             this.watcher.load();
             this.addSettingTab(new CalendariumSettings(this, this.settings$));
-            this.addCalendarView(true);
+            this.addCalendarView({ startup: true });
         });
 
         app.workspace.trigger("parse-style-settings");
@@ -238,22 +236,25 @@ export default class Calendarium extends Plugin {
         });
     }
 
-    async addCalendarView(startup: boolean = false) {
-        if (startup && this.app.workspace.getLeavesOfType(VIEW_TYPE)?.length)
+    addCalendarView(params: { full?: boolean; startup?: boolean } = {}) {
+        if (
+            params?.startup &&
+            this.app.workspace.getLeavesOfType(VIEW_TYPE)?.length
+        )
             return;
-        const leaf = this.app.workspace.getRightLeaf(false);
-        leaf.setViewState({
-            type: VIEW_TYPE,
-        });
-        if (leaf) this.app.workspace.revealLeaf(leaf);
+        this.getLeaf(params?.full ?? false);
     }
-    addFullCalendarView(startup: boolean = false) {
-        if (startup && this.app.workspace.getLeavesOfType(VIEW_TYPE)?.length)
-            return;
-        const leaf = this.app.workspace.getLeaf(true);
+    getLeaf(full: boolean) {
+        let leaf: WorkspaceLeaf = full
+            ? this.app.workspace.getLeaf(true)
+            : this.app.workspace.getRightLeaf(false);
+
         leaf.setViewState({
             type: VIEW_TYPE,
         });
+
         if (leaf) this.app.workspace.revealLeaf(leaf);
+
+        return leaf;
     }
 }
