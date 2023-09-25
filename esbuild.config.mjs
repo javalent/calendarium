@@ -63,6 +63,12 @@ const parameters = {
         sveltePlugin({
             compilerOptions: { css: true },
             preprocess: sveltePreprocess(),
+            filterWarnings: (warning) => {
+                if (warning.code.toLowerCase().startsWith("a11y-")) {
+                    return false;
+                }
+                return true;
+            },
         }),
         inlineWorkerPlugin({ workerName: "Calendarium File Watcher" }),
     ],

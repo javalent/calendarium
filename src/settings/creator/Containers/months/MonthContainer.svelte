@@ -6,7 +6,7 @@
     import Details from "../../Utilities/Details.svelte";
     import DropZone from "../../Utilities/DropZone.svelte";
     import copy from "fast-copy";
-    import { Month } from "src/schemas";
+    import type { Month } from "src/schemas";
     import { MonthModal } from "src/settings/modals/month/month";
 
     const store = getContext("store");

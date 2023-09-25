@@ -197,8 +197,14 @@ export default class Calendarium extends Plugin {
         this.app.workspace.onLayoutReady(async () => {
             this.addCommands();
 
-            this.addRibbonIcon(VIEW_TYPE, "Open Calendarium", () => {
-                this.addCalendarView();
+            this.addRibbonIcon(VIEW_TYPE, "Open Calendarium", (evt) => {
+                if (
+                    evt.getModifierState(Platform.isMacOS ? "Meta" : "Control")
+                ) {
+                    this.addFullCalendarView();
+                } else {
+                    this.addCalendarView();
+                }
             });
         });
         this.settings$.onLayoutReadyAndSettingsLoad(() => {
@@ -236,6 +242,15 @@ export default class Calendarium extends Plugin {
         if (startup && this.app.workspace.getLeavesOfType(VIEW_TYPE)?.length)
             return;
         const leaf = this.app.workspace.getRightLeaf(false);
+        leaf.setViewState({
+            type: VIEW_TYPE,
+        });
+        if (leaf) this.app.workspace.revealLeaf(leaf);
+    }
+    addFullCalendarView(startup: boolean = false) {
+        if (startup && this.app.workspace.getLeavesOfType(VIEW_TYPE)?.length)
+            return;
+        const leaf = this.app.workspace.getLeaf(true);
         leaf.setViewState({
             type: VIEW_TYPE,
         });
