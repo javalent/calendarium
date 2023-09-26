@@ -4,6 +4,8 @@ import {
     type PluginManifest,
     parseYaml,
     setIcon,
+    debounce,
+    Scope,
 } from "obsidian";
 import type {
     Calendar,
@@ -17,6 +19,10 @@ import Calendarium from "src/main";
 import copy from "fast-copy";
 import { CalendariumNotice } from "src/utils/notice";
 import { calendariumDataSchema, SyncBehavior } from "src/schemas";
+import {
+    MarkdownReason,
+    shouldTransitionMarkdownSettings,
+} from "./markdown-import";
 
 const SPLITTER = "--- BEGIN DATA ---";
 const HEADER = `This file is used by Calendarium to manage its data.
@@ -31,6 +37,7 @@ export default class SettingsService {
 
     loaded = false;
 
+    #asking: boolean = false;
     #prompting: boolean = false;
     #saving: boolean = false;
 
@@ -110,86 +117,79 @@ export default class SettingsService {
             );
         }
     }
+    get syncPlugin() {
+        return app.internalPlugins.getPluginById("sync");
+    }
+    #waitingOnSync = false;
     /**
      * This method is called whenever Obsidian detects that my data.json file has been modified.
      */
-    public async onExternalSettingsChange(): Promise<void> {
-        // If I was the source of my data file change, just ignore this.
-        if (this.#saving) {
-            setTimeout(() => {
-                this.#saving = false;
-            }, 500);
-            return;
-        }
-        // If the user doesn't want their data synced, just ignore this.
-        if (this.#data.syncBehavior === "Never") {
-            console.debug(
-                "Calendarium: Ignoring external data change event due to syncBehavior being 'Never'"
-            );
-            return;
-        }
-        // If the user wants it automatically synced, reload it.
-        if (this.#data.syncBehavior === "Always") {
-            console.debug(
-                "Calendarium: Automatically reloading data due to syncBehavior being 'Always'"
-            );
-            await this.loadData(true);
-            return;
-        }
+    public onExternalSettingsChange = debounce(
+        async (): Promise<void> => {
+            // If I was the source of my data file change, just ignore this.
+            if (this.#saving) {
+                setTimeout(() => {
+                    this.#saving = false;
+                }, 500);
+                return;
+            }
+            if (this.syncPlugin._loaded) {
+                if (this.syncPlugin.instance.getStatus() !== "synced") {
+                    if (!this.#waitingOnSync) {
+                        this.#waitingOnSync = true;
+                        console.debug(
+                            "Calendarium: Obsidian Sync is actively syncing. Scheduling a reload after it completes."
+                        );
+                        const ref = this.syncPlugin.instance.on(
+                            "status-change",
+                            () => {
+                                if (
+                                    this.syncPlugin.instance.getStatus() !==
+                                    "synced"
+                                )
+                                    return;
+                                setTimeout(() => {
+                                    console.debug(
+                                        "Calendarium: Obsidian Sync finished. Performing reload."
+                                    );
+                                    this.#waitingOnSync = false;
+                                    this.onExternalSettingsChange();
+                                    this.syncPlugin.instance.offref(ref);
+                                }, 1000);
+                            }
+                        );
+                        this.plugin.registerEvent(ref);
+                    }
+                    return;
+                }
+            }
+            // If the user doesn't want their data synced, just ignore this.
+            if (this.#data.syncBehavior === "Never") {
+                console.debug(
+                    "Calendarium: Ignoring external data change event due to syncBehavior being 'Never'"
+                );
+                return;
+            }
+            // If the user wants it automatically synced, reload it.
+            if (this.#data.syncBehavior === "Always") {
+                console.debug(
+                    "Calendarium: Automatically reloading data due to syncBehavior being 'Always'"
+                );
+                await this.loadData(true);
+                return;
+            }
+            this.askToReload();
+        },
+        2000,
+        true
+    );
+    private askToReload() {
         // If I am already asking, I shouldn't ask again.
-        if (this.#prompting) return;
-
+        if (this.#asking) return;
         console.debug(
             "Calendarium: External data change detected. Prompting for behavior."
         );
-        this.#prompting = true;
-        const prompt = async () => {
-            if (this.#data.askedAboutSync && this.#data.syncBehavior !== "Ask")
-                return;
-            if (!this.#data.askedAboutSync) {
-                this.#data.askedAboutSync = true;
-                await this.saveData(this.#data);
-            }
-            console.debug(
-                "Calendarium: Asking user how to handle external data change events in the future."
-            );
-            const notice = new CalendariumNotice(
-                createFragment((f) => {
-                    const c = f.createDiv("calendarium-notice");
-                    c.createEl("h4", {
-                        text: "Calendarium",
-                        cls: "calendarium-header",
-                    });
-                    const e = c.createDiv();
-                    e.createSpan({
-                        text: "How should Calendarium reload your data in the future?",
-                    });
-                    e.createEl("br");
-                    e.createEl("br");
-                    e.createSpan({
-                        text: "This behavior can be changed in settings.",
-                    });
-                    e.createEl("br");
-                    const b = e.createDiv("calendarium-notice-buttons");
-                    const drop = new DropdownComponent(b)
-                        .addOption(SyncBehavior.enum.Ask, "Continue Asking")
-                        .addOption(SyncBehavior.enum.Always, "Always Reload")
-                        .addOption(SyncBehavior.enum.Never, "Never Reload")
-                        .setValue(this.#data.syncBehavior)
-                        .onChange(async (v) => {
-                            this.#data.syncBehavior = v as SyncBehavior;
-                            await this.saveData(this.#data);
-                            notice.hide();
-                        });
-                    drop.selectEl.setAttr("tabindex", 99);
-                    drop.selectEl.focus();
-                    drop.selectEl.onClickEvent((e) => e.stopPropagation());
-                }),
-                0
-            );
-            this.plugin.registerNotice(notice);
-        };
-
+        this.#asking = true;
         const notice = new CalendariumNotice(
             createFragment((f) => {
                 const c = f.createDiv("calendarium-notice");
@@ -240,16 +240,77 @@ export default class SettingsService {
         );
         this.plugin.registerNotice(notice);
         notice.registerOnHide(() => {
-            this.#prompting = false;
-            prompt();
+            this.#asking = false;
+            this.promptForBehavior();
         });
+    }
+    private async promptForBehavior() {
+        if (this.#prompting) return;
+        this.#prompting = true;
+        if (this.#data.askedAboutSync && this.#data.syncBehavior !== "Ask")
+            return;
+        if (!this.#data.askedAboutSync) {
+            this.#data.askedAboutSync = true;
+            await this.saveData(this.#data);
+        }
+        console.debug(
+            "Calendarium: Asking user how to handle external data change events in the future."
+        );
+        const scope = new Scope();
+        const notice = new CalendariumNotice(
+            createFragment((f) => {
+                const c = f.createDiv("calendarium-notice");
+                c.createEl("h4", {
+                    text: "Calendarium",
+                    cls: "calendarium-header",
+                });
+                const e = c.createDiv();
+                e.createSpan({
+                    text: "How should Calendarium reload your data in the future?",
+                });
+                e.createEl("br");
+                e.createEl("br");
+                e.createSpan({
+                    text: "This behavior can be changed in settings.",
+                });
+                e.createEl("br");
+                const b = e.createDiv("calendarium-notice-buttons");
+                const drop = new DropdownComponent(b)
+                    .addOption(SyncBehavior.enum.Ask, "Continue Asking")
+                    .addOption(SyncBehavior.enum.Always, "Always Reload")
+                    .addOption(SyncBehavior.enum.Never, "Never Reload")
+                    .setValue(this.#data.syncBehavior)
+                    .onChange(async (v) => {
+                        this.#data.syncBehavior = v as SyncBehavior;
+                        await this.saveData(this.#data);
+                        notice.hide();
+                    });
+                drop.selectEl.setAttr("tabindex", 99);
+                /* drop.selectEl.focus(); */
+                app.keymap.pushScope(scope);
+                drop.selectEl.onClickEvent((e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+            }),
+            0
+        );
+        notice.registerOnHide(() => {
+            this.#prompting = false;
+            app.keymap.popScope(scope);
+        });
+        this.plugin.registerNotice(notice);
     }
     get version() {
         const split = this.manifest.version.split(".");
+        let [major, minor] = split;
+        let [, patch, beta] = split[2].match(/(\d+)(?:\-b(\d+))?/) ?? split[2];
+
         return {
-            major: Number(split[0]),
-            minor: Number(split[1]),
-            patch: split[2],
+            major: Number(major),
+            minor: Number(minor),
+            patch: Number(patch),
+            beta: beta ? Number(beta) : null,
         };
     }
 
@@ -312,22 +373,26 @@ export default class SettingsService {
     private async load() {
         const pluginData: unknown | CalendariumData =
             (await this.plugin.loadData()) ?? {};
+
+        /** Check to see if the data is in the old markdown file. */
+        console.debug(
+            "Calendarium: Checking to see if markdown settings should be migrated."
+        );
+        let reason = await this.shouldTransitionMarkdownSettings(pluginData);
+        if (reason !== MarkdownReason.NONE) {
+            console.debug(
+                "Calendarium: Markdown settings need to be migrated. Reason: " +
+                    reason
+            );
+            /** Plugin data is in markdown format. Load it, then transition it to new format. */
+            await this.transitionMarkdownSettings();
+            return;
+        }
         if (!pluginData || !Object.keys(pluginData).length) {
             console.debug(
                 "Calendarium: No data file could be loaded. Saving default data."
             );
             await this.saveData(copy(DEFAULT_DATA));
-            return;
-        }
-        /** Check to see if the data is in the old markdown file. */
-        if (
-            /** Plugin data is not null. */
-            pluginData &&
-            typeof pluginData == "object" &&
-            "transitioned" in pluginData
-        ) {
-            /** Plugin data is in markdown format. Load it, then transition it to new format. */
-            await this.transitionMarkdownSettings();
             return;
         }
         /**
@@ -414,8 +479,6 @@ export default class SettingsService {
         return !!cal;
     }
 
-    /** Whether or not I am currently asking to migrate FC data. */
-    #asking = false;
     /**
      * Check to see if I should prompt to migrate Fantasy Calendar settings.
      */
@@ -536,10 +599,20 @@ export default class SettingsService {
         await this.updateDataToNewSchema(data);
         await this.saveData(data);
     }
+    public async shouldTransitionMarkdownSettings(
+        pluginData: any
+    ): Promise<MarkdownReason> {
+        /** Nothing to transition. */
+        if (!(await this.markdownFileExists())) return MarkdownReason.NONE;
+        return shouldTransitionMarkdownSettings(pluginData);
+    }
+    public async deleteMarkdownSettings() {
+        await this.adapter.remove(this.path);
+    }
     private updateDataToNewSchema(
         data: MarkdownCalendariumData | CalendariumData
     ) {
-        let dirty = this.updateCalendarsToNewSchema(data.calendars);
+        let dirty = this.updateCalendarsToNewSchema(data.calendars, data);
         if (!data.defaultCalendar && data.calendars.length) {
             data.defaultCalendar = data.calendars[0].id;
             dirty = true;
@@ -557,7 +630,10 @@ export default class SettingsService {
         }
         return dirty;
     }
-    private updateCalendarsToNewSchema(calendars: Calendar[]): boolean {
+    private updateCalendarsToNewSchema(
+        calendars: Calendar[],
+        data: CalendariumData
+    ): boolean {
         let dirty = false;
         for (const calendar of calendars) {
             if (!calendar.id) {
@@ -589,6 +665,15 @@ export default class SettingsService {
                     };
                     dirty = true;
                 }
+            }
+            console.log(
+                "🚀 ~ file: settings.service.ts:597 ~ calendar.showIntercalarySeparately:",
+                calendar.showIntercalarySeparately
+            );
+            if (calendar.showIntercalarySeparately == null) {
+                calendar.showIntercalarySeparately = (<any>(
+                    data
+                )).showIntercalary;
             }
         }
         return dirty;
