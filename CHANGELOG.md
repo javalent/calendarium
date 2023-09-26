@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0-b29](https://github.com/javalent/the-calendarium/compare/1.0.0-b28...1.0.0-b29) (2023-09-26)
+
+
+### Bug Fixes
+
+* moved Show Intercalary Dates setting to individual calendars ([6a8b35e](https://github.com/javalent/the-calendarium/commit/6a8b35e78a9ff5e7305990ec8a3b62d6f28adcd6))
+* significantly improve the markdown data file transition ([7f9b7b1](https://github.com/javalent/the-calendarium/commit/7f9b7b1e32dc276f401a6e70cd97a1a66e8cdc63))
+* significantly improve the sync watching experience ([27718b3](https://github.com/javalent/the-calendarium/commit/27718b35c2c24c4067ec6efbbe0ca9fb2d5c9529))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b29 ([a13d70d](https://github.com/javalent/the-calendarium/commit/a13d70d96181c7066ef2e8d7cd313762cddbc3a0))
+
 ## [1.0.0-b28](https://github.com/javalent/the-calendarium/compare/1.0.0-b27...1.0.0-b28) (2023-09-25)
 
 
