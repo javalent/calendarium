@@ -287,6 +287,7 @@ export const calendarSchema = z.object({
     supportInlineEvents: z.boolean().nullish(),
     inlineEventTag: z.string().nullish(),
     dateFormat: z.string().optional(),
+    showIntercalarySeparately: z.boolean(),
 });
 export type DeletedCalendar = z.infer<typeof deletedCalendarSchema>;
 export const deletedCalendarSchema = calendarSchema.extend({
@@ -334,16 +335,12 @@ export const calendariumDataSchema = z.object({
         calendar: z.boolean(),
     }),
     parseDates: z.boolean(),
-    settingsToggleState: z.object({
-        calendars: z.boolean(),
-        events: z.boolean(),
-        advanced: z.boolean(),
-    }),
-    showIntercalary: z.boolean(),
     version: z.object({
         major: z.number().nullable(),
         minor: z.number().nullable(),
-        patch: z.union([z.number(), z.string()]).nullable(),
+        patch: z.number().nullable(),
+        beta: z.number().nullable(),
+        /* patch: z.union([z.number(), z.string()]).nullable(), */
     }),
     debug: z.boolean(),
     askedToMoveFC: z.boolean(),

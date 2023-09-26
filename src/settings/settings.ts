@@ -7,7 +7,7 @@ import {
     PluginSettingTab,
     setIcon,
     Setting,
-    TFolder,
+    type Events,
 } from "obsidian";
 
 import copy from "fast-copy";
@@ -60,6 +60,21 @@ declare module "obsidian" {
                     };
                 };
             };
+            getPluginById(id: "sync"): {
+                _loaded: boolean;
+                instance: Events & {
+                    getStatus():
+                        | "error"
+                        | "paused"
+                        | "syncing"
+                        | "uninitialized"
+                        | "synced";
+                    on(name: "status-change", callback: () => any): EventRef;
+                };
+            };
+            getPluginById(id: "page-preview"): {
+                _loaded: boolean;
+            };
         };
     }
 }
@@ -98,67 +113,22 @@ export default class CalendariumSettings extends PluginSettingTab {
         this.buildInfo(this.contentEl.createDiv("calendarium-nested-settings"));
         this.calendarsEl = this.contentEl.createEl("details", {
             cls: "calendarium-nested-settings",
-            attr: {
-                ...(this.data.settingsToggleState.calendars
-                    ? { open: `open` }
-                    : {}),
-            },
         });
         this.buildCalendars();
         this.buildEvents(
             this.contentEl.createEl("details", {
                 cls: "calendarium-nested-settings",
-                attr: {
-                    ...(this.data.settingsToggleState.events
-                        ? { open: `open` }
-                        : {}),
-                },
             })
         );
         this.buildAdvanced(
             this.contentEl.createEl("details", {
                 cls: "calendarium-nested-settings",
-                attr: {
-                    ...(this.data.settingsToggleState.advanced
-                        ? { open: `open` }
-                        : {}),
-                },
             })
         );
     }
     async buildInfo(containerEl: HTMLElement) {
         containerEl.empty();
 
-        new Setting(containerEl)
-            .setName(`Reset "Don't Ask Again" Prompts`)
-            .setDesc(
-                `All confirmations set to "Don't Ask Again" will be reset.`
-            )
-            .addButton((b) => {
-                b.setIcon("reset").onClick(async () => {
-                    this.data.exit = {
-                        saving: false,
-                        event: false,
-                        calendar: false,
-                    };
-                    await this.settings$.save();
-                });
-            });
-        new Setting(containerEl)
-            .setName(`Settings Sync Behavior`)
-            .setDesc(
-                `Control how the plugin reloads data when a sync is detected.`
-            )
-            .addDropdown((d) => {
-                d.addOption(SyncBehavior.enum.Ask, "Continue Asking")
-                    .addOption(SyncBehavior.enum.Always, "Always Reload")
-                    .addOption(SyncBehavior.enum.Never, "Never Reload")
-                    .setValue(this.data.syncBehavior)
-                    .onChange(async (v) => {
-                        this.data.syncBehavior = v as SyncBehavior;
-                        await this.settings$.save();
-                    });
-            });
         if (await this.settings$.markdownFileExists()) {
             new Setting(containerEl)
                 .setName(`Load Previous Data File`)
@@ -190,16 +160,24 @@ export default class CalendariumSettings extends PluginSettingTab {
                             await this.display();
                         }
                     });
+                })
+                .addExtraButton((b) => {
+                    b.setIcon("trash").onClick(async () => {
+                        if (
+                            await confirmWithModal(
+                                app,
+                                "This will permanently delete the old data file. Are you sure?"
+                            )
+                        ) {
+                            await this.settings$.deleteMarkdownSettings();
+                        }
+                    });
                 });
         }
     }
     async buildCalendars() {
         this.calendarsEl.empty();
         const summary = this.calendarsEl.createEl("summary");
-        summary.onClickEvent(async () => {
-            this.data.settingsToggleState.calendars = this.calendarsEl.open;
-            await this.plugin.saveSettings();
-        });
         new Setting(summary).setHeading().setName("Calendar Management");
 
         setIcon(
@@ -207,18 +185,6 @@ export default class CalendariumSettings extends PluginSettingTab {
             "chevron-right"
         );
 
-        // TODO: MOVE THIS TO CALENDAR SETTING
-        new Setting(this.calendarsEl)
-            .setName("Show Intercalary Months Separately")
-            .setDesc(
-                "Intercalary months will appear a distinct months in the calendar."
-            )
-            .addToggle((t) => {
-                t.setValue(this.data.showIntercalary).onChange(async (v) => {
-                    this.data.showIntercalary = v;
-                    await this.settings$.saveAndTrigger();
-                });
-            });
         new Setting(this.calendarsEl)
             .setName("Default Calendar")
             .setDesc("Views will open to this calendar by default.")
@@ -289,7 +255,7 @@ export default class CalendariumSettings extends PluginSettingTab {
 
                     input.value = "";
                 };
-                b.setButtonText("Choose Files");
+                b.setIcon("import");
                 b.buttonEl.addClass("calendar-file-upload");
                 b.buttonEl.appendChild(input);
                 b.onClick(() => input.click());
@@ -399,10 +365,6 @@ export default class CalendariumSettings extends PluginSettingTab {
     buildEvents(containerEl: HTMLDetailsElement) {
         containerEl.empty();
         const summary = containerEl.createEl("summary");
-        summary.onClickEvent(async () => {
-            this.data.settingsToggleState.events = containerEl.open;
-            await this.settings$.save();
-        });
         new Setting(summary).setHeading().setName("Events");
 
         setIcon(
@@ -430,16 +392,31 @@ export default class CalendariumSettings extends PluginSettingTab {
                     }
                 );
             });
+        const previewEnabled =
+            this.app.internalPlugins.getPluginById("page-preview")?._loaded;
+
         new Setting(containerEl)
             .setName("Display Event Previews")
             .setDesc(
-                "Use the core Note Preview plugin to display event notes when hovered."
+                createFragment((e) => {
+                    e.createDiv({
+                        text: "Use the core Page Preview plugin to display event notes when hovered.",
+                    });
+                    if (!previewEnabled) {
+                        e.createDiv({
+                            cls: "mod-warning",
+                            text: "The Page Preview plugin is required to modify this setting.",
+                        });
+                    }
+                })
             )
             .addToggle((t) => {
-                t.setValue(this.data.eventPreview).onChange(async (v) => {
-                    this.data.eventPreview = v;
-                    await this.settings$.save();
-                });
+                t.setDisabled(!previewEnabled)
+                    .setValue(previewEnabled && this.data.eventPreview)
+                    .onChange(async (v) => {
+                        this.data.eventPreview = v;
+                        await this.settings$.save();
+                    });
             });
 
         /*         new Setting(containerEl)
@@ -464,7 +441,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     this.plugin.watcher.start();
                 });
             });
-        new Setting(containerEl)
+        /* new Setting(containerEl)
             .setName("Date Format")
             .setClass(this.data.dailyNotes ? "daily-notes" : "no-daily-notes")
             .setDesc(
@@ -522,21 +499,49 @@ export default class CalendariumSettings extends PluginSettingTab {
                             this.buildEvents(containerEl);
                         });
                 }
-            });
+            }); */
     }
     buildAdvanced(containerEl: HTMLDetailsElement) {
         containerEl.empty();
         const summary = containerEl.createEl("summary");
-        summary.onClickEvent(async () => {
-            this.data.settingsToggleState.advanced = containerEl.open;
-            await this.settings$.save();
-        });
+
         new Setting(summary).setHeading().setName("Advanced");
 
         setIcon(
             summary.createDiv("collapser").createDiv("handle"),
             "chevron-right"
         );
+
+        new Setting(containerEl)
+            .setName(`Reset "Don't Ask Again" Prompts`)
+            .setDesc(
+                `All confirmations set to "Don't Ask Again" will be reset.`
+            )
+            .addButton((b) => {
+                b.setIcon("reset").onClick(async () => {
+                    this.data.exit = {
+                        saving: false,
+                        event: false,
+                        calendar: false,
+                    };
+                    await this.settings$.save();
+                });
+            });
+        new Setting(containerEl)
+            .setName(`Settings Sync Behavior`)
+            .setDesc(
+                `Control how the plugin reloads data when a sync is detected.`
+            )
+            .addDropdown((d) => {
+                d.addOption(SyncBehavior.enum.Ask, "Continue Asking")
+                    .addOption(SyncBehavior.enum.Always, "Always Reload")
+                    .addOption(SyncBehavior.enum.Never, "Never Reload")
+                    .setValue(this.data.syncBehavior)
+                    .onChange(async (v) => {
+                        this.data.syncBehavior = v as SyncBehavior;
+                        await this.settings$.save();
+                    });
+            });
 
         new Setting(containerEl)
             .setName("Show Event Debug Messages")

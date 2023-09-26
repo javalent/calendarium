@@ -8,6 +8,7 @@
     import copy from "fast-copy";
     import type { Month } from "src/schemas";
     import { MonthModal } from "src/settings/modals/month/month";
+    import ToggleComponent from "../../Settings/ToggleComponent.svelte";
 
     const store = getContext("store");
     const { monthStore } = store;
@@ -38,6 +39,16 @@
     desc={`${$monthStore.length} month${$monthStore.length != 1 ? "s" : ""}`}
     open={false}
 >
+    <ToggleComponent
+        name={"Show Intercalary Months Separately"}
+        desc={"Intercalary months will appear a distinct months in the calendar."}
+        value={$store.showIntercalarySeparately}
+        on:click={() => {
+            $store.showIntercalarySeparately =
+                !$store.showIntercalarySeparately;
+        }}
+    />
+
     <AddNew on:click={() => monthStore.add()} />
 
     {#if !$monthStore.length}
