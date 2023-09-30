@@ -1,14 +1,14 @@
 declare type DndEventInfo = import("svelte-dnd-action").DndEventInfo;
 declare interface GenericDndEvent<T extends Record<string, any>> {
-    items: T[],
-    info: DndEventInfo
-} 
-declare namespace svelte.JSX {
+    items: T[];
+    info: DndEventInfo;
+}
+declare namespace svelteHTML {
     interface HTMLAttributes<T> {
-        onconsider?: (
+        "on:consider"?: (
             event: CustomEvent<GenericDndEvent> & { target: EventTarget & T }
         ) => void;
-        onfinalize?: (
+        "on:finalize"?: (
             event: CustomEvent<GenericDndEvent> & { target: EventTarget & T }
         ) => void;
     }

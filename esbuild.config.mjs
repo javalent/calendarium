@@ -5,6 +5,8 @@ import process from "process";
 import builtins from "builtin-modules";
 import { config } from "dotenv";
 import inlineWorkerPlugin from "esbuild-plugin-inline-worker";
+import { copyFile } from "fs/promises";
+import path from "path";
 
 config();
 
@@ -85,5 +87,6 @@ if (prod) {
     });
 } else {
     let ctx = await esbuild.context(parameters);
+    await copyFile("./manifest.json", path.resolve(dir, "manifest.json"));
     await ctx.watch();
 }
