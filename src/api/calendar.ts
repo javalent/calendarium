@@ -1,11 +1,14 @@
+import copy from "fast-copy";
 import type { Calendar, CalDate, CalEvent } from "src/@types";
+import { CalEventHelper } from "src/events/event.helper";
 import type { CalendarStore } from "src/stores/calendar.store";
-import { compareEvents, dateString } from "src/utils/functions";
+import { compareEvents, dateString, sortEventList } from "src/utils/functions";
 import { get } from "svelte/store";
 
 export class CalendarAPI {
     #store: CalendarStore;
     #object: Calendar;
+    #helper: CalEventHelper;
     constructor(store: CalendarStore, object: Calendar) {
         this.#store = store;
         this.#object = object;
@@ -17,6 +20,14 @@ export class CalendarAPI {
      */
     getStore() {
         return this.#store;
+    }
+
+    /**
+     * Get a copy of the Calendar object.
+     * @returns {Calendar} The calendar object.
+     */
+    getObject(): Calendar {
+        return copy(this.#object);
     }
 
     /**
@@ -43,12 +54,30 @@ export class CalendarAPI {
         return this.#store.eventStore.getEvents();
     }
 
-    /** Get all events on a specific date. */
+    /**
+     * Get all events on a specific date.
+     * @param {CalDate} day
+     * @returns {CalEvent[]}
+     */
     getEventsOnDay(day: CalDate): CalEvent[] {
         return get(this.#store.eventStore.getEventsForDate(day));
     }
 
-    /** Compare two events */
+    /**
+     * Get a sorted list of events.
+     * @param {CalEvent[]} events
+     * @returns {CalEvent[]}
+     */
+    sortEvents(events: CalEvent[]): CalEvent[] {
+        return sortEventList(events);
+    }
+
+    /**
+     * Compare two events to determine sort order.
+     * @param event1
+     * @param event2
+     * @returns {number} Sort order
+     */
     compareEvents(event1: CalEvent, event2: CalEvent): number {
         return compareEvents(event1, event2);
     }
@@ -67,12 +96,19 @@ export class CalendarAPI {
      * - `D` - the day of the month, unpadded.
      * - `DD` - the day of the month, zero padded, minimum of two digits.
      *
-     * @param date Date to convert to a formatted string
-     * @param end Optional end date for multi-day events
-     * @param dateFormat Optional date format string
+     * @param {CalDate} date Date to convert to a formatted string
+     * @param {CalDate} end Optional end date for multi-day events
+     * @param {string} dateFormat Optional date format string
      * @returns formatted string
      */
     toDisplayDate(date: CalDate, end?: CalDate, dateFormat?: string): string {
         return dateString(date, this.#object, end, dateFormat);
     }
+
+    //TODO: Implement
+    /* toCalendarDate(date: string, dateFormat?: string): CalDate {
+        if (!this.#helper) {
+            this.#helper = new CalEventHelper(this.#object, false);
+        }
+    } */
 }

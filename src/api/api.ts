@@ -1,8 +1,7 @@
 import Calendarium from "src/main";
 import { CalendarAPI } from "./calendar";
-import type { CalDate, CalEvent, Calendar } from "src/@types";
+import type { CalDate, Calendar } from "src/@types";
 import type { CalendarStore } from "src/stores/calendar.store";
-import { get } from "svelte/store";
 
 export class API {
     constructor(private plugin: Calendarium) {}
@@ -20,6 +19,23 @@ export class API {
             throw new ReferenceError("No calendar by that name exists.");
         return store;
     }
+    /** API Cache */
+    #apis: WeakMap<Calendar, CalendarAPI> = new WeakMap();
+
+    /**
+     * Register a callback to be ran when Calendarium settings have loaded.
+     */
+    onSettingsLoaded(callback: () => any) {
+        this.plugin.onSettingsLoaded(callback);
+    }
+
+    /**
+     * Get a list of calendar names.
+     */
+    getCalendars(): string[] {
+        return this.plugin.data.calendars.map((c) => c.name);
+    }
+
     /**
      * Used to retrieve a Calendar API.
      * This can be used to obtain calendar-specific information, such as lists of events.
@@ -34,7 +50,14 @@ export class API {
         if (!calendar)
             throw new ReferenceError("No calendar store by that name exists.");
         const store = this.#getStore(calendar);
-        return new CalendarAPI(store, calendar);
+
+        /** Cache the APIs */
+        const api =
+            this.#apis.get(calendar) ?? new CalendarAPI(store, calendar);
+        if (!this.#apis.has(calendar)) {
+            this.#apis.set(calendar, api);
+        }
+        return api;
     }
     /**
      * Translate an event from one calendar to another.
