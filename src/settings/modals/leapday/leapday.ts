@@ -54,7 +54,7 @@ export class IntervalModal extends CalendariumModal {
     saved: boolean = true;
     editing: boolean = false;
     condition: LeapDayCondition = {
-        interval: null,
+        interval: 0,
         exclusive: false,
         ignore: false,
     };

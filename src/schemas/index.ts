@@ -163,7 +163,7 @@ export type LeapDayCondition = z.infer<typeof leapDayConditionSchema>;
 const leapDayConditionSchema = z.object({
     ignore: z.boolean().nullable(),
     exclusive: z.boolean().nullable(),
-    interval: z.number().nullable(),
+    interval: z.number(),
 });
 
 export type LeapDay = z.infer<typeof leapDaySchema>;
@@ -319,14 +319,26 @@ export const calendariumCodeBlockParametersSchema = z.object({
 export type CalendariumData = z.infer<typeof calendariumDataSchema>;
 export const SyncBehavior = z.enum(["Ask", "Always", "Never"]);
 export type SyncBehavior = z.infer<typeof SyncBehavior>;
+
+export type Version = z.infer<typeof versionSchema>;
+export const versionSchema = z.object({
+    major: z.number().nullable(),
+    minor: z.number().nullable(),
+    patch: z.number().nullable(),
+    beta: z.number().nullable(),
+    /* patch: z.union([z.number(), z.string()]).nullable(), */
+});
 export const calendariumDataSchema = z.object({
     addToDefaultIfMissing: z.boolean(),
+    askedToMoveFC: z.boolean(),
+    askedAboutSync: z.boolean(),
     calendars: z.array(calendarSchema),
-    deletedCalendars: z.array(deletedCalendarSchema),
     configDirectory: z.string().nullable(),
     dailyNotes: z.boolean(),
     dateFormat: z.string(),
+    debug: z.boolean(),
     defaultCalendar: z.nullable(z.string()),
+    deletedCalendars: z.array(deletedCalendarSchema),
     eventFrontmatter: z.boolean(),
     eventPreview: z.boolean(),
     exit: z.object({
@@ -334,18 +346,11 @@ export const calendariumDataSchema = z.object({
         event: z.boolean(),
         calendar: z.boolean(),
     }),
+    inlineEventsTag: z.string().nullable(),
     parseDates: z.boolean(),
-    version: z.object({
-        major: z.number().nullable(),
-        minor: z.number().nullable(),
-        patch: z.number().nullable(),
-        beta: z.number().nullable(),
-        /* patch: z.union([z.number(), z.string()]).nullable(), */
-    }),
-    debug: z.boolean(),
-    askedToMoveFC: z.boolean(),
-    askedAboutSync: z.boolean(),
     syncBehavior: SyncBehavior,
+    paths: z.array(z.tuple([z.string(), z.string()]).readonly()),
+    version: versionSchema,
 });
 
 export type MarkdownCalendariumData = z.infer<

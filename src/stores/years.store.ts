@@ -64,6 +64,7 @@ export class YearStore {
             leapday.interval
                 .sort((a, b) => a.interval - b.interval)
                 .some(({ interval, exclusive }, index, array) => {
+                    if (!interval) return false;
                     if (exclusive && index == 0) {
                         return (
                             (this.year - leapday.offset ?? 0) % interval != 0

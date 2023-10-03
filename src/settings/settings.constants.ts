@@ -5,6 +5,7 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
     name: "",
     description: "",
     id: null,
+    showIntercalarySeparately: true,
     static: {
         incrementDay: false,
         firstWeekDay: 0,
@@ -47,19 +48,16 @@ export const DEFAULT_DATA: CalendariumData = {
     },
     eventFrontmatter: false,
     parseDates: false,
-    settingsToggleState: {
-        calendars: false,
-        events: false,
-        advanced: true,
-    },
-    showIntercalary: false,
     version: {
         major: null,
         minor: null,
         patch: null,
+        beta: null,
     },
     debug: false,
     askedToMoveFC: false,
     askedAboutSync: false,
     syncBehavior: SyncBehavior.enum.Ask,
+    inlineEventsTag: null,
+    paths: [],
 };

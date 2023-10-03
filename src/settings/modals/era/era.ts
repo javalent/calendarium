@@ -10,13 +10,17 @@ import CurrentDate from "../../creator/Containers/CurrentDate.svelte";
 export class CreateEraModal extends CalendariumModal {
     saved = false;
     era: Era = {
-        name: null,
+        name: "",
         id: nanoid(6),
         format: "Year {{year}} - {{era_name}}",
         restart: false,
         endsYear: false,
         event: false,
-        start: null
+        start: {
+            day: 0,
+            month: 0,
+            year: 0,
+        },
     };
     editing = false;
     constructor(
@@ -51,7 +55,7 @@ export class CreateEraModal extends CalendariumModal {
 
         const advanced = this.contentEl.createEl("details", {
             cls: "calendarium-nested-settings",
-            attr: {}
+            attr: {},
         });
         const summary = advanced.createEl("summary");
         summary.createDiv("collapser").createDiv("handle");
@@ -62,11 +66,11 @@ export class CreateEraModal extends CalendariumModal {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Change how the era is displayed. See "
+                        text: "Change how the era is displayed. See ",
                     });
                     e.createEl("a", {
                         text: "here",
-                        href: "https://helpdocs.calendarium.com/topic/eras/"
+                        href: "https://helpdocs.calendarium.com/topic/eras/",
                     });
                     e.createSpan({ text: " for more information." });
                     e.createEl("br");
@@ -83,7 +87,7 @@ export class CreateEraModal extends CalendariumModal {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Restart the displayed year count from zero."
+                        text: "Restart the displayed year count from zero.",
                     });
                 })
             )
@@ -97,7 +101,7 @@ export class CreateEraModal extends CalendariumModal {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "The calendar year will end at the start of a new era."
+                        text: "The calendar year will end at the start of a new era.",
                     });
                 })
             )
@@ -136,7 +140,7 @@ export class CreateEraModal extends CalendariumModal {
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "The era will appear on its starting date as an event."
+                        text: "The era will appear on its starting date as an event.",
                     });
                 })
             )
@@ -144,8 +148,8 @@ export class CreateEraModal extends CalendariumModal {
                 t.setValue(this.era.event).onChange((v) => {
                     this.era.event = v;
                     if (!v) {
-                        this.era.eventCategory = null;
-                        this.era.eventDescription = null;
+                        this.era.eventCategory = "";
+                        this.era.eventDescription = "";
                     }
                     this.buildEventSettings(eventEl);
                 })

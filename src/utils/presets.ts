@@ -8,6 +8,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
+        showIntercalarySeparately: true,
         static: {
             displayDayNumber: false,
             incrementDay: true,
@@ -501,6 +502,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
+        showIntercalarySeparately: true,
         static: {
             displayDayNumber: false,
             incrementDay: false,
@@ -1009,6 +1011,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
+        showIntercalarySeparately: true,
         static: {
             displayDayNumber: false,
             firstWeekDay: 0,
@@ -2680,6 +2683,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
+        showIntercalarySeparately: true,
         static: {
             displayDayNumber: false,
             firstWeekDay: 0,
@@ -3467,6 +3471,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
+        showIntercalarySeparately: true,
         static: {
             displayDayNumber: false,
             firstWeekDay: 0,
@@ -3801,6 +3806,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
+        showIntercalarySeparately: true,
         static: {
             displayDayNumber: false,
             firstWeekDay: 2,
@@ -4463,6 +4469,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         path: ["/"],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
+        showIntercalarySeparately: true,
         dateFormat: "YYYY-MMM-DD",
         static: {
             displayDayNumber: false,
