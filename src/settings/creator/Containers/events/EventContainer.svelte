@@ -202,7 +202,7 @@
     desc={`Displaying ${$sorted.length}/${$calendar.events.length} events.`}
     open={false}
 >
-    <ToggleComponent
+    <!--     <ToggleComponent
         name={"Parse Files for Events"}
         desc={"The plugin will automatically parse files in the vault for events for this calendar."}
         value={autoParse}
@@ -246,7 +246,7 @@
                 </TextComponent>
             {/key}
         {/if}
-    {/if}
+    {/if} -->
     <ButtonComponent
         name={"Delete All Events"}
         icon="trash"
@@ -286,10 +286,5 @@
         text-decoration: underline;
         font-style: italic;
         cursor: pointer;
-    }
-    .existing-paths {
-        padding: 1rem 2rem;
-        display: flex;
-        flex-flow: column;
     }
 </style>

@@ -1,6 +1,6 @@
-import type { FrontMatterCache } from "obsidian";
+import type { FrontMatterCache, TFile } from "obsidian";
 import { nanoid, testLeapDay, toPaddedString, wrap } from "../utils/functions";
-const { DOMParser } = require("xmldom");
+import { DOMParser } from "xmldom";
 import type {
     Calendar,
     CalEvent,
@@ -19,6 +19,18 @@ export type CalEventCallback = (
     fcEvent: CalEvent,
     category?: CalEventCategory
 ) => void;
+
+export type CalEventElement = {
+    dataset: {
+        calendar: string | null;
+        date: string | null;
+        end: string | null;
+        class: string | null;
+        title: string | null;
+        img: string | null;
+    };
+    content: string | null;
+};
 
 export interface InputDate {
     year?: any;
@@ -56,34 +68,13 @@ export class CalEventHelper {
             .replace(/D+/g, "D");
     }
 
-    parseFileForEvents(
-        data: string,
-        file: { path: string; basename: string },
-        frontmatter: FrontMatterCache,
-        publish: CalEventCallback
-    ) {
-        let fcCategory: string;
-        console.log("#### parse file for events", frontmatter);
-        if (frontmatter) {
-            fcCategory = frontmatter?.["fc-category"];
-        }
-        const category = this.calendar.categories.find(
-            (cat) => cat?.name == fcCategory
-        );
+    onNewCategory: (category: CalEventCategory) => {};
 
-        // Single event in the frontmatter
-        this.parseFrontmatterEvent(frontmatter, file, publish, category);
-
-        if (this.calendar.supportInlineEvents) {
-            this.parseInlineEvents(data, file, publish, category);
-        }
-    }
-
+    category?: CalEventCategory | null = null;
     parseFrontmatterEvent(
         frontmatter: FrontMatterCache | undefined,
         file: { path: string; basename: string },
-        publish: CalEventCallback,
-        category?: CalEventCategory
+        publish: CalEventCallback
     ) {
         if (!frontmatter) return;
         const dateField = "fc-date" in frontmatter ? "fc-date" : "fc-start";
@@ -98,7 +89,7 @@ export class CalEventHelper {
             : null;
 
         let cat: CalEventCategory | undefined, newCategory: boolean;
-        if (frontmatter?.["fc-category"] && !category) {
+        if (frontmatter?.["fc-category"] && !this.category) {
             cat = this.calendar.categories.find(
                 (cat) => cat?.name == frontmatter["fc-category"]
             );
@@ -121,7 +112,7 @@ export class CalEventHelper {
                 end,
                 sort: this.parsedToTimestamp(date),
                 note: file.path,
-                category: (cat ?? category)?.id ?? null,
+                category: (cat ?? this.category)?.id ?? null,
                 img: frontmatter["fc-img"],
             });
         }
@@ -131,7 +122,7 @@ export class CalEventHelper {
         contents: string,
         file: { path: string; basename: string },
         publish: CalEventCallback,
-        category?: CalEventCategory
+        calendarCallback: (calendar: string, element: CalEventElement) => void
     ) {
         const domparser = new DOMParser();
         // span or div with attributes:
@@ -147,7 +138,7 @@ export class CalEventHelper {
         // For repeating events, use *
         for (const match of contents.matchAll(inlineDateSpans)) {
             const doc = domparser.parseFromString(match[0], "text/html");
-            const element = {
+            const element: CalEventElement = {
                 dataset: {
                     // Calendarium mixed-date format
                     date: doc.documentElement.getAttribute("data-date"),
@@ -156,50 +147,67 @@ export class CalEventHelper {
                     title: doc.documentElement.getAttribute("data-name"),
                     class: doc.documentElement.getAttribute("data-category"),
                     img: doc.documentElement.getAttribute("data-img"),
+                    calendar: doc.documentElement.getAttribute("data-calendar"),
                 },
                 content: doc.documentElement.textContent,
             };
             if (!element.dataset.date) {
                 continue; // span must contain a date
             }
-            // parse date strings, will return with all elements present: year, month, day, hour/order
-            let date = this.parseCalDateString(element.dataset.date, file);
-            let end = element.dataset.end
-                ? this.parseCalDateString(element.dataset.end, file)
-                : undefined;
-            let cat: CalEventCategory | undefined,
-                newCategory: boolean = false;
-            if (element.dataset.class) {
-                cat = this.calendar.categories.find(
-                    (cat) => cat?.name == element.dataset.class
-                );
-                if (!cat) {
-                    cat = {
-                        id: nanoid(6),
-                        color: randomColor(),
-                        name: element.dataset.class,
-                    };
-                    newCategory = true;
-                    this.calendar.categories.push(cat);
+            if (
+                element.dataset.calendar &&
+                element.dataset.calendar != this.calendar.name
+            ) {
+                //different calendar
+                calendarCallback(element.dataset.calendar, element);
+            } else {
+                const event = this.parseEventElement(element, file);
+                if (event) {
+                    publish(event);
                 }
             }
-            if (date) {
-                publish(
-                    {
-                        id: nanoid(6),
-                        name: element.dataset.title ?? file.basename,
-                        description: element.content,
-                        date,
-                        end,
-                        sort: this.parsedToTimestamp(date),
-                        note: file.path,
-                        category: (cat ?? category)?.id ?? null,
-                        img: element.dataset.img,
-                    },
-                    newCategory ? cat : undefined
-                );
+        }
+    }
+
+    parseEventElement(
+        element: CalEventElement,
+        file: { path: string; basename: string }
+    ): CalEvent | null {
+        // parse date strings, will return with all elements present: year, month, day, hour/order
+        if (!element.dataset.date) {
+            return null; // span must contain a date
+        }
+        let date = this.parseCalDateString(element.dataset.date, file);
+        if (!date) return null;
+        let end = element.dataset.end
+            ? this.parseCalDateString(element.dataset.end, file)
+            : undefined;
+        let cat: CalEventCategory | undefined;
+        if (element.dataset.class) {
+            cat = this.calendar.categories.find(
+                (cat) => cat?.name == element.dataset.class
+            );
+            if (!cat) {
+                cat = {
+                    id: nanoid(6),
+                    color: randomColor(),
+                    name: element.dataset.class,
+                };
+                this.onNewCategory?.(cat);
+                this.calendar.categories.push(cat);
             }
         }
+        return {
+            id: nanoid(6),
+            name: element.dataset.title ?? file.basename,
+            description: element.content,
+            date,
+            end,
+            sort: this.parsedToTimestamp(date),
+            note: file.path,
+            category: (cat ?? this.category)?.id ?? null,
+            img: element.dataset.img,
+        };
     }
 
     parseFilenameDate(file: {

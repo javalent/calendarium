@@ -44,7 +44,7 @@ export const calEventSchema = z.object({
     category: z.string().nullable(),
     sort: calEventSortSchema,
     formulas: z.array(eventFormulaSchema).optional(),
-    img: z.string().optional(),
+    img: z.string().nullable().optional(),
 });
 
 export type ColorEvent = z.infer<typeof colorEventSchema>;

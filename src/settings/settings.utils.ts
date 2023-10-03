@@ -1,3 +1,25 @@
+import type { Version } from "src/schemas";
+
+export function isOlderVersion(older: Version, current: Version) {
+    const olderTransformed = {
+        major: older.major ?? Number.MIN_VALUE,
+        minor: older.minor ?? Number.MIN_VALUE,
+        patch: older.patch ?? Number.MIN_VALUE,
+        beta: older.beta ?? Number.MIN_VALUE,
+    };
+    const currentTransformed = {
+        major: current.major ?? Number.MIN_VALUE,
+        minor: current.minor ?? Number.MIN_VALUE,
+        patch: current.patch ?? Number.MIN_VALUE,
+        beta: current.beta ?? Number.MIN_VALUE,
+    };
+    if (currentTransformed.major > olderTransformed.major) return true;
+    if (currentTransformed.minor > olderTransformed.minor) return true;
+    if (currentTransformed.patch > olderTransformed.patch) return true;
+    if (currentTransformed.beta > olderTransformed.beta) return true;
+    return false;
+}
+
 export enum MarkdownReason {
     NONE,
     NO_DATA = "No saved plugin data.",

@@ -1,13 +1,16 @@
 import {
     addIcon,
     ButtonComponent,
-    Modal,
     Notice,
     Platform,
     PluginSettingTab,
     setIcon,
     Setting,
-    type Events,
+    TextComponent,
+    ExtraButtonComponent,
+    DropdownComponent,
+    TFolder,
+    normalizePath,
 } from "obsidian";
 
 import copy from "fast-copy";
@@ -33,6 +36,7 @@ import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import SettingsService from "./settings.service";
 import { RestoreCalendarModal } from "./modals/restore";
+import { FolderSuggestionModal } from "src/suggester/folder";
 
 export enum Recurring {
     none = "None",
@@ -76,6 +80,9 @@ declare module "obsidian" {
                 _loaded: boolean;
             };
         };
+        setting: {
+            openTabById(id: string): void;
+        };
     }
 }
 
@@ -93,6 +100,12 @@ export default class CalendariumSettings extends PluginSettingTab {
     contentEl: HTMLDivElement;
     calendarsEl: HTMLDetailsElement;
     existingEl: HTMLDivElement;
+    pathsEl: HTMLDivElement;
+    toggleState = {
+        calendar: false,
+        event: false,
+        advanced: false,
+    };
     get data() {
         return this.settings$.getData();
     }
@@ -111,18 +124,28 @@ export default class CalendariumSettings extends PluginSettingTab {
         );
 
         this.buildInfo(this.contentEl.createDiv("calendarium-nested-settings"));
+
         this.calendarsEl = this.contentEl.createEl("details", {
             cls: "calendarium-nested-settings",
+            attr: {
+                ...(this.toggleState.calendar ? { open: `open` } : {}),
+            },
         });
         this.buildCalendars();
         this.buildEvents(
             this.contentEl.createEl("details", {
                 cls: "calendarium-nested-settings",
+                attr: {
+                    ...(this.toggleState.event ? { open: `open` } : {}),
+                },
             })
         );
         this.buildAdvanced(
             this.contentEl.createEl("details", {
                 cls: "calendarium-nested-settings",
+                attr: {
+                    ...(this.toggleState.advanced ? { open: `open` } : {}),
+                },
             })
         );
     }
@@ -178,6 +201,9 @@ export default class CalendariumSettings extends PluginSettingTab {
     async buildCalendars() {
         this.calendarsEl.empty();
         const summary = this.calendarsEl.createEl("summary");
+        this.calendarsEl.ontoggle = async () => {
+            this.toggleState.calendar = this.calendarsEl.open;
+        };
         new Setting(summary).setHeading().setName("Calendar Management");
 
         setIcon(
@@ -365,33 +391,16 @@ export default class CalendariumSettings extends PluginSettingTab {
     buildEvents(containerEl: HTMLDetailsElement) {
         containerEl.empty();
         const summary = containerEl.createEl("summary");
-        new Setting(summary).setHeading().setName("Events");
+        containerEl.ontoggle = async () => {
+            this.toggleState.event = containerEl.open;
+        };
+        new Setting(summary).setHeading().setName("Events Management");
 
         setIcon(
             summary.createDiv("collapser").createDiv("handle"),
             "chevron-right"
         );
 
-        new Setting(containerEl)
-            .setName("Add Events to Default Calendar")
-            .setDesc(
-                createFragment((e) => {
-                    e.createSpan({
-                        text: "Add events found in notes to the default calendar if the ",
-                    });
-                    e.createEl("code", { text: "fc-calendar" });
-                    e.createSpan({ text: " frontmatter tag is not present." });
-                })
-            )
-            .addToggle((t) => {
-                t.setValue(this.data.addToDefaultIfMissing).onChange(
-                    async (v) => {
-                        this.data.addToDefaultIfMissing = v;
-                        await this.settings$.saveAndTrigger();
-                        this.plugin.watcher.start();
-                    }
-                );
-            });
         const previewEnabled =
             this.app.internalPlugins.getPluginById("page-preview")?._loaded;
 
@@ -419,21 +428,11 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
             });
 
-        /*         new Setting(containerEl)
-            .setName("Write Event Data to Frontmatter")
-            .setDesc("This setting is temporarily disabled.")
-            .addToggle((t) => {
-                t.setValue(false)
-                    .setDisabled(true)
-                    .onChange(async (v) => {
-                        this.data.eventFrontmatter = v;
-                        await this.settings$.save();
-                    });
-            }); */
-
         new Setting(containerEl)
             .setName("Parse Note Titles for Event Dates")
-            .setDesc("The plugin will parse note titles for event dates.")
+            .setDesc(
+                "The plugin will try to parse note titles for event dates."
+            )
             .addToggle((t) => {
                 t.setValue(this.data.parseDates).onChange(async (v) => {
                     this.data.parseDates = v;
@@ -441,70 +440,275 @@ export default class CalendariumSettings extends PluginSettingTab {
                     this.plugin.watcher.start();
                 });
             });
-        /* new Setting(containerEl)
-            .setName("Date Format")
-            .setClass(this.data.dailyNotes ? "daily-notes" : "no-daily-notes")
+
+        new Setting(containerEl).setName("Event Parsing").setDesc(
+            createFragment((e) => {
+                const explanation = e.createDiv("explanation");
+                explanation.createDiv().createSpan({
+                    text: "Calendarium will find events defined in your notes. Events discovered in this way will only be added to one calendar.",
+                });
+                explanation.createEl("br");
+                explanation.createDiv().createSpan({
+                    text: "Use the following settings to match events found in a folder to a specific calendar. The most specific path (the most nested folder) will be used.",
+                });
+            })
+        );
+
+        new Setting(containerEl)
+            .setName("Add Events to Default Calendar")
             .setDesc(
                 createFragment((e) => {
-                    if (
-                        ["Y", "M", "D"].some(
-                            (token) => !this.data.dateFormat.includes(token)
-                        )
-                    ) {
-                        e.createEl("br");
-                        const span = e.createSpan({
-                            cls: "calendarium-warning date-format",
-                        });
-                        setIcon(
-                            span.createSpan("calendarium-warning"),
-                            "calendarium-warning"
-                        );
-                        let missing = ["Y", "M", "D"].filter(
-                            (token) => !this.data.dateFormat.includes(token)
-                        );
-                        span.createSpan({
-                            text: ` Date format is missing: ${missing
-                                .join(", ")
-                                .replace(/, ([^,]*)$/, " and $1")}`,
-                        });
+                    e.createSpan({
+                        text: "Add events found in notes to the default calendar if the ",
+                    });
+                    e.createEl("code", { text: "fc-calendar" });
+                    e.createSpan({
+                        text: " frontmatter tag is not present and the note is not in a defined path.",
+                    });
+                })
+            )
+            .addToggle((t) => {
+                t.setValue(this.data.addToDefaultIfMissing).onChange(
+                    async (v) => {
+                        this.data.addToDefaultIfMissing = v;
+                        await this.settings$.saveAndTrigger();
+                        this.plugin.watcher.start();
                     }
+                );
+            });
+        new Setting(containerEl)
+            .setName("Inline Events Tag")
+            .setDesc(
+                createFragment((e) => {
+                    e.createSpan({
+                        text: "Add this tag to your notes to tell Calendarium to scan them for inline ",
+                    });
+                    e.createEl("code", { text: "<span>" });
+                    e.createSpan({
+                        text: " events.",
+                    });
                 })
             )
             .addText((t) => {
-                t.setDisabled(this.data.dailyNotes)
-                    .setValue(this.plugin.format)
-                    .onChange(async (v) => {
-                        this.data.dateFormat = v;
-                        await this.settings$.save();
-                    });
-                t.inputEl.onblur = () => this.buildEvents(containerEl);
-            })
-            .addExtraButton((b) => {
-                if (!this.plugin.canUseDailyNotes) {
-                    b.extraSettingsEl.detach();
-                    return;
-                }
-                if (this.data.dailyNotes) {
-                    b.setIcon("checkmark")
-                        .setTooltip("Unlink from Daily Notes")
-                        .onClick(() => {
-                            this.data.dailyNotes = false;
-                            this.buildEvents(containerEl);
-                        });
+                t.setValue(this.data.inlineEventsTag ?? "").onChange(
+                    async (v) => {
+                        if (!v || !v.length) {
+                            this.data.inlineEventsTag = null;
+                        } else {
+                            this.data.inlineEventsTag = v.replace(/$#/, "");
+                        }
+                    }
+                );
+                t.inputEl.onblur = async () => {
+                    await this.settings$.saveAndTrigger();
+                    this.plugin.watcher.start();
+                };
+            });
+        this.pathsEl = containerEl.createDiv("calendarium-event-paths");
+        this.buildPaths();
+    }
+    #needsSort = true;
+    allFolders = this.app.vault
+        .getAllLoadedFiles()
+        .filter((f) => f instanceof TFolder);
+    folders = this.allFolders.filter(
+        (f) => !this.data.paths.find(([p]) => f.path === p)
+    );
+
+    buildPaths() {
+        if (this.#needsSort) {
+            //sort data
+            console.log("sorting data");
+            this.folders = this.allFolders.filter(
+                (f) => !this.data.paths.find(([p]) => f.path === p)
+            );
+            this.data.paths.sort((a, b) => {
+                return a[0].localeCompare(b[0]);
+            });
+            this.#needsSort = false;
+        }
+        this.pathsEl.empty();
+        if (!this.data.calendars.length) {
+            this.pathsEl.createSpan({
+                cls: "no-calendars",
+                text: "No calendars created! Create a calendar to use this functionality.",
+            });
+            return;
+        }
+
+        const pathsEl = this.pathsEl.createDiv("existing-calendars has-table");
+        //build table
+        const tableEl = pathsEl.createDiv("paths-table");
+        for (const text of ["", "Path", "Calendar", ""]) {
+            tableEl.createEl("th", { text, cls: "paths-table-header" });
+        }
+        for (let i = 0; i < this.data.paths.length; i++) {
+            const rowEl = tableEl.createDiv("paths-table-row");
+            this.buildStaticPath(rowEl, i);
+        }
+
+        /** Build the "add-new" */
+        const addEl = tableEl.createDiv("paths-table-row add-new");
+        const toAdd: { path: string | null; calendar: string | null } = {
+            path: null,
+            calendar: null,
+        };
+        const addIconEl = addEl.createDiv("icon");
+        const pathEl = addEl.createDiv("path");
+        const dropEl = addEl.createDiv("calendar");
+        const actionsEl = addEl.createDiv("actions");
+        const addButton = new ExtraButtonComponent(actionsEl)
+            .setIcon("plus-with-circle")
+            .setDisabled(true)
+            .onClick(async () => {
+                if (!toAdd.path || !toAdd.calendar) return;
+                this.data.paths.push([toAdd.path, toAdd.calendar]);
+                this.#needsSort = true;
+                this.buildPaths();
+                await this.settings$.saveAndTrigger();
+            });
+        this.buildPathInput(pathEl, addButton, addIconEl, (path) => {
+            toAdd.path = path;
+        });
+        const drop = new DropdownComponent(dropEl);
+        for (const calendar of this.data.calendars) {
+            drop.addOption(calendar.id, calendar.name);
+        }
+        toAdd.calendar = drop.getValue();
+    }
+    buildStaticPath(rowEl: HTMLElement, index: number) {
+        rowEl.empty();
+        const [path, calendar] = this.data.paths[index];
+        const maybeCal = this.data.calendars.find((c) => c.id == calendar);
+
+        const exists =
+            index > 0 &&
+            this.data.paths.slice(0, index).find(([p]) => p === path) !=
+                undefined;
+        const iconEl = rowEl.createDiv("icon");
+        if (exists) {
+            rowEl.addClass("conflict");
+            setIcon(
+                iconEl.createDiv({
+                    cls: "icon",
+                    attr: {
+                        "aria-tooltip":
+                            "This path is registered to multiple calendars",
+                    },
+                }),
+                "alert-triangle"
+            );
+        } else {
+            rowEl.removeClass("conflict");
+        }
+        rowEl.createDiv({ text: path, cls: "path" });
+        const calendarEl = rowEl.createDiv({ cls: "calendar" });
+        if (!maybeCal) {
+            calendarEl.addClass("mod-warning");
+            calendarEl.setText("Calendar could not be found");
+        } else {
+            calendarEl.setText(maybeCal.name);
+        }
+        const actions = rowEl.createDiv("actions");
+        new ExtraButtonComponent(actions).setIcon("edit").onClick(() => {
+            this.buildEditPath(rowEl, index, path, calendar);
+        });
+        new ExtraButtonComponent(actions).setIcon("trash").onClick(async () => {
+            this.data.paths.splice(index, 1);
+            await this.settings$.saveAndTrigger();
+            this.#needsSort = true;
+            this.buildPaths();
+        });
+    }
+    buildEditPath(
+        rowEl: HTMLElement,
+        index: number,
+        path: string,
+        calendar: string
+    ) {
+        rowEl.empty();
+        const originalPath = path;
+        const addIconEl = rowEl.createDiv("icon");
+        const pathEl = rowEl.createDiv("path");
+        const dropEl = rowEl.createDiv("calendar");
+        const actionsEl = rowEl.createDiv("actions");
+        const addButton = new ExtraButtonComponent(actionsEl)
+            .setIcon("checkmark")
+            .onClick(async () => {
+                this.data.paths.splice(index, 1, [path, calendar]);
+                await this.settings$.saveAndTrigger();
+                if (path !== originalPath) {
+                    this.#needsSort = true;
+                    this.buildPaths();
                 } else {
-                    b.setIcon("sync")
-                        .setTooltip("Link with Daily Notes")
-                        .onClick(() => {
-                            this.data.dailyNotes = true;
-                            this.buildEvents(containerEl);
-                        });
+                    this.buildStaticPath(rowEl, index);
                 }
-            }); */
+            });
+
+        this.buildPathInput(
+            pathEl,
+            addButton,
+            addIconEl,
+            (p) => {
+                path = p;
+            },
+            path
+        );
+        const drop = new DropdownComponent(dropEl);
+        for (const calendar of this.data.calendars) {
+            drop.addOption(calendar.id, calendar.name);
+        }
+        drop.setValue(calendar).onChange((v) => {
+            calendar = v;
+        });
+        new ExtraButtonComponent(actionsEl).setIcon("cross").onClick(() => {
+            this.buildStaticPath(rowEl, index);
+        });
+    }
+    buildPathInput(
+        inputEl: HTMLElement,
+        addButton: ExtraButtonComponent,
+        iconEl: HTMLElement,
+        callback: (path: string) => void,
+        originalPath: string = "Folder"
+    ) {
+        const validateAndSend = (path: string) => {
+            if (
+                !path ||
+                !path.length ||
+                this.data.paths.find(([p]) => path == p)
+            ) {
+                addButton.setDisabled(true);
+                setIcon(iconEl, "alert-triangle");
+                return false;
+            }
+            addButton.setDisabled(false);
+            iconEl.empty();
+            callback(normalizePath(path));
+        };
+        const text = new TextComponent(inputEl)
+            .setPlaceholder(originalPath)
+            .onChange((path) => {
+                /** Validate no existing paths... */
+                validateAndSend(path);
+            });
+        const modal = new FolderSuggestionModal(this.app, text, [
+            ...(this.folders as TFolder[]),
+        ]);
+
+        modal.onClose = async () => {
+            const path = text.inputEl.value?.trim()
+                ? text.inputEl.value.trim()
+                : "/";
+            validateAndSend(path);
+        };
     }
     buildAdvanced(containerEl: HTMLDetailsElement) {
         containerEl.empty();
         const summary = containerEl.createEl("summary");
-
+        containerEl.ontoggle = async () => {
+            this.toggleState.advanced = containerEl.open;
+        };
         new Setting(summary).setHeading().setName("Advanced");
 
         setIcon(

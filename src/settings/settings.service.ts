@@ -11,6 +11,7 @@ import type {
     Calendar,
     CalendariumData,
     MarkdownCalendariumData,
+    Version,
 } from "src/@types";
 import { DEFAULT_DATA } from "./settings.constants";
 import merge from "deepmerge";
@@ -20,17 +21,12 @@ import copy from "fast-copy";
 import { CalendariumNotice } from "src/utils/notice";
 import { calendariumDataSchema, SyncBehavior } from "src/schemas";
 import {
+    isOlderVersion,
     MarkdownReason,
     shouldTransitionMarkdownSettings,
-} from "./markdown-import";
+} from "./settings.utils";
 
 const SPLITTER = "--- BEGIN DATA ---";
-const HEADER = `This file is used by Calendarium to manage its data.
-
-Please do not modify this file directly or you could corrupt the plugin data.
-
-${SPLITTER}
-`;
 
 export default class SettingsService {
     static DataFile = "_data.md";
@@ -301,7 +297,7 @@ export default class SettingsService {
         });
         this.plugin.registerNotice(notice);
     }
-    get version() {
+    get version(): Version {
         const split = this.manifest.version.split(".");
         let [major, minor] = split;
         let [, patch, beta] = split[2].match(/(\d+)(?:\-b(\d+))?/) ?? split[2];
@@ -312,6 +308,39 @@ export default class SettingsService {
             patch: Number(patch),
             beta: beta ? Number(beta) : null,
         };
+    }
+
+    getDataVersion(data: CalendariumData): Version {
+        const version: Version = {
+            major: Number.MIN_VALUE,
+            minor: Number.MIN_VALUE,
+            patch: Number.MIN_VALUE,
+            beta: null,
+        };
+        if ("version" in data) {
+            const dV = data.version;
+            if (typeof dV.major == "number") version.major = dV.major;
+            if (typeof dV.minor == "number") version.minor = dV.minor;
+            if (typeof dV.beta == "number") version.beta = dV.beta;
+            switch (typeof dV.patch) {
+                case "number": {
+                    version.patch = dV.patch;
+                    break;
+                }
+                case "string": {
+                    let [, patch, beta] = (dV.patch as string).match(
+                        /(\d+)(?:\-b(\d+))?/
+                    ) ?? [Number.MIN_VALUE, Number.MIN_VALUE];
+                    version.patch = Number(patch);
+                    version.beta = Number(beta);
+                    break;
+                }
+            }
+        }
+        return version;
+    }
+    isOldVersion(older: Version, current: Version): boolean {
+        return isOlderVersion(older, current);
     }
 
     /**
@@ -373,7 +402,6 @@ export default class SettingsService {
     private async load() {
         const pluginData: unknown | CalendariumData =
             (await this.plugin.loadData()) ?? {};
-
         /** Check to see if the data is in the old markdown file. */
         console.debug(
             "Calendarium: Checking to see if markdown settings should be migrated."
@@ -418,6 +446,7 @@ export default class SettingsService {
             data = parsed.data;
         }
         if (!data) data = copy(DEFAULT_DATA);
+        console.log(this.getDataVersion(data));
         let dirty = this.updateDataToNewSchema(data);
         if (dirty) {
             console.debug(
@@ -612,6 +641,7 @@ export default class SettingsService {
     private updateDataToNewSchema(
         data: MarkdownCalendariumData | CalendariumData
     ) {
+        const version = this.getDataVersion(data);
         let dirty = this.updateCalendarsToNewSchema(data.calendars, data);
         if (!data.defaultCalendar && data.calendars.length) {
             data.defaultCalendar = data.calendars[0].id;
@@ -628,6 +658,75 @@ export default class SettingsService {
             data.deletedCalendars = [];
             dirty = true;
         }
+        /** Beta 29 */
+        if (
+            this.isOldVersion(this.getDataVersion(data), {
+                major: 1,
+                minor: 0,
+                patch: 0,
+                beta: 29,
+            })
+        ) {
+            data.paths = [];
+            if (data.calendars.length) {
+                for (const calendar of data.calendars) {
+                    if (calendar.path?.length) {
+                        data.paths.push(
+                            ...calendar.path.map(
+                                (p) => [p, calendar.id] as const
+                            )
+                        );
+                    }
+                }
+            }
+            for (let i = 0; i < data.paths.length; i++) {
+                const [path] = data.paths[i];
+                const exists =
+                    i > 0 &&
+                    data.paths.slice(0, i).find(([p]) => p === path) !=
+                        undefined;
+                if (exists) {
+                    let notice = new CalendariumNotice(
+                        createFragment((f) => {
+                            const c = f.createDiv("calendarium-notice");
+                            c.createEl("h4", {
+                                text: "Calendarium",
+                                cls: "calendarium-header",
+                            });
+                            const e = c.createDiv();
+                            e.createDiv({
+                                text: "You have the same event path registered to multiple calendars.",
+                            });
+                            e.createDiv({
+                                text: "Please review your event path settings.",
+                            });
+                            e.createEl("br");
+                            e.createEl("br");
+                            const b = e.createDiv("calendarium-notice-buttons");
+                            new ButtonComponent(e)
+                                .setButtonText("Open Settings")
+                                .onClick(() => {
+                                    notice.hide();
+                                    this.app.setting.openTabById(
+                                        this.plugin.manifest.id
+                                    );
+                                });
+                        }),
+                        0
+                    );
+                    this.plugin.registerNotice(notice);
+                    break;
+                }
+            }
+
+            if (data.calendars.length) {
+                data.inlineEventsTag =
+                    data.calendars.find((c) => c.inlineEventTag != null)
+                        ?.inlineEventTag ?? null;
+            }
+            dirty = true;
+        }
+
         return dirty;
     }
     private updateCalendarsToNewSchema(

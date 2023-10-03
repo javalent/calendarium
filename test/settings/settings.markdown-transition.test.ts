@@ -5,7 +5,7 @@ import { vi, test, expect } from "vitest";
 import {
     shouldTransitionMarkdownSettings,
     MarkdownReason,
-} from "../../src/settings/markdown-import";
+} from "../../src/settings/settings.utils";
 
 test("No data", () => {
     expect(shouldTransitionMarkdownSettings(null)).toBe(MarkdownReason.NO_DATA);

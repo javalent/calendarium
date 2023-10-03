@@ -1,6 +1,6 @@
 import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
 
-import CalendariumSettings from "./settings/settings";
+import CalendariumSettings from "./settings/settings.view";
 
 import type { Calendar, CalendariumData } from "./@types";
 import CalendariumView, { VIEW_TYPE } from "./calendar/view";
