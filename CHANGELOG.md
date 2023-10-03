@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.0.0-b30](https://github.com/javalent/the-calendarium/compare/1.0.0-b29...1.0.0-b30) (2023-10-03)
+
+
+### Features
+
+* Can now specify calendar for `&lt;span&gt;` events using `data-calendar` ([32e1bfd](https://github.com/javalent/the-calendarium/commit/32e1bfd7439f1df79509f7e87976156132a4ece8))
+* New event parsing path experience ([e5f429e](https://github.com/javalent/the-calendarium/commit/e5f429e4b705b85d86d7edd1c8441a646778d04c))
+
+
+### Bug Fixes
+
+* Some new API hooks ([44209e5](https://github.com/javalent/the-calendarium/commit/44209e58be50f8bd05bdda0a3ece67fae3fa5ae8))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b30 ([0243f67](https://github.com/javalent/the-calendarium/commit/0243f67e0277e2a7f24c6e87a98918146bf48ddc))
+
 ## [1.0.0-b29](https://github.com/javalent/the-calendarium/compare/1.0.0-b28...1.0.0-b29) (2023-09-26)
 
 
