@@ -1,13 +1,13 @@
 /**
  * @vitest-environment happy-dom
  */
-import type { CalDate, CalEventDate } from "../src/@types";
-import { CalEventHelper } from "../src/events/event.helper";
-import { PRESET_CALENDARS } from "../src/utils/presets";
+import type { CalDate, CalEventDate } from "../../src/@types";
+import { CalEventHelper } from "../../src/events/event.helper";
+import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { test, expect } from "vitest";
 
 import Moment from "moment";
-import { dateString } from "../src/utils/functions";
+import { dateString } from "../../src/utils/functions";
 Object.defineProperty(window, "moment", { value: Moment });
 
 const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");

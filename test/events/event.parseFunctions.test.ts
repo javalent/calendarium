@@ -2,15 +2,17 @@
  * @vitest-environment happy-dom
  */
 import type { Loc, Pos } from "obsidian";
-import type { CalEvent, Calendar } from "../src/@types";
-import { CalEventHelper, ParseDate } from "../src/events/event.helper";
-import { PRESET_CALENDARS } from "../src/utils/presets";
+import type { CalEvent, Calendar } from "../../src/@types";
+import { CalEventHelper, ParseDate } from "../../src/events/event.helper";
+import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { test, expect } from "vitest";
 
 import Moment from "moment";
 Object.defineProperty(window, "moment", { value: Moment });
 
-const GREGORIAN: Calendar = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
+const GREGORIAN: Calendar = PRESET_CALENDARS.find(
+    (p) => p.name == "Gregorian Calendar"
+);
 const gregorian = new CalEventHelper(GREGORIAN, true);
 
 const file = {
@@ -118,7 +120,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
 test("parseFrontmatterEvent", () => {
     let category = gregorian.calendar.categories[0];
     let actual: CalEvent[] = [];
-
+    gregorian.category = category;
     gregorian.parseFrontmatterEvent(
         {
             "fc-start": "1966-05-23",
@@ -135,8 +137,7 @@ test("parseFrontmatterEvent", () => {
         file,
         (event) => {
             actual.push(event);
-        },
-        category
+        }
     );
 
     expect(actual.length).toEqual(1);
@@ -168,10 +169,6 @@ test("parseFrontmatterEvent", () => {
 
 test("parseTimelineEvent", () => {
     let category = gregorian.calendar.categories[0];
-    console.log(
-        "🚀 ~ file: event.parseFunctions.test.ts:142 ~ category:",
-        category
-    );
     let actual: CalEvent[] = [];
 
     gregorian.parseInlineEvents(
@@ -187,7 +184,7 @@ test("parseTimelineEvent", () => {
         (event) => {
             actual.push(event);
         },
-        category
+        () => {}
     );
 
     expect(actual.length).toEqual(1);

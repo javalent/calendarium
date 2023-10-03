@@ -1,10 +1,10 @@
 /**
  * @vitest-environment happy-dom
  */
-import type { CalDate, CalEvent } from "../src/@types";
-import { CalEventHelper, ParseDate } from "../src/events/event.helper";
-import { dateString, sortEventList } from "../src/utils/functions";
-import { PRESET_CALENDARS } from "../src/utils/presets";
+import type { CalDate, CalEvent } from "../../src/@types";
+import { CalEventHelper, ParseDate } from "../../src/events/event.helper";
+import { dateString, sortEventList } from "../../src/utils/functions";
+import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { vi, test, expect } from "vitest";
 
 import Moment from "moment";
