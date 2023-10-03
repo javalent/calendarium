@@ -1,28 +1,26 @@
-import { rename } from "fs";
 import {
     Component,
-    TAbstractFile,
     TFile,
     TFolder,
-    Vault,
     getAllTags,
     FuzzySuggestModal,
 } from "obsidian";
-import type { Calendar, CalEvent } from "src/@types";
+import type { Calendar } from "src/@types";
 import type Calendarium from "src/main";
 //have to ignore until i fix typing issue
 //@ts-expect-error
-import Worker, {
-    type CalendarsMessage,
-    type GetFileCacheMessage,
-    type FileCacheMessage,
-    type OptionsMessage,
-    type QueueMessage,
-    type UpdateEventMessage,
-    type SaveMessage,
-    type DeleteEventMessage,
-    type NewCategoryMessage,
-} from "./watcher.worker";
+import Worker from "./watcher.worker";
+import type {
+    CalendarsMessage,
+    GetFileCacheMessage,
+    FileCacheMessage,
+    OptionsMessage,
+    QueueMessage,
+    UpdateEventMessage,
+    SaveMessage,
+    DeleteEventMessage,
+    NewCategoryMessage,
+} from "./watcher.types";
 
 declare global {
     interface Worker {
@@ -125,6 +123,8 @@ export class Watcher extends Component {
             addToDefaultIfMissing: this.plugin.data.addToDefaultIfMissing,
             format: this.plugin.format,
             defaultCalendar: this.plugin.defaultCalendar?.name,
+            inlineEventsTag: this.plugin.data.inlineEventsTag,
+            paths: this.plugin.data.paths,
             debug: this.plugin.data.debug,
         });
         this.registerEvent(
@@ -136,6 +136,7 @@ export class Watcher extends Component {
                         this.plugin.data.addToDefaultIfMissing,
                     format: this.plugin.format,
                     defaultCalendar: this.plugin.defaultCalendar?.name,
+                    paths: this.plugin.data.paths,
                     debug: this.plugin.data.debug,
                 });
             })
@@ -296,23 +297,14 @@ export class Watcher extends Component {
         if (!calendars.length) return;
         let folders: Set<string> = new Set();
 
-        for (const calendar of calendars) {
-            if (!calendar) continue;
-            if (!calendar.autoParse) continue;
-            for (const path of calendar.path) {
-                const folder = this.vault.getAbstractFileByPath(path);
-                if (!folder || !(folder instanceof TFolder)) continue;
-                for (const child of folder.children) {
-                    folders.add(child.path);
-                }
-            }
-            //remove events associated with files.
-            const store = this.plugin.getStoreByCalendar(calendar);
-            if (!store) continue;
-            store.eventStore.removeAllFileEvents();
+        const folder = this.vault.getRoot();
+        if (!folder || !(folder instanceof TFolder)) return;
+        for (const child of folder.children) {
+            folders.add(child.path);
         }
 
         if (!folders.size) return;
+        console.log("🚀 ~ file: watcher.ts:308 ~ folders:", folders);
         if (this.plugin.data.debug) {
             if (calendar) {
                 console.info(

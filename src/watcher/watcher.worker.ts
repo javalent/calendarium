@@ -6,62 +6,17 @@ import type {
     Nullable,
 } from "src/@types";
 import { CalEventHelper } from "src/events/event.helper";
-
-export interface QueueMessage {
-    type: "queue";
-    paths: string[];
-}
-export interface OptionsMessage {
-    type: "options";
-    defaultCalendar: string;
-    addToDefaultIfMissing: boolean;
-    format: string;
-    parseTitle: boolean;
-    debug: boolean;
-}
-export interface CalendarsMessage {
-    type: "calendars";
-    calendars: Calendar[];
-}
-export interface FileCacheMessage {
-    type: "file";
-    path: string;
-    file: { path: string; basename: string };
-    cache: CachedMetadata;
-    allTags: string[];
-    data: string;
-}
-export interface GetFileCacheMessage {
-    type: "get";
-    path: string;
-}
-export interface NewCategoryMessage {
-    type: "category";
-    id: string;
-    category: CalEventCategory;
-}
-export interface UpdateEventMessage {
-    type: "update";
-    id: string;
-    index: number;
-    event: CalEvent;
-    original: CalEvent | undefined;
-}
-export interface DeleteEventMessage {
-    type: "delete";
-    id: string;
-    path: string;
-}
-
-export interface SaveMessage {
-    type: "save";
-}
-
-export type RenameMessage = {
-    type: "rename";
-    sourceCalendars: Calendar[];
-    file: { path: string; basename: string; oldPath: string };
-};
+import type {
+    OptionsMessage,
+    CalendarsMessage,
+    QueueMessage,
+    SaveMessage,
+    FileCacheMessage,
+    GetFileCacheMessage,
+    DeleteEventMessage,
+    UpdateEventMessage,
+    NewCategoryMessage,
+} from "./watcher.types";
 
 const ctx: Worker = self as any;
 class Parser {
@@ -69,12 +24,13 @@ class Parser {
     parsing: boolean = false;
     defaultCalendar: string;
     calendars: Calendar[];
-    pathToName: {};
     format: string;
     parseTitle: boolean = false;
     addToDefaultIfMissing: boolean;
     debug: boolean;
     eventHelpers = new Map();
+    paths: [string, string][];
+    inlineEventsTag: string | null = null;
 
     constructor() {
         //Register Options Changer
@@ -88,12 +44,25 @@ class Parser {
                         format,
                         parseTitle,
                         debug,
+                        inlineEventsTag,
+                        paths,
                     } = event.data;
                     this.addToDefaultIfMissing = addToDefaultIfMissing;
                     this.defaultCalendar = defaultCalendar;
                     this.format = format;
                     this.parseTitle = parseTitle;
+                    this.inlineEventsTag = inlineEventsTag;
+
                     this.debug = debug;
+
+                    /** Paths should always be sorted, but... just in case. */
+                    this.paths = paths.sort((a, b) => {
+                        return a[0].localeCompare(b[0]);
+                    });
+
+                    if (this.debug) {
+                        console.debug("Received calendars message");
+                    }
 
                     if (this.debug) {
                         console.debug("Received options message");
@@ -108,29 +77,6 @@ class Parser {
                 if (event.data.type == "calendars") {
                     const { calendars } = event.data;
                     this.calendars = [...calendars];
-                    // Create a map of path to calenar name for quick lookup
-                    // Sort by name (in reverse: last added to the map wins), then by path length
-                    // When looking for a calendar for a file, we'll start with the longest (most specific) path first
-                    // If two calendars share the same path, the alphabetically first one wins
-                    const entries: Array<[string, string]> = [];
-                    for (const calendar of calendars) {
-                        for (const path of calendar.path) {
-                            entries.push([path, calendar.name]);
-                        }
-                    }
-                    this.pathToName = Object.fromEntries(
-                        entries.sort((a, b) => {
-                            if (b[0] == a[0]) {
-                                console.warn(
-                                    `Calendar ${a[1]} and ${b[1]} have the same path ${a[0]}. The last listed in configuration will be used.`
-                                );
-                            }
-                            return b[0].length - a[0].length;
-                        })
-                    );
-                    if (this.debug) {
-                        console.debug("Received calendars message");
-                    }
                 }
             }
         );
@@ -219,7 +165,7 @@ class Parser {
         // Always clear existing events for a changed file
         this.removeEventsFromFile(file.path);
 
-        const eventHelper = this.createEventHandler(frontmatter, allTags, file);
+        const eventHelper = this.createEventHandler(frontmatter, file);
         if (!eventHelper) {
             return; // no calendar for this file, events removed
         }
@@ -243,23 +189,15 @@ class Parser {
         );
 
         if (
-            eventHelper.calendar.supportInlineEvents &&
-            eventHelper.calendar.inlineEventTag &&
+            this.inlineEventsTag != null &&
             allTags &&
-            (allTags.includes(eventHelper.calendar.inlineEventTag) ||
-                allTags.includes(`#${eventHelper.calendar.inlineEventTag}`))
+            (allTags.includes(this.inlineEventsTag) ||
+                allTags.includes(`#${this.inlineEventsTag}`))
         ) {
             eventHelper.parseInlineEvents(
                 data,
                 file,
-                (event: CalEvent, newCategory?: CalEventCategory) => {
-                    if (newCategory) {
-                        ctx.postMessage<NewCategoryMessage>({
-                            type: "category",
-                            id: eventHelper.calendar.id,
-                            category: newCategory,
-                        });
-                    }
+                (event: CalEvent) => {
                     ctx.postMessage<UpdateEventMessage>({
                         type: "update",
                         id: eventHelper.calendar.id,
@@ -268,6 +206,28 @@ class Parser {
                         original: undefined,
                     });
                     tEvents++;
+                },
+                (calendar, element) => {
+                    //found a span event on a different calendar
+
+                    //get helper for that calendar
+                    const otherHelper = this.getHelperByName(calendar);
+                    //no calendar was found
+                    if (!otherHelper) return;
+                    const event = otherHelper.parseEventElement(element, file);
+                    if (!event) return;
+                    if (this.debug) {
+                        console.info(
+                            `Found inline event registered to a different calendar.`
+                        );
+                    }
+                    ctx.postMessage<UpdateEventMessage>({
+                        type: "update",
+                        id: otherHelper.calendar.id,
+                        index: -1,
+                        event,
+                        original: undefined,
+                    });
                 }
             );
         }
@@ -280,14 +240,13 @@ class Parser {
     }
     createEventHandler(
         frontmatter: FrontMatterCache | undefined,
-        allTags: string[],
         file: { path: string; basename: string }
     ): Nullable<CalEventHelper> {
         if (!frontmatter?.["fc-ignore"]) {
             let name = frontmatter?.["fc-calendar"];
             if (!name || !name.length) {
                 // did we get here because a calendar looks for events in this path?
-                const match = Object.entries(this.pathToName).find((p2n) =>
+                const match = this.paths.find((p2n) =>
                     file.path.startsWith(p2n[0])
                 );
                 if (match) {
@@ -297,42 +256,10 @@ class Parser {
             if (this.addToDefaultIfMissing && (!name || !name.length)) {
                 name = this.defaultCalendar;
             }
-            const calendarPath = Object.entries(this.pathToName).find(
-                ([path, calendar]) => calendar === name
-            );
-
-            //This file is not actually associated with the calendar....
-            if (
-                !calendarPath?.length ||
-                (calendarPath[0] !== "/" &&
-                    !file.path.startsWith(calendarPath[0]))
-            ) {
-                return null;
-            }
 
             name = name?.trim().toLowerCase();
             if (name) {
-                let helper = this.eventHelpers.get(name);
-
-                if (helper) {
-                    return helper;
-                } else {
-                    if (this.debug) console.info("Finding calendar for", name);
-                    const calendar = this.calendars.find(
-                        (calendar) => name == calendar.name.toLowerCase()
-                    );
-                    if (calendar) {
-                        if (this.debug)
-                            console.info(
-                                "creating event helper for calendar",
-                                calendar
-                            );
-                        helper = new CalEventHelper(calendar, this.parseTitle);
-
-                        this.eventHelpers.set(name, helper);
-                        return helper;
-                    }
-                }
+                return this.getHelperByName(name);
             } else if (this.debug) {
                 console.info(
                     `Could not find calendar ${name} associated with file ${file.basename}`
@@ -340,6 +267,37 @@ class Parser {
             }
         }
         return null;
+    }
+    getHelperByName(name: string) {
+        let helper = this.eventHelpers.get(name);
+
+        if (helper) {
+            return helper;
+        } else {
+            if (this.debug) console.info("Finding calendar for", name);
+            const calendar = this.calendars.find(
+                (calendar) => name.toLowerCase() == calendar.name.toLowerCase()
+            );
+            if (calendar) {
+                if (this.debug)
+                    console.info(
+                        "creating event helper for calendar",
+                        calendar
+                    );
+                helper = new CalEventHelper(calendar, this.parseTitle);
+
+                helper.onNewCategory = (category: CalEventCategory) => {
+                    ctx.postMessage<NewCategoryMessage>({
+                        type: "category",
+                        id: helper.calendar.id,
+                        category,
+                    });
+                };
+
+                this.eventHelpers.set(name, helper);
+                return helper;
+            }
+        }
     }
 }
 new Parser();
