@@ -12,6 +12,7 @@ export class CalendarAPI {
     constructor(store: CalendarStore, object: Calendar) {
         this.#store = store;
         this.#object = object;
+        this.#helper = new CalEventHelper(object, false);
     }
 
     /**
@@ -28,6 +29,16 @@ export class CalendarAPI {
      */
     getObject(): Calendar {
         return copy(this.#object);
+    }
+
+    /**
+     * Transform a string (in calendar format) into a CalDate
+     * @param dateString
+     * @returns {CalDate}
+     */
+    parseDate(dateString: string): CalDate {
+        const date = this.#helper.parseCalDateString(dateString, {path: "", basename: "api-call"});
+        return date as CalDate;
     }
 
     /**
