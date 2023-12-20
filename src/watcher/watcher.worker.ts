@@ -61,11 +61,7 @@ class Parser {
                     });
 
                     if (this.debug) {
-                        console.debug("Received calendars message");
-                    }
-
-                    if (this.debug) {
-                        console.debug("Received options message");
+                        console.debug("Received options message", this.defaultCalendar, this.addToDefaultIfMissing, this.inlineEventsTag, this.paths);
                     }
                 }
             }
@@ -104,11 +100,6 @@ class Parser {
         this.parsing = true;
         while (this.queue.length) {
             const path = this.queue.shift();
-            if (this.debug) {
-                console.debug(
-                    `Parsing ${path} for calendar events (${this.queue.length} to go)`
-                );
-            }
             if (!path) break;
             await this.getFileData(path);
         }
@@ -136,6 +127,11 @@ class Parser {
                 ctx.removeEventListener("message", resolution);
                 const { data, cache, allTags, file } = event.data;
                 if (path.endsWith(".md")) {
+                    if (self.debug) {
+                        console.debug(
+                            `Parsing ${path} for calendar events (${self.queue.length} to go)`
+                        );
+                    }
                     self.parseFileForEvents(data, cache, allTags, file);
                 }
                 resolve();
@@ -262,7 +258,7 @@ class Parser {
                 return this.getHelperByName(name);
             } else if (this.debug) {
                 console.info(
-                    `Could not find calendar ${name} associated with file ${file.basename}`
+                    `Skipping file ${file.basename} (no calendar; ${name})`
                 );
             }
         }
@@ -274,11 +270,12 @@ class Parser {
         if (helper) {
             return helper;
         } else {
-            if (this.debug) console.info("Finding calendar for", name);
-            const calendar = this.calendars.find(
+           const calendar = this.calendars.find(
                 (calendar) => name.toLowerCase() == calendar.name.toLowerCase()
+                    || name.toLowerCase() == calendar.id.toLowerCase()
             );
-            if (calendar) {
+            if (this.debug) console.info("Finding calendar for", name, calendar);
+             if (calendar) {
                 if (this.debug)
                     console.info(
                         "creating event helper for calendar",
@@ -297,6 +294,7 @@ class Parser {
                 this.eventHelpers.set(name, helper);
                 return helper;
             }
+            if (this.debug) console.info("No calendar found for", name);
         }
     }
 }
