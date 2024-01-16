@@ -89,11 +89,13 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
                 .getYearFromCache(date.year)
                 .getMonthFromCache(date.month);
         },
-        setCurrentDate: (date: CalDate) =>
+        setCurrentDate: (date: CalDate) => {
             store.update((cal) => {
                 cal.current = { ...date };
                 return cal;
-            }),
+            });
+            plugin.saveCalendars();
+        },
         updateCalendar: (calendar: Calendar) => update((cal) => calendar),
         eventStore,
         /* addEvent: (date: CalDate) => {
