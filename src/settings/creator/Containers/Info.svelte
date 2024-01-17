@@ -4,7 +4,7 @@
     import TextComponent from "../Settings/TextComponent.svelte";
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
     import Details from "../Utilities/Details.svelte";
-    import { DEFAULT_CALENDAR } from "src/settings/settings.constants";
+    import { DEFAULT_CALENDAR, DEFAULT_DATA } from "src/settings/settings.constants";
     import { DEFAULT_FORMAT } from "src/utils/constants";
 
     const calendar = getContext("store");
@@ -15,7 +15,7 @@
     $: validName = $calendar.name != null && $calendar.name.length;
 
     if (!$calendar.inlineEventTag)
-        $calendar.inlineEventTag = DEFAULT_CALENDAR.inlineEventTag;
+        $calendar.inlineEventTag = DEFAULT_DATA.inlineEventTag;
 
     const descFormat = () =>
         createFragment((e) => {
@@ -89,6 +89,23 @@
                 $calendar.static.incrementDay = !$calendar.static.incrementDay;
             }}
         /> -->
+        <ToggleComponent
+            name={"Support inline events"}
+            desc={"Display day of year in Day View"}
+            value={$calendar.supportInlineEvents}
+            on:click={() => {
+                $calendar.supportInlineEvents =
+                    !$calendar.supportInlineEvents;
+            }}
+        />
+        <TextComponent
+            name={"Tag to indicate notes to scan for inline events"}
+            value={$calendar.inlineEventTag}
+            on:blur={(evt) => {
+                if (evt.detail === $calendar.inlineEventTag) return;
+                $calendar.inlineEventTag = evt.detail;
+            }}
+        />
     </div>
 </Details>
 
