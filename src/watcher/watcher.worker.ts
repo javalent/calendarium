@@ -19,6 +19,10 @@ import type {
 } from "./watcher.types";
 
 const ctx: Worker = self as any;
+
+function resolveTags(inlineTags: (string | null)[], allTags: string[]) {
+    return inlineTags.some((tag) => tag && allTags.includes(tag));
+}
 class Parser {
     queue: string[] = [];
     parsing: boolean = false;
@@ -61,7 +65,13 @@ class Parser {
                     });
 
                     if (this.debug) {
-                        console.debug("Received options message", this.defaultCalendar, this.addToDefaultIfMissing, this.inlineEventsTag, this.paths);
+                        console.debug(
+                            "Received options message",
+                            this.defaultCalendar,
+                            this.addToDefaultIfMissing,
+                            this.inlineEventsTag,
+                            this.paths
+                        );
                     }
                 }
             }
@@ -185,10 +195,13 @@ class Parser {
         );
 
         if (
-            this.inlineEventsTag != null &&
-            allTags &&
-            (allTags.includes(this.inlineEventsTag) ||
-                allTags.includes(`#${this.inlineEventsTag}`))
+            resolveTags(
+                [
+                    this.inlineEventsTag,
+                    eventHelper.calendar.inlineEventTag ?? null,
+                ],
+                allTags
+            )
         ) {
             eventHelper.parseInlineEvents(
                 data,
@@ -270,12 +283,14 @@ class Parser {
         if (helper) {
             return helper;
         } else {
-           const calendar = this.calendars.find(
-                (calendar) => name.toLowerCase() == calendar.name.toLowerCase()
-                    || name.toLowerCase() == calendar.id.toLowerCase()
+            const calendar = this.calendars.find(
+                (calendar) =>
+                    name.toLowerCase() == calendar.name.toLowerCase() ||
+                    name.toLowerCase() == calendar.id.toLowerCase()
             );
-            if (this.debug) console.info("Finding calendar for", name, calendar);
-             if (calendar) {
+            if (this.debug)
+                console.info("Finding calendar for", name, calendar);
+            if (calendar) {
                 if (this.debug)
                     console.info(
                         "creating event helper for calendar",
