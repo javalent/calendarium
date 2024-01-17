@@ -597,6 +597,12 @@ export default class SettingsService {
         }
         const data = merge(DEFAULT_DATA, fcData ?? {});
         data.askedToMoveFC = true;
+
+        //Remove note-based events, as these will be duplicated in Calendarium.
+        for (const calendar of data?.calendars ?? []) {
+            calendar.events = calendar.events?.filter((e) => !e.note) ?? [];
+        }
+
         await this.updateDataToNewSchema(data);
         await this.saveData(data, true);
     }
