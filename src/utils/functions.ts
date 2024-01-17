@@ -304,20 +304,20 @@ export function testLeapDay(leapday: LeapDay, year: number) {
         .some(({ interval, exclusive }, index, array) => {
             if (interval == undefined) return false;
             if (exclusive && index == 0) {
-                return (year - leapday.offset ?? 0) % interval != 0;
+                return (year - (leapday.offset ?? 0)) % interval != 0;
             }
 
             if (exclusive) return;
 
             if (array[index + 1] && array[index + 1].exclusive) {
                 return (
-                    (year - leapday.offset ?? 0) % interval == 0 &&
-                    (year - leapday.offset ?? 0) %
+                    (year - (leapday.offset ?? 0)) % interval == 0 &&
+                    (year - (leapday.offset ?? 0)) %
                         (array[index + 1].interval ?? 0) !=
                         0
                 );
             }
-            return (year - leapday.offset ?? 0) % interval == 0;
+            return (year - (leapday.offset ?? 0)) % interval == 0;
         });
 }
 

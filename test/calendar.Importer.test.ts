@@ -10,6 +10,7 @@ const IMPERIAL_EXPORT = require("./data/exports/imperial-export.json");
 
 global.createDiv = vi.fn(
     (
+        //@ts-ignore
         o?: DomElementInfo | string,
         callback?: (el: HTMLDivElement) => void
     ): HTMLDivElement => {

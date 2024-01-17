@@ -30,7 +30,7 @@ export default class Import {
 
             if (!year_data) continue;
 
-            const firstWeekDay = year_data.first_day - 1 ?? 0;
+            const firstWeekDay = Math.max(year_data.first_day - 1, 0);
             const overflow = year_data.overflow ?? true;
             const global_week = year_data.global_week;
 

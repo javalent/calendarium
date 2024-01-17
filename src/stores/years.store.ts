@@ -67,7 +67,7 @@ export class YearStore {
                     if (!interval) return false;
                     if (exclusive && index == 0) {
                         return (
-                            (this.year - leapday.offset ?? 0) % interval != 0
+                            (this.year - (leapday.offset ?? 0)) % interval != 0
                         );
                     }
 
@@ -75,13 +75,13 @@ export class YearStore {
 
                     if (array[index + 1] && array[index + 1].exclusive) {
                         return (
-                            (this.year - leapday.offset ?? 0) % interval == 0 &&
-                            (this.year - leapday.offset ?? 0) %
+                            (this.year - (leapday.offset ?? 0)) % interval == 0 &&
+                            (this.year - (leapday.offset ?? 0)) %
                                 array[index + 1].interval !=
                                 0
                         );
                     }
-                    return (this.year - leapday.offset ?? 0) % interval == 0;
+                    return (this.year - (leapday.offset ?? 0)) % interval == 0;
                 })
         );
     });
