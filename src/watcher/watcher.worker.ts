@@ -32,7 +32,7 @@ class Parser {
     parseTitle: boolean = false;
     addToDefaultIfMissing: boolean;
     debug: boolean;
-    eventHelpers = new Map();
+    eventHelpers: Map<string, CalEventHelper> = new Map();
     paths: [string, string][];
     inlineEventsTag: string | null = null;
 
@@ -277,7 +277,7 @@ class Parser {
         }
         return null;
     }
-    getHelperByName(name: string) {
+    getHelperByName(name: string): CalEventHelper | null {
         let helper = this.eventHelpers.get(name);
 
         if (helper) {
@@ -297,11 +297,11 @@ class Parser {
                         calendar
                     );
                 helper = new CalEventHelper(calendar, this.parseTitle);
-
+                const id = helper.calendar.id;
                 helper.onNewCategory = (category: CalEventCategory) => {
                     ctx.postMessage<NewCategoryMessage>({
                         type: "category",
-                        id: helper.calendar.id,
+                        id,
                         category,
                     });
                 };
@@ -311,6 +311,7 @@ class Parser {
             }
             if (this.debug) console.info("No calendar found for", name);
         }
+        return null;
     }
 }
 new Parser();

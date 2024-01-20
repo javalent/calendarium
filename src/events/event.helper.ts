@@ -12,6 +12,7 @@ import type {
 } from "../@types";
 import { DEFAULT_FORMAT } from "../utils/constants";
 import randomColor from "randomcolor";
+import { logError, logWarning } from "../utils/log";
 
 const inlineDateSpans: RegExp = /<(span|div)[\s\S]*?<\/(span|div)>/g;
 
@@ -68,7 +69,7 @@ export class CalEventHelper {
             .replace(/D+/g, "D");
     }
 
-    onNewCategory: (category: CalEventCategory) => {};
+    onNewCategory: (category: CalEventCategory) => void;
 
     category?: CalEventCategory | null = null;
     parseFrontmatterEvent(
@@ -491,32 +492,4 @@ function wildNullNumber(data: any): Nullable<number> {
         return data;
     }
     return parseInt(data); // may return NaN, that's ok
-}
-
-function logError(
-    message: string,
-    input: InputDate | null,
-    file: { path: string; basename: string },
-    datestring?: string
-) {
-    console.log(
-        "Calendarium: %s. From '%s', date value: %o",
-        message,
-        file.path,
-        datestring ? datestring : input
-    );
-}
-
-function logWarning(
-    message: string,
-    input: InputDate,
-    file: { path: string; basename: string },
-    datestring?: string
-) {
-    console.log(
-        "Calendarium: %s. From '%s', date value: '%o'",
-        message,
-        file.path,
-        datestring ? datestring : input
-    );
 }

@@ -95,6 +95,7 @@ test("Parse February: Leap year", () => {
         "1996-Feb-29"
     );
 });
+
 test("Parse March", () => {
     const expected: ParseDate = {
         year: 0,
@@ -128,7 +129,7 @@ test("Sort Gregorian dates", () => {
         helper.parseCalDateString("0-March-31-some extra", file), // 6
     ];
 
-    const fcEvents: CalEvent[] = events.map((x) => {
+    const calEvents: CalEvent[] = events.map((x) => {
         return {
             date: x!,
             description: "Test",
@@ -141,7 +142,7 @@ test("Sort Gregorian dates", () => {
         };
     });
 
-    const sorted = sortEventList(fcEvents);
+    const sorted = sortEventList(calEvents);
     console.log(sorted);
 
     expect(sorted[0].date).toEqual(events[4]);
@@ -153,4 +154,39 @@ test("Sort Gregorian dates", () => {
     expect(sorted[6].date).toEqual(events[5]);
 
     console.log(sorted);
+});
+
+test("Parse Range dates", () => {
+    const events = [
+        helper.parseCalDateString("[1991-1993]-January-10", file),
+        helper.parseCalDateString("[1993-1991]-January-10", file),
+        helper.parseCalDateString("[1991-*]-January-10", file),
+        helper.parseCalDateString("[*-1991]-January-10", file),
+        helper.parseCalDateString("[1991]-January-10", file),
+        helper.parseCalDateString("1991-[January-February]-10", file),
+        helper.parseCalDateString("1991-[January-March]-10", file),
+        helper.parseCalDateString("1991-[January-*]-10", file),
+        helper.parseCalDateString("1991-[January-January]-10", file),
+        helper.parseCalDateString("1991-January-[10-20]", file),
+        helper.parseCalDateString("1991-January-[10-*]", file),
+        helper.parseCalDateString("1991-January-[*-10]", file),
+        helper.parseCalDateString("1991-January-[10]", file),
+        helper.parseCalDateString("1991-January-[*-*]", file),
+        helper.parseCalDateString("[1991-1993]-[January-February]-[10-12]", file),
+        helper.parseCalDateString("*-[January-February]-10", file),
+    ];
+
+    const calEvents: CalEvent[] = events.map((x) => {
+        return {
+            date: x!,
+            description: "Test",
+            id: "test",
+
+            name: "Test",
+            note: "Test",
+            category: "Test",
+            sort: helper.parsedToTimestamp(x!),
+            type: "Test",
+        };
+    });
 });
