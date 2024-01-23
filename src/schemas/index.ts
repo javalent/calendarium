@@ -1,359 +1,304 @@
-import { z } from "zod";
-
-export type CalDate = z.infer<typeof calDateSchema>;
-export const calDateSchema = z.object({
-    year: z.number(),
-    month: z.number(),
-    day: z.number(),
-});
+export type CalDate = {
+    year: number;
+    month: number;
+    day: number;
+};
 
 /**
  * Events
  */
-export type CalEventSort = z.infer<typeof calEventSortSchema>;
-export const calEventSortSchema = z.object({
-    timestamp: z.number(),
-    order: z.string(),
-});
+export type CalEventSort = {
+    timestamp: number;
+    order: string;
+};
 
-export type CalEventDate = z.infer<typeof calEventDateSchema>;
-export const calEventDateSchema = z.object({
-    year: z.number().nullable(),
-    month: z.number().nullable(),
-    day: z.number().nullable(),
-});
+export type CalEventDate = {
+    year: number | null;
+    month: number | null;
+    day: number | null;
+};
 
-const formulaIntervalSchema = z.object({
-    type: z.literal("interval"),
-    number: z.number(),
-    timespan: z.literal("days"),
-});
+type Formula = {
+    type: "interval";
+    number: number;
+    timespan: "days";
+};
+export type CalEvent = {
+    name: string;
+    description?: string | null;
+    date: CalEventDate;
+    end?: CalEventDate | null;
+    id: string;
+    note?: string | null;
+    category: string | null;
+    sort: CalEventSort;
+    formulas?: Formula[];
+    img?: string | null;
+};
 
-export type CalEventCondition = z.infer<typeof calEventConditionSchema>;
-export const calEventConditionSchema = z.object({});
-const eventFormulaSchema = formulaIntervalSchema;
-
-export type CalEvent = z.infer<typeof calEventSchema>;
-export const calEventSchema = z.object({
-    name: z.string(),
-    description: z.string().nullable(),
-    date: calEventDateSchema,
-    end: calEventDateSchema.nullish(),
-    id: z.string(),
-    note: z.string().nullable(),
-    category: z.string().nullable(),
-    sort: calEventSortSchema,
-    formulas: z.array(eventFormulaSchema).optional(),
-    img: z.string().nullable().optional(),
-});
-
-export type ColorEvent = z.infer<typeof colorEventSchema>;
-export const colorEventSchema = calEventSchema.extend({
-    color: z.string(),
-});
-
-export type CalEventCategory = z.infer<typeof calEventCategorySchema>;
-export const calEventCategorySchema = z.object({
-    name: z.string(),
-    color: z.string(),
-    id: z.string(),
-});
+export type CalEventCategory = {
+    name: string;
+    color: string;
+    id: string;
+};
 
 /**
  * Moons
  */
+export type Moon = {
+    name: string;
+    cycle: number;
+    offset: number;
+    faceColor: string;
+    shadowColor: string;
+    id: string;
+};
 
-export type Moon = z.infer<typeof moonSchema>;
-export const moonSchema = z.object({
-    name: z.string(),
-    cycle: z.number(),
-    offset: z.number(),
-    faceColor: z.string(),
-    shadowColor: z.string(),
-    id: z.string(),
-});
+export type Phase =
+    | "New Moon"
+    | "New Moon Fading"
+    | "New Moon Faded"
+    | "Waxing Crescent Rising"
+    | "Waxing Crescent Risen"
+    | "Waxing Crescent"
+    | "Waxing Crescent Fading"
+    | "Waxing Crescent Faded"
+    | "First Quarter Rising"
+    | "First Quarter Risen"
+    | "First Quarter"
+    | "First Quarter Fading"
+    | "First Quarter Faded"
+    | "Waxing Gibbous Rising"
+    | "Waxing Gibbous Risen"
+    | "Waxing Gibbous"
+    | "Waxing Gibbous Fading"
+    | "Waxing Gibbous Faded"
+    | "Full Moon Rising"
+    | "Full Moon Risen"
+    | "Full Moon"
+    | "Full Moon Fading"
+    | "Full Moon Faded"
+    | "Waning Gibbous Rising"
+    | "Waning Gibbous Risen"
+    | "Waning Gibbous"
+    | "Waning Gibbous Fading"
+    | "Waning Gibbous Faded"
+    | "Last Quarter Rising"
+    | "Last Quarter Risen"
+    | "Last Quarter"
+    | "Last Quarter Fading"
+    | "Last Quarter Faded"
+    | "Waning Crescent Rising"
+    | "Waning Crescent Risen"
+    | "Waning Crescent"
+    | "Waning Crescent Fading"
+    | "Waning Crescent Faded"
+    | "New Moon Rising"
+    | "New Moon Risen";
 
-export type Phase = z.infer<typeof phaseSchema>;
-export const phaseSchema = z.union([
-    z.undefined(),
-    z.literal("New Moon"),
-    z.literal("New Moon Fading"),
-    z.literal("New Moon Faded"),
-    z.literal("Waxing Crescent Rising"),
-    z.literal("Waxing Crescent Risen"),
-    z.literal("Waxing Crescent"),
-    z.literal("Waxing Crescent Fading"),
-    z.literal("Waxing Crescent Faded"),
-    z.literal("First Quarter Rising"),
-    z.literal("First Quarter Risen"),
-    z.literal("First Quarter"),
-    z.literal("First Quarter Fading"),
-    z.literal("First Quarter Faded"),
-    z.literal("Waxing Gibbous Rising"),
-    z.literal("Waxing Gibbous Risen"),
-    z.literal("Waxing Gibbous"),
-    z.literal("Waxing Gibbous Fading"),
-    z.literal("Waxing Gibbous Faded"),
-    z.literal("Full Moon Rising"),
-    z.literal("Full Moon Risen"),
-    z.literal("Full Moon"),
-    z.literal("Full Moon Fading"),
-    z.literal("Full Moon Faded"),
-    z.literal("Waning Gibbous Rising"),
-    z.literal("Waning Gibbous Risen"),
-    z.literal("Waning Gibbous"),
-    z.literal("Waning Gibbous Fading"),
-    z.literal("Waning Gibbous Faded"),
-    z.literal("Last Quarter Rising"),
-    z.literal("Last Quarter Risen"),
-    z.literal("Last Quarter"),
-    z.literal("Last Quarter Fading"),
-    z.literal("Last Quarter Faded"),
-    z.literal("Waning Crescent Rising"),
-    z.literal("Waning Crescent Risen"),
-    z.literal("Waning Crescent"),
-    z.literal("Waning Crescent Fading"),
-    z.literal("Waning Crescent Faded"),
-    z.literal("New Moon Rising"),
-    z.literal("New Moon Risen"),
-]);
-
-export type MoonState = z.infer<typeof moonStateSchema>;
-export const moonStateSchema = moonSchema.extend({
-    phase: phaseSchema,
-});
+export type MoonState = Moon & {
+    phase: Phase;
+};
 /**
  * Timespans
  */
-
-export type TimeSpan = z.infer<typeof timeSpanSchema>;
-export const timeSpanSchema = z.object({
-    type: z.string(),
-    name: z.string(),
-    id: z.string(),
-});
+export type TimeSpan = {
+    type: string;
+    name: string | null;
+    id: string;
+};
 
 /**
  * Days
  */
-export type BaseDay = z.infer<typeof baseDaySchema>;
-export const baseDaySchema = timeSpanSchema.extend({
-    type: z.union([z.literal("day"), z.literal("leapday")]),
-    name: z.string().nullable(),
-    id: z.string().nullable(),
-});
+export type BaseDay = TimeSpan & {
+    type: "day" | "leapday";
+    name?: string | null;
+    id?: string;
+};
 
-export type DefinedBaseDay = z.infer<typeof definedBaseDaySchema>;
-export const definedBaseDaySchema = z.object({
-    number: z.number(),
-});
+export type DefinedBaseDay = {
+    number: number;
+};
 
-export type Day = z.infer<typeof daySchema>;
-export const daySchema = baseDaySchema.extend({
-    type: z.literal("day"),
-    abbreviation: z.string().optional(),
-});
+export type Day = BaseDay & {
+    type: "day";
+    abbreviation?: string;
+};
 
-export const definedDaySchema = daySchema.merge(definedBaseDaySchema);
+export type DefinedDay = Day & DefinedBaseDay;
+export type Week = Day[];
 
-export type Week = z.infer<typeof weekSchema>;
-export const weekSchema = z.array(daySchema);
+export type LeapDayCondition = {
+    ignore?: boolean;
+    exclusive?: boolean;
+    interval: number;
+};
 
-export type LeapDayCondition = z.infer<typeof leapDayConditionSchema>;
-const leapDayConditionSchema = z.object({
-    ignore: z.boolean().nullable(),
-    exclusive: z.boolean().nullable(),
-    interval: z.number(),
-});
+export type LeapDay = BaseDay & {
+    type: "leapday";
+    short?: string;
+    interval: LeapDayCondition[];
+    timespan: number;
+    intercalary: boolean;
+    offset: number;
+    numbered?: boolean;
+    after?: number;
+};
+export type DefinedLeapDay = LeapDay & DefinedBaseDay;
 
-export type LeapDay = z.infer<typeof leapDaySchema>;
-export const leapDaySchema = baseDaySchema.extend({
-    type: z.literal("leapday"),
-    short: z.string().optional(),
-    interval: z.array(leapDayConditionSchema),
-    timespan: z.number(),
-    intercalary: z.boolean(),
-    offset: z.number(),
-    numbered: z.boolean().optional(),
-    after: z.number().optional(),
-});
-
-export type DefinedLeapDay = z.infer<typeof definedLeapDaySchema>;
-export const definedLeapDaySchema = leapDaySchema.merge(definedBaseDaySchema);
-
-export type DayOrLeapDay = z.infer<typeof dayOrLeapDaySchema>;
-export const dayOrLeapDaySchema = z.discriminatedUnion("type", [
-    definedLeapDaySchema,
-    definedDaySchema,
-]);
+export type DayOrLeapDay = DefinedLeapDay | DefinedDay;
 /**
  * Months
  */
-const baseMonthSchema = timeSpanSchema.extend({
-    length: z.number(),
-    interval: z.number(),
-    offset: z.number(),
-    type: z.union([z.literal("month"), z.literal("intercalary")]),
-    subtitle: z.string().optional(),
-    short: z.string().optional(),
-});
+type BaseMonth = TimeSpan & {
+    length: number;
+    interval: number;
+    offset: number;
+    type: "month" | "intercalary";
+    subtitle?: string;
+    short?: string;
+};
 
-export type IntercalaryMonth = z.infer<typeof intercalaryMonthSchema>;
-export const intercalaryMonthSchema = baseMonthSchema.extend({
-    type: z.literal("intercalary"),
-});
+export type IntercalaryMonth = BaseMonth & {
+    type: "intercalary";
+};
 
-export type RegularMonth = z.infer<typeof regularMonthSchema>;
-export const regularMonthSchema = baseMonthSchema.extend({
-    type: z.literal("month"),
-    week: weekSchema.optional(),
-});
+export type RegularMonth = BaseMonth & {
+    type: "month";
+    week?: Week;
+};
 
-export type Month = z.infer<typeof monthSchema>;
-export const monthSchema = z.discriminatedUnion("type", [
-    regularMonthSchema,
-    intercalaryMonthSchema,
-]);
+export type Month = RegularMonth | IntercalaryMonth;
 
 /**
  * Years
  */
-export type Year = z.infer<typeof yearSchema>;
-export const yearSchema = timeSpanSchema;
+export type Year = TimeSpan;
 
 /**
  * Misc
  */
-export type Season = z.infer<typeof seasonSchema>;
-export const seasonSchema = z.object({
-    name: z.string(),
-    start: z.object({
-        month: monthSchema,
-        day: daySchema,
-    }),
-});
-export type Era = z.infer<typeof eraSchema>;
-export const eraSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    format: z.string(),
-    restart: z.boolean(),
-    endsYear: z.boolean(),
-    event: z.boolean(),
-    start: calDateSchema,
-    eventDescription: z.string().optional(),
-    eventCategory: z.string().optional(),
-    description: z.string().optional(),
-});
+export type Season = {
+    name: string;
+    start: {
+        month: Month;
+        day: Day;
+    };
+};
+export type Era = {
+    id: string;
+    name: string;
+    format: string;
+    restart: boolean;
+    endsYear: boolean;
+    event: boolean;
+    start: CalDate;
+    eventDescription?: string;
+    eventCategory?: string;
+    description?: string;
+};
 
 /**
  * Static
  */
-export type StaticCalendarData = z.infer<typeof staticCalendarDataSchema>;
-export const staticCalendarDataSchema = z.object({
-    firstWeekDay: z.number(),
-    overflow: z.boolean(),
-    weekdays: weekSchema,
-    months: z.array(monthSchema),
-    leapDays: z.array(leapDaySchema),
-    moons: z.array(moonSchema),
-    displayMoons: z.boolean(),
-    displayDayNumber: z.boolean(),
-    eras: z.array(eraSchema),
-    offset: z.number().optional(),
-    incrementDay: z.boolean(),
-    useCustomYears: z.boolean().optional(),
-    years: z.array(yearSchema).optional(),
-    padMonths: z.number().optional(),
-    padDays: z.number().optional(),
-});
+export type StaticCalendarData = {
+    firstWeekDay: number;
+    overflow: boolean;
+    weekdays: Week;
+    months: Month[];
+    leapDays: LeapDay[];
+    moons: Moon[];
+    displayMoons: boolean;
+    displayDayNumber: boolean;
+    eras: Era[];
+    offset?: number;
+    incrementDay: boolean;
+    useCustomYears?: boolean;
+    years?: Year[];
+    padMonths?: number;
+    padDays?: number;
+};
 
 /**
  * Calendar
  */
-export type Calendar = z.infer<typeof calendarSchema>;
-export const calendarSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    description: z.string().nullable(),
-    static: staticCalendarDataSchema,
-    current: calDateSchema,
-    events: z.array(calEventSchema),
-    categories: z.array(calEventCategorySchema),
-    date: z.number().optional(),
-    displayWeeks: z.boolean().optional(),
-    autoParse: z.boolean(),
-    path: z.array(z.string()),
-    supportInlineEvents: z.boolean().nullish(),
-    inlineEventTag: z.string().nullish(),
-    dateFormat: z.string().optional(),
-    showIntercalarySeparately: z.boolean(),
-});
-export type DeletedCalendar = z.infer<typeof deletedCalendarSchema>;
-export const deletedCalendarSchema = calendarSchema.extend({
-    deletedTimestamp: z.number(),
-});
-export type PresetCalendar = z.infer<typeof presetCalendarSchema>;
-export const presetCalendarSchema = calendarSchema.extend({
-    id: z.string().nullable(),
-    name: z.string().nullable(),
-    current: calDateSchema.merge(
-        z.object({
-            year: z.number().nullable(),
-            month: z.number().nullable(),
-            day: z.number().nullable(),
-        })
-    ),
-});
+type BaseCalendar = {
+    id: string | null;
+    name: string | null;
+    description: string;
+    static: StaticCalendarData;
+    current: CalDate | CalEventDate;
+    events: CalEvent[];
+    categories: CalEventCategory[];
+    date?: number;
+    displayWeeks?: boolean;
+    autoParse: boolean;
+    path: string[];
+    supportInlineEvents: boolean;
+    inlineEventTag?: string | null;
+    dateFormat?: string;
+    showIntercalarySeparately: boolean;
+};
+
+export type Calendar = BaseCalendar & {
+    id: string;
+    name: string;
+    description: string;
+    current: CalDate;
+};
+export type DeletedCalendar = Calendar & {
+    deletedTimestamp: number;
+};
+export type PresetCalendar = BaseCalendar & {
+    id: null;
+    name: string | null;
+    current: CalEventDate;
+};
 
 /**
  * Data
  */
-export type CalendariumCodeBlockParameters = z.infer<
-    typeof calendariumCodeBlockParametersSchema
->;
-export const calendariumCodeBlockParametersSchema = z.object({
-    calendar: z.string().optional(),
-});
+export type CalendariumCodeBlockParameters = {
+    calendar?: string;
+};
 
-export type CalendariumData = z.infer<typeof calendariumDataSchema>;
-export const SyncBehavior = z.enum(["Ask", "Always", "Never"]);
-export type SyncBehavior = z.infer<typeof SyncBehavior>;
+export enum SyncBehavior {
+    Ask = "Ask",
+    Always = "Always",
+    Never = "Never",
+}
 
-export type Version = z.infer<typeof versionSchema>;
-export const versionSchema = z.object({
-    major: z.number().nullable(),
-    minor: z.number().nullable(),
-    patch: z.number().nullable(),
-    beta: z.number().nullable(),
-    /* patch: z.union([z.number(), z.string()]).nullable(), */
-});
-export const calendariumDataSchema = z.object({
-    addToDefaultIfMissing: z.boolean(),
-    askedToMoveFC: z.boolean(),
-    askedAboutSync: z.boolean(),
-    calendars: z.array(calendarSchema),
-    configDirectory: z.string().nullable(),
-    dailyNotes: z.boolean(),
-    dateFormat: z.string(),
-    debug: z.boolean(),
-    defaultCalendar: z.nullable(z.string()),
-    deletedCalendars: z.array(deletedCalendarSchema),
-    eventFrontmatter: z.boolean(),
-    eventPreview: z.boolean(),
-    exit: z.object({
-        saving: z.boolean(),
-        event: z.boolean(),
-        calendar: z.boolean(),
-    }),
-    inlineEventsTag: z.string().nullable(),
-    parseDates: z.boolean(),
-    syncBehavior: SyncBehavior,
-    paths: z.array(z.tuple([z.string(), z.string()]).readonly()),
-    version: versionSchema,
-});
+export type Version = {
+    major?: number | null;
+    minor?: number | null;
+    patch?: number | null;
+    beta?: number | null;
+    /* patch?: z.union([number, string]), */
+};
+export type CalendariumData = {
+    addToDefaultIfMissing: boolean;
+    askedToMoveFC: boolean;
+    askedAboutSync: boolean;
+    calendars: Calendar[];
+    configDirectory?: string | null;
+    dailyNotes: boolean;
+    dateFormat: string;
+    debug: boolean;
+    defaultCalendar: string | null;
+    deletedCalendars: DeletedCalendar[];
+    eventFrontmatter: boolean;
+    eventPreview: boolean;
+    exit: {
+        saving: boolean;
+        event: boolean;
+        calendar: boolean;
+    };
+    inlineEventsTag?: string | null;
+    parseDates: boolean;
+    syncBehavior: SyncBehavior;
+    paths: Readonly<[string, string]>[];
+    version: Version;
+};
 
-export type MarkdownCalendariumData = z.infer<
-    typeof markdownCalendariumDataSchema
->;
-export const markdownCalendariumDataSchema = calendariumDataSchema.omit({});
+export type MarkdownCalendariumData = Omit<CalendariumData, "">;

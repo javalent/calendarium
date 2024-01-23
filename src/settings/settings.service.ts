@@ -19,7 +19,7 @@ import { nanoid } from "src/utils/functions";
 import Calendarium from "src/main";
 import copy from "fast-copy";
 import { CalendariumNotice } from "src/utils/notice";
-import { calendariumDataSchema, SyncBehavior } from "src/schemas";
+import { SyncBehavior } from "src/schemas";
 import {
     isOlderVersion,
     MarkdownReason,
@@ -272,9 +272,9 @@ export default class SettingsService {
                 e.createEl("br");
                 const b = e.createDiv("calendarium-notice-buttons");
                 const drop = new DropdownComponent(b)
-                    .addOption(SyncBehavior.enum.Ask, "Continue Asking")
-                    .addOption(SyncBehavior.enum.Always, "Always Reload")
-                    .addOption(SyncBehavior.enum.Never, "Never Reload")
+                    .addOption(SyncBehavior.Ask, "Continue Asking")
+                    .addOption(SyncBehavior.Always, "Always Reload")
+                    .addOption(SyncBehavior.Never, "Never Reload")
                     .setValue(this.#data.syncBehavior)
                     .onChange(async (v) => {
                         this.#data.syncBehavior = v as SyncBehavior;
@@ -427,25 +427,11 @@ export default class SettingsService {
          * At this point, pluginData should be CalendariumData, but should be validated.
          */
         console.debug("Calendarium: Ensuring data matches the schema.");
-        const parsed = calendariumDataSchema.safeParse(pluginData);
-        let data: CalendariumData | null = null;
-        if (!parsed.success) {
-            console.debug(
-                "Calendarium data did not pass validation. Trying to merge existing data with default data." +
-                    "\n\n" +
-                    parsed.error
-            );
-            try {
-                data = merge(
-                    DEFAULT_DATA,
-                    pluginData as any as Partial<CalendariumData>
-                );
-            } catch (e) {}
-        } else {
-            console.debug("Calendarium: Data passed validation.");
-            data = parsed.data;
-        }
-        if (!data) data = copy(DEFAULT_DATA);
+
+        let data = pluginData as CalendariumData;
+
+        if (!data || !Object.keys(pluginData ?? {}).length)
+            data = copy(DEFAULT_DATA);
         console.log(this.getDataVersion(data));
         let dirty = this.updateDataToNewSchema(data);
         if (dirty) {

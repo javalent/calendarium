@@ -111,7 +111,7 @@ function createStore(plugin: Calendarium, existing: Calendar) {
     const validMonths = derived(staticStore, (data) => {
         return (
             data.months?.length > 0 &&
-            data.months?.every((m) => m.name?.length > 0) &&
+            data.months?.every((m) => (m.name?.length ?? 0) > 0) &&
             data.months?.every((m) => m.length > 0)
         );
     });

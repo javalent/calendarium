@@ -4,7 +4,6 @@ import type {
     CalEvent,
     Day,
     LeapDay,
-    Nullable,
     CalEventDate,
 } from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
@@ -110,7 +109,7 @@ export function dateString(
 
     let startY: string = `${year}`;
     if (useCustomYears && years?.length && year) {
-        startY = years[year - 1].name;
+        startY = years[year - 1].name ?? startY;
     }
     if (month != undefined && !months[month]) return "Invalid Date";
 
@@ -123,7 +122,7 @@ export function dateString(
         const endYear = end.year;
         let endY: string = `${endYear}`;
         if (useCustomYears && years?.length && endYear) {
-            endY = years[endYear - 1]?.name;
+            endY = years[endYear - 1]?.name ?? endY;
         }
         const endM = endMonth == undefined ? endMonth : months[endMonth].name;
         const endD = ordinal(endDay);
@@ -236,7 +235,7 @@ export function toMonthString(
     month: Nullable<number>,
     calendar: Calendar
 ): string {
-    return month == null ? "*" : calendar.static.months[month].name;
+    return month == null ? "*" : calendar.static.months[month]?.name ?? "*";
 }
 
 export function toShortMonthString(
@@ -247,7 +246,7 @@ export function toShortMonthString(
         ? "*"
         : shorten(
               calendar.static.months[month].short ?? "",
-              calendar.static.months[month].name
+              calendar.static.months[month].name ?? ""
           );
 }
 

@@ -737,9 +737,9 @@ export default class CalendariumSettings extends PluginSettingTab {
                 `Control how the plugin reloads data when a sync is detected.`
             )
             .addDropdown((d) => {
-                d.addOption(SyncBehavior.enum.Ask, "Continue Asking")
-                    .addOption(SyncBehavior.enum.Always, "Always Reload")
-                    .addOption(SyncBehavior.enum.Never, "Never Reload")
+                d.addOption(SyncBehavior.Ask, "Continue Asking")
+                    .addOption(SyncBehavior.Always, "Always Reload")
+                    .addOption(SyncBehavior.Never, "Never Reload")
                     .setValue(this.data.syncBehavior)
                     .onChange(async (v) => {
                         this.data.syncBehavior = v as SyncBehavior;
@@ -765,7 +765,7 @@ export default class CalendariumSettings extends PluginSettingTab {
     }
 
     launchCalendarCreator(
-        calendar: PresetCalendar = DEFAULT_CALENDAR
+        calendar: Calendar | PresetCalendar = DEFAULT_CALENDAR
     ): Promise<Calendar | void> {
         /* this.containerEl.empty(); */
         const clone = copy(calendar) as Calendar;

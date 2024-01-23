@@ -1,14 +1,10 @@
-import { Nullable } from ".";
+import type { CalDate } from ".";
 
 export interface CalEventSort {
     timestamp: number;
     order: string;
 }
-export interface CalEventDate {
-    year: Nullable<number>,
-    month: Nullable<number>,
-    day: Nullable<number>
-}
+export type CalEventDate = Nullable<CalDate>;
 
 export interface CalEvent {
     name: string;

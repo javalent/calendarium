@@ -23,16 +23,17 @@
     ); */
     const focus = (year: HTMLElement) => {
         const header = year.querySelector(
-            `#${getIdForMonth($displayedMonth.name)}`
+            `#${getIdForMonth($displayedMonth.name)}`,
         );
         if (header) header.scrollIntoView(true);
     };
     const id_map = new Map();
-    const getIdForMonth = (month: string) => {
+    const getIdForMonth = (month: string | null) => {
+        if (!month) return "";
         if (!id_map.has(month)) {
             id_map.set(
                 month,
-                `ID_${nanoid(5)}_${month.replace(/^[^a-z]+|[^\w:.-]+/gi, "")}`
+                `ID_${nanoid(5)}_${month.replace(/^[^a-z]+|[^\w:.-]+/gi, "")}`,
             );
         }
         return id_map.get(month);

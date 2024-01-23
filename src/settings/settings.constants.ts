@@ -2,7 +2,7 @@ import type { CalendariumData, PresetCalendar } from "src/@types";
 import { SyncBehavior } from "../schemas";
 
 export const DEFAULT_CALENDAR: PresetCalendar = {
-    name: "",
+    name: null,
     description: "",
     id: null,
     showIntercalarySeparately: true,
@@ -57,7 +57,7 @@ export const DEFAULT_DATA: CalendariumData = {
     debug: false,
     askedToMoveFC: false,
     askedAboutSync: false,
-    syncBehavior: SyncBehavior.enum.Ask,
+    syncBehavior: SyncBehavior.Ask,
     inlineEventsTag: null,
     paths: [],
 };

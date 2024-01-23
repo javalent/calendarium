@@ -33,7 +33,7 @@
 
     const name = (node: HTMLElement, item: Year) => {
         const comp = new TextComponent(node)
-            .setValue(item.name)
+            .setValue(item.name ?? "")
             .setPlaceholder("Name")
             .onChange((v) => {
                 item.name = v;

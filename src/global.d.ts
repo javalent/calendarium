@@ -13,3 +13,5 @@ declare namespace svelteHTML {
         ) => void;
     }
 }
+
+type Nullable<T> = T extends object ? { [P in keyof T]: T[P] | null } : T | null;

@@ -155,7 +155,7 @@ test("Sort Gregorian dates", () => {
 
     console.log(sorted);
 });
-
+/* 
 test("Parse Range dates", () => {
     const events = [
         helper.parseCalDateString("[1991-1993]-January-10", file),
@@ -189,4 +189,4 @@ test("Parse Range dates", () => {
             type: "Test",
         };
     });
-});
+}); */

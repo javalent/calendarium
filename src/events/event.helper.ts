@@ -8,7 +8,6 @@ import type {
     CalEventDate,
     CalEventSort,
     LeapDay,
-    Nullable,
 } from "../@types";
 import { DEFAULT_FORMAT } from "../utils/constants";
 import randomColor from "randomcolor";
@@ -318,7 +317,7 @@ export class CalEventHelper {
             // Name in the month segment
             let m = this.calendar.static.months.find(
                 (m) =>
-                    m.name.startsWith(input.month) ||
+                    m.name?.startsWith(input.month) ||
                     m.short?.startsWith(input.month)
             );
             if (m) {
