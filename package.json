@@ -4,7 +4,7 @@
     "description": "The ultimate Obsidian plugin for crafting mind-bending fantasy and sci-fi calendars",
     "main": "main.js",
     "scripts": {
-        "build": "node ./esbuild.config.mjs production && vitest --run",
+        "build": "vitest --run && node ./esbuild.config.mjs production",
         "dev": "node ./esbuild.config.mjs",
         "release-as": "scripty",
         "test": "vitest"
