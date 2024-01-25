@@ -12,7 +12,7 @@ import type {
     CalendariumData,
     MarkdownCalendariumData,
     Version,
-} from "src/@types";
+} from "src/schemas";
 import { DEFAULT_DATA } from "./settings.constants";
 import merge from "deepmerge";
 import { nanoid } from "src/utils/functions";

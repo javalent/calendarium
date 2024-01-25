@@ -8,7 +8,7 @@ import {
     TFile,
     parseYaml,
 } from "obsidian";
-import type { CalendariumCodeBlockParameters } from "src/@types";
+import type { CalendariumCodeBlockParameters } from "src/schemas";
 import Calendarium from "src/main";
 
 import Ui from "./ui/UI.svelte";

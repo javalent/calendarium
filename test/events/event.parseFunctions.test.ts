@@ -2,7 +2,13 @@
  * @vitest-environment happy-dom
  */
 import type { Loc, Pos } from "obsidian";
-import type { CalEvent, Calendar } from "../../src/@types";
+import {
+    CalEventType,
+    type CalEvent,
+    type Calendar,
+    PeriodicCalEvent,
+    RangeCalEvent,
+} from "../../src/schemas";
 import { CalEventHelper, ParseDate } from "../../src/events/event.helper";
 import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { test, expect } from "vitest";
@@ -119,7 +125,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
 
 test("parseFrontmatterEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: CalEvent[] = [];
+    let actual: RangeCalEvent[] = [];
     gregorian.category = category;
     gregorian.parseFrontmatterEvent(
         {
@@ -136,11 +142,11 @@ test("parseFrontmatterEvent", () => {
         },
         file,
         (event) => {
-            actual.push(event);
+            actual.push(event as RangeCalEvent);
         }
     );
-
     expect(actual.length).toEqual(1);
+    expect(actual[0].type).toBe(CalEventType.Range);
     expect(actual[0].id).toBeDefined();
     expect(actual[0].name).toEqual("Pretty name");
     expect(actual[0].description).toEqual("Fun text");
@@ -169,7 +175,7 @@ test("parseFrontmatterEvent", () => {
 
 test("parseTimelineEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: CalEvent[] = [];
+    let actual: RangeCalEvent[] = [];
 
     gregorian.parseInlineEvents(
         "<span class='ob-timelines'   \n" +
@@ -182,12 +188,13 @@ test("parseTimelineEvent", () => {
             "</span>",
         file,
         (event) => {
-            actual.push(event);
+            actual.push(event as RangeCalEvent);
         },
         () => {}
     );
 
     expect(actual.length).toEqual(1);
+    expect(actual[0].type).toBe(CalEventType.Range);
     expect(actual[0].id).toBeDefined();
     expect(actual[0].name).toEqual("Pretty name");
     expect(actual[0].description?.trim()).toEqual("Fun text");

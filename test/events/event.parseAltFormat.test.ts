@@ -1,7 +1,7 @@
 /**
  * @vitest-environment happy-dom
  */
-import type { CalDate, CalEventDate } from "../../src/@types";
+import type { CalDate, CalEventDate } from "../../src/schemas";
 import { CalEventHelper } from "../../src/events/event.helper";
 import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { test, expect } from "vitest";

@@ -1,5 +1,5 @@
 import copy from "fast-copy";
-import type { Calendar, CalDate, CalEvent } from "src/@types";
+import type { Calendar, CalDate, CalEvent } from "src/schemas";
 import { CalEventHelper } from "src/events/event.helper";
 import type { CalendarStore } from "src/stores/calendar.store";
 import { compareEvents, dateString, sortEventList } from "src/utils/functions";

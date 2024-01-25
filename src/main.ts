@@ -2,7 +2,7 @@ import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
 
 import CalendariumSettings from "./settings/settings.view";
 
-import type { Calendar, CalendariumData } from "./@types";
+import type { Calendar, CalendariumData } from "./schemas";
 import CalendariumView, { VIEW_TYPE } from "./calendar/view";
 
 import { type CalendarEventTree, Watcher } from "./watcher/watcher";
