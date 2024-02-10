@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.0.0-b32](https://github.com/javalent/the-calendarium/compare/1.0.0-b30...1.0.0-b32) (2024-02-10)
+
+
+### Features
+
+* **api:** Parse date ([#86](https://github.com/javalent/the-calendarium/issues/86)) ([778c51f](https://github.com/javalent/the-calendarium/commit/778c51fdb7fe5b2077a334317574272d3c28405d))
+
+
+### Bug Fixes
+
+* Filter out old note-based events when migrationg FC data ([8b8caac](https://github.com/javalent/the-calendarium/commit/8b8caac651b0f2c841b4739e0c0bb1e10333a9e1))
+* Fixes month offset from calendars imported from FC ([9ee67cd](https://github.com/javalent/the-calendarium/commit/9ee67cd05c1c2c949a9d6bec3c34e0e890c7c0af))
+* Improve leapday offset coalescence ([262bf7f](https://github.com/javalent/the-calendarium/commit/262bf7fa1249053b9f59c222dcc5c11d35993528))
+* Look at calendar-specific inline events tag as well as global ([2edfb9c](https://github.com/javalent/the-calendarium/commit/2edfb9c3d4ce043c86893cfc853da4f5f594699b))
+* Save when setting current date (close [#84](https://github.com/javalent/the-calendarium/issues/84)) ([20458ea](https://github.com/javalent/the-calendarium/commit/20458ea9a85e72b56f8a5b31e85e88a7014c5bb5))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0-b31 ([e4977da](https://github.com/javalent/the-calendarium/commit/e4977dad12144197a6457919f4a2fda23a6928b4))
+* release 1.0.0-b32 ([ad02593](https://github.com/javalent/the-calendarium/commit/ad025935e4836f9caa9cdee2ab78679e1ce2e497))
+
 ## [1.0.0-b30](https://github.com/javalent/the-calendarium/compare/1.0.0-b29...1.0.0-b30) (2023-10-03)
 
 
