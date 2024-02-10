@@ -60,7 +60,7 @@ export default class Import {
                     length: m.length,
                     id: nanoid(6),
                     interval: m.interval,
-                    offset: m.offset,
+                    offset: 0,
                 };
             });
 
