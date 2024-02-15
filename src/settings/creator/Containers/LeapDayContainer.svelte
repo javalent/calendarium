@@ -1,6 +1,5 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import type { LeapDay } from "src/@types";
     import LeapDayUI from "./LeapDayInstance.svelte";
     import AddNew from "../Utilities/AddNew.svelte";
     import NoExistingItems from "../Utilities/NoExistingItems.svelte";
@@ -8,6 +7,7 @@
     import type Calendarium from "src/main";
 
     import Details from "../Utilities/Details.svelte";
+    import type { LeapDay } from "src/schemas/calendar/timespans";
 
     export let plugin: Calendarium;
 
@@ -33,7 +33,6 @@
 
 <Details
     name={"Leap Days"}
-    open={false}
     desc={`${$leapDayStore.length} leap day${
         $leapDayStore.length != 1 ? "s" : ""
     }`}

@@ -1,7 +1,6 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import { ExtraButtonComponent } from "obsidian";
-    import type { Day } from "src/@types";
+    import type { Day } from "src/schemas/calendar/timespans";
     import ToggleComponent from "../../Settings/ToggleComponent.svelte";
     import AddNew from "../../Utilities/AddNew.svelte";
     import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
@@ -57,16 +56,7 @@
     desc={`${$weekdayStore.length} weekday${
         $weekdayStore.length != 1 ? "s" : ""
     }`}
-    open={false}
 >
-    <ToggleComponent
-        name={"Overflow Weeks"}
-        desc={"Turn this off to make each month start on the first of the week."}
-        value={$staticStore.overflow}
-        on:click={() =>
-            staticStore.setProperty("overflow", !$staticStore.overflow)}
-    />
-
     <AddNew
         on:click={() => {
             add();
@@ -88,11 +78,18 @@
         {/if}
     </div>
 
+    <ToggleComponent
+        name={"Overflow Weeks"}
+        desc={"Weeks will flow into the next month. Disable to reset the weekday each month."}
+        value={$staticStore.overflow}
+        on:click={() =>
+            staticStore.setProperty("overflow", !$staticStore.overflow)}
+    />
     <div class="setting-item">
         <div class="setting-item-info">
             <div class="setting-item-name">First Day</div>
             <div class="setting-item-description">
-                The day of the week the first year starts on.
+                The weekday for the very first day on the calendar.
             </div>
         </div>
         <div class="setting-item-control">

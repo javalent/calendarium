@@ -1,6 +1,6 @@
-import type { Month } from "src/@types";
 import { CanceableCalendariumModal } from "../modal";
 import { Setting } from "obsidian";
+import type { Month } from "src/schemas/calendar/timespans";
 import { nanoid } from "src/utils/functions";
 
 export class MonthModal extends CanceableCalendariumModal<Month> {

@@ -1,11 +1,5 @@
-import type {
-    Calendar,
-    CalDate,
-    CalEvent,
-    Day,
-    LeapDay,
-    CalEventDate,
-} from "../@types";
+import type { LeapDay, Day } from "src/schemas/calendar/timespans";
+import type { Calendar, CalDate, CalEvent, CalEventDate } from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
 
 export function daysBetween(date1: Date, date2: Date) {

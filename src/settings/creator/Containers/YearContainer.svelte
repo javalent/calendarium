@@ -8,13 +8,13 @@
         setIcon,
         TextComponent,
     } from "obsidian";
-    import type { Calendar, Year } from "src/@types";
 
     import { confirmWithModal } from "../../modals/confirm";
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
     import AddNew from "../Utilities/AddNew.svelte";
     import NoExistingItems from "../Utilities/NoExistingItems.svelte";
     import Details from "../Utilities/Details.svelte";
+    import type { Year } from "src/schemas/calendar/timespans";
 
     const calendar = getContext("store");
 
@@ -62,7 +62,7 @@
             ($customYears &&
                 (await confirmWithModal(
                     app,
-                    "The custom years you have created will be removed. Proceed?"
+                    "The custom years you have created will be removed. Proceed?",
                 )))
         ) {
             yearStore.set([]);
@@ -105,7 +105,6 @@
     name={"Years"}
     warn={$customYears && !$yearStore?.length}
     label={"At least one year is required when using custom years"}
-    open={false}
 >
     <ToggleComponent
         name="Use Custom Years"

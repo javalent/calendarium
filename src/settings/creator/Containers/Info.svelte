@@ -4,17 +4,19 @@
     import TextComponent from "../Settings/TextComponent.svelte";
     import ToggleComponent from "../Settings/ToggleComponent.svelte";
     import Details from "../Utilities/Details.svelte";
-    import {
-        DEFAULT_CALENDAR,
-        DEFAULT_DATA,
-    } from "src/settings/settings.constants";
+    import { DEFAULT_DATA } from "src/settings/settings.constants";
     import { DEFAULT_FORMAT } from "src/utils/constants";
+    import { Setting } from "obsidian";
+    import { CalendarPresetModal } from "src/settings/modals/preset";
+    import copy from "fast-copy";
+    import type { CalDate } from "src/schemas";
+    import { nanoid } from "src/utils/functions";
+    import Calendarium from "src/main";
 
     const calendar = getContext("store");
+    const plugin = getContext<Calendarium>("plugin");
 
     $: displayDayNumber = $calendar.static.displayDayNumber;
-    $: incrementDay = $calendar.static.incrementDay;
-
     $: validName = $calendar.name != null && $calendar.name.length;
 
     if (!$calendar.inlineEventTag)
@@ -37,17 +39,58 @@
                 text: ".",
             });
         });
+
+    const preset = (node: HTMLElement) => {
+        const presetEl = node.createDiv("calendarium-apply-preset");
+        new Setting(presetEl)
+            .setName("Apply Preset")
+            .setDesc("Apply a common Calendarium as a preset.")
+            .addButton((b) => {
+                b.setCta()
+                    .setButtonText("Choose Preset")
+                    .onClick(() => {
+                        const modal = new CalendarPresetModal(plugin.app);
+                        modal.onClose = () => {
+                            if (!modal.saved) return;
+                            const current: CalDate = {
+                                day: modal.preset.current.day!,
+                                month: modal.preset.current.month!,
+                                year: modal.preset.current.year!,
+                            };
+                            if (modal.preset?.name == "Gregorian Calendar") {
+                                const today = new Date();
+
+                                current.year = today.getFullYear();
+                                current.month = today.getMonth();
+                                current.day = today.getDate();
+                            }
+                            $calendar = {
+                                ...copy(modal.preset),
+                                id: nanoid(8),
+                                name: $calendar.name?.length
+                                    ? $calendar.name
+                                    : modal.preset.name!,
+                                current: { ...current },
+                            };
+                        };
+                        modal.open();
+                    });
+            });
+    };
 </script>
+
+<div use:preset />
 
 <Details
     name={"Basic Info"}
     warn={!validName}
     label={"The calendar must have a name"}
+    alwaysOpen={true}
 >
     <div class="calendarium-info">
         {#key $calendar.name}
             <TextComponent
-                name={"Calendar Name"}
+                name={"Name"}
                 warn={!validName}
                 desc={!validName ? "The calendar must have a name" : ""}
                 value={$calendar.name}
@@ -57,9 +100,8 @@
                 }}
             />
         {/key}
-        <!-- on:change={(evt) => ($calendar.name = evt.detail)} -->
         <TextAreaComponent
-            name={"Calendar Description"}
+            name={"Description"}
             value={$calendar.description ?? ""}
             on:blur={(evt) => {
                 if (evt.detail === $calendar.description) return;
@@ -84,14 +126,6 @@
                 $calendar.dateFormat = evt.detail;
             }}
         />
-        <!-- <ToggleComponent
-            name={"Auto Increment Day"}
-            desc={"Automatically increment the current day every real-world day."}
-            value={incrementDay}
-            on:click={() => {
-                $calendar.static.incrementDay = !$calendar.static.incrementDay;
-            }}
-        /> -->
         <ToggleComponent
             name={"Support inline events"}
             desc={"Display day of year in Day View"}
@@ -113,9 +147,6 @@
 </Details>
 
 <style>
-    .calendarium-info :global(.setting-item) {
-        padding-top: 18px;
-    }
     .calendarium-info :global(.calendarium-description) {
         display: flex;
         flex-flow: column;

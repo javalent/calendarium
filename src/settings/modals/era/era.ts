@@ -1,11 +1,12 @@
 import copy from "fast-copy";
 import Calendarium from "src/main";
-import type { Calendar, Era } from "src/@types";
+import type { Calendar } from "src/@types";
 import { nanoid } from "src/utils/functions";
 import { CalendariumModal } from "../modal";
 import { Notice, Setting } from "obsidian";
 
 import CurrentDate from "../../creator/Containers/CurrentDate.svelte";
+import type { Era } from "src/schemas/calendar/timespans";
 
 export class CreateEraModal extends CalendariumModal {
     saved = false;

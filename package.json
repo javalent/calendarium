@@ -38,7 +38,7 @@
         "scripty": "^2.1.1",
         "standard-version": "^9.5.0",
         "svelte": "^4.2.1",
-        "svelte-dnd-action": "^0.9.29",
+        "svelte-dnd-action": "^0.9.38",
         "svelte-jester": "^3.0.0",
         "svelte-preprocess": "^5.0.4",
         "title-case": "^3.0.3",

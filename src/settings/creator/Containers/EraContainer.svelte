@@ -3,7 +3,7 @@
     import { flip } from "svelte/animate";
     import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
     import { ExtraButtonComponent, setIcon } from "obsidian";
-    import type { Calendar, Era } from "src/@types";
+    import type { Calendar } from "src/schemas";
 
     import AddNew from "../Utilities/AddNew.svelte";
     import NoExistingItems from "../Utilities/NoExistingItems.svelte";
@@ -12,6 +12,7 @@
     import { CreateEraModal } from "src/settings/modals/era/era";
     import Calendarium from "src/main";
     import { nanoid } from "src/utils/functions";
+    import type { Era } from "src/schemas/calendar/timespans";
 
     export let calendar: Calendar;
     export let plugin: Calendarium;
@@ -28,7 +29,7 @@
                 id: era.id ?? nanoid(6),
                 restart: era.restart ?? false,
                 endsYear: era.endsYear ?? false,
-                event: era.event ?? false
+                event: era.event ?? false,
             };
         });
         plugin.saveSettings();
@@ -54,7 +55,7 @@
     function handleConsider(e: CustomEvent<GenericDndEvent<Era>>) {
         const {
             items: newItems,
-            info: { source, trigger }
+            info: { source, trigger },
         } = e.detail;
         eras = newItems;
         // Ensure dragging is stopped on drag finish via keyboard
@@ -65,7 +66,7 @@
     function handleFinalize(e: CustomEvent<GenericDndEvent<Era>>) {
         const {
             items: newItems,
-            info: { source, id }
+            info: { source, id },
         } = e.detail;
         // Ensure dragging is stopped on drag finish via pointer (mouse, touch)
         if (source === SOURCES.POINTER) {
@@ -82,7 +83,7 @@
             if (!modal.saved) return;
             if (modal.editing) {
                 const index = calendar.events.findIndex(
-                    (e) => e.id === modal.era.id
+                    (e) => e.id === modal.era.id,
                 );
 
                 calendar.static.eras.splice(index, 1, { ...modal.era });

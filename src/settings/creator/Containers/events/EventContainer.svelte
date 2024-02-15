@@ -50,7 +50,7 @@
             .filter(
                 (f) =>
                     f instanceof TFolder &&
-                    !$calendar.path.find((p) => f.path.startsWith(p))
+                    !$calendar.path.find((p) => f.path.startsWith(p)),
             );
         const text = new ObsidianTextComponent(node);
         if (!$calendar.path) $calendar.path = ["/"];
@@ -86,7 +86,7 @@
         new Setting(node).setName(path).addExtraButton((b) =>
             b.setIcon("trash").onClick(() => {
                 $calendar.path = $calendar.path.filter((p) => p != path);
-            })
+            }),
         );
     };
     $: inlineEventTagDesc = createFragment((e) => {
@@ -106,12 +106,12 @@
     const inlineEventTagSetting = (node: HTMLElement) => {
         const text = new ObsidianTextComponent(node);
         text.setValue(
-            `${$calendar.inlineEventTag ?? ""}`.replace("#", "")
+            `${$calendar.inlineEventTag ?? ""}`.replace("#", ""),
         ).onChange(
             debounce(async (v) => {
                 $calendar.inlineEventTag = v.startsWith("#") ? v : `#${v}`;
                 await plugin.saveSettings();
-            }, 100)
+            }, 100),
         );
     };
 
@@ -132,7 +132,7 @@
     });
 
     const sliced = derived([sorted, slicer], ([events, slicer]) =>
-        events.slice(0, 100 * slicer)
+        events.slice(0, 100 * slicer),
     );
 
     const deleteEvent = (item: CalEvent) => {
@@ -157,7 +157,7 @@
         if (
             await confirmWithModal(
                 plugin.app,
-                "Are you sure you want to delete all events from this calendar?"
+                "Are you sure you want to delete all events from this calendar?",
             )
         ) {
             eventStore.set([]);
@@ -173,7 +173,7 @@
                 s.onChange(
                     debounce((v) => {
                         $nameFilter = v;
-                    }, 250)
+                    }, 250),
                 );
             })
             .addExtraButton((b) => {
@@ -183,11 +183,11 @@
                         if (
                             await confirmWithModal(
                                 plugin.app,
-                                "Are you sure you want to delete the filtered events from this calendar?"
+                                "Are you sure you want to delete the filtered events from this calendar?",
                             )
                         ) {
                             eventStore.set(
-                                $eventStore.filter((e) => !$sorted.includes(e))
+                                $eventStore.filter((e) => !$sorted.includes(e)),
                             );
                             search.setValue("");
                             $nameFilter = "";
@@ -200,53 +200,7 @@
 <Details
     name={"Events"}
     desc={`Displaying ${$sorted.length}/${$calendar.events.length} events.`}
-    open={false}
 >
-    <!--     <ToggleComponent
-        name={"Parse Files for Events"}
-        desc={"The plugin will automatically parse files in the vault for events for this calendar."}
-        value={autoParse}
-        on:click={() => {
-            $calendar.autoParse = !$calendar.autoParse;
-        }}
-    />
-    {#if autoParse}
-        <TextComponent
-            name={"Events Folders"}
-            desc={"The plugin will only parse files in these folders for events."}
-            value={$calendar.path[0]}
-        >
-            <div use:folder />
-            <div use:addPathButton on:click={addPath} />
-        </TextComponent>
-        <div class="existing-paths">
-            {#each $calendar.path as path (path)}
-                <div class="existing-path" use:pathSetting={path} />
-            {/each}
-        </div>
-        <ToggleComponent
-            name={"Support Inline Events"}
-            desc={"Look for <span> tags defining events in notes."}
-            value={supportInlineEvents}
-            on:click={() => {
-                $calendar.supportInlineEvents = !$calendar.supportInlineEvents;
-            }}
-        />
-        {#if supportInlineEvents}
-            {#key $calendar.supportInlineEvents}
-                <TextComponent
-                    name={"Default Inline Events Tag"}
-                    desc={inlineEventTagDesc}
-                    value={""}
-                >
-                    <div
-                        use:inlineEventTagSetting
-                        class="setting-item-control"
-                    />
-                </TextComponent>
-            {/key}
-        {/if}
-    {/if} -->
     <ButtonComponent
         name={"Delete All Events"}
         icon="trash"

@@ -2,23 +2,26 @@
     import { Platform, Setting, setIcon } from "obsidian";
     import { warning } from "./utils";
 
-    export let open = !Platform.isMobile;
+    export let open = true;
     export let name: string;
     export let desc: string = "";
     export let warn: boolean = false;
     export let label: string | null = null;
-    const details = (node: HTMLElement) => {
+    export let alwaysOpen = false;
+
+    const details = (node: HTMLDetailsElement) => {
         if (open) node.setAttr("open", "open");
-    };
-    const summary = (node: HTMLDivElement) => {
-        new Setting(node).setHeading().setName(name);
     };
     const handle = (node: HTMLElement) => {
         setIcon(node, "chevron-right");
     };
 </script>
 
-<details class="calendarium-nested-settings" use:details>
+<details
+    class="creator calendarium-nested-settings setting-item"
+    class:always-open={alwaysOpen}
+    use:details
+>
     <summary class="calendarium-nested-summary">
         <div class="setting-item setting-item-heading">
             <div class="setting-item-info">
@@ -33,28 +36,37 @@
                 {/if}
                 <div class="handle" use:handle />
             </div>
+            {#if warn && label}
+                <div class="warning-label-container">
+                    <div class="setting-item-description warning-label">
+                        {label}
+                    </div>
+                </div>
+            {/if}
         </div>
     </summary>
-    {#if warn && label}
-        <div class="warning-label-container">
-            <div class="setting-item-description warning-label">
-                {label}
-            </div>
-        </div>
-    {/if}
-    <slot />
+
+    <div class="creator-settings-container">
+        <slot />
+    </div>
 </details>
 
 <style>
+    .always-open {
+        pointer-events: none;
+    }
+    .creator-settings-container {
+        pointer-events: initial;
+    }
     .calendarium-nested-settings {
         position: relative;
     }
-    .warning-label-container {
+    /* .warning-label-container {
         display: flex;
         justify-content: flex-end;
         position: absolute;
         right: 0;
-    }
+    } */
     /* .calendarium-nested-summary,
     .calendarium-nested-settings {
         position: relative;
@@ -71,9 +83,6 @@
         border-top-left-radius: 0.1rem;
         border-top-right-radius: 0.1rem;
         cursor: pointer;
-        position: sticky;
-        top: 0;
-        z-index: 2;
         background-color: var(--creator-background-color);
     }
 
@@ -81,12 +90,19 @@
     summary::marker {
         display: none !important;
     }
+    .always-open .handle {
+        display: none;
+    }
     .collapser {
         position: absolute;
         top: 50%;
         right: 8px;
         transform: translateY(-50%);
         content: "";
+        display: flex;
+        flex-flow: column;
+        justify-content: flex-end;
+        align-items: flex-end;
     }
 
     .handle {
@@ -97,5 +113,13 @@
 
     details[open] .handle {
         transform: rotate(90deg);
+    }
+
+    .creator-settings-container {
+        padding: 0.75em var(--size-4-3);
+    }
+
+    .calendarium-nested-settings {
+        border-top: 0px;
     }
 </style>

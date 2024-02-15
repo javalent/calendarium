@@ -9,8 +9,6 @@
     import NoExistingItems from "../Utilities/NoExistingItems.svelte";
     import Details from "../Utilities/Details.svelte";
 
-    const dispatch = createEventDispatcher();
-
     const calendar = getContext("store");
     const { categoryStore } = calendar;
 
@@ -41,7 +39,6 @@
 
 <Details
     name={"Categories"}
-    open={false}
     desc={`${$categoryStore.length} categor${
         $categoryStore.length != 1 ? "ies" : "y"
     }`}
