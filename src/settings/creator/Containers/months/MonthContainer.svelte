@@ -6,7 +6,7 @@
     import Details from "../../Utilities/Details.svelte";
     import DropZone from "../../Utilities/DropZone.svelte";
     import copy from "fast-copy";
-    import type { Month } from "src/schemas";
+    import type { Month } from "src/schemas/calendar/timespans";
     import { MonthModal } from "src/settings/modals/month/month";
     import ToggleComponent from "../../Settings/ToggleComponent.svelte";
 
@@ -37,7 +37,6 @@
     warn={!$monthStore?.length}
     label={"At least one month is required"}
     desc={`${$monthStore.length} month${$monthStore.length != 1 ? "s" : ""}`}
-    open={false}
 >
     <ToggleComponent
         name={"Show Intercalary Months Separately"}

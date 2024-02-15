@@ -1,8 +1,9 @@
 import { App, Setting, Notice } from "obsidian";
-import type { Calendar, Moon } from "../../@types";
+import type { Calendar } from "../../@types";
 
 import { nanoid } from "../../utils/functions";
 import { CalendariumModal } from "./modal";
+import type { Moon } from "src/schemas/calendar/moons";
 
 export class CreateMoonModal extends CalendariumModal {
     saved = false;

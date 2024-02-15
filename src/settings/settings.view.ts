@@ -128,7 +128,8 @@ export default class CalendariumSettings extends PluginSettingTab {
         this.calendarsEl = this.contentEl.createEl("details", {
             cls: "calendarium-nested-settings",
             attr: {
-                ...(this.toggleState.calendar ? { open: `open` } : {}),
+                /* ...(this.toggleState.calendar ? { open: `open` } : {}), */
+                open: "open",
             },
         });
         this.buildCalendars();
@@ -853,6 +854,8 @@ class CreatorModal extends CalendariumModal {
     constructor(public plugin: Calendarium, calendar: Calendar) {
         super(plugin.app);
         this.modalEl.addClass("calendarium-creator");
+        this.modalEl.addClasses(["mod-sidebar-layout", "mod-settings"]);
+        this.contentEl.addClass("vertical-tabs-container");
         this.calendar = copy(calendar);
         this.store = createStore(this.plugin, this.calendar);
         this.scope.register([Platform.isMacOS ? "Meta" : "Ctrl"], "z", () => {
@@ -881,10 +884,6 @@ class CreatorModal extends CalendariumModal {
         }
     }
     async display() {
-        new CreatorTitle({
-            target: this.titleEl,
-            props: { store: this.store },
-        });
         this.$app = new CalendarCreator({
             target: this.contentEl,
             props: {

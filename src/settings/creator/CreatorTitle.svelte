@@ -1,86 +1,38 @@
 <script lang="ts">
     import { setIcon } from "obsidian";
-    import { getMissingNotice, warning } from "./Utilities/utils";
+    import { getMissingNotice } from "./Utilities/utils";
     import createStore from "./stores/calendar";
 
     export let store: ReturnType<typeof createStore>;
-    const { undo, redo, canRedo, canUndo, valid } = store;
+    const { valid } = store;
 
-    const isValid = (node: HTMLElement) => {
-        setIcon(node.createSpan("save can-save"), "checkmark");
-        node.createSpan({
-            cls: "additional can-save",
-            text: "All good! Exit to save calendar.",
-        });
-    };
-    const isInvalid = (node: HTMLElement) => {
-        warning(
-            node.createSpan({
-                cls: "save",
-                attr: {
-                    "aria-label": getMissingNotice($store),
-                },
-            })
-        );
-        node.createSpan({
-            cls: "additional",
-            text: "Additional information is required to save.",
-        });
-    };
-
-    const undoBtn = (node: HTMLElement) => {
-        setIcon(node, "undo");
-    };
-    const redoBtn = (node: HTMLElement) => {
-        setIcon(node, "redo");
-    };
-    const tryUndo = () => {
-        if (!$canUndo) return;
-        undo();
-    };
-    const tryRedo = () => {
-        if (!$canRedo) return;
-        redo();
+    const setValidation = (node: HTMLElement, valid: boolean) => {
+        const icon = node.createSpan("save");
+        if (valid) {
+            icon.addClass("can-save");
+        } else {
+            icon.setAttr("aria-label", getMissingNotice($store));
+        }
+        setIcon(icon, valid ? "checkmark" : "calendarium-warning");
     };
 </script>
 
 <div class="creator-title">
-    <span>Calendar Creator</span>
-    <div class="creator-context">
+    <div class="title">
+        <h3>Calendar Creator</h3>
         <div class="creator-check">
-            {#if $valid}
-                <div class="check" use:isValid />
-            {:else}
-                <div class="check" use:isInvalid />
-            {/if}
-        </div>
-        <div class="creator-history">
-            <div
-                class="clickable-icon setting-editor-extra-setting-button"
-                class:is-disabled={!$canUndo}
-                use:undoBtn
-                on:click={tryUndo}
-            />
-            <div
-                class="clickable-icon setting-editor-extra-setting-button"
-                class:is-disabled={!$canRedo}
-                use:redoBtn
-                on:click={tryRedo}
-            />
+            <div class="check" use:setValidation={$valid} />
         </div>
     </div>
 </div>
 
 <style scoped>
-    .creator-context {
+    .title {
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
-    /* .creator-title {
-        display: flex;
-    } */
-    .creator-history {
-        display: flex;
+    .creator-title h3 {
+        margin: 0;
     }
 </style>

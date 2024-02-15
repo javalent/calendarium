@@ -13,7 +13,6 @@
         advanced: T;
         trash: T;
     }>();
-
     const grip = (node: HTMLElement) => {
         setIcon(node, "grip-horizontal");
     };
@@ -59,7 +58,7 @@
     on:consider={handleConsider}
     on:finalize={handleFinalize}
 >
-    {#each items.filter((x) => x.id !== SHADOW_PLACEHOLDER_ITEM_ID) as item (item.id)}
+    {#each items as item (item.id)}
         <div
             animate:flip={{ duration: flipDurationMs }}
             class="drop-item-container"

@@ -1,7 +1,6 @@
 <script lang="ts">
     import { getContext } from "svelte";
 
-    import type { Moon } from "src/@types";
     import { ExtraButtonComponent } from "obsidian";
     import MoonSVG from "src/calendar/ui/Moon.svelte";
     import AddNew from "../Utilities/AddNew.svelte";
@@ -10,6 +9,8 @@
     import { CreateMoonModal } from "src/settings/modals/moons";
     import type Calendarium from "src/main";
     import Details from "../Utilities/Details.svelte";
+    import type { Moon } from "src/schemas/calendar/moons";
+    import { setNodeIcon } from "src/utils/helpers";
 
     export let plugin: Calendarium;
 
@@ -22,7 +23,7 @@
             .setTooltip("Delete");
     };
     const edit = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("pencil").setTooltip("Edit");
+        new ExtraButtonComponent(node).setIcon("wrench").setTooltip("Edit");
     };
     const deleteMoon = (item: Moon) => {
         moonStore.delete(item.id);
@@ -44,7 +45,6 @@
 
 <Details
     name={"Moons"}
-    open={false}
     desc={`${$moonStore.length} moon${$moonStore.length != 1 ? "s" : ""}`}
 >
     <ToggleComponent
@@ -73,13 +73,21 @@
                         </span>
                         <div class="setting-item-description">
                             <div class="date">
-                                <span>
-                                    Cycle: {moon.cycle} days
-                                </span>
+                                <div class="icons">
+                                    <span
+                                        class="icon small"
+                                        use:setNodeIcon={"orbit"}
+                                    ></span>
+                                    {moon.cycle} days
+                                </div>
                                 {#if moon.offset}
-                                    <span>
-                                        , offset: {moon.offset} days
-                                    </span>
+                                    <div class="icons">
+                                        <span
+                                            class="icon small"
+                                            use:setNodeIcon={"arrow-big-right-dash"}
+                                        ></span>
+                                        {moon.offset} days
+                                    </div>
                                 {/if}
                             </div>
                         </div>
@@ -116,8 +124,14 @@
         align-self: flex-start;
         justify-self: flex-end;
         align-items: center;
+
+        gap: 0.25rem;
     }
     .icon {
+        display: flex;
         align-items: center;
+    }
+    .small {
+        --icon-size: var(--icon-xs);
     }
 </style>

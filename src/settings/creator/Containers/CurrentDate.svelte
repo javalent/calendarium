@@ -16,7 +16,6 @@
     warn={!$validDate}
     label={"Invalid current date specified"}
     {desc}
-    open={false}
 >
     <DateWithValidation />
 </Details>
