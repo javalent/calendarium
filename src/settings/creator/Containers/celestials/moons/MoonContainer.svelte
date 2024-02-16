@@ -2,29 +2,19 @@
     import { getContext } from "svelte";
 
     import { ExtraButtonComponent } from "obsidian";
-    import MoonSVG from "src/calendar/ui/Moon.svelte";
-    import AddNew from "../Utilities/AddNew.svelte";
-    import NoExistingItems from "../Utilities/NoExistingItems.svelte";
-    import ToggleComponent from "../Settings/ToggleComponent.svelte";
+    import AddNew from "../../../Utilities/AddNew.svelte";
+    import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
+    import ToggleComponent from "../../../Settings/ToggleComponent.svelte";
     import { CreateMoonModal } from "src/settings/modals/moons";
     import type Calendarium from "src/main";
-    import Details from "../Utilities/Details.svelte";
+    import Details from "../../../Utilities/Details.svelte";
     import type { Moon } from "src/schemas/calendar/moons";
-    import { setNodeIcon } from "src/utils/helpers";
-
-    export let plugin: Calendarium;
+    import MoonInstance from "./MoonInstance.svelte";
 
     const calendar = getContext("store");
+    const plugin = getContext("plugin");
     const { moonStore, displayMoons } = calendar;
 
-    const trash = (node: HTMLElement) => {
-        let b = new ExtraButtonComponent(node)
-            .setIcon("trash")
-            .setTooltip("Delete");
-    };
-    const edit = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("wrench").setTooltip("Edit");
-    };
     const deleteMoon = (item: Moon) => {
         moonStore.delete(item.id);
     };
@@ -61,7 +51,12 @@
     {:else}
         <div class="existing-items">
             {#each $moonStore as moon}
-                <div class="moon">
+                <MoonInstance
+                    {moon}
+                    on:edit={() => add(moon)}
+                    on:delete={() => deleteMoon(moon)}
+                />
+                <!-- <div class="moon">
                     <div class="moon-info">
                         <span class="setting-item-name">
                             <MoonSVG
@@ -100,38 +95,11 @@
                             on:click={() => deleteMoon(moon)}
                         />
                     </div>
-                </div>
+                </div> -->
             {/each}
         </div>
     {/if}
 </Details>
 
 <style>
-    .moon {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-top: 0.5rem;
-    }
-    .setting-item-name {
-        display: flex;
-        align-items: center;
-    }
-    .icons {
-        display: flex;
-        align-self: flex-start;
-        justify-self: flex-end;
-        align-items: center;
-
-        gap: 0.25rem;
-    }
-    .icon {
-        display: flex;
-        align-items: center;
-    }
-    .small {
-        --icon-size: var(--icon-xs);
-    }
 </style>

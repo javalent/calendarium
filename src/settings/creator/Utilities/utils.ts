@@ -2,10 +2,6 @@ import { setIcon } from "obsidian";
 import type { Calendar } from "src/@types";
 import { isValidDay, isValidMonth, isValidYear } from "src/utils/functions";
 
-export function warning(node: HTMLElement) {
-    setIcon(node, "calendarium-warning");
-}
-
 export function getMissingNotice(calendar: Calendar) {
     let missingArr: string[] = [];
 

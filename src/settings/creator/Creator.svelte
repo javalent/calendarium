@@ -1,26 +1,19 @@
 <script lang="ts">
-    import type { CalDate, Calendar } from "src/@types";
+    import type { Calendar } from "src/@types";
     import type Calendarium from "src/main";
-    import copy from "fast-copy";
-    import { Platform, Setting } from "obsidian";
-    import { CalendarPresetModal } from "../modals/preset";
+    import { ButtonComponent, Platform } from "obsidian";
     import { setContext } from "svelte";
     import { onMount } from "svelte";
-    import CurrentDate from "./Containers/CurrentDate.svelte";
-    import Info from "./Containers/Info.svelte";
-    import WeekdayContainer from "./Containers/weekday/WeekdayContainer.svelte";
-    import MonthContainer from "./Containers/months/MonthContainer.svelte";
-    import YearContainer from "./Containers/YearContainer.svelte";
-    import EventContainer from "./Containers/events/EventContainer.svelte";
-    import CategoryContainer from "./Containers/CategoryContainer.svelte";
-    import MoonContainer from "./Containers/MoonContainer.svelte";
-    import LeapDayContainer from "./Containers/LeapDayContainer.svelte";
     import { type Writable } from "svelte/store";
 
     import createStore from "./stores/calendar";
-    import { nanoid } from "src/utils/functions";
     import CreatorTitle from "./CreatorTitle.svelte";
     import History from "./Utilities/History.svelte";
+    import General from "./Containers/general/General.svelte";
+    import Dates from "./Containers/dates/Dates.svelte";
+    import Celestials from "./Containers/celestials/Celestials.svelte";
+    import Events from "./Containers/events/Events.svelte";
+    import { createEventDispatcher } from "svelte";
 
     const mobile = Platform.isMobile;
     let ready = mobile;
@@ -28,8 +21,8 @@
     const SettingsSections = [
         "General",
         "Dates",
-        "Eras",
-        "Weather",
+        /* "Eras",
+        "Weather", */
         "Celestial Bodies",
         "Events",
     ] as const;
@@ -46,12 +39,22 @@
     export let store: ReturnType<typeof createStore>;
     setContext<Writable<Calendar>>("store", store);
     setContext<Calendarium>("plugin", plugin);
+
+    const dispatch = createEventDispatcher<{ cancel: null }>();
+    const cancel = (node: HTMLDivElement) => {
+        new ButtonComponent(node)
+            .setButtonText("Cancel")
+            .setCta()
+            .onClick(() => {
+                dispatch("cancel");
+            });
+    };
 </script>
 
 {#if !Platform.isMobile}
     <div class="vertical-tab-header">
+        <CreatorTitle {store} />
         <div class="vertical-tab-header-group">
-            <CreatorTitle {store} />
             <div class="vertical-tab-header-group-items">
                 {#each SettingsSections as SECTION}
                     <div
@@ -64,6 +67,10 @@
                 {/each}
             </div>
         </div>
+
+        <div class="bottom">
+            <div class="cancel" use:cancel />
+        </div>
     </div>
     <div
         class="vertical-tab-content-container {SelectedSection.toLowerCase()}s"
@@ -71,24 +78,22 @@
         <History></History>
         <div class="vertical-tab-content">
             {#if SelectedSection == "General"}
-                <Info />
+                <General />
             {/if}
             {#if SelectedSection == "Dates"}
-                <CurrentDate />
-                <WeekdayContainer />
-                <MonthContainer />
-                <LeapDayContainer {plugin} />
-                <YearContainer app={plugin.app} />
+                <Dates />
             {/if}
-            {#if SelectedSection === "Eras"}
-                <!--<EraContainer {plugin} {calendar} />-->
+            <!-- {#if SelectedSection === "Eras"}
+                <Eras {plugin} {calendar} />
             {/if}
+            {#if SelectedSection === "Weather"}
+                <Weather {plugin} {calendar} />
+            {/if} -->
             {#if SelectedSection == "Events"}
-                <CategoryContainer />
-                <EventContainer {plugin} />
+                <Events />
             {/if}
             {#if SelectedSection == "Celestial Bodies"}
-                <MoonContainer {plugin} />
+                <Celestials />
             {/if}
         </div>
     </div>
@@ -101,18 +106,10 @@
             <CreatorTitle {store} />
             <div class="inherit calendarium-creator-inner">
                 <div class="calendarium-creator-app">
-                    <Info />
-                    <WeekdayContainer />
-                    <MonthContainer />
-                    <YearContainer app={plugin.app} />
-                    <!--<EraContainer {plugin} {calendar} />-->
-                    <CurrentDate />
-                    <EventContainer {plugin} />
-                    <CategoryContainer />
-                    <MoonContainer {plugin} />
-                    <LeapDayContainer {plugin} />
-                    <!-- 
-            -->
+                    <General />
+                    <Dates />
+                    <Celestials />
+                    <Events />
                 </div>
             </div>
         {/if}
@@ -135,5 +132,10 @@
     }
     .vertical-tab-content {
         padding: var(--size-4-8);
+    }
+    .bottom {
+        margin-top: auto;
+        justify-content: flex-end;
+        display: flex;
     }
 </style>

@@ -19,7 +19,6 @@ import type Calendarium from "../main";
 import Importer from "./import/importer";
 
 import CalendarCreator from "./creator/Creator.svelte";
-import CreatorTitle from "./creator/CreatorTitle.svelte";
 
 import type { Calendar, PresetCalendar } from "src/@types";
 import { SyncBehavior } from "src/schemas";
@@ -45,6 +44,7 @@ export enum Recurring {
 }
 interface Context {
     store: ReturnType<typeof createStore>;
+    plugin: Calendarium;
 }
 declare module "svelte" {
     function setContext<K extends keyof Context>(
@@ -155,7 +155,7 @@ export default class CalendariumSettings extends PluginSettingTab {
 
         if (await this.settings$.markdownFileExists()) {
             new Setting(containerEl)
-                .setName(`Load Previous Data File`)
+                .setName(`Load previous data file`)
                 .setDesc(
                     createFragment((e) => {
                         e.createSpan({
@@ -205,7 +205,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         this.calendarsEl.ontoggle = async () => {
             this.toggleState.calendar = this.calendarsEl.open;
         };
-        new Setting(summary).setHeading().setName("Calendar Management");
+        new Setting(summary).setHeading().setName("Calendar management");
 
         setIcon(
             summary.createDiv("collapser").createDiv("handle"),
@@ -213,7 +213,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         );
 
         new Setting(this.calendarsEl)
-            .setName("Default Calendar")
+            .setName("Default calendar")
             .setDesc("Views will open to this calendar by default.")
             .addDropdown((d) => {
                 d.addOption("none", "None");
@@ -234,7 +234,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 });
             });
         new Setting(this.calendarsEl)
-            .setName("Import Calendar")
+            .setName("Import calendar")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
@@ -290,7 +290,7 @@ export default class CalendariumSettings extends PluginSettingTab {
 
         if (this.data.deletedCalendars?.length) {
             new Setting(this.calendarsEl)
-                .setName("Restore Deleted Calendars")
+                .setName("Restore deleted calendars")
                 .addButton((b) => {
                     b.setTooltip("Restore").setIcon("archive-restore");
                     b.buttonEl.setCssStyles({ position: "relative" });
@@ -332,7 +332,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         }
 
         new Setting(this.calendarsEl)
-            .setName("Create New Calendar")
+            .setName("Create new calendar")
             .addButton((button: ButtonComponent) =>
                 button
                     .setTooltip("Launch Calendar Creator")
@@ -395,7 +395,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         containerEl.ontoggle = async () => {
             this.toggleState.event = containerEl.open;
         };
-        new Setting(summary).setHeading().setName("Events Management");
+        new Setting(summary).setHeading().setName("Events management");
 
         setIcon(
             summary.createDiv("collapser").createDiv("handle"),
@@ -406,7 +406,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             this.app.internalPlugins.getPluginById("page-preview")?._loaded;
 
         new Setting(containerEl)
-            .setName("Display Event Previews")
+            .setName("Display event previews")
             .setDesc(
                 createFragment((e) => {
                     e.createDiv({
@@ -430,10 +430,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName("Parse Note Titles for Event Dates")
-            .setDesc(
-                "The plugin will try to parse note titles for event dates."
-            )
+            .setName("Parse note titles for event dates")
             .addToggle((t) => {
                 t.setValue(this.data.parseDates).onChange(async (v) => {
                     this.data.parseDates = v;
@@ -442,7 +439,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 });
             });
 
-        new Setting(containerEl).setName("Event Parsing").setDesc(
+        new Setting(containerEl).setName("Event parsing").setDesc(
             createFragment((e) => {
                 const explanation = e.createDiv("explanation");
                 explanation.createDiv().createSpan({
@@ -456,7 +453,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         );
 
         new Setting(containerEl)
-            .setName("Add Events to Default Calendar")
+            .setName("Add events to default calendar")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
@@ -478,7 +475,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 );
             });
         new Setting(containerEl)
-            .setName("Inline Events Tag")
+            .setName("Inline events tag")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
@@ -718,7 +715,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         );
 
         new Setting(containerEl)
-            .setName(`Reset "Don't Ask Again" Prompts`)
+            .setName(`Reset "Don't ask again" prompts`)
             .setDesc(
                 `All confirmations set to "Don't Ask Again" will be reset.`
             )
@@ -733,7 +730,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 });
             });
         new Setting(containerEl)
-            .setName(`Settings Sync Behavior`)
+            .setName(`Settings sync behavior`)
             .setDesc(
                 `Control how the plugin reloads data when a sync is detected.`
             )
@@ -749,7 +746,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName("Show Event Debug Messages")
+            .setName("Show event debug messages")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
@@ -781,6 +778,10 @@ export default class CalendariumSettings extends PluginSettingTab {
         return new Promise((resolve, reject) => {
             try {
                 modal.onClose = () => {
+                    console.log(
+                        "🚀 ~ file: settings.view.ts:785 ~ modal.saved:",
+                        modal.saved
+                    );
                     if (modal.saved) {
                         calendar = copy(modal.calendar);
                         if (original) calendar.id = original;
@@ -891,6 +892,10 @@ class CreatorModal extends CalendariumModal {
                 plugin: this.plugin,
                 top: 0,
             },
+        });
+        this.$app.$on("cancel", () => {
+            this.saved = true;
+            super.close();
         });
     }
 }

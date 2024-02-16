@@ -218,7 +218,7 @@ export class CreateEventModal extends CalendariumModal {
         this.endEl = this.dateEl.createDiv();
 
         if (!this.event.end) {
-            new Setting(this.endEl).setName("Add End Date").addToggle((t) => {
+            new Setting(this.endEl).setName("Add end date").addToggle((t) => {
                 t.setValue(false).onChange((v) => this.buildEndDate());
             });
         } else {
@@ -226,7 +226,7 @@ export class CreateEventModal extends CalendariumModal {
         }
         const formulas = this.dateEl.createDiv("calendarium-event-formula");
         if (!this.event.formulas?.length) {
-            new Setting(formulas).setName("Add Interval").addToggle((t) => {
+            new Setting(formulas).setName("Add interval").addToggle((t) => {
                 t.setValue(false).onChange((v) =>
                     this.buildEventFormulas(formulas)
                 );
@@ -249,7 +249,7 @@ export class CreateEventModal extends CalendariumModal {
         ];
 
         new Setting(formulas)
-            .setName("Event Interval")
+            .setName("Event interval")
             .addText((t) => {
                 t.setValue(`${this.event.formulas?.[0].number ?? ""}`)
                     .onChange((v) => {
@@ -380,7 +380,7 @@ export class CreateEventModal extends CalendariumModal {
                 };
             });
 
-        new Setting(this.infoEl).setName("Event Name").addText((t) =>
+        new Setting(this.infoEl).setName("Event name").addText((t) =>
             t
                 .setPlaceholder("Event Name")
                 .setValue(this.event.name)
@@ -398,7 +398,7 @@ export class CreateEventModal extends CalendariumModal {
                 this.event.description = v;
             });
 
-        new Setting(this.infoEl).setName("Event Category").addDropdown((d) => {
+        new Setting(this.infoEl).setName("Event category").addDropdown((d) => {
             const options = Object.fromEntries(
                 this.calendar.categories.map((category) => {
                     return [category.id, category.name];

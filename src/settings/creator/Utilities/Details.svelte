@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { Platform, Setting, setIcon } from "obsidian";
-    import { warning } from "./utils";
+    import { setIcon } from "obsidian";
+    import { setNodeIcon } from "src/utils/helpers";
 
     export let open = true;
     export let name: string;
@@ -32,7 +32,7 @@
         <div class="collapser">
             <div class="warning-container">
                 {#if warn}
-                    <div use:warning />
+                    <div use:setNodeIcon={"calendarium-warning"} />
                 {/if}
                 <div class="handle" use:handle />
             </div>

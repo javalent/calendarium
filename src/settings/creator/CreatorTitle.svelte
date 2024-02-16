@@ -10,20 +10,24 @@
         const icon = node.createSpan("save");
         if (valid) {
             icon.addClass("can-save");
-        } else {
-            icon.setAttr("aria-label", getMissingNotice($store));
         }
+        icon.setAttr(
+            "aria-label",
+            valid ? "All good! Exit to save." : getMissingNotice($store),
+        );
         setIcon(icon, valid ? "checkmark" : "calendarium-warning");
     };
 </script>
 
 <div class="creator-title">
-    <div class="title">
-        <h3>Calendar Creator</h3>
+    <h3 class="title">
+        Calendar Creator
         <div class="creator-check">
-            <div class="check" use:setValidation={$valid} />
+            {#key $valid}
+                <div class="check" use:setValidation={$valid} />
+            {/key}
         </div>
-    </div>
+    </h3>
 </div>
 
 <style scoped>
@@ -33,6 +37,9 @@
         justify-content: space-between;
     }
     .creator-title h3 {
-        margin: 0;
+        margin-top: 0;
+    }
+    .creator-title :global(.can-save) {
+        color: var(--background-modifier-success);
     }
 </style>

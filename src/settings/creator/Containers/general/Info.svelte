@@ -1,20 +1,14 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import TextAreaComponent from "../Settings/TextAreaComponent.svelte";
-    import TextComponent from "../Settings/TextComponent.svelte";
-    import ToggleComponent from "../Settings/ToggleComponent.svelte";
-    import Details from "../Utilities/Details.svelte";
+    import TextAreaComponent from "../../Settings/TextAreaComponent.svelte";
+    import TextComponent from "../../Settings/TextComponent.svelte";
+    import ToggleComponent from "../../Settings/ToggleComponent.svelte";
+    import Details from "../../Utilities/Details.svelte";
     import { DEFAULT_DATA } from "src/settings/settings.constants";
     import { DEFAULT_FORMAT } from "src/utils/constants";
-    import { Setting } from "obsidian";
-    import { CalendarPresetModal } from "src/settings/modals/preset";
-    import copy from "fast-copy";
-    import type { CalDate } from "src/schemas";
-    import { nanoid } from "src/utils/functions";
     import Calendarium from "src/main";
 
     const calendar = getContext("store");
-    const plugin = getContext<Calendarium>("plugin");
 
     $: displayDayNumber = $calendar.static.displayDayNumber;
     $: validName = $calendar.name != null && $calendar.name.length;
@@ -39,47 +33,7 @@
                 text: ".",
             });
         });
-
-    const preset = (node: HTMLElement) => {
-        const presetEl = node.createDiv("calendarium-apply-preset");
-        new Setting(presetEl)
-            .setName("Apply Preset")
-            .setDesc("Apply a common Calendarium as a preset.")
-            .addButton((b) => {
-                b.setCta()
-                    .setButtonText("Choose Preset")
-                    .onClick(() => {
-                        const modal = new CalendarPresetModal(plugin.app);
-                        modal.onClose = () => {
-                            if (!modal.saved) return;
-                            const current: CalDate = {
-                                day: modal.preset.current.day!,
-                                month: modal.preset.current.month!,
-                                year: modal.preset.current.year!,
-                            };
-                            if (modal.preset?.name == "Gregorian Calendar") {
-                                const today = new Date();
-
-                                current.year = today.getFullYear();
-                                current.month = today.getMonth();
-                                current.day = today.getDate();
-                            }
-                            $calendar = {
-                                ...copy(modal.preset),
-                                id: nanoid(8),
-                                name: $calendar.name?.length
-                                    ? $calendar.name
-                                    : modal.preset.name!,
-                                current: { ...current },
-                            };
-                        };
-                        modal.open();
-                    });
-            });
-    };
 </script>
-
-<div use:preset />
 
 <Details
     name={"Basic Info"}

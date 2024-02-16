@@ -1,8 +1,8 @@
 <script lang="ts">
     import { dateString } from "src/utils/functions";
     import { getContext } from "svelte";
-    import DateWithValidation from "../Utilities/DateWithValidation.svelte";
-    import Details from "../Utilities/Details.svelte";
+    import DateWithValidation from "../../../Utilities/DateWithValidation.svelte";
+    import Details from "../../../Utilities/Details.svelte";
 
     const calendar = getContext("store");
     const { validDate, currentStore, monthStore, yearStore } = calendar;

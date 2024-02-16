@@ -1,14 +1,14 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import type { Day } from "src/schemas/calendar/timespans";
-    import ToggleComponent from "../../Settings/ToggleComponent.svelte";
-    import AddNew from "../../Utilities/AddNew.svelte";
-    import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
-    import Details from "../../Utilities/Details.svelte";
     import { WeekdayModal } from "src/settings/modals/weekday/weekday";
     import copy from "fast-copy";
-    import DropZone from "../../Utilities/DropZone.svelte";
     import WeekdayInstance from "./WeekdayInstance.svelte";
+    import Details from "src/settings/creator/Utilities/Details.svelte";
+    import AddNew from "src/settings/creator/Utilities/AddNew.svelte";
+    import NoExistingItems from "src/settings/creator/Utilities/NoExistingItems.svelte";
+    import DropZone from "src/settings/creator/Utilities/DropZone.svelte";
+    import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
 
     const calendar = getContext("store");
 

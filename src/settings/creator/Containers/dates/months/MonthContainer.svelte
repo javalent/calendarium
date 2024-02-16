@@ -1,14 +1,14 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import MonthInstance from "./MonthInstance.svelte";
-    import AddNew from "../../Utilities/AddNew.svelte";
-    import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
-    import Details from "../../Utilities/Details.svelte";
-    import DropZone from "../../Utilities/DropZone.svelte";
     import copy from "fast-copy";
     import type { Month } from "src/schemas/calendar/timespans";
     import { MonthModal } from "src/settings/modals/month/month";
-    import ToggleComponent from "../../Settings/ToggleComponent.svelte";
+    import AddNew from "src/settings/creator/Utilities/AddNew.svelte";
+    import Details from "src/settings/creator/Utilities/Details.svelte";
+    import DropZone from "src/settings/creator/Utilities/DropZone.svelte";
+    import NoExistingItems from "src/settings/creator/Utilities/NoExistingItems.svelte";
+    import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
 
     const store = getContext("store");
     const { monthStore } = store;
