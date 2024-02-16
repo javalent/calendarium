@@ -9,14 +9,15 @@
         TextComponent,
     } from "obsidian";
 
-    import { confirmWithModal } from "../../modals/confirm";
-    import ToggleComponent from "../Settings/ToggleComponent.svelte";
-    import AddNew from "../Utilities/AddNew.svelte";
-    import NoExistingItems from "../Utilities/NoExistingItems.svelte";
-    import Details from "../Utilities/Details.svelte";
+    import { confirmWithModal } from "../../../../modals/confirm";
+    import ToggleComponent from "../../../Settings/ToggleComponent.svelte";
+    import AddNew from "../../../Utilities/AddNew.svelte";
+    import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
+    import Details from "../../../Utilities/Details.svelte";
     import type { Year } from "src/schemas/calendar/timespans";
 
     const calendar = getContext("store");
+    const plugin = getContext("plugin");
 
     const { yearStore, staticStore } = calendar;
     const { customYears } = yearStore;
@@ -42,8 +43,6 @@
         comp.inputEl.setAttr("style", "width: 100%;");
     };
 
-    export let app: App;
-
     const customDesc = createFragment((el) => {
         el.createSpan({
             text: "Create custom years to display instead of incrementing from 1.",
@@ -61,7 +60,7 @@
             !$yearStore?.length ||
             ($customYears &&
                 (await confirmWithModal(
-                    app,
+                    plugin.app,
                     "The custom years you have created will be removed. Proceed?",
                 )))
         ) {

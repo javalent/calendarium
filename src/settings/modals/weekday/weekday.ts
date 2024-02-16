@@ -31,7 +31,7 @@ export class WeekdayModal extends CanceableCalendariumModal<Day> {
             );
         });
         new Setting(this.contentEl)
-            .setName("Custom Abbreviation")
+            .setName("Custom abbreviation")
             .setDesc(
                 "By default, the first three letters of the name will be used."
             )

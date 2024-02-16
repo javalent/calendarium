@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import type { LeapDay } from "src/@types";
     import { ExtraButtonComponent } from "obsidian";
     import { getIntervalDescription } from "src/utils/functions";
+    import type { LeapDay } from "src/schemas/calendar/timespans";
 
     const dispatch = createEventDispatcher();
 

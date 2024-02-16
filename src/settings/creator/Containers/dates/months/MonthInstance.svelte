@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { debounce, ExtraButtonComponent } from "obsidian";
-    import type { Month } from "src/@types";
-    import { createEventDispatcher, getContext } from "svelte";
-    import SettingItem from "../../Settings/SettingItem.svelte";
+    import { debounce } from "obsidian";
+    import { getContext } from "svelte";
+    import type { Month } from "src/schemas/calendar/timespans";
+    import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
 
     export let item: Month;
     const store = getContext("store");
@@ -20,7 +20,7 @@
             monthStore.update(item.id, item);
         },
         300,
-        true
+        true,
     );
 </script>
 

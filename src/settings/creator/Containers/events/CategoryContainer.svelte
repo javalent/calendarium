@@ -5,9 +5,9 @@
 
     import type { CalEventCategory } from "src/@types";
     import { nanoid } from "src/utils/functions";
-    import AddNew from "../Utilities/AddNew.svelte";
-    import NoExistingItems from "../Utilities/NoExistingItems.svelte";
-    import Details from "../Utilities/Details.svelte";
+    import AddNew from "../../Utilities/AddNew.svelte";
+    import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
+    import Details from "../../Utilities/Details.svelte";
 
     const calendar = getContext("store");
     const { categoryStore } = calendar;

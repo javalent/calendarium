@@ -320,12 +320,6 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
     display: flex;
     align-items: center;
 }
-.calendarium-creator .save.can-save {
-    color: var(--interactive-success);
-}
-.calendarium-creator .additional.can-save {
-    color: var(--text-normal);
-}
 
 /** Generic Modal */
 .calendarium-modal-buttons {

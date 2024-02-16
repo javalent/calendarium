@@ -1,11 +1,11 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import {
-        warning,
         invalidDayLabel,
         invalidMonthLabel,
         invalidYearLabel,
     } from "../Utilities/utils";
+    import { setNodeIcon } from "src/utils/helpers";
 
     const calendar = getContext("store");
     const {
@@ -23,7 +23,7 @@
         <div class="warning-container">
             <label for="">Day</label>
             {#if !$validDay}
-                <div use:warning />
+                <div use:setNodeIcon={"calendarium-warning"} />
                 <div class="setting-item-description">
                     {#if !$validDay}
                         {invalidDayLabel($currentStore.day, $calendar)}
@@ -43,7 +43,7 @@
         <div class="warning-container">
             <label for="">Month</label>
             {#if !$validMonth}
-                <div use:warning />
+                <div use:setNodeIcon={"calendarium-warning"} />
                 <div class="setting-item-description">
                     {#if !$validMonth}
                         {invalidMonthLabel($currentStore.month, $calendar)}
@@ -65,7 +65,7 @@
         <div class="warning-container">
             <label for="">Year</label>
             {#if !$validYear}
-                <div use:warning />
+                <div use:setNodeIcon={"calendarium-warning"} />
                 <div class="setting-item-description">
                     {#if !$validYear}
                         {invalidYearLabel($currentStore.year, $calendar)}

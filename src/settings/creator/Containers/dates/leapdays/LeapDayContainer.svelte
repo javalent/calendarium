@@ -1,17 +1,15 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import LeapDayUI from "./LeapDayInstance.svelte";
-    import AddNew from "../Utilities/AddNew.svelte";
-    import NoExistingItems from "../Utilities/NoExistingItems.svelte";
+    import AddNew from "../../../Utilities/AddNew.svelte";
+    import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
     import { CreateLeapDayModal } from "src/settings/modals/leapday/leapday";
-    import type Calendarium from "src/main";
 
-    import Details from "../Utilities/Details.svelte";
+    import Details from "../../../Utilities/Details.svelte";
     import type { LeapDay } from "src/schemas/calendar/timespans";
 
-    export let plugin: Calendarium;
-
     const calendar = getContext("store");
+    const plugin = getContext("plugin");
 
     const { leapDayStore, leapDayDisabled } = calendar;
 

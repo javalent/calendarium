@@ -5,10 +5,10 @@
     import { ExtraButtonComponent, setIcon } from "obsidian";
     import type { Calendar } from "src/schemas";
 
-    import AddNew from "../Utilities/AddNew.svelte";
-    import NoExistingItems from "../Utilities/NoExistingItems.svelte";
+    import AddNew from "../../Utilities/AddNew.svelte";
+    import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
     import type { Writable } from "svelte/store";
-    import Details from "../Utilities/Details.svelte";
+    import Details from "../../Utilities/Details.svelte";
     import { CreateEraModal } from "src/settings/modals/era/era";
     import Calendarium from "src/main";
     import { nanoid } from "src/utils/functions";

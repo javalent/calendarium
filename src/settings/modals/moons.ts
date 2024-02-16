@@ -89,14 +89,14 @@ export class CreateMoonModal extends CalendariumModal {
                 });
             });
 
-        new Setting(this.infoEl).setName("Face Color").addText((t) => {
+        new Setting(this.infoEl).setName("Face color").addText((t) => {
             t.inputEl.setAttr("type", "color");
             t.setValue(this.moon.faceColor).onChange((v) => {
                 this.moon.faceColor = v;
             });
         });
 
-        new Setting(this.infoEl).setName("Shadow Color").addText((t) => {
+        new Setting(this.infoEl).setName("Shadow color").addText((t) => {
             t.inputEl.setAttr("type", "color");
             t.setValue(this.moon.shadowColor).onChange((v) => {
                 this.moon.shadowColor = v;

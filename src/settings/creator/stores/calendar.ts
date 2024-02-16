@@ -1,15 +1,9 @@
 import type {
     Calendar,
     CalDate,
-    Day,
     CalEvent,
     CalEventCategory,
-    LeapDay,
-    Month,
-    Moon,
     StaticCalendarData,
-    Week,
-    Year,
 } from "src/@types";
 import type Calendarium from "src/main";
 import {
@@ -20,6 +14,14 @@ import {
 } from "src/utils/functions";
 import { derived, writable } from "svelte/store";
 import copy from "fast-copy";
+import type { Moon } from "src/schemas/calendar/moons";
+import type {
+    Month,
+    Week,
+    Year,
+    LeapDay,
+    Day,
+} from "src/schemas/calendar/timespans";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;

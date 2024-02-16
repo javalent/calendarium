@@ -5,7 +5,6 @@ import { nanoid } from "src/utils/functions";
 import { CalendariumModal } from "../modal";
 import { Notice, Setting } from "obsidian";
 
-import CurrentDate from "../../creator/Containers/CurrentDate.svelte";
 import type { Era } from "src/schemas/calendar/timespans";
 
 export class CreateEraModal extends CalendariumModal {
@@ -84,7 +83,7 @@ export class CreateEraModal extends CalendariumModal {
                 });
             });
         new Setting(advanced)
-            .setName("Restart Year Count")
+            .setName("Restart year count")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
@@ -98,7 +97,7 @@ export class CreateEraModal extends CalendariumModal {
                     .onChange((v) => (this.era.restart = v))
             );
         new Setting(advanced)
-            .setName("Ends Year Prematurely")
+            .setName("Ends year prematurely")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
@@ -137,7 +136,7 @@ export class CreateEraModal extends CalendariumModal {
         eventEl.empty();
         const advanced = eventEl.createDiv("era-event");
         new Setting(advanced)
-            .setName("Show as Event")
+            .setName("Show as event")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
@@ -157,10 +156,10 @@ export class CreateEraModal extends CalendariumModal {
             );
         if (this.era.event) {
             new Setting(advanced)
-                .setName("Event Category")
+                .setName("Event category")
                 .addDropdown((d) => d);
             new Setting(advanced)
-                .setName("Event Description")
+                .setName("Event description")
                 .addTextArea((t) => t);
         }
     }

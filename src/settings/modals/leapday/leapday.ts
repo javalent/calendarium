@@ -120,7 +120,7 @@ export class IntervalModal extends CalendariumModal {
                     .onChange((v) => (this.condition.exclusive = v))
             );
         new Setting(this.contentEl)
-            .setName("Ignore Offset")
+            .setName("Ignore offset")
             .setDesc(
                 "The condition will ignore the leap day's offset when checking to apply."
             )
