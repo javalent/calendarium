@@ -5,7 +5,6 @@
     import MoonUI from "../Moon.svelte";
     import { getTypedContext } from "../../view";
     import { dateString } from "src/utils/functions";
-    import { REVEAL_ICON } from "src/utils/constants";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -29,7 +28,7 @@
     };
     const reveal = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setIcon(REVEAL_ICON)
+            .setIcon("calendar-search")
             .setTooltip("Show on Calendar");
     };
     const event = (node: HTMLElement) => {
