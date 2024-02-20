@@ -1,10 +1,5 @@
 import type { CachedMetadata, FrontMatterCache } from "obsidian";
-import type {
-    Calendar,
-    CalEvent,
-    CalEventCategory,
-    Nullable,
-} from "src/@types";
+import type { Calendar, CalEvent, CalEventCategory } from "src/@types";
 import { CalEventHelper } from "src/events/event.helper";
 import type {
     OptionsMessage,
@@ -21,7 +16,9 @@ import type {
 const ctx: Worker = self as any;
 
 function resolveTags(inlineTags: (string | null)[], allTags: string[]) {
-    return inlineTags.some((tag) => tag && allTags.includes(tag));
+    return inlineTags.some(
+        (tag) => tag && (allTags.includes(tag) || allTags.includes(`#${tag}`))
+    );
 }
 class Parser {
     queue: string[] = [];
@@ -250,7 +247,7 @@ class Parser {
     createEventHandler(
         frontmatter: FrontMatterCache | undefined,
         file: { path: string; basename: string }
-    ): Nullable<CalEventHelper> {
+    ): CalEventHelper | null {
         if (!frontmatter?.["fc-ignore"]) {
             let name = frontmatter?.["fc-calendar"];
             if (!name || !name.length) {
