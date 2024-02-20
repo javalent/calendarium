@@ -19,11 +19,11 @@
         {#each events.slice(0, 2) as event}
             <Dot color={color(event)} />
         {/each}
-        <div class="overflow">
-            {#if overflow > 0}
+        {#if overflow > 0}
+            <div class="overflow">
                 <span>+</span>
-            {/if}
-        </div>
+            </div>
+        {/if}
     </div>
 </div>
 
