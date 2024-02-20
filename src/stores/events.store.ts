@@ -52,6 +52,15 @@ export class EventStore {
             return SAVED_EVENTS;
         });
     }
+    public removeEvents(...events: CalEvent[]) {
+        this.#events.update((SAVED_EVENTS) => {
+            for (const event of events) {
+                SAVED_EVENTS.delete(event.id);
+                this.#eventCache.invalidate(event.date);
+            }
+            return SAVED_EVENTS;
+        });
+    }
     public insertEventsFromFile(path: string | null, ...events: CalEvent[]) {
         if (!path) return;
         this.#fileEvents.set(path, [

@@ -1,17 +1,24 @@
 <script lang="ts">
     import { ExtraButtonComponent } from "obsidian";
-    import { createEventDispatcher } from "svelte";
     import Flags from "../Events/Flags.svelte";
     import MoonUI from "../Moon.svelte";
     import { getTypedContext } from "../../view";
     import { dateString } from "src/utils/functions";
-    import { ADD, CALENDAR_SEARCH, CLOSE, LEFT, RIGHT } from "src/utils/icons";
+    import {
+        ADD_EVENT,
+        CALENDAR_SEARCH,
+        CLOSE,
+        LEFT,
+        RIGHT,
+    } from "src/utils/icons";
+    import { addEventWithModal } from "src/settings/modals/event/event";
+    import { derived } from "svelte/store";
 
     const global = getTypedContext("store");
+    const plugin = getTypedContext("plugin");
     const ephemeral = getTypedContext("ephemeralStore");
     $: store = $global;
-    $: viewing = $ephemeral.viewing;
-    $: if (!$viewing) viewing = $ephemeral.displaying;
+    const viewing = derived([$ephemeral.viewing], ([view]) => view!);
     $: date = dateString($viewing!, $store);
     $: yearCalculator = store.yearCalculator;
     $: displayedMonth = yearCalculator
@@ -34,7 +41,7 @@
     };
     const event = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setIcon(ADD)
+            .setIcon(ADD_EVENT)
             .setTooltip("New Event")
             .onClick(() => {});
     };
@@ -52,15 +59,15 @@
             <div
                 use:reveal
                 on:click={() => {
-                    if (!$viewing) {
-                        viewing = $ephemeral.displaying;
-                    }
                     $ephemeral.displayDate($viewing);
                 }}
             />
-            <!-- <div use:event on:click={() => store.addEvent($viewing)} /> -->
+            <div
+                use:event
+                on:click={() => addEventWithModal(plugin, $store, $viewing)}
+            />
         </div>
-        <div use:close on:click={() => ($viewing = null)} />
+        <div use:close on:click={() => $ephemeral.viewing.set(null)} />
     </div>
     <div class="date">
         <div

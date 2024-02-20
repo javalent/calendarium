@@ -18,6 +18,7 @@ export const REDO = "redo";
 export const RESET = "reset";
 
 export const ADD = "plus-with-circle";
+export const ADD_EVENT = "calendar-plus";
 export const EDIT = "wrench";
 export const TRASH = "trash";
 export const IMPORT = "import";
