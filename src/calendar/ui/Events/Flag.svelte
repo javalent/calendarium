@@ -1,7 +1,7 @@
 <svelte:options accessors />
 
 <script lang="ts">
-    import { Menu, Platform, TFile, setIcon } from "obsidian";
+    import { Menu, TFile, setIcon } from "obsidian";
 
     import type { CalDate, CalEvent } from "src/@types";
     import {
@@ -12,15 +12,16 @@
     import { getTypedContext } from "../../view";
     import { ViewEventModal } from "../../event-modal";
     import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
+    import { addEventWithModal } from "src/settings/modals/event/event";
     const dispatch = createEventDispatcher();
 
     export let event: CalEvent;
     export let date: CalDate;
+    export let dayView: boolean = false;
 
     const plugin = getTypedContext("plugin");
     const store = getTypedContext("store");
 
-    export let dayView: boolean = false;
     let multi = false,
         start = false,
         end = false,
@@ -47,16 +48,15 @@
         }
     }
 
+    $: calendar = $store;
     $: categories = $store.categories;
 
     $: color =
         $categories?.find((c) => c.id == event.category)?.color ??
         DEFAULT_CATEGORY_COLOR;
-
-    const meta = Platform.isMacOS ? "Meta" : "Control";
-
+    $: removeable = $store.eventStore.isRemovable(event.id);
     const note = (node: HTMLElement) => {
-        if ($store.eventStore.isRemovable(event.id)) {
+        if (removeable) {
             setIcon(node, EVENT_LINKED_TO_NOTE);
         } else {
             setIcon(node, EVENT_FROM_FRONTMATTER);
@@ -83,14 +83,17 @@
     const contextMenu = (evt: MouseEvent) => {
         evt.stopPropagation();
         const menu = new Menu();
-        if ($store.eventStore.isRemovable(event.id)) {
-            /* if (!event.note) {
-                menu.addItem((item) => {
-                    item.setTitle("Create Note");
-                });
-            } */
-            menu.addItem((item) => item.setTitle("Edit Event"));
-            menu.addItem((item) => item.setTitle("Delete Event"));
+        if (removeable) {
+            menu.addItem((item) =>
+                item.setTitle("Edit Event").onClick(() => {
+                    addEventWithModal(plugin, $calendar, date, event);
+                }),
+            );
+            menu.addItem((item) =>
+                item.setTitle("Delete Event").onClick(() => {
+                    $store.eventStore.removeEvents(event);
+                }),
+            );
         }
         menu.showAtMouseEvent(evt);
     };
