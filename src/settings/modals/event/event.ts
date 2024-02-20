@@ -8,7 +8,7 @@ import {
     TextAreaComponent,
     TFile,
 } from "obsidian";
-import type { CalDate, Calendar, CalEvent } from "../../../@types";
+import type { CalDate, Calendar, CalEvent, CalEventDate } from "../../../@types";
 
 import { dateString, nanoid } from "../../../utils/functions";
 
@@ -55,7 +55,7 @@ export class CreateEventModal extends CalendariumModal {
     constructor(
         public calendar: Calendar,
         event?: CalEvent,
-        date?: { month: number; day: number; year: number }
+        date?: CalDate | CalEventDate
     ) {
         super(app);
         if (event) {
@@ -468,7 +468,7 @@ export class CreateEventModal extends CalendariumModal {
 export async function addEventWithModal(
     plugin: Calendarium,
     calendar: Calendar,
-    date: CalDate,
+    date: CalDate | CalEventDate,
     event?: CalEvent
 ) {
     const modal = new CreateEventModal(calendar, event, date);
