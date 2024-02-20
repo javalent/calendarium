@@ -36,6 +36,8 @@ import { nanoid } from "src/utils/functions";
 import SettingsService from "./settings.service";
 import { RestoreCalendarModal } from "./modals/restore";
 import { FolderSuggestionModal } from "src/suggester/folder";
+import { getPresetCalendar } from "./preset";
+import CreatorController from "./creator/CreatorController.svelte";
 
 export enum Recurring {
     none = "None",
@@ -334,17 +336,31 @@ export default class CalendariumSettings extends PluginSettingTab {
         new Setting(this.calendarsEl)
             .setName("Create new calendar")
             .addButton((button: ButtonComponent) =>
+                button.setButtonText("Open Creator").onClick(async () => {
+                    const calendar = await this.launchCalendarCreator();
+                    if (calendar) {
+                        await this.plugin.addNewCalendar(calendar);
+                        this.display();
+                    }
+                })
+            )
+            .addButton((button) => {
                 button
-                    .setTooltip("Launch Calendar Creator")
-                    .setIcon("plus-with-circle")
+                    .setTooltip("Launch Quick Creator")
+                    .setIcon("sparkles")
                     .onClick(async () => {
-                        const calendar = await this.launchCalendarCreator();
+                        const preset = await getPresetCalendar(this.plugin);
+                        if (!preset) return;
+                        const calendar = await this.launchCalendarCreator(
+                            preset,
+                            true
+                        );
                         if (calendar) {
                             await this.plugin.addNewCalendar(calendar);
                             this.display();
                         }
-                    })
-            );
+                    });
+            });
 
         this.existingEl = this.calendarsEl.createDiv("existing-calendars");
 
@@ -363,7 +379,19 @@ export default class CalendariumSettings extends PluginSettingTab {
                 .setName(calendar.name)
                 .setDesc(calendar.description ?? "")
                 .addExtraButton((b) => {
-                    b.setIcon("pencil").onClick(async () => {
+                    b.setIcon("sparkles").onClick(async () => {
+                        const edited = await this.launchCalendarCreator(
+                            calendar,
+                            true
+                        );
+                        if (edited) {
+                            await this.plugin.addNewCalendar(edited, calendar);
+                            this.display();
+                        }
+                    });
+                })
+                .addExtraButton((b) => {
+                    b.setIcon("wrench").onClick(async () => {
                         const edited = await this.launchCalendarCreator(
                             calendar
                         );
@@ -373,6 +401,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                         }
                     });
                 })
+
                 .addExtraButton((b) => {
                     b.setIcon("trash").onClick(async () => {
                         if (
@@ -516,7 +545,6 @@ export default class CalendariumSettings extends PluginSettingTab {
     buildPaths() {
         if (this.#needsSort) {
             //sort data
-            console.log("sorting data");
             this.folders = this.allFolders.filter(
                 (f) => !this.data.paths.find(([p]) => f.path === p)
             );
@@ -763,7 +791,8 @@ export default class CalendariumSettings extends PluginSettingTab {
     }
 
     launchCalendarCreator(
-        calendar: Calendar | PresetCalendar = DEFAULT_CALENDAR
+        calendar: Calendar | PresetCalendar = DEFAULT_CALENDAR,
+        quick = false
     ): Promise<Calendar | void> {
         /* this.containerEl.empty(); */
         const clone = copy(calendar) as Calendar;
@@ -774,14 +803,10 @@ export default class CalendariumSettings extends PluginSettingTab {
         }
 
         /* if (Platform.isMobile) { */
-        const modal = new CreatorModal(this.plugin, clone);
+        const modal = new CreatorModal(this.plugin, clone, quick);
         return new Promise((resolve, reject) => {
             try {
                 modal.onClose = () => {
-                    console.log(
-                        "🚀 ~ file: settings.view.ts:785 ~ modal.saved:",
-                        modal.saved
-                    );
                     if (modal.saved) {
                         calendar = copy(modal.calendar);
                         if (original) calendar.id = original;
@@ -851,8 +876,12 @@ class CreatorModal extends CalendariumModal {
     calendar: Calendar;
     saved = false;
     store: ReturnType<typeof createStore>;
-    $app: CalendarCreator;
-    constructor(public plugin: Calendarium, calendar: Calendar) {
+    $app: CreatorController;
+    constructor(
+        public plugin: Calendarium,
+        calendar: Calendar,
+        public quick = false
+    ) {
         super(plugin.app);
         this.modalEl.addClass("calendarium-creator");
         this.modalEl.addClasses(["mod-sidebar-layout", "mod-settings"]);
@@ -885,16 +914,17 @@ class CreatorModal extends CalendariumModal {
         }
     }
     async display() {
-        this.$app = new CalendarCreator({
+        this.$app = new CreatorController({
             target: this.contentEl,
             props: {
                 store: this.store,
                 plugin: this.plugin,
                 top: 0,
+                quick: this.quick,
             },
         });
         this.$app.$on("cancel", () => {
-            this.saved = true;
+            this.saved = false;
             super.close();
         });
     }
