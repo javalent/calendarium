@@ -1,7 +1,6 @@
 import type {
     Calendar,
     CalDate,
-    MoonState,
     CalEventCategory,
 } from "src/@types";
 import {
@@ -16,6 +15,7 @@ import { dateString } from "src/utils/functions";
 import { MoonCache } from "./cache/moon-cache";
 import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
+import type { MoonState } from "src/schemas/calendar/moons";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 

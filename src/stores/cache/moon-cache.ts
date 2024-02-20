@@ -1,9 +1,9 @@
-import type { MoonState } from "src/@types";
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
 import { type Readable, get } from "svelte/store";
 import { YearStoreCache } from "../years.store";
 import { MOON_PHASES } from "src/utils/constants";
 import { wrap } from "src/utils/functions";
+import type { MoonState } from "src/schemas/calendar/moons";
 
 class YearMoonCache extends YearCache<MoonState> {
     update(moons: MoonState[]) {

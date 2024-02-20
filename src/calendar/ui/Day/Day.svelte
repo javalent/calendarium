@@ -3,11 +3,12 @@
     import { getTypedContext } from "../../view";
     import Dots from "../Events/Dots.svelte";
     import { Menu, TFile } from "obsidian";
-    import type { DayOrLeapDay, CalEvent } from "src/@types";
+    import type { CalEvent } from "src/@types";
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Flags from "../Events/Flags.svelte";
     import { addEventWithModal } from "src/settings/modals/event/event";
+    import type { DayOrLeapDay } from "src/schemas/calendar/timespans";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -81,7 +82,7 @@
                     month: $index,
                     year: year.year,
                 });
-            })
+            }),
         );
         let notes: { event: CalEvent; file: TFile }[] = [];
         for (const event of $events) {
@@ -98,7 +99,7 @@
                 menu.addItem((item) =>
                     item.setTitle(`Open ${event.name}`).onClick(() => {
                         app.workspace.getLeaf().openFile(file);
-                    })
+                    }),
                 );
             }
         }
@@ -167,7 +168,9 @@
         padding: 4px;
         position: relative;
         text-align: center;
-        transition: background-color 0.1s ease-in, color 0.1s ease-in;
+        transition:
+            background-color 0.1s ease-in,
+            color 0.1s ease-in;
         vertical-align: baseline;
         display: flex;
         flex-flow: column nowrap;

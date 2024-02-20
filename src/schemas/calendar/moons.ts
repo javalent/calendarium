@@ -53,5 +53,5 @@ export type Phase =
     | "New Moon Risen";
 
 export type MoonState = Moon & {
-    phase: Phase;
+    phase: Phase | undefined;
 };
