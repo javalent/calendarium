@@ -75,7 +75,7 @@
     .add-new {
         gap: 0.5rem;
     }
-    input {
+    .add-new.setting-item input {
         margin-right: initial;
     }
 </style>
