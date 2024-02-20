@@ -14,7 +14,7 @@
 
     const { leapDayStore, leapDayDisabled } = calendar;
     const label = derived(leapDayDisabled, (disabled) =>
-        disabled ? "At least one month is required" : null,
+        disabled ? "At least one month is required to create a Leap Day" : null,
     );
 
     const add = (leapday?: Partial<LeapDay>) => {
