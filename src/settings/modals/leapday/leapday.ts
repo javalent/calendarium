@@ -1,12 +1,13 @@
 import copy from "fast-copy";
 import { App, Setting, ButtonComponent } from "obsidian";
-import type { Calendar, LeapDay, LeapDayCondition } from "../../../@types";
+import type { Calendar } from "../../../@types";
 
 import { nanoid } from "../../../utils/functions";
 
 import LeapDayNew from "./LeapDayNew.svelte";
 import LeapDayInterval from "./LeapDayInterval.svelte";
 import { CalendariumModal } from "../modal";
+import type { LeapDay, LeapDayCondition } from "src/schemas/calendar/timespans";
 
 export class CreateLeapDayModal extends CalendariumModal {
     saved = true;
@@ -22,10 +23,14 @@ export class CreateLeapDayModal extends CalendariumModal {
     editing: boolean;
     infoEl: HTMLDivElement;
     conditionsEl: HTMLDivElement;
-    constructor(app: App, public calendar: Calendar, leapday?: LeapDay) {
+    constructor(
+        app: App,
+        public calendar: Calendar,
+        leapday?: Partial<LeapDay>
+    ) {
         super(app);
         if (leapday) {
-            this.leapday = copy(leapday);
+            this.leapday = { ...this.leapday, ...copy(leapday) };
             this.editing = true;
         }
         this.containerEl.addClasses(["calendarium-create-leapday"]);

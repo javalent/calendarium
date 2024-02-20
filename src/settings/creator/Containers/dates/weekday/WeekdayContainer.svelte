@@ -9,6 +9,9 @@
     import NoExistingItems from "src/settings/creator/Utilities/NoExistingItems.svelte";
     import DropZone from "src/settings/creator/Utilities/DropZone.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
+    import { ExtraButtonComponent, TextComponent } from "obsidian";
+    import { derived, writable } from "svelte/store";
+    import { nanoid } from "src/utils/functions";
 
     const calendar = getContext("store");
 
@@ -19,17 +22,13 @@
 
     let firstWeekday = $staticStore.firstWeekDay;
 
-    const add = () => {
-        const modal = new WeekdayModal();
-
-        modal.onCancel = () => {}; //no op;
-        modal.onClose = () => {
-            if (!modal.item.name) return;
-            weekdayStore.add(modal.item);
-        };
-
-        modal.open();
-    };
+    /*     const add = (name: string) => {
+        weekdayStore.add({
+            type: "day",
+            name,
+            id: nanoid(6),
+        });
+    }; */
 
     const advanced = (item: Day) => {
         const modal = new WeekdayModal(item);
@@ -57,29 +56,32 @@
         $weekdayStore.length != 1 ? "s" : ""
     }`}
 >
+    {#if !$weekdayStore.length}
+        <NoExistingItems message={"Create a new weekday to see it here."} />
+    {:else}
+        <DropZone
+            type="weekday"
+            {items}
+            {onDrop}
+            component={WeekdayInstance}
+            on:advanced={(e) => advanced(e.detail)}
+            on:trash={(e) => trash(e.detail)}
+        />
+    {/if}
+
     <AddNew
-        on:click={() => {
-            add();
+        placeholder={"Weekday"}
+        on:add={(evt) => {
+            weekdayStore.add({
+                type: "day",
+                name: evt.detail,
+                id: nanoid(6),
+            });
         }}
     />
 
-    <div class="existing-items">
-        {#if !$weekdayStore.length}
-            <NoExistingItems message={"Create a new weekday to see it here."} />
-        {:else}
-            <DropZone
-                type="weekday"
-                {items}
-                {onDrop}
-                component={WeekdayInstance}
-                on:advanced={(e) => advanced(e.detail)}
-                on:trash={(e) => trash(e.detail)}
-            />
-        {/if}
-    </div>
-
     <ToggleComponent
-        name={"Overflow Weeks"}
+        name={"Overflow weeks"}
         desc={"Weeks will flow into the next month. Disable to reset the weekday each month."}
         value={$staticStore.overflow}
         on:click={() =>
@@ -87,7 +89,7 @@
     />
     <div class="setting-item">
         <div class="setting-item-info">
-            <div class="setting-item-name">First Day</div>
+            <div class="setting-item-name">First day</div>
             <div class="setting-item-description">
                 The weekday for the very first day on the calendar.
             </div>

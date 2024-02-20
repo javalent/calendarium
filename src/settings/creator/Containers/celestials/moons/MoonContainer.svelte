@@ -56,46 +56,6 @@
                     on:edit={() => add(moon)}
                     on:delete={() => deleteMoon(moon)}
                 />
-                <!-- <div class="moon">
-                    <div class="moon-info">
-                        <span class="setting-item-name">
-                            <MoonSVG
-                                moon={{ ...moon, phase: "First Quarter" }}
-                                label={false}
-                                size={20}
-                            />
-                            {moon.name}
-                        </span>
-                        <div class="setting-item-description">
-                            <div class="date">
-                                <div class="icons">
-                                    <span
-                                        class="icon small"
-                                        use:setNodeIcon={"orbit"}
-                                    ></span>
-                                    {moon.cycle} days
-                                </div>
-                                {#if moon.offset}
-                                    <div class="icons">
-                                        <span
-                                            class="icon small"
-                                            use:setNodeIcon={"arrow-big-right-dash"}
-                                        ></span>
-                                        {moon.offset} days
-                                    </div>
-                                {/if}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="icons">
-                        <div class="icon" use:edit on:click={() => add(moon)} />
-                        <div
-                            class="icon"
-                            use:trash
-                            on:click={() => deleteMoon(moon)}
-                        />
-                    </div>
-                </div> -->
             {/each}
         </div>
     {/if}

@@ -2,8 +2,9 @@
     import { setIcon } from "obsidian";
     import { getMissingNotice } from "./Utilities/utils";
     import createStore from "./stores/calendar";
+    import { getContext } from "svelte";
 
-    export let store: ReturnType<typeof createStore>;
+    const store = getContext("store");
     const { valid } = store;
 
     const setValidation = (node: HTMLElement, valid: boolean) => {
@@ -19,7 +20,7 @@
     };
 </script>
 
-<div class="creator-title">
+<div class="creator-title vertical-tab-nav-item">
     <h3 class="title">
         Calendar Creator
         <div class="creator-check">
@@ -41,5 +42,8 @@
     }
     .creator-title :global(.can-save) {
         color: var(--background-modifier-success);
+    }
+    .creator-title.vertical-tab-nav-item:hover {
+        background-color: initial;
     }
 </style>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { setIcon } from "obsidian";
     import { setNodeIcon } from "src/utils/helpers";
+    import WarningLabel from "./WarningLabel.svelte";
 
     export let open = true;
     export let name: string;
@@ -32,16 +33,15 @@
         <div class="collapser">
             <div class="warning-container">
                 {#if warn}
-                    <div use:setNodeIcon={"calendarium-warning"} />
+                    <div
+                        class="x-small"
+                        use:setNodeIcon={"calendarium-warning"}
+                    />
                 {/if}
                 <div class="handle" use:handle />
             </div>
             {#if warn && label}
-                <div class="warning-label-container">
-                    <div class="setting-item-description warning-label">
-                        {label}
-                    </div>
-                </div>
+                <WarningLabel {label} />
             {/if}
         </div>
     </summary>
@@ -61,22 +61,8 @@
     .calendarium-nested-settings {
         position: relative;
     }
-    /* .warning-label-container {
-        display: flex;
-        justify-content: flex-end;
-        position: absolute;
-        right: 0;
-    } */
-    /* .calendarium-nested-summary,
-    .calendarium-nested-settings {
-        position: relative;
-    } */
-    .warning-label {
-        color: var(--text-error);
-    }
     .calendarium-nested-summary {
         outline: none;
-        display: block !important;
         list-style: none !important;
         list-style-type: none !important;
         min-height: 1rem;
@@ -84,6 +70,9 @@
         border-top-right-radius: 0.1rem;
         cursor: pointer;
         background-color: var(--creator-background-color);
+        margin-right: 0;
+        display: flex;
+        justify-content: space-between;
     }
 
     summary::-webkit-details-marker,
@@ -94,15 +83,11 @@
         display: none;
     }
     .collapser {
-        position: absolute;
-        top: 50%;
-        right: 8px;
-        transform: translateY(-50%);
-        content: "";
         display: flex;
         flex-flow: column;
-        justify-content: flex-end;
+        justify-content: flex-start;
         align-items: flex-end;
+        content: "";
     }
 
     .handle {

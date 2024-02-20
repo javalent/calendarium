@@ -18,12 +18,12 @@
     } = calendar;
 </script>
 
-<div class="calendarium-date-field-container setting-item">
+<div class="calendarium-date-field-container">
     <div class="calendarium-date-field">
         <div class="warning-container">
             <label for="">Day</label>
             {#if !$validDay}
-                <div use:setNodeIcon={"calendarium-warning"} />
+                <!-- <div use:setNodeIcon={"calendarium-warning"} /> -->
                 <div class="setting-item-description">
                     {#if !$validDay}
                         {invalidDayLabel($currentStore.day, $calendar)}
@@ -43,7 +43,7 @@
         <div class="warning-container">
             <label for="">Month</label>
             {#if !$validMonth}
-                <div use:setNodeIcon={"calendarium-warning"} />
+                <!-- <div use:setNodeIcon={"calendarium-warning"} /> -->
                 <div class="setting-item-description">
                     {#if !$validMonth}
                         {invalidMonthLabel($currentStore.month, $calendar)}
@@ -65,7 +65,7 @@
         <div class="warning-container">
             <label for="">Year</label>
             {#if !$validYear}
-                <div use:setNodeIcon={"calendarium-warning"} />
+                <!-- <div use:setNodeIcon={"calendarium-warning"} /> -->
                 <div class="setting-item-description">
                     {#if !$validYear}
                         {invalidYearLabel($currentStore.year, $calendar)}
@@ -118,9 +118,10 @@
     }
     .warning-container {
         position: relative;
-        display: grid;
-        align-items: center;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: flex-start;
         gap: 0.25rem;
-        grid-template-columns: 1fr auto;
     }
+    
 </style>

@@ -26,6 +26,7 @@
         display: flex;
         flex-flow: column nowrap;
         align-items: flex-start;
+        gap: 0.5rem;
         width: 100%;
     }
     textarea {

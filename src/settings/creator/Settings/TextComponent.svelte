@@ -33,9 +33,9 @@
     <div class="setting-item-control">
         <div class="warning-container">
             <slot>
-                {#if warn}
+                <!-- {#if warn}
                     <div use:setNodeIcon={"calendarium-warning"} />
-                {/if}
+                {/if} -->
                 {#if type == "text"}
                     <input
                         type="text"

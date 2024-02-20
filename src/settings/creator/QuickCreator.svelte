@@ -9,13 +9,11 @@
     import createStore from "./stores/calendar";
     import CreatorTitle from "./CreatorTitle.svelte";
     import History from "./Utilities/History.svelte";
-    import General from "./Containers/general/General.svelte";
-    import Dates from "./Containers/dates/Dates.svelte";
-    import Celestials from "./Containers/celestials/Celestials.svelte";
     import Events from "./Containers/events/Events.svelte";
     import { createEventDispatcher } from "svelte";
     import { setNodeIcon } from "src/utils/helpers";
-    import { getContext } from "svelte";
+    import Info from "./Containers/general/Info.svelte";
+    import CurrentDate from "./Containers/dates/current/CurrentDate.svelte";
 
     const mobile = Platform.isMobile;
     let ready = mobile;
@@ -24,38 +22,12 @@
         ready = true;
     });
 
-    export let color: string | null = null;
-    export let top: number;
-
-    const store = getContext("store");
-    const plugin = getContext("plugin");
-
-    const SettingsSections = [
-        "General",
-        "Dates",
-        /* "Eras",
-        "Weather", */
-        "Celestial Bodies",
-        "Events",
-    ] as const;
+    const SettingsSections = ["General", "Events"] as const;
     type CreatorSection = (typeof SettingsSections)[number];
     let SelectedSection: CreatorSection = SettingsSections[0];
 
-    const { validName, validDate, validMonths, validWeekdays, validYears } =
-        store;
-
     $: validSection = (section: CreatorSection): boolean => {
         switch (section) {
-            case "General": {
-                return $validName;
-            }
-            case "Dates": {
-                return (
-                    $validDate && $validMonths && $validWeekdays && $validYears
-                );
-            }
-            case "Celestial Bodies":
-            case "Events":
             default: {
                 return true;
             }
@@ -106,37 +78,22 @@
         <History></History>
         <div class="vertical-tab-content">
             {#if SelectedSection == "General"}
-                <General />
+                <Info />
+                <CurrentDate />
             {/if}
-            {#if SelectedSection == "Dates"}
-                <Dates />
-            {/if}
-            <!-- {#if SelectedSection === "Eras"}
-                <Eras {plugin} {calendar} />
-            {/if}
-            {#if SelectedSection === "Weather"}
-                <Weather {plugin} {calendar} />
-            {/if} -->
             {#if SelectedSection == "Events"}
                 <Events />
-            {/if}
-            {#if SelectedSection == "Celestial Bodies"}
-                <Celestials />
             {/if}
         </div>
     </div>
 {:else}
-    <div
-        class="calendarium-creator"
-        style="--creator-background-color: {color}; --top: {top}px;"
-    >
+    <div class="calendarium-creator">
         {#if ready}
             <CreatorTitle />
             <div class="inherit calendarium-creator-inner">
                 <div class="calendarium-creator-app">
-                    <General />
-                    <Dates />
-                    <Celestials />
+                    <Info />
+                    <CurrentDate />
                     <Events />
                 </div>
             </div>

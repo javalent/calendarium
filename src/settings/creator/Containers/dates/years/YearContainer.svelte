@@ -106,7 +106,7 @@
     label={"At least one year is required when using custom years"}
 >
     <ToggleComponent
-        name="Use Custom Years"
+        name="Use custom years"
         desc={customDesc}
         value={$customYears ?? false}
         on:click={() => confirmCustom()}

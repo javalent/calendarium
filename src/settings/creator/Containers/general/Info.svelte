@@ -6,7 +6,6 @@
     import Details from "../../Utilities/Details.svelte";
     import { DEFAULT_DATA } from "src/settings/settings.constants";
     import { DEFAULT_FORMAT } from "src/utils/constants";
-    import Calendarium from "src/main";
 
     const calendar = getContext("store");
 
@@ -63,7 +62,7 @@
             }}
         />
         <ToggleComponent
-            name={"Display Day Number"}
+            name={"Display day number"}
             desc={"Display day of year in Day View"}
             value={displayDayNumber}
             on:click={() => {
@@ -72,7 +71,7 @@
             }}
         />
         <TextComponent
-            name={"Date Format"}
+            name={"Date format"}
             desc={descFormat()}
             value={$calendar.dateFormat ?? DEFAULT_FORMAT}
             on:blur={(evt) => {
@@ -81,16 +80,16 @@
             }}
         />
         <ToggleComponent
-            name={"Support inline events"}
-            desc={"Display day of year in Day View"}
+            name={"Support Inline Events"}
+            desc={""}
             value={$calendar.supportInlineEvents ?? false}
             on:click={() => {
                 $calendar.supportInlineEvents = !$calendar.supportInlineEvents;
             }}
         />
         <TextComponent
-            name={"Tag to indicate notes to scan for inline events"}
-            desc={""}
+            name={"Tag for Inline Events"}
+            desc={"Only notes with this tag will be scanned for inline events"}
             value={$calendar.inlineEventTag ?? ""}
             on:blur={(evt) => {
                 if (evt.detail === $calendar.inlineEventTag) return;
