@@ -16,7 +16,7 @@
     const dispatch = createEventDispatcher();
 
     export let event: CalEvent;
-    export let date: CalDate;
+    /* export let date: CalDate; */
     export let dayView: boolean = false;
 
     const plugin = getTypedContext("plugin");
@@ -26,7 +26,7 @@
         start = false,
         end = false,
         first = false;
-    $: {
+    /*     $: {
         if (event.end != undefined && !dayView) {
             multi = true;
             start =
@@ -46,7 +46,7 @@
                 end = false;
             }
         }
-    }
+    } */
 
     $: calendar = $store;
     $: categories = $store.categories;
@@ -86,7 +86,7 @@
         if (removeable) {
             menu.addItem((item) =>
                 item.setTitle("Edit Event").onClick(() => {
-                    addEventWithModal(plugin, $calendar, date, event);
+                    addEventWithModal(plugin, $calendar, event.date, event);
                 }),
             );
             menu.addItem((item) =>
@@ -99,6 +99,7 @@
     };
 </script>
 
+<!--  -->
 <div
     bind:this={flag}
     class="flag"

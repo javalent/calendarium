@@ -10,7 +10,6 @@
     export let date: CalDate;
 
     const store = getTypedContext("store");
-    const { categories } = $store;
 
     let height: number;
     let target: Element;
@@ -34,12 +33,12 @@
             let remaining = height;
 
             for (const event of events) {
-                const flag = new Flag({
+                new Flag({
                     target,
                     props: {
                         event,
                         dayView,
-                        date,
+                        /* date, */
                     },
                 });
                 if (!dayView) {
@@ -47,7 +46,7 @@
                         height -
                         Array.from(target.children).reduce(
                             (a, b) => b.getBoundingClientRect().height + a,
-                            0
+                            0,
                         );
                     if (remaining < 0 && height != 0) {
                         target.lastElementChild?.detach();
