@@ -1,4 +1,4 @@
-import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
+import { Platform, Plugin, WorkspaceLeaf, addIcon, setIcon } from "obsidian";
 
 import CalendariumSettings from "./settings/settings.view";
 
@@ -13,7 +13,7 @@ import {
     createCalendarStore,
 } from "./stores/calendar.store";
 import { CodeBlockService } from "./calendar/codeblock";
-import { DEFAULT_FORMAT, REVEAL_ICON } from "./utils/constants";
+import { DEFAULT_FORMAT } from "./utils/constants";
 import { CalendariumNotice } from "./utils/notice";
 
 declare module "obsidian" {
@@ -176,11 +176,9 @@ export default class Calendarium extends Plugin {
 
         /** Add Icons */
         addIcon(
-            REVEAL_ICON,
-            `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="calendar-day" class="svg-inline--fa fa-calendar-day fa-w-14" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm64-192c0-8.8 7.2-16 16-16h96c8.8 0 16 7.2 16 16v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"/></svg>`
+            "calendarium-between-horizontal-start",
+            `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-between-horizontal-start"><rect width="13" height="7" x="8" y="3" rx="1"/><path d="m2 9 3 3-3 3"/><rect width="13" height="7" x="8" y="14" rx="1"/></svg>`
         );
-
-        /* addIcon(EVENT_LINKED_TO_NOTE, EVENT_LINKED_TO_NOTE_ICON); */
 
         this.watcher = new Watcher(this);
 

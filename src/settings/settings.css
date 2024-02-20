@@ -125,7 +125,8 @@
 
 details.calendarium-nested-settings > summary {
     outline: none;
-    display: block !important;
+    display: flex;
+    justify-content: space-between;
     list-style: none !important;
     list-style-type: none !important;
     min-height: 1rem;
@@ -141,14 +142,11 @@ details.calendarium-nested-settings > summary::marker {
 }
 
 details.calendarium-nested-settings > summary > .collapser {
-    position: absolute;
-    top: 50%;
-    right: 8px;
-    transform: translateY(-50%);
     content: "";
 }
 
 details.calendarium-nested-settings > summary > .collapser > .handle {
+    display: flex;
     transform: rotate(0deg);
     transition: transform 0.25s;
 }
@@ -189,7 +187,7 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
 .calendarium-nested-settings[open] .setting-item-heading,
 .calendarium-nested-settings:not(details) .setting-item-heading {
     border-top: 0px;
-   /*  border-bottom: 1px solid var(--background-modifier-border); */
+    /*  border-bottom: 1px solid var(--background-modifier-border); */
 }
 
 .calendarium-nested-settings .warning-container {
@@ -324,4 +322,24 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
 /** Generic Modal */
 .calendarium-modal-buttons {
     justify-content: flex-end;
+}
+
+.has-node-icon {
+    display: flex;
+    align-items: center;
+}
+.has-node-icon.x-small {
+    --icon-size: var(--icon-xs);
+}
+.has-node-icon.small {
+    --icon-size: var(--icon-s);
+}
+.has-node-icon.medium {
+    --icon-size: var(--icon-m);
+}
+.has-node-icon.large {
+    --icon-size: var(--icon-l);
+}
+.has-node-icon.x-large {
+    --icon-size: var(--icon-xl);
 }
