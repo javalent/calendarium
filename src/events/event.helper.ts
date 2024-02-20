@@ -7,11 +7,11 @@ import type {
     CalEventCategory,
     CalEventDate,
     CalEventSort,
-    LeapDay,
 } from "../@types";
 import { DEFAULT_FORMAT } from "../utils/constants";
 import randomColor from "randomcolor";
 import { logError, logWarning } from "../utils/log";
+import type { LeapDay } from "src/schemas/calendar/timespans";
 
 const inlineDateSpans: RegExp = /<(span|div)[\s\S]*?<\/(span|div)>/g;
 
