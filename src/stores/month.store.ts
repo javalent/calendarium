@@ -1,8 +1,12 @@
-import type { DayOrLeapDay, DefinedLeapDay, Month } from "src/@types";
 import { type StaticStore } from "./calendar.store";
 import { YearStore } from "./years.store";
 import { type Readable, derived } from "svelte/store";
-import { wrap } from "../utils/functions";
+import { nanoid, wrap } from "../utils/functions";
+import type {
+    Month,
+    DayOrLeapDay,
+    DefinedLeapDay,
+} from "src/schemas/calendar/timespans";
 
 export class MonthStore {
     constructor(
@@ -65,16 +69,19 @@ export class MonthStore {
         [this.year.firstDay, this.daysBefore, this.weekdays, this.days],
         ([firstDayOfYear, daysBefore, weekdays, days]) => {
             return wrap(
-                (daysBefore % weekdays.length) + firstDayOfYear + days,
+                (daysBefore % weekdays.length) + firstDayOfYear + days - 1,
                 weekdays.length
             );
         }
     );
     weeks = derived(
         [this.weekdays, this.lastDay, this.firstDay],
-        ([weekdays, lastDay, firstDay]) =>
-            Math.ceil((firstDay + this.month.length) / weekdays.length) +
-            (weekdays.length - lastDay <= weekdays.length / 2 ? 1 : 0)
+        ([weekdays, lastDay, firstDay]) => {
+            return (
+                Math.ceil((firstDay + this.month.length) / weekdays.length) +
+                (weekdays.length - lastDay <= weekdays.length / 2 ? 1 : 0)
+            );
+        }
     );
 
     daysAsWeeks: Readable<Array<(DayOrLeapDay | null)[]>> = derived(
@@ -129,7 +136,7 @@ export class MonthStore {
                             type: "day",
                             number: day + 1,
                             name: null,
-                            id: null,
+                            id: nanoid(3),
                         });
                     }
                 }
