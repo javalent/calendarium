@@ -7,13 +7,17 @@
 
     import Details from "../../../Utilities/Details.svelte";
     import type { LeapDay } from "src/schemas/calendar/timespans";
+    import { derived } from "svelte/store";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
 
     const { leapDayStore, leapDayDisabled } = calendar;
+    const label = derived(leapDayDisabled, (disabled) =>
+        disabled ? "At least one month is required" : null,
+    );
 
-    const add = (leapday?: LeapDay) => {
+    const add = (leapday?: Partial<LeapDay>) => {
         const modal = new CreateLeapDayModal(plugin.app, $calendar, leapday);
         modal.onClose = () => {
             if (!modal.saved) return;
@@ -30,17 +34,11 @@
 </script>
 
 <Details
-    name={"Leap Days"}
+    name={"Leap days"}
     desc={`${$leapDayStore.length} leap day${
         $leapDayStore.length != 1 ? "s" : ""
     }`}
 >
-    <AddNew
-        on:click={() => add()}
-        disabled={$leapDayDisabled}
-        label={$leapDayDisabled ? "At least one named month is required" : ""}
-    />
-
     {#if !$leapDayStore.length}
         <NoExistingItems message={"Create a new leap day to see it here."} />
     {:else}
@@ -54,6 +52,13 @@
             {/each}
         </div>
     {/if}
+
+    <AddNew
+        placeholder={"Leap Day"}
+        disabled={leapDayDisabled}
+        label={$label}
+        on:add={(evt) => add({ name: evt.detail })}
+    />
 </Details>
 
 <style>

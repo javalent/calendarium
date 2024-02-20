@@ -247,11 +247,11 @@ function createStore(plugin: Calendarium, existing: Calendar) {
         },
         monthStore: {
             subscribe: monthStore.subscribe,
-            add: () =>
+            add: (name?: string) =>
                 update((data) => {
                     data.static.months.push({
                         type: "month",
-                        name: "",
+                        name: name ?? "",
                         length: 0,
                         id: nanoid(6),
                         interval: 1,

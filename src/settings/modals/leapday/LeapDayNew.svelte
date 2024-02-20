@@ -1,6 +1,6 @@
 <script lang="ts">
     import { App, ButtonComponent, ExtraButtonComponent } from "obsidian";
-    import type { Calendar, LeapDay, LeapDayCondition } from "src/@types";
+    import type { Calendar } from "src/@types";
     import { IntervalModal } from "src/settings/modals/leapday/leapday";
     import { getIntervalDescription } from "src/utils/functions";
     import { createEventDispatcher } from "svelte";
@@ -8,6 +8,10 @@
     import ToggleComponent from "../../creator/Settings/ToggleComponent.svelte";
     import AddNew from "../../creator/Utilities/AddNew.svelte";
     import Details from "../../creator/Utilities/Details.svelte";
+    import type {
+        LeapDay,
+        LeapDayCondition,
+    } from "src/schemas/calendar/timespans";
 
     const dispatch = createEventDispatcher();
 
@@ -26,7 +30,7 @@
         const modal = new IntervalModal(
             app,
             leapDay.interval.length > 0,
-            interval
+            interval,
         );
         modal.onClose = () => {
             if (!modal.saved) return;
@@ -37,7 +41,7 @@
                 leapDay.interval.splice(
                     leapDay.interval.indexOf(interval),
                     1,
-                    modal.condition
+                    modal.condition,
                 );
             }
             leapDay.interval = leapDay.interval;
@@ -47,7 +51,7 @@
 
     $: intervals = leapDay.interval.sort(
         (a, b) =>
-            (a.interval ?? Number.MIN_VALUE) - (b.interval ?? Number.MIN_VALUE)
+            (a.interval ?? Number.MIN_VALUE) - (b.interval ?? Number.MIN_VALUE),
     );
     const getIntervalName = (interval: LeapDayCondition) => {
         const name = [`${interval.interval}`];
@@ -143,7 +147,6 @@
         value={`${leapDay.offset}`}
         on:blur={(evt) => (leapDay.offset = evt.detail)}
     />
-    <AddNew on:click={() => add()} />
     <div class="setting-item">
         <div class="setting-item-description">
             {getIntervalDescription(leapDay)}
@@ -160,12 +163,14 @@
                     use:trash
                     on:click={() =>
                         (leapDay.interval = leapDay.interval.filter(
-                            (i) => i != interval
+                            (i) => i != interval,
                         ))}
                 />
             </div>
         </div>
     {/each}
+
+    <AddNew isInput={false} on:add={() => add()} />
 </Details>
 <div class="buttons">
     <div use:cancel on:click={() => dispatch("cancel")} />

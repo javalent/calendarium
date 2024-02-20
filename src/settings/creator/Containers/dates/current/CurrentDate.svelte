@@ -12,7 +12,7 @@
 </script>
 
 <Details
-    name={"Current Date"}
+    name={"Current date"}
     warn={!$validDate}
     label={"Invalid current date specified"}
     {desc}

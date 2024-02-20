@@ -48,8 +48,6 @@
         }}
     />
 
-    <AddNew on:click={() => monthStore.add()} />
-
     {#if !$monthStore.length}
         <NoExistingItems message={"Create a new month to see it here."} />
     {:else}
@@ -62,6 +60,11 @@
             on:trash={(e) => trash(e.detail)}
         />
     {/if}
+
+    <AddNew
+        placeholder={"Month"}
+        on:add={(evt) => monthStore.add(evt.detail)}
+    />
 </Details>
 
 <style>

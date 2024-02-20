@@ -34,7 +34,6 @@
 <style>
     .creator-history {
         display: flex;
-        position: absolute;
         padding: var(--size-2-3);
     }
 </style>
