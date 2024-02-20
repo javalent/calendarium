@@ -4,6 +4,7 @@ import type { Calendar, PresetCalendar } from "src/@types";
 import { nanoid } from "src/utils/functions";
 import { PRESET_CALENDARS } from "src/utils/presets";
 import { CalendariumModal } from "./modal";
+import { CLOSE } from "src/utils/icons";
 
 export class CalendarPresetModal extends CalendariumModal {
     preset: PresetCalendar | Calendar;
@@ -50,7 +51,7 @@ export class CalendarPresetModal extends CalendariumModal {
                 this.close();
             })
             .setCta();
-        new ExtraButtonComponent(buttonEl).setIcon("cross").onClick(() => {
+        new ExtraButtonComponent(buttonEl).setIcon(CLOSE).onClick(() => {
             this.close();
         });
     }

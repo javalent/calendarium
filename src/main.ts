@@ -1,4 +1,4 @@
-import { Platform, Plugin, WorkspaceLeaf, addIcon, setIcon } from "obsidian";
+import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
 
 import CalendariumSettings from "./settings/settings.view";
 

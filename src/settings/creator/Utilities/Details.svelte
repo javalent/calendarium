@@ -1,7 +1,8 @@
 <script lang="ts">
     import { setIcon } from "obsidian";
-    import { setNodeIcon } from "src/utils/helpers";
+    import { COLLAPSE, setNodeIcon } from "src/utils/icons";
     import WarningLabel from "./WarningLabel.svelte";
+    import { WARNING } from "src/utils/icons";
 
     export let open = true;
     export let name: string;
@@ -14,7 +15,7 @@
         if (open) node.setAttr("open", "open");
     };
     const handle = (node: HTMLElement) => {
-        setIcon(node, "chevron-right");
+        setIcon(node, COLLAPSE);
     };
 </script>
 
@@ -33,10 +34,7 @@
         <div class="collapser">
             <div class="warning-container">
                 {#if warn}
-                    <div
-                        class="x-small"
-                        use:setNodeIcon={"calendarium-warning"}
-                    />
+                    <div class="x-small" use:setNodeIcon={WARNING} />
                 {/if}
                 <div class="handle" use:handle />
             </div>

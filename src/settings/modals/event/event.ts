@@ -20,6 +20,7 @@ import copy from "fast-copy";
 import { CalendariumModal } from "../modal";
 import { CalEventHelper } from "src/events/event.helper";
 import Calendarium from "src/main";
+import { CLOSE } from "src/utils/icons";
 
 export class CreateEventModal extends CalendariumModal {
     saved = false;
@@ -206,7 +207,7 @@ export class CreateEventModal extends CalendariumModal {
                     });
             })
             .addExtraButton((b) => {
-                b.setIcon("cross")
+                b.setIcon(CLOSE)
                     .setTooltip("Cancel")
                     .onClick(() => this.close());
             });
@@ -319,7 +320,7 @@ export class CreateEventModal extends CalendariumModal {
             )
             .setValue(
                 field.month != undefined
-                    ? this.calendar.static.months[field.month].name
+                    ? this.calendar.static.months[field.month].name!
                     : "select"
             )
             .onChange((v) => {

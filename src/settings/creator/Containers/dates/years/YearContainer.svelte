@@ -15,6 +15,7 @@
     import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
     import Details from "../../../Utilities/Details.svelte";
     import type { Year } from "src/schemas/calendar/timespans";
+    import { GRIP, TRASH } from "src/utils/icons";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
@@ -23,12 +24,12 @@
     const { customYears } = yearStore;
 
     const grip = (node: HTMLElement) => {
-        setIcon(node, "calendarium-grip");
+        setIcon(node, GRIP);
     };
 
     const trash = (node: HTMLElement, item: Year) => {
         new ExtraButtonComponent(node)
-            .setIcon("trash")
+            .setIcon(TRASH)
             .onClick(() => yearStore.delete(item.id));
     };
 

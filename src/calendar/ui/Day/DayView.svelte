@@ -5,6 +5,7 @@
     import MoonUI from "../Moon.svelte";
     import { getTypedContext } from "../../view";
     import { dateString } from "src/utils/functions";
+    import { ADD, CALENDAR_SEARCH, CLOSE, LEFT, RIGHT } from "src/utils/icons";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -24,24 +25,24 @@
     $: displayMoons = $ephemeral.displayMoons;
 
     const close = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("cross").setTooltip("Close");
+        new ExtraButtonComponent(node).setIcon(CLOSE).setTooltip("Close");
     };
     const reveal = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setIcon("calendar-search")
-            .setTooltip("Show on Calendar");
+            .setIcon(CALENDAR_SEARCH)
+            .setTooltip("Reveal");
     };
     const event = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setIcon("plus-with-circle")
+            .setIcon(ADD)
             .setTooltip("New Event")
             .onClick(() => {});
     };
     const left = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("left-arrow");
+        new ExtraButtonComponent(node).setIcon(LEFT);
     };
     const right = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("right-arrow");
+        new ExtraButtonComponent(node).setIcon(RIGHT);
     };
 </script>
 

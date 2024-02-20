@@ -38,6 +38,19 @@ import { RestoreCalendarModal } from "./modals/restore";
 import { FolderSuggestionModal } from "src/suggester/folder";
 import { getPresetCalendar } from "./preset";
 import CreatorController from "./creator/CreatorController.svelte";
+import {
+    ADD,
+    CHECK,
+    CLOSE,
+    COLLAPSE,
+    EDIT,
+    IMPORT,
+    QUICK_CREATOR,
+    RESET,
+    RESTORE,
+    TRASH,
+    WARNING,
+} from "src/utils/icons";
 
 export enum Recurring {
     none = "None",
@@ -87,16 +100,6 @@ declare module "obsidian" {
         };
     }
 }
-
-addIcon(
-    "calendarium-grip",
-    `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="grip-lines" class="svg-inline--fa fa-grip-lines fa-w-16" role="img" viewBox="0 0 512 512"><path fill="currentColor" d="M496 288H16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-128H16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16z"/></svg>`
-);
-
-addIcon(
-    "calendarium-warning",
-    `<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="exclamation-triangle" class="svg-inline--fa fa-exclamation-triangle fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path></svg>`
-);
 
 export default class CalendariumSettings extends PluginSettingTab {
     contentEl: HTMLDivElement;
@@ -171,7 +174,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     })
                 )
                 .addButton((b) => {
-                    b.setIcon("import").onClick(async () => {
+                    b.setIcon(IMPORT).onClick(async () => {
                         if (
                             await confirmWithModal(
                                 app,
@@ -188,7 +191,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
                 })
                 .addExtraButton((b) => {
-                    b.setIcon("trash").onClick(async () => {
+                    b.setIcon(TRASH).onClick(async () => {
                         if (
                             await confirmWithModal(
                                 app,
@@ -209,10 +212,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         };
         new Setting(summary).setHeading().setName("Calendar management");
 
-        setIcon(
-            summary.createDiv("collapser").createDiv("handle"),
-            "chevron-right"
-        );
+        setIcon(summary.createDiv("collapser").createDiv("handle"), COLLAPSE);
 
         new Setting(this.calendarsEl)
             .setName("Default calendar")
@@ -284,7 +284,7 @@ export default class CalendariumSettings extends PluginSettingTab {
 
                     input.value = "";
                 };
-                b.setIcon("import");
+                b.setIcon(IMPORT);
                 b.buttonEl.addClass("calendar-file-upload");
                 b.buttonEl.appendChild(input);
                 b.onClick(() => input.click());
@@ -294,7 +294,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             new Setting(this.calendarsEl)
                 .setName("Restore deleted calendars")
                 .addButton((b) => {
-                    b.setTooltip("Restore").setIcon("archive-restore");
+                    b.setTooltip("Restore").setIcon(RESTORE);
                     b.buttonEl.setCssStyles({ position: "relative" });
                     const badge = b.buttonEl.createDiv({
                         cls: "calendarium-deleted-badge",
@@ -347,7 +347,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addButton((button) => {
                 button
                     .setTooltip("Launch Quick Creator")
-                    .setIcon("sparkles")
+                    .setIcon(QUICK_CREATOR)
                     .onClick(async () => {
                         const preset = await getPresetCalendar(this.plugin);
                         if (!preset) return;
@@ -379,7 +379,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 .setName(calendar.name)
                 .setDesc(calendar.description ?? "")
                 .addExtraButton((b) => {
-                    b.setIcon("sparkles").onClick(async () => {
+                    b.setIcon(QUICK_CREATOR).onClick(async () => {
                         const edited = await this.launchCalendarCreator(
                             calendar,
                             true
@@ -391,7 +391,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
                 })
                 .addExtraButton((b) => {
-                    b.setIcon("wrench").onClick(async () => {
+                    b.setIcon(EDIT).onClick(async () => {
                         const edited = await this.launchCalendarCreator(
                             calendar
                         );
@@ -403,7 +403,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 })
 
                 .addExtraButton((b) => {
-                    b.setIcon("trash").onClick(async () => {
+                    b.setIcon(TRASH).onClick(async () => {
                         if (
                             !this.data.exit.calendar &&
                             !(await confirmDeleteCalendar(this.plugin))
@@ -426,10 +426,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         };
         new Setting(summary).setHeading().setName("Events management");
 
-        setIcon(
-            summary.createDiv("collapser").createDiv("handle"),
-            "chevron-right"
-        );
+        setIcon(summary.createDiv("collapser").createDiv("handle"), COLLAPSE);
 
         const previewEnabled =
             this.app.internalPlugins.getPluginById("page-preview")?._loaded;
@@ -584,7 +581,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         const dropEl = addEl.createDiv("calendar");
         const actionsEl = addEl.createDiv("actions");
         const addButton = new ExtraButtonComponent(actionsEl)
-            .setIcon("plus-with-circle")
+            .setIcon(ADD)
             .setDisabled(true)
             .onClick(async () => {
                 if (!toAdd.path || !toAdd.calendar) return;
@@ -622,7 +619,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                             "This path is registered to multiple calendars",
                     },
                 }),
-                "alert-triangle"
+                WARNING
             );
         } else {
             rowEl.removeClass("conflict");
@@ -636,10 +633,10 @@ export default class CalendariumSettings extends PluginSettingTab {
             calendarEl.setText(maybeCal.name);
         }
         const actions = rowEl.createDiv("actions");
-        new ExtraButtonComponent(actions).setIcon("edit").onClick(() => {
+        new ExtraButtonComponent(actions).setIcon(EDIT).onClick(() => {
             this.buildEditPath(rowEl, index, path, calendar);
         });
-        new ExtraButtonComponent(actions).setIcon("trash").onClick(async () => {
+        new ExtraButtonComponent(actions).setIcon(TRASH).onClick(async () => {
             this.data.paths.splice(index, 1);
             await this.settings$.saveAndTrigger();
             this.#needsSort = true;
@@ -659,7 +656,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         const dropEl = rowEl.createDiv("calendar");
         const actionsEl = rowEl.createDiv("actions");
         const addButton = new ExtraButtonComponent(actionsEl)
-            .setIcon("checkmark")
+            .setIcon(CHECK)
             .onClick(async () => {
                 this.data.paths.splice(index, 1, [path, calendar]);
                 await this.settings$.saveAndTrigger();
@@ -687,7 +684,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         drop.setValue(calendar).onChange((v) => {
             calendar = v;
         });
-        new ExtraButtonComponent(actionsEl).setIcon("cross").onClick(() => {
+        new ExtraButtonComponent(actionsEl).setIcon(CLOSE).onClick(() => {
             this.buildStaticPath(rowEl, index);
         });
     }
@@ -705,7 +702,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 this.data.paths.find(([p]) => path == p)
             ) {
                 addButton.setDisabled(true);
-                setIcon(iconEl, "alert-triangle");
+                setIcon(iconEl, WARNING);
                 return false;
             }
             addButton.setDisabled(false);
@@ -737,10 +734,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         };
         new Setting(summary).setHeading().setName("Advanced");
 
-        setIcon(
-            summary.createDiv("collapser").createDiv("handle"),
-            "chevron-right"
-        );
+        setIcon(summary.createDiv("collapser").createDiv("handle"), COLLAPSE);
 
         new Setting(containerEl)
             .setName(`Reset "Don't ask again" prompts`)
@@ -748,7 +742,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 `All confirmations set to "Don't Ask Again" will be reset.`
             )
             .addButton((b) => {
-                b.setIcon("reset").onClick(async () => {
+                b.setIcon(RESET).onClick(async () => {
                     this.data.exit = {
                         saving: false,
                         event: false,

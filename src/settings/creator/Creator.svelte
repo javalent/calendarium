@@ -14,8 +14,9 @@
     import Celestials from "./Containers/celestials/Celestials.svelte";
     import Events from "./Containers/events/Events.svelte";
     import { createEventDispatcher } from "svelte";
-    import { setNodeIcon } from "src/utils/helpers";
+    import { setNodeIcon } from "src/utils/icons";
     import { getContext } from "svelte";
+    import { WARNING } from "src/utils/icons";
 
     const mobile = Platform.isMobile;
     let ready = mobile;
@@ -88,7 +89,7 @@
                         {#if !validSection(SECTION)}
                             <div
                                 class="calendarium-warning x-small"
-                                use:setNodeIcon={"calendarium-warning"}
+                                use:setNodeIcon={WARNING}
                             />
                         {/if}
                     </div>

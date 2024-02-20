@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { setNodeIcon } from "src/utils/helpers";
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
@@ -33,9 +32,6 @@
     <div class="setting-item-control">
         <div class="warning-container">
             <slot>
-                <!-- {#if warn}
-                    <div use:setNodeIcon={"calendarium-warning"} />
-                {/if} -->
                 {#if type == "text"}
                     <input
                         type="text"

@@ -3,17 +3,18 @@
     import { ExtraButtonComponent } from "obsidian";
     import { getIntervalDescription } from "src/utils/functions";
     import type { LeapDay } from "src/schemas/calendar/timespans";
+    import { EDIT, TRASH } from "src/utils/icons";
 
     const dispatch = createEventDispatcher();
 
     const trash = (node: HTMLElement) => {
         let b = new ExtraButtonComponent(node)
-            .setIcon("trash")
+            .setIcon(TRASH)
             .setTooltip("Delete");
         b.extraSettingsEl.setAttr("style", "margin-left: 0;");
     };
     const edit = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("pencil").setTooltip("Edit");
+        new ExtraButtonComponent(node).setIcon(EDIT).setTooltip("Edit");
     };
     export let leapday: LeapDay;
 

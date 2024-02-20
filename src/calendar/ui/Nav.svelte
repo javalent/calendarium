@@ -2,6 +2,7 @@
     import { ExtraButtonComponent, Menu } from "obsidian";
     import { getTypedContext } from "../view";
     import { ViewState } from "src/stores/calendar.store";
+    import { LEFT, RIGHT, SETTINGS } from "src/utils/icons";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -14,13 +15,13 @@
     $: viewState = $ephemeral.viewState;
 
     const left = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("left-arrow");
+        new ExtraButtonComponent(node).setIcon(LEFT);
     };
     const right = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("right-arrow");
+        new ExtraButtonComponent(node).setIcon(RIGHT);
     };
     const settings = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("gear");
+        new ExtraButtonComponent(node).setIcon(SETTINGS);
     };
     const openSettings = (evt: MouseEvent) => {
         const menu = new Menu();
@@ -35,21 +36,21 @@
         menu.addSeparator();
         menu.addItem((item) => {
             item.setTitle(
-                `${$displayWeeks ? "Hide" : "Display"} Week Numbers`
+                `${$displayWeeks ? "Hide" : "Display"} Week Numbers`,
             ).onClick(async () => {
                 $displayWeeks = !$displayWeeks;
             });
         });
         menu.addItem((item) => {
             item.setTitle(
-                $displayMoons ? "Hide Moons" : "Display Moons"
+                $displayMoons ? "Hide Moons" : "Display Moons",
             ).onClick(() => {
                 $displayMoons = !$displayMoons;
             });
         });
         menu.addItem((item) => {
             item.setTitle(
-                $displayDayNumber ? "Hide Day Number" : "Display Day Number"
+                $displayDayNumber ? "Hide Day Number" : "Display Day Number",
             ).onClick(async () => {
                 $displayDayNumber = !$displayDayNumber;
             });

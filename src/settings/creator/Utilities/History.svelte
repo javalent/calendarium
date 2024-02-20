@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { setNodeIcon } from "src/utils/helpers";
+    import { setNodeIcon } from "src/utils/icons";
     import type createStore from "../stores/calendar";
     import { getContext } from "svelte";
+    import { REDO, UNDO } from "src/utils/icons";
 
     const store = getContext("store");
     const { undo, redo, canRedo, canUndo } = store;
@@ -20,13 +21,13 @@
     <div
         class="clickable-icon setting-editor-extra-setting-button"
         class:is-disabled={!$canUndo}
-        use:setNodeIcon={"undo"}
+        use:setNodeIcon={UNDO}
         on:click={tryUndo}
     />
     <div
         class="clickable-icon setting-editor-extra-setting-button"
         class:is-disabled={!$canRedo}
-        use:setNodeIcon={"redo"}
+        use:setNodeIcon={REDO}
         on:click={tryRedo}
     />
 </div>

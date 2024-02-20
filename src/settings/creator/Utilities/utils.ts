@@ -1,4 +1,3 @@
-import { setIcon } from "obsidian";
 import type { Calendar } from "src/@types";
 import { isValidDay, isValidMonth, isValidYear } from "src/utils/functions";
 

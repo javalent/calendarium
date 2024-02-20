@@ -12,6 +12,7 @@
         LeapDay,
         LeapDayCondition,
     } from "src/schemas/calendar/timespans";
+    import { EDIT, TRASH } from "src/utils/icons";
 
     const dispatch = createEventDispatcher();
 
@@ -64,10 +65,10 @@
         return name.join(" ");
     };
     const edit = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("pencil");
+        new ExtraButtonComponent(node).setIcon(EDIT);
     };
     const trash = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("trash");
+        new ExtraButtonComponent(node).setIcon(TRASH);
     };
 
     const cancel = (node: HTMLElement) => {

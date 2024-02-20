@@ -9,6 +9,7 @@
     import Week from "./Week/Week.svelte";
     import { writable } from "svelte/store";
     import Weekdays from "./Week/Weekdays.svelte";
+    import { SELECT_MULTIPLE } from "src/utils/icons";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -32,23 +33,23 @@
     //don't like this... find a better way
     plugin.app.workspace.on(
         "calendarium-updated",
-        () => ($otherCalendars = plugin.data.calendars)
+        () => ($otherCalendars = plugin.data.calendars),
     );
 
     const drop = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("chevrons-up-down");
+        new ExtraButtonComponent(node).setIcon(SELECT_MULTIPLE);
     };
     const showMenu = (evt: MouseEvent) => {
         const menu = new Menu();
         for (const calendar of plugin.data.calendars.filter(
-            (c) => c.id != $store.id
+            (c) => c.id != $store.id,
         )) {
             menu.addItem((item) =>
                 item.setTitle(calendar.name).onClick(() => {
                     const newStore = plugin.getStore(calendar.id);
                     if (!newStore)
                         throw new Error(
-                            "Could not find a calendar by that name"
+                            "Could not find a calendar by that name",
                         );
                     global.set(newStore);
                     ephemeral.set(newStore.ephemeralStore);
@@ -57,17 +58,18 @@
                         view.calendar = calendar.id;
                         app.workspace.requestSaveLayout();
                     }
-                })
+                }),
             );
         }
         menu.showAtMouseEvent(evt);
     };
-    $: weekForDay = $daysAsWeeks.find((w) =>
-        w.find((day) => day && day.number == $displaying.day)
-    ) ?? [];
+    $: weekForDay =
+        $daysAsWeeks.find((w) =>
+            w.find((day) => day && day.number == $displaying.day),
+        ) ?? [];
     $: weekNumber =
         $daysAsWeeks.findIndex((w) =>
-            w.find((day) => day && day.number == $displaying.day)
+            w.find((day) => day && day.number == $displaying.day),
         ) +
         $firstWeekNumber +
         1;

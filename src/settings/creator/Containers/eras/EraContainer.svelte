@@ -13,6 +13,7 @@
     import Calendarium from "src/main";
     import { nanoid } from "src/utils/functions";
     import type { Era } from "src/schemas/calendar/timespans";
+    import { GRIP, TRASH } from "src/utils/icons";
 
     export let calendar: Calendar;
     export let plugin: Calendarium;
@@ -36,12 +37,12 @@
     }
 
     const grip = (node: HTMLElement) => {
-        setIcon(node, "calendarium-grip");
+        setIcon(node, GRIP);
     };
 
     const trash = (node: HTMLElement, item: Era) => {
         new ExtraButtonComponent(node)
-            .setIcon("trash")
+            .setIcon(TRASH)
             .onClick(() => (eras = eras.filter((era) => era.id !== item.id)));
     };
 

@@ -1,7 +1,5 @@
 export const DEFAULT_FORMAT = "YYYY-MM-DD";
 
-export const EVENT_LINKED_TO_NOTE = "sticky-note";
-export const EVENT_FROM_FRONTMATTER = "file-symlink";
 
 export const DEFAULT_CATEGORY_COLOR = "#808080";
 

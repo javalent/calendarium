@@ -3,15 +3,15 @@
 <script lang="ts">
     import { Menu, Platform, TFile, setIcon } from "obsidian";
 
-    import type { CalDate, CalEvent, CalEventCategory } from "src/@types";
+    import type { CalDate, CalEvent } from "src/@types";
     import {
-        DEFAULT_CATEGORY_COLOR,
         EVENT_FROM_FRONTMATTER,
         EVENT_LINKED_TO_NOTE,
-    } from "src/utils/constants";
+    } from "src/utils/icons";
     import { createEventDispatcher } from "svelte";
     import { getTypedContext } from "../../view";
     import { ViewEventModal } from "../../event-modal";
+    import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
     const dispatch = createEventDispatcher();
 
     export let event: CalEvent;

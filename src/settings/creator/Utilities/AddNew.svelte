@@ -4,6 +4,7 @@
     import { createEventDispatcher } from "svelte";
     import { writable, derived, readable } from "svelte/store";
     import WarningLabel from "./WarningLabel.svelte";
+    import { ADD } from "src/utils/icons";
 
     const dispatch = createEventDispatcher<{ add: string }>();
 
@@ -29,7 +30,7 @@
         addButton = (
             isInput ? new ExtraButtonComponent(node) : new ButtonComponent(node)
         )
-            .setIcon("plus-with-circle")
+            .setIcon(ADD)
             .onClick(() => {
                 if ($_disabled) return;
                 sendIt();

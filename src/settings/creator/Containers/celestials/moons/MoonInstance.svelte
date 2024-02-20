@@ -2,14 +2,15 @@
     import { ExtraButtonComponent } from "obsidian";
     import MoonSVG from "src/calendar/ui/Moon.svelte";
     import type { Moon } from "src/schemas/calendar/moons";
-    import { setNodeIcon } from "src/utils/helpers";
+    import { EDIT, TRASH, setNodeIcon } from "src/utils/icons";
+    import { MOON_CYCLE, MOON_OFFSET } from "src/utils/icons";
     import { createEventDispatcher } from "svelte";
 
     const trash = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("trash").setTooltip("Delete");
+        new ExtraButtonComponent(node).setIcon(TRASH).setTooltip("Delete");
     };
     const edit = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("wrench").setTooltip("Edit");
+        new ExtraButtonComponent(node).setIcon(EDIT).setTooltip("Edit");
     };
 
     export let moon: Moon;
@@ -30,14 +31,13 @@
         <div class="setting-item-description">
             <div class="date">
                 <div class="icons">
-                    <span class="icon small" use:setNodeIcon={"orbit"}></span>
+                    <span class="icon small" use:setNodeIcon={MOON_CYCLE}
+                    ></span>
                     {moon.cycle} days
                 </div>
                 {#if moon.offset}
                     <div class="icons">
-                        <span
-                            class="icon small"
-                            use:setNodeIcon={"arrow-big-right-dash"}
+                        <span class="icon small" use:setNodeIcon={MOON_OFFSET}
                         ></span>
                         {moon.offset} days
                     </div>

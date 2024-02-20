@@ -3,6 +3,7 @@
     import { getMissingNotice } from "./Utilities/utils";
     import createStore from "./stores/calendar";
     import { getContext } from "svelte";
+    import { CHECK, WARNING } from "src/utils/icons";
 
     const store = getContext("store");
     const { valid } = store;
@@ -16,7 +17,7 @@
             "aria-label",
             valid ? "All good! Exit to save." : getMissingNotice($store),
         );
-        setIcon(icon, valid ? "checkmark" : "calendarium-warning");
+        setIcon(icon, valid ? CHECK : WARNING);
     };
 </script>
 

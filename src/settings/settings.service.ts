@@ -25,6 +25,7 @@ import {
     MarkdownReason,
     shouldTransitionMarkdownSettings,
 } from "./settings.utils";
+import { CHECK, LOADING } from "src/utils/icons";
 
 const SPLITTER = "--- BEGIN DATA ---";
 
@@ -212,7 +213,7 @@ export default class SettingsService {
                         const migrating = e.createDiv("calendarium-migrating");
                         setIcon(
                             migrating.createDiv("migrating-icon rotating"),
-                            "loader-2"
+                            LOADING
                         );
                         migrating.createSpan({ text: "Reloading data..." });
                         const start = Date.now();
@@ -221,7 +222,7 @@ export default class SettingsService {
                             migrating.empty();
                             setIcon(
                                 migrating.createDiv("migrating-icon"),
-                                "check"
+                                CHECK
                             );
                             migrating.createSpan({
                                 text: "Calendarium data reloaded.",
@@ -529,7 +530,7 @@ export default class SettingsService {
                         const migrating = e.createDiv("calendarium-migrating");
                         setIcon(
                             migrating.createDiv("migrating-icon rotating"),
-                            "loader-2"
+                            LOADING
                         );
                         migrating.createSpan({ text: "Migrating..." });
                         const start = Date.now();
@@ -538,7 +539,7 @@ export default class SettingsService {
                             migrating.empty();
                             setIcon(
                                 migrating.createDiv("migrating-icon"),
-                                "check"
+                                CHECK
                             );
                             migrating.createSpan({
                                 text: "Fantasy Calendar settings migrated.",

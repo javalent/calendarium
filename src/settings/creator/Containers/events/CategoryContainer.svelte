@@ -8,6 +8,7 @@
     import AddNew from "../../Utilities/AddNew.svelte";
     import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
     import Details from "../../Utilities/Details.svelte";
+    import { TRASH } from "src/utils/icons";
 
     const calendar = getContext("store");
     const { categoryStore } = calendar;
@@ -25,7 +26,7 @@
         comp.inputEl.setAttr("style", "width: 100%;");
     };
     const trash = (node: HTMLElement, item: CalEventCategory) => {
-        new ExtraButtonComponent(node).setIcon("trash").onClick(() => {
+        new ExtraButtonComponent(node).setIcon(TRASH).onClick(() => {
             categoryStore.delete(item.id);
         });
     };

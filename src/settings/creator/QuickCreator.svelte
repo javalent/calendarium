@@ -1,19 +1,15 @@
 <script lang="ts">
-    import type { Calendar } from "src/@types";
-    import type Calendarium from "src/main";
     import { ButtonComponent, Platform } from "obsidian";
-    import { setContext } from "svelte";
     import { onMount } from "svelte";
-    import { type Writable } from "svelte/store";
 
-    import createStore from "./stores/calendar";
     import CreatorTitle from "./CreatorTitle.svelte";
     import History from "./Utilities/History.svelte";
     import Events from "./Containers/events/Events.svelte";
     import { createEventDispatcher } from "svelte";
-    import { setNodeIcon } from "src/utils/helpers";
+    import { setNodeIcon } from "src/utils/icons";
     import Info from "./Containers/general/Info.svelte";
     import CurrentDate from "./Containers/dates/current/CurrentDate.svelte";
+    import { WARNING } from "src/utils/icons";
 
     const mobile = Platform.isMobile;
     let ready = mobile;
@@ -60,7 +56,7 @@
                         {#if !validSection(SECTION)}
                             <div
                                 class="calendarium-warning x-small"
-                                use:setNodeIcon={"calendarium-warning"}
+                                use:setNodeIcon={WARNING}
                             />
                         {/if}
                     </div>

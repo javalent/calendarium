@@ -6,6 +6,7 @@ import { CalendariumModal } from "../modal";
 import { Notice, Setting } from "obsidian";
 
 import type { Era } from "src/schemas/calendar/timespans";
+import { CLOSE } from "src/utils/icons";
 
 export class CreateEraModal extends CalendariumModal {
     saved = false;
@@ -127,7 +128,7 @@ export class CreateEraModal extends CalendariumModal {
                     });
             })
             .addExtraButton((b) => {
-                b.setIcon("cross")
+                b.setIcon(CLOSE)
                     .setTooltip("Cancel")
                     .onClick(() => this.close());
             });

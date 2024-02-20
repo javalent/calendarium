@@ -1,6 +1,7 @@
 import { type DeletedCalendar } from "src/schemas";
 import { SaveableCalendariumModal } from "./modal";
 import { Setting } from "obsidian";
+import { TRASH } from "src/utils/icons";
 
 export class RestoreCalendarModal extends SaveableCalendariumModal<
     DeletedCalendar[]
@@ -32,7 +33,7 @@ export class RestoreCalendarModal extends SaveableCalendariumModal<
                     });
                 })
                 .addExtraButton((b) => {
-                    b.setIcon("trash").onClick(() => {
+                    b.setIcon(TRASH).onClick(() => {
                         this.permanentlyDelete.push(calendar.id);
                         this.display();
                     });

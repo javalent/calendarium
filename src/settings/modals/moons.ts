@@ -4,6 +4,7 @@ import type { Calendar } from "../../@types";
 import { nanoid } from "../../utils/functions";
 import { CalendariumModal } from "./modal";
 import type { Moon } from "src/schemas/calendar/moons";
+import { CLOSE } from "src/utils/icons";
 
 export class CreateMoonModal extends CalendariumModal {
     saved = false;
@@ -53,7 +54,7 @@ export class CreateMoonModal extends CalendariumModal {
                     });
             })
             .addExtraButton((b) => {
-                b.setIcon("cross")
+                b.setIcon(CLOSE)
                     .setTooltip("Cancel")
                     .onClick(() => this.close());
             });

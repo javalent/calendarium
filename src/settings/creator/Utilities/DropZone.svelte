@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { EDIT, GRIP, TRASH } from "src/utils/icons";
+
     import { ExtraButtonComponent, Scope, setIcon } from "obsidian";
     import { SHADOW_PLACEHOLDER_ITEM_ID, dndzone } from "svelte-dnd-action";
     import { type ComponentType, createEventDispatcher } from "svelte";
@@ -14,7 +16,7 @@
         trash: T;
     }>();
     const grip = (node: HTMLElement) => {
-        setIcon(node, "grip-horizontal");
+        setIcon(node, GRIP);
     };
 
     let _scope = new Scope();
@@ -35,13 +37,13 @@
     }
     const advanced = (node: HTMLElement, item: T) => {
         new ExtraButtonComponent(node)
-            .setIcon("wrench")
+            .setIcon(EDIT)
             .onClick(() => dispatch("advanced", item));
     };
 
     const trash = (node: HTMLElement, item: T) => {
         new ExtraButtonComponent(node)
-            .setIcon("trash")
+            .setIcon(TRASH)
             .onClick(() => dispatch("trash", item));
     };
 </script>
