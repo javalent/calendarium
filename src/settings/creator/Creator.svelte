@@ -1,12 +1,7 @@
 <script lang="ts">
-    import type { Calendar } from "src/@types";
-    import type Calendarium from "src/main";
     import { ButtonComponent, Platform } from "obsidian";
-    import { setContext } from "svelte";
     import { onMount } from "svelte";
-    import { type Writable } from "svelte/store";
 
-    import createStore from "./stores/calendar";
     import CreatorTitle from "./CreatorTitle.svelte";
     import History from "./Utilities/History.svelte";
     import General from "./Containers/general/General.svelte";
@@ -72,6 +67,18 @@
                 dispatch("cancel");
             });
     };
+    const getIcon = (section: CreatorSection) => {
+        switch (section) {
+            case "General":
+                return "badge-info";
+            case "Dates":
+                return "calendar";
+            case "Celestial Bodies":
+                return "moon";
+            case "Events":
+                return "calendar-clock";
+        }
+    };
 </script>
 
 {#if !Platform.isMobile}
@@ -85,7 +92,10 @@
                         class:is-active={SelectedSection === SECTION}
                         on:click={() => (SelectedSection = SECTION)}
                     >
-                        {SECTION}
+                        <div class="section">
+                            <div use:setNodeIcon={getIcon(SECTION)} />
+                            {SECTION}
+                        </div>
                         {#if !validSection(SECTION)}
                             <div
                                 class="calendarium-warning x-small"
@@ -178,5 +188,10 @@
         margin-top: auto;
         justify-content: flex-end;
         display: flex;
+    }
+    .section {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
     }
 </style>
