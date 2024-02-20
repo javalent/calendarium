@@ -1,7 +1,7 @@
 <script lang="ts">
     import { getTypedContext } from "../../view";
     import Dot from "./Dot.svelte";
-    import type { CalEvent, CalEventCategory } from "src/@types";
+    import type { CalEvent } from "src/@types";
 
     export let events: CalEvent[] = [];
 
