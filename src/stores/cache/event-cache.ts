@@ -1,4 +1,4 @@
-import type { CalEvent } from "src/@types";
+import type { CalDate, CalEvent, CalEventDate } from "src/@types";
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
 class YearEventCache extends YearCache<CalEvent> {
     update(events: CalEvent[]) {
@@ -36,7 +36,7 @@ class MonthEventCache extends MonthCache<CalEvent> {
         if (events) {
             this.derived = events.filter((event) => {
                 const date = { ...event.date };
-                const end = { ...event.end };
+                const end = { ...(event.end ?? {}) };
 
                 //No-month events are on every month.
                 if (date.month == undefined) return true;
@@ -82,17 +82,66 @@ class MonthEventCache extends MonthCache<CalEvent> {
     }
 }
 class DayEventCache extends DayCache<CalEvent> {
+    get date(): CalDate {
+        return {
+            day: this.day,
+            month: this.month,
+            year: this.year,
+        };
+    }
+
+    isBefore(date: CalEventDate): boolean {
+        if (!date.year || date.year < this.year) return true;
+        if (!date.month || (date.month < this.month && date.year === this.year))
+            return true;
+        if (
+            !date.day ||
+            (date.day < this.day &&
+                date.month === this.month &&
+                date.year === this.year)
+        )
+            return true;
+        return false;
+    }
+    isAfter(date: CalEventDate): boolean {
+        if (!date.year || date.year > this.year) return true;
+        if (!date.month || (date.month > this.month && date.year === this.year))
+            return true;
+        if (
+            !date.day ||
+            (date.day >= this.day &&
+                date.month === this.month &&
+                date.year === this.year)
+        )
+            return true;
+        return false;
+    }
+    isEqual(date: CalEventDate): boolean {
+        return (
+            (!date.year || date.year == this.year) &&
+            (!date.month || date.month == this.month) &&
+            date.day == this.day
+        );
+    }
     update(events: CalEvent[]) {
         if (events) {
-            this.derived = events.filter((event) => {
+            this.derived = [];
+            for (const event of events) {
+                //event is after this day
+                if ((event.date.day ?? Infinity) > this.day) continue;
+
+                // exact match
+                if (this.isEqual(event.date)) {
+                    this.derived.push(event);
+                }
                 if (
-                    (!event.date.year || event.date.year == this.year) &&
-                    (!event.date.month || event.date.month == this.month) &&
-                    event.date.day == this.day
-                )
-                    return true;
-                if (!event.end && !event.formulas?.length) return false;
-            });
+                    event.end &&
+                    this.isBefore(event.date) &&
+                    this.isAfter(event.end)
+                ) {
+                    this.derived.push(event);
+                }
+            }
         }
         return this.derived;
     }
