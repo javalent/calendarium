@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/javalent/calendarium/compare/1.0.0...1.0.1) (2024-02-21)
+
+
+### Bug Fixes
+
+* Cleanup to prepare for community release ([bbe8d78](https://github.com/javalent/calendarium/commit/bbe8d7886bebe1a0abf61748d734438a283ec206))
+* poke ([da731c6](https://github.com/javalent/calendarium/commit/da731c642716a856bfcd345c53326836a6f25b2f))
+
 ## [1.0.0](https://github.com/javalent/the-calendarium/compare/1.0.0-b32...1.0.0) (2024-02-21)
 
 
