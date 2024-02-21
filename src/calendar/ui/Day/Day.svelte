@@ -140,14 +140,7 @@
                     </div>
                 {/if}
                 {#key $events}
-                    <Flags
-                        events={$events}
-                        date={{
-                            day: day.number,
-                            month: $index,
-                            year: year.year,
-                        }}
-                    />
+                    <Flags events={$events} />
                 {/key}
             {:else}
                 <Dots events={$events} />

@@ -1,8 +1,11 @@
-import { setIcon } from "obsidian";
+import { ExtraButtonComponent, setIcon } from "obsidian";
 
 export function setNodeIcon(node: HTMLElement, icon: string) {
     node.addClass("has-node-icon");
     setIcon(node, icon);
+}
+export function setClickableIcon(node: HTMLElement, icon: string) {
+    new ExtraButtonComponent(node).setIcon(icon);
 }
 
 export const EVENT_LINKED_TO_NOTE = "sticky-note";

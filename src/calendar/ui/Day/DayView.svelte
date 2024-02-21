@@ -10,6 +10,8 @@
         CLOSE,
         LEFT,
         RIGHT,
+        setClickableIcon,
+        setNodeIcon,
     } from "src/utils/icons";
     import { addEventWithModal } from "src/settings/modals/event/event";
     import { derived } from "svelte/store";
@@ -42,77 +44,75 @@
     const event = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon(ADD_EVENT)
-            .setTooltip("New Event")
-            .onClick(() => {});
-    };
-    const left = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon(LEFT);
-    };
-    const right = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon(RIGHT);
+            .setTooltip("New Event");
     };
 </script>
 
 <div class="day-view">
+    <hr />
     <div class="nav">
-        <div class="left-nav">
+        <div
+            use:setClickableIcon={CALENDAR_SEARCH}
+            aria-label="Reveal"
+            on:click={() => {
+                $ephemeral.displayDate($viewing);
+            }}
+        />
+        <div class="date">
             <div
-                use:reveal
+                class="arrow"
+                use:setClickableIcon={LEFT}
+                aria-label="Previous"
                 on:click={() => {
+                    $ephemeral.goToPreviousDay();
+
                     $ephemeral.displayDate($viewing);
                 }}
-            />
+            ></div>
+
+            <div class="title-container">
+                <h5 class="calendarium-title title">
+                    <span class="current">{date}</span>
+                </h5>
+                {#if displayDayNumber}
+                    <div class="day-number">
+                        <em> Day {daysBeforeDay} </em>
+                    </div>
+                {/if}
+            </div>
+            <div
+                class="arrow"
+                use:setClickableIcon={RIGHT}
+                aria-label="Next"
+                on:click={() => {
+                    $ephemeral.goToNextDay();
+                    $ephemeral.displayDate($viewing);
+                }}
+            ></div>
+        </div>
+        <!-- <div class="actions">
             <div
                 use:event
                 on:click={() => addEventWithModal(plugin, $store, $viewing)}
             />
-        </div>
+        </div> -->
         <div use:close on:click={() => $ephemeral.viewing.set(null)} />
     </div>
-    <div class="date">
-        <div
-            class="arrow calendar-clickable"
-            use:left
-            aria-label="Previous"
-            on:click={() => {
-                $ephemeral.goToPreviousDay();
 
-                $ephemeral.displayDate($viewing);
-            }}
-        />
-        <div class="title-container">
-            <h3 class="calendarium-title title">
-                <span class="current">{date}</span>
-            </h3>
-            {#if displayDayNumber}
-                <div class="day-number">
-                    <em> Day {daysBeforeDay} </em>
-                </div>
-            {/if}
-        </div>
-        <div
-            class="arrow right calendar-clickable"
-            use:right
-            aria-label="Next"
-            on:click={() => {
-                $ephemeral.goToNextDay();
-                $ephemeral.displayDate($viewing);
-            }}
-        />
+    <div class="context">
+        {#if $displayMoons}
+            <div class="moon-container">
+                {#each $moons as moon}
+                    <MoonUI {moon} />
+                {/each}
+            </div>
+        {/if}
     </div>
-    {#if $displayMoons}
-        <div class="moon-container">
-            {#each $moons as moon}
-                <MoonUI {moon} />
-            {/each}
-        </div>
-    {/if}
     {#key $events}
         {#if $viewing}
             <Flags
                 events={$events}
                 dayView={true}
-                date={$viewing}
                 on:event-click
                 on:event-mouseover
                 on:event-context
@@ -127,34 +127,28 @@
         display: flex;
         flex-flow: column nowrap;
         gap: 0.5rem;
+        min-height: 300px;
     }
-
-    .nav,
-    .date {
+    hr {
+        margin: 0.5em 0;
+    }
+    .nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-    .left-nav {
-        display: flex;
-    }
-    .left-nav :global(.clickable-icon) {
-        margin-right: 0;
-    }
 
-    .calendar-clickable {
+    .date {
+        --icon-size: var(--icon-s);
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-    }
-    h3 {
-        margin: 0;
+        gap: 0.25rem;
     }
 
-    .day-view :global(.flag-container > .flag) {
+    /*     .day-view :global(.flag-container > .flag) {
         padding-left: 0.5rem;
-    }
+    } */
 
     .title-container {
         display: flex;
@@ -162,8 +156,11 @@
         align-items: center;
         justify-content: center;
     }
+    .title {
+        margin: 0;
+    }
     .day-number {
-        font-size: small;
+        font-size: x-small;
     }
     .moon-container {
         display: flex;

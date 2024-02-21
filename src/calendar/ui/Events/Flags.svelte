@@ -7,9 +7,6 @@
 
     export let events: CalEvent[] = [];
     export let dayView: boolean = false;
-    export let date: CalDate;
-
-    const store = getTypedContext("store");
 
     let height: number;
     let target: Element;
@@ -76,23 +73,21 @@
     });
 </script>
 
-<div class="flags-container">
-    <div class="flag-container" bind:this={container} />
-    <div class="overflow">
-        {#if overflow > 0}
-            <span>+{overflow}</span>
-        {/if}
-    </div>
+<div class="flag-container" bind:this={container} />
+<div class="overflow">
+    {#if overflow > 0}
+        <span>+{overflow}</span>
+    {/if}
 </div>
 
 <style>
-    .flags-container,
     .flag-container {
         height: 100%;
         display: flex;
         flex-flow: column nowrap;
         gap: 0.25rem;
-        overflow: hidden;
+        overflow: auto;
+        white-space: nowrap;
     }
 
     .overflow {

@@ -112,7 +112,6 @@
             {/if}
         </div>
         {#if $viewing}
-            <hr />
             <DayView />
         {/if}
     </div>
@@ -121,8 +120,10 @@
 <style scoped>
     .calendar-container {
         overflow: hidden;
-        display: flex;
-        flex-flow: column nowrap;
+        /* display: flex;
+        flex-flow: column nowrap; */
+        display: grid;
+        grid-template-rows: auto auto 1fr;
     }
     .calendar {
         overflow: auto;
