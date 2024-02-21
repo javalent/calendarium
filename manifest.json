@@ -1,10 +1,10 @@
 {
     "id": "calendarium",
     "name": "Calendarium",
-    "version": "1.0.0",
-    "minAppVersion": "1.2.8",
     "author": "Jeremy Valentine",
-    "description": "The ultimate Obsidian plugin for crafting mind-bending fantasy and sci-fi calendars.",
+    "description": "Craft mind-bending fantasy and sci-fi calendars.",
+    "version": "1.0.0",
+    "minAppVersion": "1.5.0",
     "authorUrl": "https://github.com/javalent/calendarium",
     "fundingUrl": "https://www.buymeacoffee.com/valentine195",
     "isDesktopOnly": false
