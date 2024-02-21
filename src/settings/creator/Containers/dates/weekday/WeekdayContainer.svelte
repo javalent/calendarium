@@ -9,8 +9,6 @@
     import NoExistingItems from "src/settings/creator/Utilities/NoExistingItems.svelte";
     import DropZone from "src/settings/creator/Utilities/DropZone.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
-    import { ExtraButtonComponent, TextComponent } from "obsidian";
-    import { derived, writable } from "svelte/store";
     import { nanoid } from "src/utils/functions";
 
     const calendar = getContext("store");

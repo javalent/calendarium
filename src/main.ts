@@ -209,14 +209,11 @@ export default class Calendarium extends Plugin {
             this.addCalendarView({ startup: true });
         });
 
-        app.workspace.trigger("parse-style-settings");
+        this.app.workspace.trigger("parse-style-settings");
     }
 
     async onunload() {
         console.log("Unloading Calendarium v" + this.manifest.version);
-        this.app.workspace
-            .getLeavesOfType(VIEW_TYPE)
-            .forEach((leaf) => leaf.detach());
         this.watcher?.unload();
 
         for (const notice of this.#notices) {

@@ -304,7 +304,7 @@ export class Watcher extends Component {
         }
 
         if (!folders.size) return;
-        console.log("🚀 ~ file: watcher.ts:308 ~ folders:", folders);
+
         if (this.plugin.data.debug) {
             if (calendar) {
                 console.info(

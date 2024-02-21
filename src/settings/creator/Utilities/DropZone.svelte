@@ -1,8 +1,10 @@
 <script lang="ts">
+    import { getContext } from "svelte";
+
     import { EDIT, GRIP, TRASH } from "src/utils/icons";
 
     import { ExtraButtonComponent, Scope, setIcon } from "obsidian";
-    import { SHADOW_PLACEHOLDER_ITEM_ID, dndzone } from "svelte-dnd-action";
+    import { dndzone } from "svelte-dnd-action";
     import { type ComponentType, createEventDispatcher } from "svelte";
     import { flip } from "svelte/animate";
 
@@ -11,6 +13,9 @@
     export let type: string;
     export let component: ComponentType;
     export let onDrop: (items: T[]) => void;
+
+    const plugin = getContext("plugin");
+
     let dispatch = createEventDispatcher<{
         advanced: T;
         trash: T;
@@ -22,7 +27,7 @@
     let _scope = new Scope();
     function startDrag(e: Event) {
         e.preventDefault();
-        app.keymap.pushScope(_scope);
+        plugin.app.keymap.pushScope(_scope);
         dragDisabled = false;
     }
     const flipDurationMs = 300;
@@ -32,7 +37,7 @@
         items = e.detail.items;
     }
     function handleFinalize(e: CustomEvent<GenericDndEvent<T>>) {
-        app.keymap.popScope(_scope);
+        plugin.app.keymap.popScope(_scope);
         onDrop(e.detail.items);
     }
     const advanced = (node: HTMLElement, item: T) => {

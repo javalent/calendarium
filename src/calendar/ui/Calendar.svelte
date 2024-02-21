@@ -56,7 +56,7 @@
                     if (view) {
                         view.store = newStore;
                         view.calendar = calendar.id;
-                        app.workspace.requestSaveLayout();
+                        plugin.app.workspace.requestSaveLayout();
                     }
                 }),
             );

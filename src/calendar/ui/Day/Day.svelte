@@ -87,7 +87,7 @@
         let notes: { event: CalEvent; file: TFile }[] = [];
         for (const event of $events) {
             if (!event.note) continue;
-            const file = app.vault.getAbstractFileByPath(event.note);
+            const file = plugin.app.vault.getAbstractFileByPath(event.note);
             if (file && file instanceof TFile) {
                 notes.push({ event, file });
             }
@@ -98,7 +98,7 @@
             for (const { event, file } of notes) {
                 menu.addItem((item) =>
                     item.setTitle(`Open ${event.name}`).onClick(() => {
-                        app.workspace.getLeaf().openFile(file);
+                        plugin.app.workspace.getLeaf().openFile(file);
                     }),
                 );
             }

@@ -68,9 +68,9 @@
             const note = event.note.endsWith(".md")
                 ? event.note
                 : `${event.note}.md`;
-            const file = app.vault.getAbstractFileByPath(note);
+            const file = plugin.app.vault.getAbstractFileByPath(note);
             if (file && file instanceof TFile) {
-                app.workspace.getLeaf().openFile(file);
+                plugin.app.workspace.getLeaf().openFile(file);
             }
         } else {
             const modal = new ViewEventModal(event, plugin);

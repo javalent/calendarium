@@ -115,7 +115,7 @@ export default class SettingsService {
         }
     }
     get syncPlugin() {
-        return app.internalPlugins.getPluginById("sync");
+        return this.app.internalPlugins.getPluginById("sync");
     }
     #waitingOnSync = false;
     /**
@@ -284,7 +284,7 @@ export default class SettingsService {
                     });
                 drop.selectEl.setAttr("tabindex", 99);
                 /* drop.selectEl.focus(); */
-                app.keymap.pushScope(scope);
+                this.app.keymap.pushScope(scope);
                 drop.selectEl.onClickEvent((e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -294,7 +294,7 @@ export default class SettingsService {
         );
         notice.registerOnHide(() => {
             this.#prompting = false;
-            app.keymap.popScope(scope);
+            this.app.keymap.popScope(scope);
         });
         this.plugin.registerNotice(notice);
     }
@@ -433,7 +433,6 @@ export default class SettingsService {
 
         if (!data || !Object.keys(pluginData ?? {}).length)
             data = copy(DEFAULT_DATA);
-        console.log(this.getDataVersion(data));
         let dirty = this.updateDataToNewSchema(data);
         if (dirty) {
             console.debug(
@@ -758,10 +757,6 @@ export default class SettingsService {
                     dirty = true;
                 }
             }
-            console.log(
-                "🚀 ~ file: settings.service.ts:597 ~ calendar.showIntercalarySeparately:",
-                calendar.showIntercalarySeparately
-            );
             if (calendar.showIntercalarySeparately == null) {
                 calendar.showIntercalarySeparately = (<any>(
                     data
