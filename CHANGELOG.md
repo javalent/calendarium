@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.0.0](https://github.com/javalent/the-calendarium/compare/1.0.0-b32...1.0.0) (2024-02-21)
+
+
+### Features
+
+* Enable range events in event cache ([c75fbfc](https://github.com/javalent/the-calendarium/commit/c75fbfce71d0bc9784dfd1ecefa49e54f38925c3))
+* New Calendar Creator experience on Desktop / Tablets ([5f04a0a](https://github.com/javalent/the-calendarium/commit/5f04a0a801af44de77cfab490164f39342f990d2))
+* New Quick Creator functionality for users that only use presets ([79ea92c](https://github.com/javalent/the-calendarium/commit/79ea92c9f844b7fa1eea2b5031552240f3809325))
+
+
+### Bug Fixes
+
+* Added icons to Calendar Creator sections ([eba9cc6](https://github.com/javalent/the-calendarium/commit/eba9cc6d560109d7f5ee62af3066819dd9418e93))
+* Aligns Show on Calendar icon with Obsidian standard ([1aef033](https://github.com/javalent/the-calendarium/commit/1aef033b8c645297d013ee691a8b8a975c30035b))
+* Better Leap Day feedback when no months are defined ([5e5546e](https://github.com/javalent/the-calendarium/commit/5e5546ef176f1c0254ce2c366ad02341bc3a072a))
+* Can now edit/delete events in the day view context menu ([c61c827](https://github.com/javalent/the-calendarium/commit/c61c8276cce3d4cb2719eca1e0f7b1c9c8acd5f2))
+* Fixes inspecting tags for span events ([d5a600f](https://github.com/javalent/the-calendarium/commit/d5a600f49457659db0025b3be6f7058aa23df966))
+* Fixes instance where an overflow week would not be shown if the last day of the month fell on the last weekday ([7ec9c08](https://github.com/javalent/the-calendarium/commit/7ec9c089df6906c8c1dc8e1042d7649c66eb9f69))
+* Fixes misalignment of event dots on calendar ([ae46b51](https://github.com/javalent/the-calendarium/commit/ae46b51d0bfed3cf09d7403977a1a063caf074e8))
+* Fixes moon hover ([bbfdf08](https://github.com/javalent/the-calendarium/commit/bbfdf083a377821a62f856658ed806aedef1dfd5))
+* Improved visual styling of Add New component ([0d16316](https://github.com/javalent/the-calendarium/commit/0d16316ee67b12c962d87fc76c6cdef7ca1d4bc2))
+* Improves Day View styling ([d760dab](https://github.com/javalent/the-calendarium/commit/d760dab5f4e3a4c19935660ed56c10aa86e4fffc))
+* Re-added ability to add events to a day from the day view screen ([0d107e9](https://github.com/javalent/the-calendarium/commit/0d107e9cd1ba116c4f4acfb32867f45272e90995))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([2420e06](https://github.com/javalent/the-calendarium/commit/2420e06eb90ac761c7d6e533d9c21d8021dcc68e))
+
 ## [1.0.0-b32](https://github.com/javalent/the-calendarium/compare/1.0.0-b30...1.0.0-b32) (2024-02-10)
 
 
