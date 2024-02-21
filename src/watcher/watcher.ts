@@ -239,7 +239,7 @@ export class Watcher extends Component {
                         }
                     }
 
-                    store.eventStore.insertEventsFromFile(event.note, event);
+                    store.eventStore.insertEventsFromFile(event.note!, event);
                 }
             }
         );
