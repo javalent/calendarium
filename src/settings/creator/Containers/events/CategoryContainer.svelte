@@ -44,15 +44,6 @@
         $categoryStore.length != 1 ? "ies" : "y"
     }`}
 >
-    <AddNew
-        on:click={() =>
-            categoryStore.add({
-                id: nanoid(6),
-                color: randomColor(),
-                name: "Category",
-            })}
-    />
-
     {#if !categories.length}
         <NoExistingItems
             message={"Create a new event category to see it here."}
@@ -74,6 +65,15 @@
             {/each}
         </div>
     {/if}
+
+    <AddNew
+        on:add={(evt) =>
+            categoryStore.add({
+                id: nanoid(6),
+                color: randomColor(),
+                name: evt.detail,
+            })}
+    />
 </Details>
 
 <style>

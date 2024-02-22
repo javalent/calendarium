@@ -16,7 +16,7 @@
     } from "obsidian";
     import { getContext } from "svelte";
     import { derived, writable } from "svelte/store";
-    import { TRASH } from "src/utils/icons";
+    import { ADD, TRASH } from "src/utils/icons";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
@@ -115,11 +115,12 @@
 >
     <ButtonComponent
         name={"Delete All Events"}
-        icon="trash"
+        icon={TRASH}
         on:click={() => deleteAll()}
     />
     <div class="filter" use:filter />
-    <AddNew on:click={() => add()} />
+    <!-- <AddNew on:click={() => add()} /> -->
+    <ButtonComponent name={"Add Event"} icon={ADD} on:click={() => add()} />
     <div class="existing-items">
         {#each $sliced as event}
             <EventInstance
