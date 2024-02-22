@@ -167,6 +167,7 @@
         vertical-align: baseline;
         display: flex;
         flex-flow: column nowrap;
+        /* max-height: var(--max-day-height); */
     }
     .intercalary {
         grid-column: span var(--calendar-columns);

@@ -1,14 +1,14 @@
 <script lang="ts">
     import Flag from "./Flag.svelte";
-    import type { CalDate, CalEvent } from "src/@types";
-    import { getTypedContext } from "../../view";
+    import type { CalEvent } from "src/@types";
     import { sortEventList } from "src/utils/functions";
     import { onMount } from "svelte";
 
     export let events: CalEvent[] = [];
     export let dayView: boolean = false;
 
-    let height: number;
+    /* export */ let height: number;
+
     let target: Element;
 
     $: events = sortEventList([...events]);
@@ -24,7 +24,7 @@
                     Math.floor(height) == Math.floor(previousHeight))
             )
                 return;
-            previousHeight = height;
+            previousHeight = height!;
             target.empty();
             overflow = 0;
             let remaining = height;
@@ -58,7 +58,6 @@
         }
     };
 
-    let container: HTMLElement;
     const observer = new ResizeObserver((entries) => {
         height = entries[0].contentRect?.height;
         target = entries[0]?.target;
@@ -69,11 +68,11 @@
         }
     }
     onMount(() => {
-        observer.observe(container);
+        observer.observe(target);
     });
 </script>
 
-<div class="flag-container" bind:this={container} />
+<div class="flag-container" class:full={!dayView} bind:this={target}></div>
 <div class="overflow">
     {#if overflow > 0}
         <span>+{overflow}</span>
@@ -88,6 +87,10 @@
         gap: 0.25rem;
         overflow: auto;
         white-space: nowrap;
+    }
+
+    .full {
+        overflow: hidden;
     }
 
     .overflow {

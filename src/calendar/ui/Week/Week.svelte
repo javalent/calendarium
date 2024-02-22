@@ -2,7 +2,7 @@
     import { getTypedContext } from "src/calendar/view";
     import Day from "../Day/Day.svelte";
     import { get } from "svelte/store";
-    import type { DayOrLeapDay } from "src/@types";
+    import type { DayOrLeapDay } from "src/schemas/calendar/timespans";
 
     export let year: number;
     export let month: number;

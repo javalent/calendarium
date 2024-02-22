@@ -122,11 +122,13 @@
         overflow: hidden;
         /* display: flex;
         flex-flow: column nowrap; */
-        display: grid;
-        grid-template-rows: auto auto 1fr;
+        display: flex;
+        flex-flow: column;
+        height: 100%;
     }
     .calendar {
         overflow: auto;
+        height: 100%;
     }
     .top-container {
         display: flex;

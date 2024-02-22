@@ -53,6 +53,8 @@
     }
     .month-container.full {
         height: 100%;
+        display: flex;
+        flex-flow: column nowrap;
     }
 
     .month-header {
