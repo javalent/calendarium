@@ -86,7 +86,6 @@
         flex-flow: column nowrap;
         gap: 0.25rem;
         overflow: auto;
-        white-space: nowrap;
     }
 
     .full {
