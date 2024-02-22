@@ -184,7 +184,7 @@
     .adjacent-month {
         opacity: 0.25;
     }
-    .today {
+    .today .day-number {
         color: var(--interactive-accent);
     }
 
