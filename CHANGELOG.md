@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.2](https://github.com/javalent/calendarium/compare/1.0.1...1.0.2) (2024-02-22)
+
+
+### Bug Fixes
+
+* "Today" color no longer leaks to event flags ([db069d4](https://github.com/javalent/calendarium/commit/db069d4dcb37e3653930e1469e1c550784ac275d))
+* Allow long event names to wrap ([69e2c5b](https://github.com/javalent/calendarium/commit/69e2c5b470c309dd634d3fbbe644e905fd2d4296))
+* several appearance improvements for full-view calendar ([3efb014](https://github.com/javalent/calendarium/commit/3efb014f1e218bf50f29a47e3e20bf36ef19e9e8))
+
 ## [1.0.1](https://github.com/javalent/calendarium/compare/1.0.0...1.0.1) (2024-02-21)
 
 
