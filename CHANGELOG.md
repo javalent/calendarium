@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/javalent/calendarium/compare/1.0.2...1.0.3) (2024-02-22)
+
+
+### Bug Fixes
+
+* Fixes issue where events & categories couldn't be added in the creator ([2f81b43](https://github.com/javalent/calendarium/commit/2f81b433b991941314d73aee51d6306ea9473efc))
+
 ## [1.0.2](https://github.com/javalent/calendarium/compare/1.0.1...1.0.2) (2024-02-22)
 
 
