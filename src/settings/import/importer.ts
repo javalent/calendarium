@@ -1,13 +1,8 @@
 import type {
     Calendar,
-    Era,
     CalEvent,
     CalEventCategory,
-    LeapDay,
-    Month,
-    Moon,
     StaticCalendarData,
-    Week,
 } from "../../@types";
 import distinct from "distinct-colors";
 
@@ -16,6 +11,8 @@ import type { ImportedCalendar } from "../../@types/import";
 import deepmerge from "deepmerge";
 import { DEFAULT_CALENDAR } from "../settings.constants";
 import { nanoid } from "../../utils/functions";
+import type { Moon } from "src/schemas/calendar/moons";
+import type { Week, Month, LeapDay, Era } from "src/schemas/calendar/timespans";
 
 export default class Import {
     static import(objects: ImportedCalendar[]) {
@@ -240,16 +237,9 @@ export default class Import {
                         } catch (e) {}
                     }
 
-                    let description: string = "";
-                    if (event.description) {
-                        const descriptionEl = createDiv();
-                        descriptionEl.innerHTML = event.description;
-                        description = descriptionEl.textContent ?? "";
-                    }
-
                     events.push({
                         name: event.name,
-                        description: description,
+                        description: event.description,
                         id: `${event.id}`,
                         note: null,
                         date,

@@ -535,15 +535,14 @@ export default class CalendariumSettings extends PluginSettingTab {
     allFolders = this.app.vault
         .getAllLoadedFiles()
         .filter((f) => f instanceof TFolder);
-    folders = this.allFolders.filter(
-        (f) => !this.data.paths.find(([p]) => f.path === p)
-    );
+    folders: TFolder[] = [];
 
     buildPaths() {
         if (this.#needsSort) {
             //sort data
             this.folders = this.allFolders.filter(
-                (f) => !this.data.paths.find(([p]) => f.path === p)
+                (f): f is TFolder =>
+                    !this.data.paths.find(([p]) => f.path === p)
             );
             this.data.paths.sort((a, b) => {
                 return a[0].localeCompare(b[0]);
@@ -716,7 +715,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 validateAndSend(path);
             });
         const modal = new FolderSuggestionModal(this.app, text, [
-            ...(this.folders as TFolder[]),
+            ...this.folders,
         ]);
 
         modal.onClose = async () => {

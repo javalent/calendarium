@@ -224,7 +224,7 @@ export default class Calendarium extends Plugin {
     addCommands() {
         this.addCommand({
             id: "open-calendarium",
-            name: "Open Calendarium",
+            name: "Open Calendar",
             callback: () => {
                 this.addCalendarView();
             },
@@ -240,11 +240,11 @@ export default class Calendarium extends Plugin {
         this.getLeaf(params?.full ?? false);
     }
     getLeaf(full: boolean) {
-        let leaf: WorkspaceLeaf = full
+        let leaf: WorkspaceLeaf | null = full
             ? this.app.workspace.getLeaf(true)
             : this.app.workspace.getRightLeaf(false);
 
-        leaf.setViewState({
+        leaf?.setViewState({
             type: VIEW_TYPE,
         });
 

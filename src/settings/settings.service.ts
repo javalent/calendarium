@@ -563,13 +563,13 @@ export default class SettingsService {
         let fcData: CalendariumData;
         if (
             await this.adapter.exists(
-                ".obsidian/plugins/fantasy-calendar/_data.md"
+                `${this.plugin.app.vault.configDir}/plugins/fantasy-calendar/_data.md`
             )
         ) {
             const contents = (
                 (
                     await this.adapter.read(
-                        ".obsidian/plugins/fantasy-calendar/_data.md"
+                        `${this.plugin.app.vault.configDir}/plugins/fantasy-calendar/_data.md`
                     )
                 )
                     .split(SPLITTER)
