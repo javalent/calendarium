@@ -91,37 +91,45 @@ class DayEventCache extends DayCache<CalEvent> {
     }
 
     isBefore(date: CalEventDate): boolean {
-        if (!date.year || date.year < this.year) return true;
-        if (!date.month || (date.month < this.month && date.year === this.year))
+        const normalized = this.normalize(date);
+        if (normalized.year < this.year) return true;
+        if (normalized.month < this.month && normalized.year === this.year)
             return true;
         if (
-            !date.day ||
-            (date.day < this.day &&
-                date.month === this.month &&
-                date.year === this.year)
+            normalized.day <= this.day &&
+            normalized.month === this.month &&
+            normalized.year === this.year
         )
             return true;
         return false;
     }
     isAfter(date: CalEventDate): boolean {
-        if (!date.year || date.year > this.year) return true;
-        if (!date.month || (date.month > this.month && date.year === this.year))
+        const normalized = this.normalize(date);
+        if (normalized.year > this.year) return true;
+        if (normalized.month > this.month && normalized.year === this.year)
             return true;
         if (
-            !date.day ||
-            (date.day >= this.day &&
-                date.month === this.month &&
-                date.year === this.year)
+            normalized.day >= this.day &&
+            normalized.month === this.month &&
+            normalized.year === this.year
         )
             return true;
         return false;
     }
     isEqual(date: CalEventDate): boolean {
+        const normalized = this.normalize(date);
         return (
-            (!date.year || date.year == this.year) &&
-            (!date.month || date.month == this.month) &&
-            date.day == this.day
+            normalized.year == this.year &&
+            normalized.month == this.month &&
+            normalized.day == this.day
         );
+    }
+    normalize(date: CalEventDate): CalDate {
+        const _date = { ...date };
+        if (!_date.day) _date.day = this.date.day;
+        if (!_date.month) _date.month = this.date.month;
+        if (!_date.year) _date.year = this.date.year;
+        return _date as CalDate;
     }
     update(events: CalEvent[]) {
         if (events) {
@@ -133,8 +141,7 @@ class DayEventCache extends DayCache<CalEvent> {
                 // exact match
                 if (this.isEqual(event.date)) {
                     this.derived.push(event);
-                }
-                if (
+                } else if (
                     event.end &&
                     this.isBefore(event.date) &&
                     this.isAfter(event.end)
