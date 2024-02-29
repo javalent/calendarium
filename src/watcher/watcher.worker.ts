@@ -108,6 +108,9 @@ class Parser {
         while (this.queue.length) {
             const path = this.queue.shift();
             if (!path) break;
+            if (!path.endsWith(".md")) {
+                continue;
+            }
             await this.getFileData(path);
         }
         this.parsing = false;

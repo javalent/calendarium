@@ -8,11 +8,17 @@ import {
     TextAreaComponent,
     TFile,
 } from "obsidian";
-import type { CalDate, Calendar, CalEvent, CalEventDate } from "../../../@types";
+import type {
+    CalDate,
+    Calendar,
+    CalEvent,
+    CalEventDate,
+} from "../../../@types";
 
 import { dateString, nanoid } from "../../../utils/functions";
 
 import PathSuggestionModal from "../../../suggester/path";
+import { FileInputSuggest } from "obsidian-utilities";
 
 /* import EventCreator from "./EventCreator.svelte"; */
 
@@ -370,15 +376,15 @@ export class CreateEventModal extends CalendariumModal {
                     }
                 }
 
-                const modal = new PathSuggestionModal(this.app, text, [
-                    ...files,
-                ]);
+                const modal = new FileInputSuggest(this.app, text, [...files]);
 
-                modal.onClose = async () => {
+                modal.onSelect(async (value) => {
                     text.inputEl.blur();
-                    if (modal.file) this.event.note = modal.file.path;
-                    if (modal.file) this.tryParse(modal.file);
-                };
+                    if (value.item) {
+                        this.event.note = value.item.path;
+                        this.tryParse(value.item);
+                    }
+                });
             });
 
         new Setting(this.infoEl).setName("Event name").addText((t) =>

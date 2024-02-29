@@ -63,8 +63,6 @@ export class Watcher extends Component {
         super();
     }
 
-    tree: CalendarEventTree = new Map();
-
     worker = new Worker();
     onload() {
         /** Rescan for events for all calendars */

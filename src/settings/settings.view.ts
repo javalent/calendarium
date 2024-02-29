@@ -18,8 +18,6 @@ import copy from "fast-copy";
 import type Calendarium from "../main";
 import Importer from "./import/importer";
 
-import CalendarCreator from "./creator/Creator.svelte";
-
 import type { Calendar, PresetCalendar } from "src/@types";
 import { SyncBehavior } from "src/schemas";
 
@@ -35,7 +33,7 @@ import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import SettingsService from "./settings.service";
 import { RestoreCalendarModal } from "./modals/restore";
-import { FolderSuggestionModal } from "src/suggester/folder";
+import { FolderInputSuggest } from "obsidian-utilities";
 import { getPresetCalendar } from "./preset";
 import CreatorController from "./creator/CreatorController.svelte";
 import {
@@ -96,7 +94,8 @@ declare module "obsidian" {
             };
         };
         setting: {
-            openTabById(id: string): void;
+            open(): void;
+            openTabById(id: string): CalendariumSettings;
         };
     }
 }
@@ -111,6 +110,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         event: false,
         advanced: false,
     };
+    eventsEl: HTMLDetailsElement;
     get data() {
         return this.settings$.getData();
     }
@@ -138,14 +138,13 @@ export default class CalendariumSettings extends PluginSettingTab {
             },
         });
         this.buildCalendars();
-        this.buildEvents(
-            this.contentEl.createEl("details", {
-                cls: "calendarium-nested-settings",
-                attr: {
-                    ...(this.toggleState.event ? { open: `open` } : {}),
-                },
-            })
-        );
+        this.eventsEl = this.contentEl.createEl("details", {
+            cls: "calendarium-nested-settings",
+            attr: {
+                ...(this.toggleState.event ? { open: `open` } : {}),
+            },
+        });
+        this.buildEvents(this.eventsEl);
         this.buildAdvanced(
             this.contentEl.createEl("details", {
                 cls: "calendarium-nested-settings",
@@ -531,6 +530,10 @@ export default class CalendariumSettings extends PluginSettingTab {
         this.pathsEl = containerEl.createDiv("calendarium-event-paths");
         this.buildPaths();
     }
+    showPaths() {
+        this.eventsEl.setAttr("open", "open");
+        this.pathsEl.scrollIntoView();
+    }
     #needsSort = true;
     allFolders = this.app.vault
         .getAllLoadedFiles()
@@ -714,7 +717,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 /** Validate no existing paths... */
                 validateAndSend(path);
             });
-        const modal = new FolderSuggestionModal(this.app, text, [
+        /* const modal = new FolderSuggestionModal(this.app, text, [
             ...this.folders,
         ]);
 
@@ -723,7 +726,15 @@ export default class CalendariumSettings extends PluginSettingTab {
                 ? text.inputEl.value.trim()
                 : "/";
             validateAndSend(path);
-        };
+        }; */
+
+        const modal = new FolderInputSuggest(this.app, text, [...this.folders]);
+
+        modal.onSelect(async (value) => {
+            modal.close();
+            modal.setValue(value.item.path);
+            validateAndSend(value.item.path);
+        });
     }
     buildAdvanced(containerEl: HTMLDetailsElement) {
         containerEl.empty();
