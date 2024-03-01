@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.4](https://github.com/javalent/calendarium/compare/1.0.3...1.0.4) (2024-02-24)
+
+
+### Bug Fixes
+
+* Fixes for Obsidian review ([074c98c](https://github.com/javalent/calendarium/commit/074c98c484821dcb9bbd532d150a1505fa5d9144))
+* Fixes some issues multi-day event logic ([3facbcc](https://github.com/javalent/calendarium/commit/3facbccc106427b0694a8bc879df8ae9f643f4a5))
+
 ## [1.0.3](https://github.com/javalent/calendarium/compare/1.0.2...1.0.3) (2024-02-22)
 
 
