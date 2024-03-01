@@ -116,8 +116,10 @@ export default class CalendariumSettings extends PluginSettingTab {
     }
     constructor(public plugin: Calendarium, public settings$: SettingsService) {
         super(plugin.app, plugin);
-        this.app.workspace.on("calendarium-settings-external-load", () =>
-            this.display()
+        this.plugin.registerEvent(
+            this.app.workspace.on("calendarium-settings-external-load", () =>
+                this.display()
+            )
         );
     }
     async display() {
