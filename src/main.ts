@@ -53,10 +53,6 @@ declare module "obsidian" {
             callback: () => any
         ): EventRef;
     }
-    interface Plugin {
-        onConfigFileChange: () => void;
-        handleConfigFileChange(): Promise<void>;
-    }
 }
 
 declare global {
@@ -129,10 +125,6 @@ export default class Calendarium extends Plugin {
     }
     async onExternalSettingsChange() {
         this.settings$.onExternalSettingsChange();
-    }
-    async handleConfigFileChange() {
-        await super.handleConfigFileChange();
-        this.onExternalSettingsChange();
     }
 
     /**
