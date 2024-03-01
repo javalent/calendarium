@@ -124,7 +124,6 @@ export default class CalendariumSettings extends PluginSettingTab {
     }
     async display() {
         this.containerEl.empty();
-        this.containerEl.createEl("h2", { text: "Calendarium" });
         this.containerEl.addClass("calendarium-settings");
         this.contentEl = this.containerEl.createDiv(
             "calendarium-settings-content"
