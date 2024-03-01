@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.5](https://github.com/javalent/calendarium/compare/1.0.4...1.0.5) (2024-03-01)
+
+
+### Bug Fixes
+
+* Logging utilities now use proper log levels ([8ac1058](https://github.com/javalent/calendarium/commit/8ac1058e053cd6d4c36c9df9302597489f3951ce))
+* Properly register settings event ([4fc3789](https://github.com/javalent/calendarium/commit/4fc37897eed12789fabd12e370f9b3e247cdcfda))
+* regen package file ([7927e94](https://github.com/javalent/calendarium/commit/7927e9499eb9cbc3df8dc549efcb8cb407cc386e))
+* regen package file (again...) ([fd715fe](https://github.com/javalent/calendarium/commit/fd715fe312f44d66634b49e2a5580ee0f4b01626))
+* Remove unnecessary header from settings ([e1be39b](https://github.com/javalent/calendarium/commit/e1be39b3964aeeb3d4f669426744d66a681dd901))
+* Remove workaround for Obsidian config file watching issue ([9138f87](https://github.com/javalent/calendarium/commit/9138f872452a293cdb88eff5be3311b59f356879))
+* Switch input suggesters to centralized version ([e641ddc](https://github.com/javalent/calendarium/commit/e641ddc1f25fc21f4ac0dfd720701a77fcbb0378))
+* UI pass to switch to title case ([de1fe04](https://github.com/javalent/calendarium/commit/de1fe0484909d5c6804ab548d0cdb880462ccd8a))
+
 ## [1.0.4](https://github.com/javalent/calendarium/compare/1.0.3...1.0.4) (2024-02-24)
 
 
