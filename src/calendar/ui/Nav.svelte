@@ -29,28 +29,28 @@
         menu.setNoIcon();
 
         menu.addItem((item) => {
-            item.setTitle("Go to Day").onClick(() => {
+            item.setTitle("Go to day").onClick(() => {
                 /* openDate(); */
             });
         });
         menu.addSeparator();
         menu.addItem((item) => {
             item.setTitle(
-                `${$displayWeeks ? "Hide" : "Display"} Week Numbers`,
+                `${$displayWeeks ? "Hide" : "Display"} week numbers`,
             ).onClick(async () => {
                 $displayWeeks = !$displayWeeks;
             });
         });
         menu.addItem((item) => {
             item.setTitle(
-                $displayMoons ? "Hide Moons" : "Display Moons",
+                $displayMoons ? "Hide moons" : "Display moons",
             ).onClick(() => {
                 $displayMoons = !$displayMoons;
             });
         });
         menu.addItem((item) => {
             item.setTitle(
-                $displayDayNumber ? "Hide Day Number" : "Display Day Number",
+                $displayDayNumber ? "Hide day number" : "Display day number",
             ).onClick(async () => {
                 $displayDayNumber = !$displayDayNumber;
             });
@@ -116,7 +116,7 @@
                 <div
                     class="calendar-clickable"
                     use:settings
-                    aria-label="Calendar Settings"
+                    aria-label="Calendar settings"
                     on:click={(evt) => openSettings(evt)}
                 />
             </div>

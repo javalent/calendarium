@@ -6,7 +6,7 @@
     export let label: boolean = true;
     export let size = 28;
 
-    $: path = SHADOW_MAP[moon.phase ?? "New Moon"];
+    $: path = SHADOW_MAP[moon.phase ?? "New moon"];
 </script>
 
 <div aria-label={label ? `${moon.name}\n${moon.phase}` : null}>

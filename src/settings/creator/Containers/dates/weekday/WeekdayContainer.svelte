@@ -97,7 +97,7 @@
                 class="dropdown"
                 aria-label={$weekdayStore.filter((v) => v.name?.length).length
                     ? null
-                    : "Named Weekday Required"}
+                    : "Named weekday required"}
                 bind:value={firstWeekday}
                 on:change={() => {
                     staticStore.setProperty("firstWeekDay", firstWeekday);

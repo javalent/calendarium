@@ -22,7 +22,7 @@
     <div class="moon-info">
         <span class="setting-item-name">
             <MoonSVG
-                moon={{ ...moon, phase: "First Quarter" }}
+                moon={{ ...moon, phase: "First quarter" }}
                 label={false}
                 size={20}
             />

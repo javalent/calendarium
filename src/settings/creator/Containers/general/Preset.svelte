@@ -18,7 +18,7 @@
             .setDesc("Apply a common Calendarium as a preset.")
             .addButton((b) => {
                 b.setCta()
-                    .setButtonText("Choose Preset")
+                    .setButtonText("Choose preset")
                     .onClick(async () => {
                         const preset = await getPresetCalendar(
                             plugin,

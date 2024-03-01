@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { type LeapDayCondition } from "src/schemas";
+    import type { LeapDayCondition } from "src/schemas/calendar/timespans";
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
 
@@ -24,7 +24,7 @@
         canBeExclusive ? (condition.exclusive = !condition.exclusive) : null}
 />
 <ToggleComponent
-    name="Ignore Offset"
+    name="Ignore offset"
     desc="The condition will ignore the leap day's offset when checking to apply."
     value={condition.ignore ?? false}
     on:click={() => (condition.ignore = !condition.ignore)}

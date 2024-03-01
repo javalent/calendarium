@@ -35,7 +35,7 @@
 </script>
 
 <Details
-    name={"Basic Info"}
+    name={"Basic info"}
     warn={!validName}
     label={"The calendar must have a name"}
     alwaysOpen={true}
@@ -80,7 +80,7 @@
             }}
         />
         <ToggleComponent
-            name={"Support Inline Events"}
+            name={"Support inline events"}
             desc={""}
             value={$calendar.supportInlineEvents ?? false}
             on:click={() => {
@@ -88,7 +88,7 @@
             }}
         />
         <TextComponent
-            name={"Tag for Inline Events"}
+            name={"Tag for inline events"}
             desc={"Only notes with this tag will be scanned for inline events"}
             value={$calendar.inlineEventTag ?? ""}
             on:blur={(evt) => {

@@ -68,7 +68,7 @@ export class Watcher extends Component {
         /** Rescan for events for all calendars */
         this.plugin.addCommand({
             id: "rescan-events",
-            name: "Rescan Events",
+            name: "Rescan events",
             callback: () => {
                 if (this.plugin.data.debug) {
                     console.info("Beginning full rescan for calendar events");
@@ -80,7 +80,7 @@ export class Watcher extends Component {
         /** Rescan for events for a specific calendar. */
         this.plugin.addCommand({
             id: "rescan-events-for-calendar",
-            name: "Rescan Events for Calendar",
+            name: "Rescan events for calendar",
             callback: () => {
                 const modal = new CalendarPickerModal(this.plugin);
                 modal.onClose = () => {

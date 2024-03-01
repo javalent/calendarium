@@ -205,7 +205,7 @@ export default class SettingsService {
                     notice.hide();
                 });
                 new ButtonComponent(b)
-                    .setButtonText("Reload Data")
+                    .setButtonText("Reload data")
                     .setCta()
                     .onClick(async (evt) => {
                         evt.stopPropagation();
@@ -273,9 +273,9 @@ export default class SettingsService {
                 e.createEl("br");
                 const b = e.createDiv("calendarium-notice-buttons");
                 const drop = new DropdownComponent(b)
-                    .addOption(SyncBehavior.Ask, "Continue Asking")
-                    .addOption(SyncBehavior.Always, "Always Reload")
-                    .addOption(SyncBehavior.Never, "Never Reload")
+                    .addOption(SyncBehavior.Ask, "Continue asking")
+                    .addOption(SyncBehavior.Always, "Always reload")
+                    .addOption(SyncBehavior.Never, "Never reload")
                     .setValue(this.#data.syncBehavior)
                     .onChange(async (v) => {
                         this.#data.syncBehavior = v as SyncBehavior;
@@ -696,7 +696,7 @@ export default class SettingsService {
                             e.createEl("br");
                             const b = e.createDiv("calendarium-notice-buttons");
                             new ButtonComponent(e)
-                                .setButtonText("Open Settings")
+                                .setButtonText("Open settings")
                                 .onClick(() => {
                                     notice.hide();
                                     this.app.setting.openTabById(

@@ -335,7 +335,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         new Setting(this.calendarsEl)
             .setName("Create new calendar")
             .addButton((button: ButtonComponent) =>
-                button.setButtonText("Open Creator").onClick(async () => {
+                button.setButtonText("Open creator").onClick(async () => {
                     const calendar = await this.launchCalendarCreator();
                     if (calendar) {
                         await this.plugin.addNewCalendar(calendar);
@@ -345,7 +345,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             )
             .addButton((button) => {
                 button
-                    .setTooltip("Launch Quick Creator")
+                    .setTooltip("Launch quick creator")
                     .setIcon(QUICK_CREATOR)
                     .onClick(async () => {
                         const preset = await getPresetCalendar(this.plugin);
@@ -767,9 +767,9 @@ export default class CalendariumSettings extends PluginSettingTab {
                 `Control how the plugin reloads data when a sync is detected.`
             )
             .addDropdown((d) => {
-                d.addOption(SyncBehavior.Ask, "Continue Asking")
-                    .addOption(SyncBehavior.Always, "Always Reload")
-                    .addOption(SyncBehavior.Never, "Never Reload")
+                d.addOption(SyncBehavior.Ask, "Continue asking")
+                    .addOption(SyncBehavior.Always, "Always reload")
+                    .addOption(SyncBehavior.Never, "Never reload")
                     .setValue(this.data.syncBehavior)
                     .onChange(async (v) => {
                         this.data.syncBehavior = v as SyncBehavior;

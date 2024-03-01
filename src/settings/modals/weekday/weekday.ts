@@ -1,6 +1,6 @@
-import type { Day } from "src/@types";
 import { CanceableCalendariumModal } from "../modal";
 import { Setting } from "obsidian";
+import type { Day } from "src/schemas/calendar/timespans";
 import { nanoid } from "src/utils/functions";
 
 export class WeekdayModal extends CanceableCalendariumModal<Day> {
@@ -21,7 +21,7 @@ export class WeekdayModal extends CanceableCalendariumModal<Day> {
 
         this.useAbbr = (this.item?.abbreviation?.length ?? 0) > 0;
 
-        this.titleEl.setText(`${this.creating ? "Create" : "Modify"} Weekday`);
+        this.titleEl.setText(`${this.creating ? "Create" : "Modify"} weekday`);
     }
     async display() {
         this.contentEl.empty();

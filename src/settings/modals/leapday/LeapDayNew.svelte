@@ -60,7 +60,7 @@
             name.push("(Exclusive)");
         }
         if (interval.ignore) {
-            name.push(" - Ignoring Offset");
+            name.push(" - Ignoring offset");
         }
         return name.join(" ");
     };

@@ -85,12 +85,12 @@
         const menu = new Menu();
         if (removeable) {
             menu.addItem((item) =>
-                item.setTitle("Edit Event").onClick(() => {
+                item.setTitle("Edit event").onClick(() => {
                     addEventWithModal(plugin, $calendar, event.date, event);
                 }),
             );
             menu.addItem((item) =>
-                item.setTitle("Delete Event").onClick(() => {
+                item.setTitle("Delete event").onClick(() => {
                     $store.eventStore.removeEvents(event);
                 }),
             );

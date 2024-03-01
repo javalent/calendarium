@@ -30,7 +30,7 @@ export class CreateMoonModal extends CalendariumModal {
     async display() {
         this.contentEl.empty();
         this.contentEl.createEl("h3", {
-            text: this.editing ? "Edit Moon" : "New Moon",
+            text: this.editing ? "Edit moon" : "New moon",
         });
 
         this.infoEl = this.contentEl.createDiv("moon-info");

@@ -1,5 +1,6 @@
-export const DEFAULT_FORMAT = "YYYY-MM-DD";
+import type { Phase } from "src/schemas/calendar/moons";
 
+export const DEFAULT_FORMAT = "YYYY-MM-DD";
 
 export const DEFAULT_CATEGORY_COLOR = "#808080";
 
@@ -54,193 +55,151 @@ export const MOON_SHADOWS = [
     "M16,26.72a10.52,10.52,0,0,1-3.77-.7C9.77,24.81,7,22.1,7,16S9.77,7.19,12.23,6A10.52,10.52,0,0,1,16,5.28a10.72,10.72,0,0,1,0,21.44Z",
 ];
 
-export const SHADOW_MAP = {
-    "New Moon": MOON_SHADOWS[0],
-    "New Moon Fading": MOON_SHADOWS[1],
-    "New Moon Faded": MOON_SHADOWS[2],
-    "Waxing Crescent Rising": MOON_SHADOWS[3],
-    "Waxing Crescent Risen": MOON_SHADOWS[4],
-    "Waxing Crescent": MOON_SHADOWS[6],
-    "Waxing Crescent Fading": MOON_SHADOWS[7],
-    "Waxing Crescent Faded": MOON_SHADOWS[8],
-    "First Quarter Rising": MOON_SHADOWS[9],
-    "First Quarter Risen": MOON_SHADOWS[10],
-    "First Quarter": MOON_SHADOWS[12],
-    "First Quarter Fading": MOON_SHADOWS[13],
-    "First Quarter Faded": MOON_SHADOWS[14],
-    "Waxing Gibbous Rising": MOON_SHADOWS[15],
-    "Waxing Gibbous Risen": MOON_SHADOWS[16],
-    "Waxing Gibbous": MOON_SHADOWS[18],
-    "Waxing Gibbous Fading": MOON_SHADOWS[19],
-    "Waxing Gibbous Faded": MOON_SHADOWS[20],
-    "Full Moon Rising": MOON_SHADOWS[21],
-    "Full Moon Risen": MOON_SHADOWS[22],
-    "Full Moon": MOON_SHADOWS[24],
-    "Full Moon Fading": MOON_SHADOWS[25],
-    "Full Moon Faded": MOON_SHADOWS[26],
-    "Waning Gibbous Rising": MOON_SHADOWS[27],
-    "Waning Gibbous Risen": MOON_SHADOWS[28],
-    "Waning Gibbous": MOON_SHADOWS[30],
-    "Waning Gibbous Fading": MOON_SHADOWS[31],
-    "Waning Gibbous Faded": MOON_SHADOWS[32],
-    "Last Quarter Rising": MOON_SHADOWS[33],
-    "Last Quarter Risen": MOON_SHADOWS[34],
-    "Last Quarter": MOON_SHADOWS[36],
-    "Last Quarter Fading": MOON_SHADOWS[37],
-    "Last Quarter Faded": MOON_SHADOWS[38],
-    "Waning Crescent Rising": MOON_SHADOWS[39],
-    "Waning Crescent Risen": MOON_SHADOWS[40],
-    "Waning Crescent": MOON_SHADOWS[42],
-    "Waning Crescent Fading": MOON_SHADOWS[43],
-    "Waning Crescent Faded": MOON_SHADOWS[44],
-    "New Moon Rising": MOON_SHADOWS[45],
-    "New Moon Risen": MOON_SHADOWS[46],
+export const SHADOW_MAP: Record<Phase, string | null> = {
+    "New moon": MOON_SHADOWS[0],
+    "New moon fading": MOON_SHADOWS[1],
+    "New moon faded": MOON_SHADOWS[2],
+    "Waxing crescent rising": MOON_SHADOWS[3],
+    "Waxing crescent risen": MOON_SHADOWS[4],
+    "Waxing crescent": MOON_SHADOWS[6],
+    "Waxing crescent fading": MOON_SHADOWS[7],
+    "Waxing crescent faded": MOON_SHADOWS[8],
+    "First quarter rising": MOON_SHADOWS[9],
+    "First quarter risen": MOON_SHADOWS[10],
+    "First quarter": MOON_SHADOWS[12],
+    "First quarter fading": MOON_SHADOWS[13],
+    "First quarter faded": MOON_SHADOWS[14],
+    "Waxing gibbous rising": MOON_SHADOWS[15],
+    "Waxing gibbous risen": MOON_SHADOWS[16],
+    "Waxing gibbous": MOON_SHADOWS[18],
+    "Waxing gibbous fading": MOON_SHADOWS[19],
+    "Waxing gibbous faded": MOON_SHADOWS[20],
+    "Full moon rising": MOON_SHADOWS[21],
+    "Full moon risen": MOON_SHADOWS[22],
+    "Full moon": MOON_SHADOWS[24],
+    "Full moon fading": MOON_SHADOWS[25],
+    "Full moon faded": MOON_SHADOWS[26],
+    "Waning gibbous rising": MOON_SHADOWS[27],
+    "Waning gibbous risen": MOON_SHADOWS[28],
+    "Waning gibbous": MOON_SHADOWS[30],
+    "Waning gibbous fading": MOON_SHADOWS[31],
+    "Waning gibbous faded": MOON_SHADOWS[32],
+    "Last quarter rising": MOON_SHADOWS[33],
+    "Last quarter risen": MOON_SHADOWS[34],
+    "Last quarter": MOON_SHADOWS[36],
+    "Last quarter fading": MOON_SHADOWS[37],
+    "Last quarter faded": MOON_SHADOWS[38],
+    "Waning crescent rising": MOON_SHADOWS[39],
+    "Waning crescent risen": MOON_SHADOWS[40],
+    "Waning crescent": MOON_SHADOWS[42],
+    "Waning crescent fading": MOON_SHADOWS[43],
+    "Waning crescent faded": MOON_SHADOWS[44],
+    "New moon rising": MOON_SHADOWS[45],
+    "New moon risen": MOON_SHADOWS[46],
 };
 
 export const MOON_PHASES: {
     [granularity: number]: Array<Phase>;
 } = {
-    4: ["New Moon", "First Quarter", "Full Moon", "Last Quarter"],
+    4: ["New moon", "First quarter", "Full moon", "Last quarter"],
 
     8: [
-        "New Moon",
-        "Waxing Crescent",
-        "First Quarter",
-        "Waxing Gibbous",
-        "Full Moon",
-        "Waning Gibbous",
-        "Last Quarter",
-        "Waning Crescent",
+        "New moon",
+        "Waxing crescent",
+        "First quarter",
+        "Waxing gibbous",
+        "Full moon",
+        "Waning gibbous",
+        "Last quarter",
+        "Waning crescent",
     ],
 
     16: [
-        "New Moon",
-        "New Moon Fading",
-        "Waxing Crescent",
-        "Waxing Crescent Fading",
-        "First Quarter",
-        "First Quarter Fading",
-        "Waxing Gibbous",
-        "Waxing Gibbous Fading",
-        "Full Moon",
-        "Full Moon Fading",
-        "Waning Gibbous",
-        "Waning Gibbous Fading",
-        "Last Quarter",
-        "Last Quarter Fading",
-        "Waning Crescent",
-        "Waning Crescent Fading",
+        "New moon",
+        "New moon fading",
+        "Waxing crescent",
+        "Waxing crescent fading",
+        "First quarter",
+        "First quarter fading",
+        "Waxing gibbous",
+        "Waxing gibbous fading",
+        "Full moon",
+        "Full moon fading",
+        "Waning gibbous",
+        "Waning gibbous fading",
+        "Last quarter",
+        "Last quarter fading",
+        "Waning crescent",
+        "Waning crescent fading",
     ],
 
     24: [
-        "New Moon",
-        "New Moon Fading",
-        "Waxing Crescent Rising",
-        "Waxing Crescent",
-        "Waxing Crescent Fading",
-        "First Quarter Rising",
-        "First Quarter",
-        "First Quarter Fading",
-        "Waxing Gibbous Rising",
-        "Waxing Gibbous",
-        "Waxing Gibbous Fading",
-        "Full Moon Rising",
-        "Full Moon",
-        "Full Moon Fading",
-        "Waning Gibbous Rising",
-        "Waning Gibbous",
-        "Waning Gibbous Fading",
-        "Last Quarter Rising",
-        "Last Quarter",
-        "Last Quarter Fading",
-        "Waning Crescent Rising",
-        "Waning Crescent",
-        "Waning Crescent Fading",
-        "New Moon Rising",
+        "New moon",
+        "New moon fading",
+        "Waxing crescent rising",
+        "Waxing crescent",
+        "Waxing crescent fading",
+        "First quarter rising",
+        "First quarter",
+        "First quarter fading",
+        "Waxing gibbous rising",
+        "Waxing gibbous",
+        "Waxing gibbous fading",
+        "Full moon rising",
+        "Full moon",
+        "Full moon fading",
+        "Waning gibbous rising",
+        "Waning gibbous",
+        "Waning gibbous fading",
+        "Last quarter rising",
+        "Last quarter",
+        "Last quarter fading",
+        "Waning crescent rising",
+        "Waning crescent",
+        "Waning crescent fading",
+        "New moon rising",
     ],
 
     40: [
-        "New Moon",
-        "New Moon Fading",
-        "New Moon Faded",
-        "Waxing Crescent Rising",
-        "Waxing Crescent Risen",
-        "Waxing Crescent",
-        "Waxing Crescent Fading",
-        "Waxing Crescent Faded",
-        "First Quarter Rising",
-        "First Quarter Risen",
-        "First Quarter",
-        "First Quarter Fading",
-        "First Quarter Faded",
-        "Waxing Gibbous Rising",
-        "Waxing Gibbous Risen",
-        "Waxing Gibbous",
-        "Waxing Gibbous Fading",
-        "Waxing Gibbous Faded",
-        "Full Moon Rising",
-        "Full Moon Risen",
-        "Full Moon",
-        "Full Moon Fading",
-        "Full Moon Faded",
-        "Waning Gibbous Rising",
-        "Waning Gibbous Risen",
-        "Waning Gibbous",
-        "Waning Gibbous Fading",
-        "Waning Gibbous Faded",
-        "Last Quarter Rising",
-        "Last Quarter Risen",
-        "Last Quarter",
-        "Last Quarter Fading",
-        "Last Quarter Faded",
-        "Waning Crescent Rising",
-        "Waning Crescent Risen",
-        "Waning Crescent",
-        "Waning Crescent Fading",
-        "Waning Crescent Faded",
-        "New Moon Rising",
-        "New Moon Risen",
+        "New moon",
+        "New moon fading",
+        "New moon faded",
+        "Waxing crescent rising",
+        "Waxing crescent risen",
+        "Waxing crescent",
+        "Waxing crescent fading",
+        "Waxing crescent faded",
+        "First quarter rising",
+        "First quarter risen",
+        "First quarter",
+        "First quarter fading",
+        "First quarter faded",
+        "Waxing gibbous rising",
+        "Waxing gibbous risen",
+        "Waxing gibbous",
+        "Waxing gibbous fading",
+        "Waxing gibbous faded",
+        "Full moon rising",
+        "Full moon risen",
+        "Full moon",
+        "Full moon fading",
+        "Full moon faded",
+        "Waning gibbous rising",
+        "Waning gibbous risen",
+        "Waning gibbous",
+        "Waning gibbous fading",
+        "Waning gibbous faded",
+        "Last quarter rising",
+        "Last quarter risen",
+        "Last quarter",
+        "Last quarter fading",
+        "Last quarter faded",
+        "Waning crescent rising",
+        "Waning crescent risen",
+        "Waning crescent",
+        "Waning crescent fading",
+        "Waning crescent faded",
+        "New moon rising",
+        "New moon risen",
     ],
 };
-
-export type Phase =
-    | "New Moon"
-    | "New Moon Fading"
-    | "New Moon Faded"
-    | "Waxing Crescent Rising"
-    | "Waxing Crescent Risen"
-    | "Waxing Crescent"
-    | "Waxing Crescent Fading"
-    | "Waxing Crescent Faded"
-    | "First Quarter Rising"
-    | "First Quarter Risen"
-    | "First Quarter"
-    | "First Quarter Fading"
-    | "First Quarter Faded"
-    | "Waxing Gibbous Rising"
-    | "Waxing Gibbous Risen"
-    | "Waxing Gibbous"
-    | "Waxing Gibbous Fading"
-    | "Waxing Gibbous Faded"
-    | "Full Moon Rising"
-    | "Full Moon Risen"
-    | "Full Moon"
-    | "Full Moon Fading"
-    | "Full Moon Faded"
-    | "Waning Gibbous Rising"
-    | "Waning Gibbous Risen"
-    | "Waning Gibbous"
-    | "Waning Gibbous Fading"
-    | "Waning Gibbous Faded"
-    | "Last Quarter Rising"
-    | "Last Quarter Risen"
-    | "Last Quarter"
-    | "Last Quarter Fading"
-    | "Last Quarter Faded"
-    | "Waning Crescent Rising"
-    | "Waning Crescent Risen"
-    | "Waning Crescent"
-    | "Waning Crescent Fading"
-    | "Waning Crescent Faded"
-    | "New Moon Rising"
-    | "New Moon Risen";

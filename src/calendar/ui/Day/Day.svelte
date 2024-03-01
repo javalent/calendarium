@@ -57,7 +57,7 @@
 
         if (!full) {
             menu.addItem((item) => {
-                item.setTitle("Open Day View").onClick(() => {
+                item.setTitle("Open day view").onClick(() => {
                     $viewing = {
                         day: day.number,
                         month: $index,
@@ -76,7 +76,7 @@
             });
         });
         menu.addItem((item) =>
-            item.setTitle("New Event").onClick(() => {
+            item.setTitle("New event").onClick(() => {
                 addEventWithModal(plugin, $calendar, {
                     day: day.number,
                     month: $index,

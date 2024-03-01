@@ -54,7 +54,7 @@
     {/if}
 
     <AddNew
-        placeholder={"Leap Day"}
+        placeholder={"Leap day"}
         disabled={leapDayDisabled}
         label={$label}
         on:add={(evt) => add({ name: evt.detail })}

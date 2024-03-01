@@ -216,7 +216,7 @@ export default class Calendarium extends Plugin {
     addCommands() {
         this.addCommand({
             id: "open-calendarium",
-            name: "Open Calendar",
+            name: "Open calendar",
             callback: () => {
                 this.addCalendarView();
             },

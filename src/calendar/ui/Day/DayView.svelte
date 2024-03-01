@@ -44,7 +44,7 @@
     const event = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon(ADD_EVENT)
-            .setTooltip("New Event");
+            .setTooltip("New event");
     };
 </script>
 

@@ -21,7 +21,7 @@ export class MonthModal extends CanceableCalendariumModal<Month> {
             offset: 0,
         };
 
-        this.titleEl.setText(`${this.creating ? "Create" : "Modify"} Month`);
+        this.titleEl.setText(`${this.creating ? "Create" : "Modify"} month`);
     }
     async display() {
         this.contentEl.empty();

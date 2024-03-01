@@ -14,7 +14,7 @@ export class RestoreCalendarModal extends SaveableCalendariumModal<
     async display() {
         this.contentEl.empty();
         if (!this.item) this.item = [];
-        this.titleEl.setText("Restore Calendars");
+        this.titleEl.setText("Restore calendars");
         for (const calendar of this.calendars.filter(
             (c) => !this.permanentlyDelete.includes(c.id)
         )) {

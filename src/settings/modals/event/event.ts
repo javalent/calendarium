@@ -76,7 +76,7 @@ export class CreateEventModal extends CalendariumModal {
 
     async display() {
         this.contentEl.empty();
-        this.titleEl.setText(this.editing ? "Edit Event" : "New Event");
+        this.titleEl.setText(this.editing ? "Edit event" : "New event");
 
         this.infoEl = this.contentEl.createDiv("event-info");
         this.buildInfo();
@@ -317,7 +317,7 @@ export class CreateEventModal extends CalendariumModal {
         new DropdownComponent(monthEl)
             .addOptions(
                 Object.fromEntries([
-                    ["select", "Select Month"],
+                    ["select", "Select month"],
                     ...this.calendar.static.months.map((month) => [
                         month.name,
                         month.name,
@@ -389,7 +389,7 @@ export class CreateEventModal extends CalendariumModal {
 
         new Setting(this.infoEl).setName("Event name").addText((t) =>
             t
-                .setPlaceholder("Event Name")
+                .setPlaceholder("Event name")
                 .setValue(this.event.name)
                 .onChange((v) => {
                     this.event.name = v;
@@ -397,9 +397,9 @@ export class CreateEventModal extends CalendariumModal {
         );
 
         const descriptionEl = this.infoEl.createDiv("event-description");
-        descriptionEl.createEl("label", { text: "Event Description" });
+        descriptionEl.createEl("label", { text: "Event description" });
         new TextAreaComponent(descriptionEl)
-            .setPlaceholder("Event Description")
+            .setPlaceholder("Event description")
             .setValue(this.event.description ?? "")
             .onChange((v) => {
                 this.event.description = v;

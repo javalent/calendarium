@@ -31,7 +31,7 @@
         "Dates",
         /* "Eras",
         "Weather", */
-        "Celestial Bodies",
+        "Celestial bodies",
         "Events",
     ] as const;
     type CreatorSection = (typeof SettingsSections)[number];
@@ -50,7 +50,7 @@
                     $validDate && $validMonths && $validWeekdays && $validYears
                 );
             }
-            case "Celestial Bodies":
+            case "Celestial bodies":
             case "Events":
             default: {
                 return true;
@@ -73,7 +73,7 @@
                 return "badge-info";
             case "Dates":
                 return "calendar";
-            case "Celestial Bodies":
+            case "Celestial bodies":
                 return "moon";
             case "Events":
                 return "calendar-clock";
@@ -131,7 +131,7 @@
             {#if SelectedSection == "Events"}
                 <Events />
             {/if}
-            {#if SelectedSection == "Celestial Bodies"}
+            {#if SelectedSection == "Celestial bodies"}
                 <Celestials />
             {/if}
         </div>

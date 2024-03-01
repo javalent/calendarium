@@ -38,7 +38,7 @@
     desc={`${$moonStore.length} moon${$moonStore.length != 1 ? "s" : ""}`}
 >
     <ToggleComponent
-        name={"Display Moons"}
+        name={"Display moons"}
         desc={"Display moons by default when viewing this calendar."}
         value={$displayMoons}
         on:click={() => ($displayMoons = !$displayMoons)}

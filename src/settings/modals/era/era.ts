@@ -39,7 +39,7 @@ export class CreateEraModal extends CalendariumModal {
 
     async display() {
         this.contentEl.empty();
-        this.titleEl.setText(this.editing ? "Edit Era" : "New Era");
+        this.titleEl.setText(this.editing ? "Edit era" : "New era");
         new Setting(this.contentEl).setName("Name").addText((t) => {
             t.setValue(this.era.name ?? "Era").onChange((v) => {
                 this.era.name = v;

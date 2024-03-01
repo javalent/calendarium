@@ -90,14 +90,14 @@
     </div>
     <div class="setting-item">
         <div class="setting-item-info">
-            <div class="setting-item-name">Event Name</div>
+            <div class="setting-item-name">Event name</div>
             <div class="setting-item-description" />
         </div>
         <div class="setting-item-control">
             <input
                 type="text"
                 spellcheck="false"
-                placeholder="Event Name"
+                placeholder="Event name"
                 bind:value={event.name}
             />
         </div>
@@ -107,7 +107,7 @@
         <textarea
             name="desc"
             spellcheck="false"
-            placeholder="Event Description"
+            placeholder="Event description"
             bind:value={event.description}
         />
     </div>

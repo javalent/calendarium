@@ -90,7 +90,7 @@
             })
             .addExtraButton((b) => {
                 b.setIcon(TRASH)
-                    .setTooltip("Delete Filtered Events")
+                    .setTooltip("Delete filtered events")
                     .onClick(async () => {
                         if (
                             await confirmWithModal(
@@ -114,13 +114,13 @@
     desc={`Displaying ${$sorted.length}/${$calendar.events.length} events.`}
 >
     <ButtonComponent
-        name={"Delete All Events"}
+        name={"Delete all events"}
         icon={TRASH}
         on:click={() => deleteAll()}
     />
     <div class="filter" use:filter />
     <!-- <AddNew on:click={() => add()} /> -->
-    <ButtonComponent name={"Add Event"} icon={ADD} on:click={() => add()} />
+    <ButtonComponent name={"Add event"} icon={ADD} on:click={() => add()} />
     <div class="existing-items">
         {#each $sliced as event}
             <EventInstance

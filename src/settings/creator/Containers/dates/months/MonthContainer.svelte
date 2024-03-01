@@ -39,7 +39,7 @@
     desc={`${$monthStore.length} month${$monthStore.length != 1 ? "s" : ""}`}
 >
     <ToggleComponent
-        name={"Show Intercalary Months Separately"}
+        name={"Show intercalary months separately"}
         desc={"Intercalary months will appear a distinct months in the calendar."}
         value={$store.showIntercalarySeparately}
         on:click={() => {

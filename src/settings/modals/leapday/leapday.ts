@@ -37,7 +37,7 @@ export class CreateLeapDayModal extends CalendariumModal {
     }
 
     async display() {
-        this.titleEl.setText(this.editing ? "Edit Leap Day" : "New Leap Day");
+        this.titleEl.setText(this.editing ? "Edit leap day" : "New leap day");
         new LeapDayNew({
             target: this.contentEl,
             props: {
@@ -79,7 +79,7 @@ export class IntervalModal extends CalendariumModal {
     async display() {
         this.containerEl.addClasses(["calendarium-nested-settings"]);
         this.contentEl.empty();
-        this.titleEl.setText("Leap Day Condition");
+        this.titleEl.setText("Leap day condition");
 
         new LeapDayInterval({
             target: this.contentEl,
