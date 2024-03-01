@@ -6,7 +6,7 @@ export function logError(
     file: { path: string; basename: string },
     datestring?: string
 ) {
-    console.log(
+    console.error(
         "Calendarium: %s. From '%s', date value: %o",
         message,
         file.path,
@@ -20,7 +20,7 @@ export function logWarning(
     file: { path: string; basename: string },
     datestring?: string
 ) {
-    console.log(
+    console.warn(
         "Calendarium: %s. From '%s', date value: '%o'",
         message,
         file.path,
