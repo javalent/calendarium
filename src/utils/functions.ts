@@ -1,6 +1,7 @@
 import type { LeapDay, Day } from "src/schemas/calendar/timespans";
 import type { Calendar, CalDate, CalEvent, CalEventDate } from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
+import type { DateBit } from "src/events/event.helper";
 
 export function daysBetween(date1: Date, date2: Date) {
     const d1 = window.moment(date1);
@@ -245,7 +246,7 @@ export function toShortMonthString(
 }
 
 export function toPaddedString(
-    data: Nullable<number>,
+    data: [DateBit, DateBit] | DateBit,
     calendar: Calendar,
     field: string
 ): string {
@@ -330,6 +331,14 @@ export function areDatesEqual(date: CalDate, date2: CalDate) {
     return true;
 }
 
+function resolve(number: number | number[] | null): number {
+    number = number ?? Number.MIN_VALUE;
+    return Array.isArray(number) ? number.reduce(($1, $2) => $1 + $2) : number;
+}
+function compare(a: number | number[] | null, b: number | number[] | null) {
+    return resolve(a) != resolve(b);
+}
+
 export function compareEvents(a: CalEvent, b: CalEvent) {
     if (a.sort && b.sort) {
         if (a.sort.timestamp == b.sort.timestamp) {
@@ -337,19 +346,13 @@ export function compareEvents(a: CalEvent, b: CalEvent) {
         }
         return a.sort.timestamp - b.sort.timestamp;
     }
-    if (a.date.year != b.date.year) {
-        return (
-            (a.date.year ?? Number.MIN_VALUE) -
-            (b.date.year ?? Number.MIN_VALUE)
-        );
+    if (compare(a.date.year, b.date.year)) {
+        return resolve(a.date.year) - resolve(b.date.year);
     }
-    if (a.date.month != b.date.month) {
-        return (
-            (a.date.month ?? Number.MIN_VALUE) -
-            (b.date.month ?? Number.MIN_VALUE)
-        );
+    if (compare(a.date.month, b.date.month)) {
+        return resolve(a.date.month) - resolve(b.date.month);
     }
-    return (a.date.day ?? Number.MIN_VALUE) - (b.date.day ?? Number.MIN_VALUE);
+    return resolve(a.date.day) - resolve(b.date.day);
 }
 
 export function sortEventList(list: CalEvent[]): CalEvent[] {
