@@ -126,18 +126,25 @@ class DayEventCache extends DayCache<CalEvent> {
     }
     normalize(date: CalEventDate): CalDate {
         const _date = { ...date };
-        if (!_date.day) _date.day = this.date.day;
-        if (!_date.month) _date.month = this.date.month;
-        if (!_date.year) _date.year = this.date.year;
+        if (_date.day == null) {
+            _date.day = this.date.day;
+        }
+        if (_date.month == null) {
+            _date.month = this.date.month;
+        }
+        if (_date.year == null) {
+            _date.year = this.date.year;
+        }
         return _date as CalDate;
+    }
+    isUndefined(date: CalEventDate): boolean {
+        return date.day === null && date.month === null && date.year === null;
     }
     update(events: CalEvent[]) {
         if (events) {
             this.derived = [];
             for (const event of events) {
-                //event is after this day
-                if ((event.date.day ?? Infinity) > this.day) continue;
-
+                if (this.isUndefined(event.date)) continue;
                 // exact match
                 if (this.isEqual(event.date)) {
                     this.derived.push(event);
