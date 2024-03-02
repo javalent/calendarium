@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/javalent/calendarium/compare/1.0.5...1.0.6) (2024-03-02)
+
+
+### Bug Fixes
+
+* Fixes issue where the file watcher wouldn't look in folders ([a8d5a96](https://github.com/javalent/calendarium/commit/a8d5a967492d6fce922d6d7ca8232f878818579e))
+
 ## [1.0.5](https://github.com/javalent/calendarium/compare/1.0.4...1.0.5) (2024-03-01)
 
 
