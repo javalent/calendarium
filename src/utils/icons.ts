@@ -30,6 +30,7 @@ export const CHECK = "check";
 export const COLLAPSE = "chevron-right";
 export const RESTORE = "archive-restore";
 export const QUICK_CREATOR = "sparkles";
+export const CUSTOM_CREATOR = "pencil-ruler";
 export const GRIP = "grip-vertical";
 
 export const SELECT_MULTIPLE = "chevrons-up-down";

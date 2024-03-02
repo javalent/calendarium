@@ -41,6 +41,7 @@ import {
     CHECK,
     CLOSE,
     COLLAPSE,
+    CUSTOM_CREATOR,
     EDIT,
     IMPORT,
     QUICK_CREATOR,
@@ -335,19 +336,10 @@ export default class CalendariumSettings extends PluginSettingTab {
 
         new Setting(this.calendarsEl)
             .setName("Create new calendar")
-            .addButton((button: ButtonComponent) =>
-                button.setButtonText("Open creator").onClick(async () => {
-                    const calendar = await this.launchCalendarCreator();
-                    if (calendar) {
-                        await this.plugin.addNewCalendar(calendar);
-                        this.display();
-                    }
-                })
-            )
             .addButton((button) => {
                 button
-                    .setTooltip("Launch quick creator")
-                    .setIcon(QUICK_CREATOR)
+                    /*                 .setIcon(QUICK_CREATOR)
+                .setButtonText("Quick creator") */
                     .onClick(async () => {
                         const preset = await getPresetCalendar(this.plugin);
                         if (!preset) return;
@@ -360,6 +352,23 @@ export default class CalendariumSettings extends PluginSettingTab {
                             this.display();
                         }
                     });
+                button.buttonEl.setAttr("style", "gap: 0.25rem;");
+                setIcon(button.buttonEl, QUICK_CREATOR);
+                button.buttonEl.createSpan().setText("Quick creator");
+            })
+            .addButton((button: ButtonComponent) => {
+                button /* .setButtonText("Custom creator") */
+                    .onClick(async () => {
+                        const calendar = await this.launchCalendarCreator();
+                        if (calendar) {
+                            await this.plugin.addNewCalendar(calendar);
+                            this.display();
+                        }
+                    });
+
+                button.buttonEl.setAttr("style", "gap: 0.25rem;");
+                setIcon(button.buttonEl, CUSTOM_CREATOR);
+                button.buttonEl.createSpan().setText("Custom creator");
             });
 
         this.existingEl = this.calendarsEl.createDiv("existing-calendars");
@@ -391,7 +400,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
                 })
                 .addExtraButton((b) => {
-                    b.setIcon(EDIT).onClick(async () => {
+                    b.setIcon(CUSTOM_CREATOR).onClick(async () => {
                         const edited = await this.launchCalendarCreator(
                             calendar
                         );
