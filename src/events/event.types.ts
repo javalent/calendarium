@@ -1,3 +1,9 @@
+export enum EventType {
+    Range,
+    Span,
+    Date,
+}
+
 export enum EventCombinator {
     AND,
     OR,
@@ -6,7 +12,7 @@ export enum EventCombinator {
 }
 export enum EventOperator {
     Plus,
-    Minus
+    Minus,
 }
 export enum EventCondition {
     Equals,
@@ -27,5 +33,5 @@ export enum EventTimespan {
 
     Moon,
     Random,
-    Event
+    Event,
 }

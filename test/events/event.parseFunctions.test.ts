@@ -2,12 +2,18 @@
  * @vitest-environment happy-dom
  */
 import type { Loc, Pos } from "obsidian";
-import type { CalEvent, Calendar } from "../../src/@types";
+import type {
+    CalEvent,
+    Calendar,
+    DatedCalEvent,
+    SpanCalEvent,
+} from "../../src/@types";
 import { CalEventHelper, ParseDate } from "../../src/events/event.helper";
 import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { test, expect } from "vitest";
 
 import Moment from "moment";
+import { EventType } from "../../src/events/event.types";
 Object.defineProperty(window, "moment", { value: Moment });
 
 const GREGORIAN: Calendar = PRESET_CALENDARS.find(
@@ -119,7 +125,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
 
 test("parseFrontmatterEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: CalEvent[] = [];
+    let actual: SpanCalEvent[] = [];
     gregorian.category = category;
     gregorian.parseFrontmatterEvent(
         {
@@ -136,12 +142,13 @@ test("parseFrontmatterEvent", () => {
         },
         file,
         (event) => {
-            actual.push(event);
+            actual.push(event as SpanCalEvent);
         }
     );
 
     expect(actual.length).toEqual(1);
     expect(actual[0].id).toBeDefined();
+    expect(actual[0].type).toBe(EventType.Span);
     expect(actual[0].name).toEqual("Pretty name");
     expect(actual[0].description).toEqual("Fun text");
     expect(actual[0].date).toEqual(
@@ -169,7 +176,7 @@ test("parseFrontmatterEvent", () => {
 
 test("parseTimelineEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: CalEvent[] = [];
+    let actual: SpanCalEvent[] = [];
 
     gregorian.parseInlineEvents(
         "<span class='ob-timelines'   \n" +
@@ -182,13 +189,14 @@ test("parseTimelineEvent", () => {
             "</span>",
         file,
         (event) => {
-            actual.push(event);
+            actual.push(event as SpanCalEvent);
         },
         () => {}
     );
 
     expect(actual.length).toEqual(1);
     expect(actual[0].id).toBeDefined();
+    expect(actual[0].type).toBe(EventType.Span);
     expect(actual[0].name).toEqual("Pretty name");
     expect(actual[0].description?.trim()).toEqual("Fun text");
     expect(actual[0].date).toEqual(
@@ -280,5 +288,20 @@ test("Repeating events with extra", () => {
     expect(gregorian.parsedToTimestamp(expected)).toEqual({
         timestamp: Number.MIN_VALUE,
         order: "01 some extra flavor",
+    });
+});
+test("Range Events", () => {
+    expect(gregorian.parseCalDateString("[2018-2024]-03-01", file)).toEqual({
+        year: [2018, 2024],
+        month: 2,
+        day: 1,
+        order: "", 
+    });
+    
+    expect(gregorian.parseCalDateString("2024-[02-03]-01", file)).toEqual({
+        year: 2024,
+        month: [1, 2],
+        day: 1,
+        order: "",
     });
 });

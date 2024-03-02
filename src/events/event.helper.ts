@@ -7,11 +7,15 @@ import type {
     CalEventCategory,
     CalEventDate,
     CalEventSort,
+    RangedCalEventDate,
+    CalEventInfo,
+    DatedCalEvent,
 } from "../@types";
 import { DEFAULT_FORMAT } from "../utils/constants";
 import randomColor from "randomcolor";
 import { logError, logWarning } from "../utils/log";
 import type { LeapDay } from "src/schemas/calendar/timespans";
+import { EventType } from "./event.types";
 
 const inlineDateSpans: RegExp = /<(span|div)[\s\S]*?<\/(span|div)>/g;
 
@@ -39,10 +43,12 @@ export interface InputDate {
     order?: any;
 }
 
+export type DateBit = number | null;
+
 export interface ParseDate {
-    year: Nullable<number>;
-    month: Nullable<number>;
-    day: Nullable<number>;
+    year: [DateBit, DateBit] | DateBit;
+    month: [DateBit, DateBit] | DateBit;
+    day: [DateBit, DateBit] | DateBit;
     order: string;
 }
 
@@ -78,15 +84,6 @@ export class CalEventHelper {
     ) {
         if (!frontmatter) return;
         const dateField = "fc-date" in frontmatter ? "fc-date" : "fc-start";
-        let date = frontmatter[dateField]
-            ? this.parseFrontmatterDate(frontmatter[dateField], file)
-            : this.useFilenameForEvents
-            ? this.parseFilenameDate(file)
-            : null;
-
-        let end = frontmatter["fc-end"]
-            ? this.parseFrontmatterDate(frontmatter["fc-end"], file)
-            : null;
 
         let cat: CalEventCategory | undefined, newCategory: boolean;
         if (frontmatter?.["fc-category"] && !this.category) {
@@ -103,19 +100,65 @@ export class CalEventHelper {
                 this.calendar.categories.push(cat);
             }
         }
-        if (date) {
-            publish({
-                id: nanoid(6),
-                name: frontmatter["fc-display-name"] ?? file.basename,
-                description: frontmatter["fc-description"],
-                date,
-                end,
-                sort: this.parsedToTimestamp(date),
-                note: file.path,
-                category: (cat ?? this.category)?.id ?? null,
-                img: frontmatter["fc-img"],
-            });
+
+        let date = frontmatter[dateField]
+            ? this.parseFrontmatterDate(frontmatter[dateField], file)
+            : this.useFilenameForEvents
+            ? this.parseFilenameDate(file)
+            : null;
+        if (!date) return;
+
+        let end = frontmatter["fc-end"]
+            ? this.parseFrontmatterDate(frontmatter["fc-end"], file)
+            : null;
+
+        const info = this.resolveDates(date, end);
+        let event: CalEvent = {
+            id: nanoid(6),
+            name: frontmatter["fc-display-name"] ?? file.basename,
+            description: frontmatter["fc-description"],
+            sort: this.parsedToTimestamp(date),
+            note: file.path,
+            category: (cat ?? this.category)?.id ?? null,
+            img: frontmatter["fc-img"],
+            ...info,
+        };
+
+        publish(event);
+    }
+
+    resolveDates(date: ParseDate, end: ParseDate | null): CalEventInfo {
+        let event: CalEventInfo;
+        if (
+            Array.isArray(date.day) ||
+            Array.isArray(date.month) ||
+            Array.isArray(date.year)
+        ) {
+            event = {
+                type: EventType.Range,
+                date: date as RangedCalEventDate,
+            };
+        } else if (end) {
+            if (
+                Array.isArray(end.day) ||
+                Array.isArray(end.month) ||
+                Array.isArray(end.year)
+            ) {
+                /* logError("End dates cannot be ranges.", end as InputDate, file); */
+            }
+            event = {
+                type: EventType.Span,
+                date: date as CalEventDate,
+                end: end as CalEventDate,
+            };
+        } else {
+            event = {
+                type: EventType.Date,
+                date: date as CalEventDate,
+            };
         }
+
+        return event;
     }
 
     parseInlineEvents(
@@ -179,9 +222,6 @@ export class CalEventHelper {
         }
         let date = this.parseCalDateString(element.dataset.date, file);
         if (!date) return null;
-        let end = element.dataset.end
-            ? this.parseCalDateString(element.dataset.end, file)
-            : undefined;
         let cat: CalEventCategory | undefined;
         if (element.dataset.class) {
             cat = this.calendar.categories.find(
@@ -197,17 +237,22 @@ export class CalEventHelper {
                 this.calendar.categories.push(cat);
             }
         }
-        return {
+        let end = element.dataset.end
+            ? this.parseCalDateString(element.dataset.end, file)
+            : null;
+        const info = this.resolveDates(date, end);
+        let event: CalEvent = {
             id: nanoid(6),
             name: element.dataset.title ?? file.basename,
             description: element.content,
-            date,
-            end,
             sort: this.parsedToTimestamp(date),
             note: file.path,
             category: (cat ?? this.category)?.id ?? null,
             img: element.dataset.img,
+            ...info,
         };
+
+        return event;
     }
 
     parseFilenameDate(file: {
@@ -257,7 +302,8 @@ export class CalEventHelper {
         datestring: string,
         file: { path: string; basename: string }
     ): ParseDate | null {
-        let datebits = datestring.split(/(?!^)[-–—]/);
+        let datebits = datestring.split(/(?!^)[-–—](?![^[]*])/);
+        console.log("🚀 ~ file: event.helper.ts:306 ~ datebits:", datebits);
 
         if (this.formatDigest != "YMD" && datebits.length < 3) {
             logError(
@@ -281,6 +327,32 @@ export class CalEventHelper {
         );
     }
 
+    resolveMonth(month: number | null | string, input: any): number | null {
+        if (month === null) return null;
+        if (typeof month === "number" && !Number.isNaN(month))
+            return wrap(month - 1, this.calendar.static.months.length);
+        if (Number.isNaN(month)) {
+            // Note: Number.isNaN(null) == false
+            // A null input month will not enter this block.
+            // Name in the month segment
+            let m = this.calendar.static.months.find(
+                (m) => m.name?.startsWith(input) || m.short?.startsWith(input)
+            );
+            if (m) {
+                return this.calendar.static.months.indexOf(m);
+            } else {
+                // Is this a well-known leapday?
+                let leapday = this.calendar.static.leapDays.find(
+                    (l) => l.name && l.name.startsWith(input)
+                );
+                if (leapday) {
+                    return leapday.timespan;
+                }
+            }
+        }
+        return 0;
+    }
+
     /**
      * Create a fully formed date from parsed data segments
      *
@@ -297,43 +369,31 @@ export class CalEventHelper {
     ): ParseDate | null {
         const year = wildNullNumber(input.year);
         let month = wildNullNumber(input.month);
+        console.log("🚀 ~ file: event.helper.ts:345 ~ month:", month);
+
         let day = wildNullNumber(input.day);
 
         if (input.year === "*") {
             // repeating, this is fine
-        } else if (!input.year || Number.isNaN(year)) {
-            logError(`Must specify a valid year`, input, file, datestring);
+        } else if (!input.year || [year].flat().some((y) => Number.isNaN(y))) {
+            logError(
+                `Must specify a valid year: ${year}`,
+                input,
+                file,
+                datestring
+            );
             return null;
         }
-
-        let leapday: LeapDay | undefined;
+        
         if (input.month === "*") {
             // repeating, this is fine
-        } else if (month != null && Number.isInteger(month)) {
-            month = wrap(month - 1, this.calendar.static.months.length);
-        } else if (Number.isNaN(month)) {
-            // Note: Number.isNaN(null) == false
-            // A null input month will not enter this block.
-            // Name in the month segment
-            let m = this.calendar.static.months.find(
-                (m) =>
-                    m.name?.startsWith(input.month) ||
-                    m.short?.startsWith(input.month)
-            );
-            if (m) {
-                month = this.calendar.static.months.indexOf(m);
-            } else {
-                // Is this a well-known leapday?
-                leapday = this.calendar.static.leapDays.find(
-                    (l) => l.name && l.name.startsWith(input.month)
-                );
-                if (leapday) {
-                    month = leapday.timespan;
-                }
-            }
+        } else if (Array.isArray(month)) {
+            month = month.map((m) => this.resolveMonth(m, input.month)) as [
+                DateBit,
+                DateBit
+            ];
         } else {
-            // short form (omitted), assume first month
-            month = 0;
+            month = this.resolveMonth(month, input.month);
         }
 
         if (input.day === "*") {
@@ -384,6 +444,12 @@ export class CalEventHelper {
             day = 1;
         }
 
+        console.log("🚀 ~ file: event.helper.ts:444", {
+            year,
+            month,
+            day,
+            order: input.order || "",
+        });
         return {
             year,
             month,
@@ -429,7 +495,7 @@ export class CalEventHelper {
         }
         // rebuild the timestamp
         return this.parsedToTimestamp({
-            ...event.date!,
+            ...(event as DatedCalEvent).date!,
             order: old?.order || "",
         });
     }
@@ -477,18 +543,25 @@ export class CalEventHelper {
 }
 
 /**
- * Convert a string/null value to null, NaN, or a number.
+ * Convert a string/null value to null, NaN, number, or array of numbers.
  * - null or `*` are not a number, but are different than a string
  * - if the value fails to parse as a number, it is a string month name
  * @param data
  * @returns null, a number, or NaN
  */
-function wildNullNumber(data: any): Nullable<number> {
+function wildNullNumber(data: any): [DateBit, DateBit] | DateBit {
     if (data == null || data === "*") {
         return null;
     }
     if (typeof data == "number") {
         return data;
     }
+    if (typeof data == "string" && /[-–—]/.test(data)) {
+        return data
+            .slice(1, -1)
+            .split("-")
+            .map((v) => wildNullNumber(v) as DateBit) as [DateBit, DateBit];
+    }
+
     return parseInt(data); // may return NaN, that's ok
 }
