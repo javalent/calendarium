@@ -121,66 +121,24 @@ export default class SettingsService {
     /**
      * This method is called whenever Obsidian detects that my data.json file has been modified.
      */
-    public async onExternalSettingsChange /* =  debounce( */
-        /* async */ (): Promise<void> /* => */ {
-            console.log("this.#saving", this.#saving);
-            // If I was the source of my data file change, just ignore this.
-            /* if (this.#saving) {
-                setTimeout(() => {
-                    this.#saving = false;
-                }, 500);
-                return;
-            }
-            if (this.syncPlugin._loaded) {
-                if (this.syncPlugin.instance.getStatus() !== "synced") {
-                    if (!this.#waitingOnSync) {
-                        this.#waitingOnSync = true;
-                        console.debug(
-                            "Calendarium: Obsidian Sync is actively syncing. Scheduling a reload after it completes."
-                        );
-                        const ref = this.syncPlugin.instance.on(
-                            "status-change",
-                            () => {
-                                if (
-                                    this.syncPlugin.instance.getStatus() !==
-                                    "synced"
-                                )
-                                    return;
-                                setTimeout(() => {
-                                    console.debug(
-                                        "Calendarium: Obsidian Sync finished. Performing reload."
-                                    );
-                                    this.#waitingOnSync = false;
-                                    this.onExternalSettingsChange();
-                                    this.syncPlugin.instance.offref(ref);
-                                }, 1000);
-                            }
-                        );
-                        this.plugin.registerEvent(ref);
-                    }
-                    return;
-                }
-            } */
-            // If the user doesn't want their data synced, just ignore this.
-            if (this.#data.syncBehavior === "Never") {
-                console.debug(
-                    "Calendarium: Ignoring external data change event due to syncBehavior being 'Never'"
-                );
-                return;
-            }
-            // If the user wants it automatically synced, reload it.
-            if (this.#data.syncBehavior === "Always") {
-                console.debug(
-                    "Calendarium: Automatically reloading data due to syncBehavior being 'Always'"
-                );
-                await this.loadData(true);
-                return;
-            }
-            this.askToReload();
-        }/* ,
-        2000,
-        true
-    ); */
+    public async onExternalSettingsChange(): Promise<void> {
+        // If the user doesn't want their data synced, just ignore this.
+        if (this.#data.syncBehavior === "Never") {
+            console.debug(
+                "Calendarium: Ignoring external data change event due to syncBehavior being 'Never'"
+            );
+            return;
+        }
+        // If the user wants it automatically synced, reload it.
+        if (this.#data.syncBehavior === "Always") {
+            console.debug(
+                "Calendarium: Automatically reloading data due to syncBehavior being 'Always'"
+            );
+            await this.loadData(true);
+            return;
+        }
+        this.askToReload();
+    }
     private askToReload() {
         // If I am already asking, I shouldn't ask again.
         if (this.#asking) return;
@@ -344,7 +302,6 @@ export default class SettingsService {
     isOlder(older: Version, current: Version): boolean {
         return isOlder(older, current);
     }
-
 
     /**
      *
@@ -654,12 +611,15 @@ export default class SettingsService {
         }
         /** Beta 29 */
         if (
-            this.isOlder( {
-                major: 1,
-                minor: 0,
-                patch: 0,
-                beta: 29,
-            }, this.getDataVersion(data))
+            this.isOlder(
+                {
+                    major: 1,
+                    minor: 0,
+                    patch: 0,
+                    beta: 29,
+                },
+                this.getDataVersion(data)
+            )
         ) {
             data.paths = [];
             if (data.calendars.length) {
