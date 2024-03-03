@@ -1,12 +1,10 @@
-import { type DeletedCalendar } from "src/schemas";
 import { SaveableCalendariumModal } from "./modal";
 import { Setting } from "obsidian";
+import type { Calendar } from "src/schemas";
 import { TRASH } from "src/utils/icons";
 
-export class RestoreCalendarModal extends SaveableCalendariumModal<
-    DeletedCalendar[]
-> {
-    constructor(public calendars: DeletedCalendar[]) {
+export class RestoreCalendarModal extends SaveableCalendariumModal<Calendar[]> {
+    constructor(public calendars: Calendar[]) {
         super();
     }
     permanentlyDelete: string[] = [];
@@ -20,9 +18,6 @@ export class RestoreCalendarModal extends SaveableCalendariumModal<
         )) {
             new Setting(this.contentEl)
                 .setName(calendar.name)
-                .setDesc(
-                    `${new Date(calendar.deletedTimestamp).toLocaleString()}`
-                )
                 .addToggle((t) => {
                     t.setValue(false).onChange((v) => {
                         if (v) {

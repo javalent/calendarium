@@ -1,4 +1,4 @@
-import type { Calendar, DeletedCalendar } from "../calendar";
+import type { Calendar } from "../calendar";
 
 export enum SyncBehavior {
     Ask = "Ask",
@@ -23,7 +23,6 @@ export type CalendariumData = {
     dateFormat: string;
     debug: boolean;
     defaultCalendar: string | null;
-    deletedCalendars: DeletedCalendar[];
     eventFrontmatter: boolean;
     eventPreview: boolean;
     exit: {

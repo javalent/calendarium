@@ -291,7 +291,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 b.onClick(() => input.click());
             });
 
-        if (this.data.deletedCalendars?.length) {
+        if (this.settings$.deletedCalendars?.length) {
             new Setting(this.calendarsEl)
                 .setName("Restore deleted calendars")
                 .addButton((b) => {
@@ -302,24 +302,24 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
                     badge
                         .createSpan()
-                        .setText(`${this.data.deletedCalendars.length}`);
+                        .setText(`${this.settings$.deletedCalendars.length}`);
                     b.onClick(() => {
                         const modal = new RestoreCalendarModal(
-                            this.data.deletedCalendars
+                            this.settings$.deletedCalendars
                         );
                         modal.onSave = async () => {
                             if (modal.item?.length) {
-                                for (let restoring of modal.item) {
-                                    this.data.deletedCalendars.remove(
-                                        restoring
+                                for (let calendar of modal.item) {
+                                    this.settings$.deletedCalendars.remove(
+                                        calendar
                                     );
-                                    await this.settings$.addCalendar(restoring);
+                                    await this.settings$.addCalendar(calendar);
                                 }
                                 this.display();
                             }
                             if (modal.permanentlyDelete.length) {
-                                this.data.deletedCalendars =
-                                    this.data.deletedCalendars.filter(
+                                this.settings$.deletedCalendars =
+                                    this.settings$.deletedCalendars.filter(
                                         (d) =>
                                             !modal.permanentlyDelete.includes(
                                                 d.id

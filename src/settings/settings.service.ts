@@ -37,6 +37,7 @@ export default class SettingsService {
     #asking: boolean = false;
     #prompting: boolean = false;
     #saving: boolean = false;
+    deletedCalendars: Calendar[] = [];
 
     get app() {
         return this.plugin.app;
@@ -60,30 +61,6 @@ export default class SettingsService {
         this.app.workspace.onLayoutReady(() => (this.layoutReady = true));
         this.onLayoutReadyAndSettingsLoad(async () => {
             setTimeout(() => this.checkFCSettings(), 2000);
-            const permanentlyDelete: string[] = [];
-
-            console.debug(
-                `Calendarium: Checking deleted calendars for any to permanently delete.`
-            );
-            for (const calendar of this.#data.deletedCalendars) {
-                if (
-                    Date.now() - calendar.deletedTimestamp >
-                    7 * 24 * 60 * 60 * 1000
-                ) {
-                    permanentlyDelete.push(calendar.id);
-                }
-            }
-
-            if (permanentlyDelete.length) {
-                console.debug(
-                    `Calendarium: Found ${permanentlyDelete.length} deleted calendars more than 7 days old. Removing them.`
-                );
-                this.#data.deletedCalendars =
-                    this.#data.deletedCalendars.filter(
-                        (d) => !permanentlyDelete.includes(d.id)
-                    );
-                await this.saveData(this.#data);
-            }
         });
     }
     /**
@@ -345,6 +322,8 @@ export default class SettingsService {
             );
             this.app.workspace.trigger("calendarium-updated");
         }
+
+        this.#saving = false;
     }
 
     /**
@@ -437,10 +416,7 @@ export default class SettingsService {
             this.#data.defaultCalendar = this.#data.calendars[0]?.id;
             this.plugin.watcher.start();
         }
-        this.#data.deletedCalendars.push({
-            ...copy(calendar),
-            deletedTimestamp: Date.now(),
-        });
+        this.deletedCalendars.push(calendar);
         await this.saveData(this.#data, true);
     }
 
@@ -605,8 +581,8 @@ export default class SettingsService {
             data.defaultCalendar = data.calendars[0].id;
             dirty = true;
         }
-        if (!data.deletedCalendars) {
-            data.deletedCalendars = [];
+        if ("deletedCalendars" in data) {
+            delete data.deletedCalendars;
             dirty = true;
         }
         /** Beta 29 */
