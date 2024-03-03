@@ -21,7 +21,7 @@ import copy from "fast-copy";
 import { CalendariumNotice } from "src/utils/notice";
 import { SyncBehavior } from "src/schemas";
 import {
-    isOlderVersion,
+    isOlder,
     MarkdownReason,
     shouldTransitionMarkdownSettings,
 } from "./settings.utils";
@@ -121,10 +121,11 @@ export default class SettingsService {
     /**
      * This method is called whenever Obsidian detects that my data.json file has been modified.
      */
-    public onExternalSettingsChange = debounce(
-        async (): Promise<void> => {
+    public async onExternalSettingsChange /* =  debounce( */
+        /* async */ (): Promise<void> /* => */ {
+            console.log("this.#saving", this.#saving);
             // If I was the source of my data file change, just ignore this.
-            if (this.#saving) {
+            /* if (this.#saving) {
                 setTimeout(() => {
                     this.#saving = false;
                 }, 500);
@@ -159,7 +160,7 @@ export default class SettingsService {
                     }
                     return;
                 }
-            }
+            } */
             // If the user doesn't want their data synced, just ignore this.
             if (this.#data.syncBehavior === "Never") {
                 console.debug(
@@ -176,10 +177,10 @@ export default class SettingsService {
                 return;
             }
             this.askToReload();
-        },
+        }/* ,
         2000,
         true
-    );
+    ); */
     private askToReload() {
         // If I am already asking, I shouldn't ask again.
         if (this.#asking) return;
@@ -340,9 +341,10 @@ export default class SettingsService {
         }
         return version;
     }
-    isOldVersion(older: Version, current: Version): boolean {
-        return isOlderVersion(older, current);
+    isOlder(older: Version, current: Version): boolean {
+        return isOlder(older, current);
     }
+
 
     /**
      *
@@ -652,12 +654,12 @@ export default class SettingsService {
         }
         /** Beta 29 */
         if (
-            this.isOldVersion(this.getDataVersion(data), {
+            this.isOlder( {
                 major: 1,
                 minor: 0,
                 patch: 0,
                 beta: 29,
-            })
+            }, this.getDataVersion(data))
         ) {
             data.paths = [];
             if (data.calendars.length) {
@@ -710,6 +712,11 @@ export default class SettingsService {
                     break;
                 }
             }
+
+            console.log(
+                "🚀 ~ file: settings.service.ts:664 ~ data.paths:",
+                data.paths
+            );
 
             if (data.calendars.length) {
                 data.inlineEventsTag =
