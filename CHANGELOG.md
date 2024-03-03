@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/javalent/calendarium/compare/1.0.6...1.0.7) (2024-03-02)
+
+
+### Bug Fixes
+
+* Fixes event calculation logic ([a13fb62](https://github.com/javalent/calendarium/commit/a13fb626f0722e1cd3c31a2ebef045fad0c311b3))
+
 ## [1.0.6](https://github.com/javalent/calendarium/compare/1.0.5...1.0.6) (2024-03-02)
 
 
