@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.8](https://github.com/javalent/calendarium/compare/1.0.7...1.0.8) (2024-03-03)
+
+
+### Bug Fixes
+
+* Fixes issue with data conversion from older versions ([0da91aa](https://github.com/javalent/calendarium/commit/0da91aa11d52fbd035ee96ed0d3d2b4bf39a6075))
+* Improves Quick creator discoverability ([19376c2](https://github.com/javalent/calendarium/commit/19376c21990ad2554cea32044d17d41eca841c85))
+* Removes unnecessary external settings watching workarounds ([f0a985b](https://github.com/javalent/calendarium/commit/f0a985b761a58b317e8b9f18f7a8601cfef1c63d))
+
 ## [1.0.7](https://github.com/javalent/calendarium/compare/1.0.6...1.0.7) (2024-03-02)
 
 

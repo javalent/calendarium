@@ -1,6 +1,6 @@
 {
     "name": "calendarium",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "The ultimate Obsidian plugin for crafting mind-bending fantasy and sci-fi calendars",
     "main": "main.js",
     "scripts": {
