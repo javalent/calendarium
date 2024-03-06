@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.9](https://github.com/javalent/calendarium/compare/1.0.8...1.0.9) (2024-03-06)
+
+
+### Bug Fixes
+
+* Deleted calendars are now permantly removed when Obsidian is closed, instead of persisting for 7 days ([978c6be](https://github.com/javalent/calendarium/commit/978c6be77044db8d403443234d4238ddb616a742))
+* Fixes several bugs related to intercalary leap day logic ([978edad](https://github.com/javalent/calendarium/commit/978edad8d7afce2fc36488cea21f25430b9513f5))
+* Remove intercalary leap days from calculation of days before month ([00bf9fd](https://github.com/javalent/calendarium/commit/00bf9fd3b478efd5bb8dde7719377be1d793c801))
+
 ## [1.0.8](https://github.com/javalent/calendarium/compare/1.0.7...1.0.8) (2024-03-03)
 
 
