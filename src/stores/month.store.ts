@@ -32,7 +32,7 @@ export class MonthStore {
                     .slice(0, index)
                     .filter((m) => m.type == "month")
                     .reduce((a, b) => a + b.length, 0) +
-                leapDays.filter((l) => l.timespan < index).length
+                leapDays.filter((l) => !l.intercalary && l.timespan < index).length
             );
         }
     );
