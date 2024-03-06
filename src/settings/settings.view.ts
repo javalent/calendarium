@@ -41,6 +41,7 @@ import {
     CHECK,
     CLOSE,
     COLLAPSE,
+    CUSTOM_CREATOR,
     EDIT,
     IMPORT,
     QUICK_CREATOR,
@@ -290,7 +291,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 b.onClick(() => input.click());
             });
 
-        if (this.data.deletedCalendars?.length) {
+        if (this.settings$.deletedCalendars?.length) {
             new Setting(this.calendarsEl)
                 .setName("Restore deleted calendars")
                 .addButton((b) => {
@@ -301,24 +302,24 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
                     badge
                         .createSpan()
-                        .setText(`${this.data.deletedCalendars.length}`);
+                        .setText(`${this.settings$.deletedCalendars.length}`);
                     b.onClick(() => {
                         const modal = new RestoreCalendarModal(
-                            this.data.deletedCalendars
+                            this.settings$.deletedCalendars
                         );
                         modal.onSave = async () => {
                             if (modal.item?.length) {
-                                for (let restoring of modal.item) {
-                                    this.data.deletedCalendars.remove(
-                                        restoring
+                                for (let calendar of modal.item) {
+                                    this.settings$.deletedCalendars.remove(
+                                        calendar
                                     );
-                                    await this.settings$.addCalendar(restoring);
+                                    await this.settings$.addCalendar(calendar);
                                 }
                                 this.display();
                             }
                             if (modal.permanentlyDelete.length) {
-                                this.data.deletedCalendars =
-                                    this.data.deletedCalendars.filter(
+                                this.settings$.deletedCalendars =
+                                    this.settings$.deletedCalendars.filter(
                                         (d) =>
                                             !modal.permanentlyDelete.includes(
                                                 d.id
@@ -335,19 +336,10 @@ export default class CalendariumSettings extends PluginSettingTab {
 
         new Setting(this.calendarsEl)
             .setName("Create new calendar")
-            .addButton((button: ButtonComponent) =>
-                button.setButtonText("Open creator").onClick(async () => {
-                    const calendar = await this.launchCalendarCreator();
-                    if (calendar) {
-                        await this.plugin.addNewCalendar(calendar);
-                        this.display();
-                    }
-                })
-            )
             .addButton((button) => {
                 button
-                    .setTooltip("Launch quick creator")
-                    .setIcon(QUICK_CREATOR)
+                    /*                 .setIcon(QUICK_CREATOR)
+                .setButtonText("Quick creator") */
                     .onClick(async () => {
                         const preset = await getPresetCalendar(this.plugin);
                         if (!preset) return;
@@ -360,6 +352,23 @@ export default class CalendariumSettings extends PluginSettingTab {
                             this.display();
                         }
                     });
+                button.buttonEl.setAttr("style", "gap: 0.25rem;");
+                setIcon(button.buttonEl, QUICK_CREATOR);
+                button.buttonEl.createSpan().setText("Quick creator");
+            })
+            .addButton((button: ButtonComponent) => {
+                button /* .setButtonText("Custom creator") */
+                    .onClick(async () => {
+                        const calendar = await this.launchCalendarCreator();
+                        if (calendar) {
+                            await this.plugin.addNewCalendar(calendar);
+                            this.display();
+                        }
+                    });
+
+                button.buttonEl.setAttr("style", "gap: 0.25rem;");
+                setIcon(button.buttonEl, CUSTOM_CREATOR);
+                button.buttonEl.createSpan().setText("Custom creator");
             });
 
         this.existingEl = this.calendarsEl.createDiv("existing-calendars");
@@ -391,7 +400,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
                 })
                 .addExtraButton((b) => {
-                    b.setIcon(EDIT).onClick(async () => {
+                    b.setIcon(CUSTOM_CREATOR).onClick(async () => {
                         const edited = await this.launchCalendarCreator(
                             calendar
                         );

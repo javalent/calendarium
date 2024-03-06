@@ -55,9 +55,6 @@ export type Calendar = BaseCalendar & {
     description: string;
     current: CalDate;
 };
-export type DeletedCalendar = Calendar & {
-    deletedTimestamp: number;
-};
 export type PresetCalendar = BaseCalendar & {
     id: null;
     name: string | null;

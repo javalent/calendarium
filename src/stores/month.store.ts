@@ -32,7 +32,8 @@ export class MonthStore {
                     .slice(0, index)
                     .filter((m) => m.type == "month")
                     .reduce((a, b) => a + b.length, 0) +
-                leapDays.filter((l) => l.timespan < index).length
+                leapDays.filter((l) => !l.intercalary && l.timespan < index)
+                    .length
             );
         }
     );
@@ -74,77 +75,104 @@ export class MonthStore {
             );
         }
     );
-    weeks = derived(
-        [this.weekdays, this.lastDay, this.firstDay],
-        ([weekdays, lastDay, firstDay]) => {
-            return (
-                Math.ceil((firstDay + this.month.length) / weekdays.length) +
-                (weekdays.length - lastDay <= weekdays.length / 2 ? 1 : 0)
-            );
-        }
-    );
-
+    /**
+     * This should return every day of the month, sorted into its appropriate week.
+     * Each array represents 1 week.
+     * Each element within each array represents 1 day.
+     *
+     * To "skip" days in the UI, null should be used.
+     */
     daysAsWeeks: Readable<Array<(DayOrLeapDay | null)[]>> = derived(
-        [this.weeks, this.weekdays, this.days, this.firstDay, this.leapDays],
-        ([weeks, weekdays, days, firstDay, leapDays]) => {
+        [this.weekdays, this.days, this.firstDay, this.leapDays],
+        ([weekdays, days, firstDay, leapDays]) => {
             let weekArray: (DayOrLeapDay | null)[][] = [];
-            for (let week = 0; week < weeks; week++) {
-                let dayArray: (DayOrLeapDay | null)[] = [];
-                let intercals = 0;
-                for (
-                    let weekday = 0;
-                    weekday < weekdays.length + intercals;
-                    weekday++
-                ) {
-                    let day: number;
-                    if (weekday == 0 && weekArray.length) {
-                        const lastWeek = weekArray[weekArray.length - 1];
-                        day = lastWeek[lastWeek.length - 1]!.number;
-                    } else if (dayArray.length) {
-                        day = dayArray[dayArray.length - 1]!.number;
-                    } else {
-                        day = weekday + week * weekdays.length - firstDay;
-                    }
-                    if (day >= days && this.month.type == "intercalary") break;
+            let daysAdded = 0;
+            let intercals = 0;
+            while (daysAdded < days) {
+                //Initialize the day array.
+                //The first week of the month should include negative numbers for the prior month.
+                let dayArray: (DayOrLeapDay | null)[] =
+                    weekArray.length === 0
+                        ? [...Array(firstDay).keys()].reverse().map((k) => {
+                              return {
+                                  type: "day",
+                                  number: -1 * k,
+                                  name: null,
+                                  id: nanoid(3),
+                              };
+                          })
+                        : [];
+
+                while (dayArray.length < weekdays.length) {
+                    daysAdded++;
+
+                    // Check if this should be a leap day instead of a "regular" day.
                     const leapday = leapDays.find(
-                        (leapday) => leapday.after == day
+                        (leapday) =>
+                            leapday.after && leapday.after == daysAdded - 1
                     );
+
                     if (leapday) {
                         const definedLeapDay: DefinedLeapDay = {
                             ...leapday,
-                            number: day + 1,
+                            number: daysAdded,
                         };
-                        if (leapday.intercalary) {
-                            if (dayArray.length) weekArray.push(dayArray);
+                        if (!leapday.intercalary) {
+                            dayArray.push(definedLeapDay);
+                        } else {
+                            for (let i = 0; i < intercals; i++) {
+                                if (dayArray.length == weekdays.length) {
+                                    weekArray.push(dayArray);
+                                    dayArray = [];
+                                }
+                                dayArray.push({
+                                    type: "day",
+                                    number: daysAdded,
+                                    name: null,
+                                    id: nanoid(3),
+                                });
+                                daysAdded++;
+                                definedLeapDay.number++;
+                            }
+                            intercals++;
+                            if (dayArray.length) {
+                                weekArray.push(dayArray);
+                            }
                             weekArray.push([definedLeapDay]);
                             if (
-                                definedLeapDay.after &&
-                                definedLeapDay.after > 0
+                                dayArray.length > 0 &&
+                                dayArray.length < weekdays.length
                             ) {
-                                dayArray = [
-                                    ...Array(dayArray.length + 1).keys(),
-                                ].map((k) => null);
-                            } else {
-                                intercals++;
-                                dayArray = [];
+                                weekArray.push(
+                                    [...Array(dayArray.length)].map((k) => null)
+                                );
                             }
-                        } else {
-                            dayArray.push(definedLeapDay);
+                            dayArray = [];
+                            if (daysAdded === days) break;
                         }
                     } else {
                         dayArray.push({
                             type: "day",
-                            number: day + 1,
+                            number: daysAdded,
                             name: null,
                             id: nanoid(3),
                         });
                     }
+                    // Too many days for this intercalary month, stop adding them.
+                    // This prevents displaying the "overflow" days.
+                    if (daysAdded >= days && this.month.type == "intercalary") {
+                        break;
+                    }
                 }
                 weekArray.push(dayArray);
             }
+
             return weekArray;
         }
     );
+    weeks = derived([this.daysAsWeeks], ([weeks]) => {
+        return weeks.length;
+    });
 
     firstWeekNumber = derived(
         [this.daysBeforeAll, this.weekdays, this.year.firstDay],

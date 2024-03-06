@@ -1,6 +1,6 @@
 import type { Version } from "src/schemas";
 
-export function isOlderVersion(older: Version, current: Version) {
+export function isOlder(older: Version, current: Version) {
     const olderTransformed = {
         major: older.major ?? Number.MIN_VALUE,
         minor: older.minor ?? Number.MIN_VALUE,
@@ -11,13 +11,14 @@ export function isOlderVersion(older: Version, current: Version) {
         major: current.major ?? Number.MIN_VALUE,
         minor: current.minor ?? Number.MIN_VALUE,
         patch: current.patch ?? Number.MIN_VALUE,
-        beta: current.beta ?? Number.MIN_VALUE,
+        beta: current.beta ?? Number.MAX_VALUE,
     };
-    if (currentTransformed.major > olderTransformed.major) return true;
-    if (currentTransformed.minor > olderTransformed.minor) return true;
-    if (currentTransformed.patch > olderTransformed.patch) return true;
-    if (currentTransformed.beta > olderTransformed.beta) return true;
-    return false;
+
+    if (currentTransformed.major >= olderTransformed.major) return false;
+    if (currentTransformed.minor >= olderTransformed.minor) return false;
+    if (currentTransformed.patch >= olderTransformed.patch) return false;
+    if (currentTransformed.beta >= olderTransformed.beta) return false;
+    return true;
 }
 
 export enum MarkdownReason {

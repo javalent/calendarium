@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.0.9](https://github.com/javalent/calendarium/compare/1.0.8...1.0.9) (2024-03-06)
+
+
+### Bug Fixes
+
+* Deleted calendars are now permantly removed when Obsidian is closed, instead of persisting for 7 days ([978c6be](https://github.com/javalent/calendarium/commit/978c6be77044db8d403443234d4238ddb616a742))
+* Fixes several bugs related to intercalary leap day logic ([978edad](https://github.com/javalent/calendarium/commit/978edad8d7afce2fc36488cea21f25430b9513f5))
+* Remove intercalary leap days from calculation of days before month ([00bf9fd](https://github.com/javalent/calendarium/commit/00bf9fd3b478efd5bb8dde7719377be1d793c801))
+
+## [1.0.8](https://github.com/javalent/calendarium/compare/1.0.7...1.0.8) (2024-03-03)
+
+
+### Bug Fixes
+
+* Fixes issue with data conversion from older versions ([0da91aa](https://github.com/javalent/calendarium/commit/0da91aa11d52fbd035ee96ed0d3d2b4bf39a6075))
+* Improves Quick creator discoverability ([19376c2](https://github.com/javalent/calendarium/commit/19376c21990ad2554cea32044d17d41eca841c85))
+* Removes unnecessary external settings watching workarounds ([f0a985b](https://github.com/javalent/calendarium/commit/f0a985b761a58b317e8b9f18f7a8601cfef1c63d))
+
+## [1.0.7](https://github.com/javalent/calendarium/compare/1.0.6...1.0.7) (2024-03-02)
+
+
+### Bug Fixes
+
+* Fixes event calculation logic ([a13fb62](https://github.com/javalent/calendarium/commit/a13fb626f0722e1cd3c31a2ebef045fad0c311b3))
+
 ## [1.0.6](https://github.com/javalent/calendarium/compare/1.0.5...1.0.6) (2024-03-02)
 
 
