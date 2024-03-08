@@ -5,7 +5,7 @@
     import AddNew from "../../../Utilities/AddNew.svelte";
     import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
     import ToggleComponent from "../../../Settings/ToggleComponent.svelte";
-    import { CreateMoonModal } from "src/settings/modals/moons";
+    import { CreateMoonModal, getDefaultMoon } from "src/settings/modals/moons";
     import type Calendarium from "src/main";
     import Details from "../../../Utilities/Details.svelte";
     import type { Moon } from "src/schemas/calendar/moons";
@@ -44,7 +44,7 @@
         on:click={() => ($displayMoons = !$displayMoons)}
     />
 
-    <AddNew on:click={() => add()} />
+    <AddNew on:add={(evt) => add(getDefaultMoon(evt.detail))} />
 
     {#if !$moonStore.length}
         <NoExistingItems message={"Create a new moon to see it here."} />

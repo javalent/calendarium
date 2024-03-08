@@ -6,6 +6,17 @@ import { CalendariumModal } from "./modal";
 import type { Moon } from "src/schemas/calendar/moons";
 import { CLOSE } from "src/utils/icons";
 
+export function getDefaultMoon(name?: string) {
+    return {
+        name: name ?? "",
+        cycle: 0,
+        offset: 0,
+        faceColor: "#fff",
+        shadowColor: "#000",
+        id: nanoid(6),
+    };
+}
+
 export class CreateMoonModal extends CalendariumModal {
     saved = false;
     moon: Moon = {
