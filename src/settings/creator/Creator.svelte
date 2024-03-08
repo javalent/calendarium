@@ -14,6 +14,8 @@
     import { WARNING } from "src/utils/icons";
 
     const mobile = Platform.isMobile;
+    console.log("🚀 ~ file: Creator.svelte:17 ~ mobile:", mobile);
+
     let ready = mobile;
 
     onMount(() => {
@@ -81,7 +83,7 @@
     };
 </script>
 
-{#if !Platform.isMobile}
+{#if Platform.isTablet || Platform.isDesktop}
     <div class="vertical-tab-header">
         <CreatorTitle />
         <div class="vertical-tab-header-group">
