@@ -125,7 +125,6 @@ export function invalidMonthLabel(month: number, calendar: Calendar) {
 
 export function invalidYearLabel(year: number, calendar: Calendar) {
     if (year == null) return "No year specified";
-    if (year < 1 && !calendar.static?.useCustomYears) return "Years start at 1";
     if (calendar?.static?.useCustomYears) {
         if (!calendar?.static?.years?.length) return "No custom years exist";
         if (year < 0 || year >= calendar?.static?.years?.length)

@@ -77,11 +77,11 @@
                 on:touchstart={startDrag}
                 style={dragDisabled ? "cursor: grab" : "cursor: grabbing"}
             />
-
-            <div class="drop-item" class:type>
-                <svelte:component this={component} {item} />
-            </div>
-
+            {#key item}
+                <div class="drop-item" class:type>
+                    <svelte:component this={component} {item} />
+                </div>
+            {/key}
             <div class="icons">
                 <div class="icon" use:advanced={item} />
                 <div class="icon" use:trash={item} />

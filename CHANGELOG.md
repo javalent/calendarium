@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.10](https://github.com/javalent/calendarium/compare/1.0.9...1.0.10) (2024-03-08)
+
+
+### Bug Fixes
+
+* Expose Offset and Interval parameters for Months in Creator ([a8a27aa](https://github.com/javalent/calendarium/commit/a8a27aa60bd10d64f1ada3fc868015a513b7f751))
+* Fixes issue where moons could not be created (close [#103](https://github.com/javalent/calendarium/issues/103)) ([83af13f](https://github.com/javalent/calendarium/commit/83af13fd2f7a2919b8c18a805c78b680e1476717))
+* Improves Creator experience on tablet (close [#102](https://github.com/javalent/calendarium/issues/102)) ([287dcfc](https://github.com/javalent/calendarium/commit/287dcfcb0b833f33d4461d98bdabb8ddab0fe019))
+* Improves display of month offsets and intervals in Creator ([7839e1c](https://github.com/javalent/calendarium/commit/7839e1c797fa0e33d8beb0caa771e4daea8d9ae6))
+* Improves leap day descriptions in the creator ([f8af3ec](https://github.com/javalent/calendarium/commit/f8af3ec570252e845f72b7ac0f0dec3191735f23))
+* Months should now correctly follow the week overflow behavior (close [#88](https://github.com/javalent/calendarium/issues/88)) ([e10f36c](https://github.com/javalent/calendarium/commit/e10f36c58693ea89d295e88bb1d3cdca21edfe57))
+* Properly calculate month offsets for a given year ([f107754](https://github.com/javalent/calendarium/commit/f1077546fca6d72b68015ecd11aa7ce1cbc0851c))
+* Properly update entities when modified in Creator ([d298a41](https://github.com/javalent/calendarium/commit/d298a41191beb02e6590e5da1d11d3078078acb7))
+* Record month offsets when importing ([a7e7fe2](https://github.com/javalent/calendarium/commit/a7e7fe2a110b7ff44e75245c4043ce7b6708fbe7))
+* Remove negative year restriction from creator ([2e6e646](https://github.com/javalent/calendarium/commit/2e6e64667d1cf8afdcf42b92e347f6f6094dafeb))
+
 ## [1.0.9](https://github.com/javalent/calendarium/compare/1.0.8...1.0.9) (2024-03-06)
 
 

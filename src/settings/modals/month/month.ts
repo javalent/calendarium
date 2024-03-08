@@ -30,13 +30,6 @@ export class MonthModal extends CanceableCalendariumModal<Month> {
                 (v) => (this.item.name = v)
             );
         });
-        new Setting(this.contentEl).setName("Length").addText((t) => {
-            t.setValue(`${this.item.length}` ?? "").onChange(
-                (v) => (this.item.length = Number(v))
-            );
-            t.inputEl.type = "number";
-            t.inputEl.min = "0";
-        });
         new Setting(this.contentEl).setName("Type").addDropdown((d) => {
             d.addOption("month", "Month");
             d.addOption("intercalary", "Intercalary");
@@ -44,6 +37,27 @@ export class MonthModal extends CanceableCalendariumModal<Month> {
                 if (v != "month" && v != "intercalary") return;
                 this.item.type = v;
             });
+        });
+        new Setting(this.contentEl).setName("Length").addText((t) => {
+            t.setValue(`${this.item.length}` ?? "").onChange(
+                (v) => (this.item.length = Number(v))
+            );
+            t.inputEl.type = "number";
+            t.inputEl.min = "0";
+        });
+        new Setting(this.contentEl).setName("Interval").addText((t) => {
+            t.setValue(`${this.item.interval}` ?? "").onChange(
+                (v) => (this.item.interval = Number(v))
+            );
+            t.inputEl.type = "number";
+            t.inputEl.min = "0";
+        });
+        new Setting(this.contentEl).setName("Offset").addText((t) => {
+            t.setValue(`${this.item.offset}` ?? "").onChange(
+                (v) => (this.item.offset = Number(v))
+            );
+            t.inputEl.type = "number";
+            t.inputEl.min = "0";
         });
     }
 }

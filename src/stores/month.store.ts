@@ -47,8 +47,14 @@ export class MonthStore {
         }
     );
     firstDay = derived(
-        [this.year.firstDay, this.daysBefore, this.weekdays],
-        ([firstDayOfYear, daysBefore, weekdays]) => {
+        [
+            this.year.firstDay,
+            this.daysBefore,
+            this.weekdays,
+            this.staticStore.staticData,
+        ],
+        ([firstDayOfYear, daysBefore, weekdays, data]) => {
+            if (!data.overflow) return 0;
             return wrap(
                 (daysBefore % weekdays.length) + firstDayOfYear,
                 weekdays.length
@@ -83,8 +89,14 @@ export class MonthStore {
      * To "skip" days in the UI, null should be used.
      */
     daysAsWeeks: Readable<Array<(DayOrLeapDay | null)[]>> = derived(
-        [this.weekdays, this.days, this.firstDay, this.leapDays],
-        ([weekdays, days, firstDay, leapDays]) => {
+        [
+            this.weekdays,
+            this.days,
+            this.firstDay,
+            this.leapDays,
+            this.staticStore.staticData,
+        ],
+        ([weekdays, days, firstDay, leapDays, data]) => {
             let weekArray: (DayOrLeapDay | null)[][] = [];
             let daysAdded = 0;
             let intercals = 0;
@@ -160,7 +172,10 @@ export class MonthStore {
                     }
                     // Too many days for this intercalary month, stop adding them.
                     // This prevents displaying the "overflow" days.
-                    if (daysAdded >= days && this.month.type == "intercalary") {
+                    if (
+                        daysAdded >= days &&
+                        (this.month.type == "intercalary" || !data.overflow)
+                    ) {
                         break;
                     }
                 }
