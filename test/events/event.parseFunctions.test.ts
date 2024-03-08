@@ -297,11 +297,24 @@ test("Range Events", () => {
         day: 1,
         order: "", 
     });
+    expect(gregorian.parseCalDateString("[1991-*]-01-10", file)).toEqual({
+        year: [1991, null],
+        month: 0,
+        day: 10,
+        order: "", 
+    });
     
     expect(gregorian.parseCalDateString("2024-[02-03]-01", file)).toEqual({
         year: 2024,
         month: [1, 2],
         day: 1,
+        order: "",
+    });
+
+    expect(gregorian.parseCalDateString("2024-03-[01-10]", file)).toEqual({
+        year: 2024,
+        month: 2,
+        day: [1, 10],
         order: "",
     });
 });

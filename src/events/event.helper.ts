@@ -1,6 +1,7 @@
 import type { FrontMatterCache, TFile } from "obsidian";
 import { nanoid, testLeapDay, toPaddedString, wrap } from "../utils/functions";
 import { DOMParser } from "xmldom";
+import { Err, Ok, type Result } from "@sniptt/monads";
 import type {
     Calendar,
     CalEvent,
@@ -303,8 +304,6 @@ export class CalEventHelper {
         file: { path: string; basename: string }
     ): ParseDate | null {
         let datebits = datestring.split(/(?!^)[-–—](?![^[]*])/);
-        console.log("🚀 ~ file: event.helper.ts:306 ~ datebits:", datebits);
-
         if (this.formatDigest != "YMD" && datebits.length < 3) {
             logError(
                 `Must specify all three segments in ${this.formatString} order`,
@@ -327,8 +326,8 @@ export class CalEventHelper {
         );
     }
 
-    resolveMonth(month: number | null | string, input: any): number | null {
-        if (month === null) return null;
+    resolveMonth(month: DateBit | string, input: any): number | null {
+        if (month === null) return 0;
         if (typeof month === "number" && !Number.isNaN(month))
             return wrap(month - 1, this.calendar.static.months.length);
         if (Number.isNaN(month)) {
@@ -352,6 +351,51 @@ export class CalEventHelper {
         }
         return 0;
     }
+    resolveDay(
+        day: DateBit,
+        months: DateBit | DateBit[],
+        years: DateBit | DateBit[],
+        input: InputDate
+    ): Result<number | null, string> {
+        // validate the day against the month (and perhaps year)
+        if (typeof day === "number" && day < 1) return Ok(1);
+        if (typeof day === "number") {
+            for (const month of [months].flat()) {
+                if (!month) continue;
+                for (const year of [years].flat()) {
+                    const days = this.daysForMonth(month, year);
+                    if (day > days) {
+                        return Err(
+                            `Day '${input.day}' is incorrect for month '${input.month}', which has ${days} day(s)`
+                        );
+                    }
+                }
+            }
+            return Ok(day);
+        }
+        let leapday = this.calendar.static.leapDays.find(
+            (l) => l.name && l.name.startsWith(input.month)
+        );
+
+        if (leapday) {
+            for (const month of [months].flat()) {
+                if (!month) continue;
+                for (const year of [years].flat()) {
+                    day = this.findLeapDay(leapday, month, year);
+                    if (day == null) {
+                        return Err(
+                            `Leap day '${input.day}' isn't valid for year '${input.year}'`
+                        );
+                    } else if (input.year !== "*") {
+                        return Ok(day);
+                    }
+                }
+            }
+        }
+        if (day == null) return Ok(1);
+
+        return Ok(day);
+    }
 
     /**
      * Create a fully formed date from parsed data segments
@@ -369,8 +413,6 @@ export class CalEventHelper {
     ): ParseDate | null {
         const year = wildNullNumber(input.year);
         let month = wildNullNumber(input.month);
-        console.log("🚀 ~ file: event.helper.ts:345 ~ month:", month);
-
         let day = wildNullNumber(input.day);
 
         if (input.year === "*") {
@@ -384,7 +426,7 @@ export class CalEventHelper {
             );
             return null;
         }
-        
+
         if (input.month === "*") {
             // repeating, this is fine
         } else if (Array.isArray(month)) {
@@ -395,61 +437,32 @@ export class CalEventHelper {
         } else {
             month = this.resolveMonth(month, input.month);
         }
-
         if (input.day === "*") {
             // repeating, this is fine
-        } else if (day != null && Number.isInteger(day)) {
-            if (day < 1) {
-                logWarning(
-                    `Must specify a valid day. Using 1`,
-                    input,
-                    file,
-                    datestring
-                );
-                day = 1;
-            } else if (month) {
-                // validate the day against the month (and perhaps year)
-                const days = this.daysForMonth(month, year);
-                if (day > days) {
-                    logError(
-                        `Day '${input.day}' is incorrect for month '${input.month}', which has ${days} day(s)`,
-                        input,
-                        file,
-                        datestring
-                    );
+        } else if (Array.isArray(day)) {
+            const results = day.map((d) =>
+                this.resolveDay(d, month, year, input)
+            );
+            let days: DateBit[] = [];
+            for (const result of results) {
+                if (result.isErr()) {
+                    logError(result.unwrapErr(), input, file, datestring);
                     return null;
+                } else {
+                    days.push(result.unwrap());
                 }
             }
-        } else if (leapday && month != null && year != null) {
-            // short form (omitted date), but a well-known leapday (e.g. Harptos Shieldmeet)
-            day = this.findLeapDay(leapday, month, year);
-            if (day == null) {
-                logError(
-                    `Leap day '${input.day}' isn't valid for year '${input.year}'`,
-                    input,
-                    file,
-                    datestring
-                );
-                return null;
-            } else if (!year && input.year !== "*") {
-                logWarning(
-                    `Unable to validate '${input.day}' for year '${input.year}'. Using ${day}`,
-                    input,
-                    file,
-                    datestring
-                );
-            }
+            day = [...days] as [DateBit, DateBit];
         } else {
             // short form, assume first day of month
-            day = 1;
+            const result = this.resolveDay(day, month, year, input);
+            if (result.isErr()) {
+                logError(result.unwrapErr(), input, file, datestring);
+                return null;
+            } else {
+                day = result.unwrap();
+            }
         }
-
-        console.log("🚀 ~ file: event.helper.ts:444", {
-            year,
-            month,
-            day,
-            order: input.order || "",
-        });
         return {
             year,
             month,
@@ -506,7 +519,7 @@ export class CalEventHelper {
     findLeapDay(
         leapday: LeapDay,
         month: number,
-        year: number
+        year: number | null
     ): Nullable<number> {
         const cm = this.calendar.static.months[month];
         const leapdays: LeapDay[] = this.calendar.static.leapDays.filter(
