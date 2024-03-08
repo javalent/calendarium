@@ -47,7 +47,7 @@ export class EventStore {
         this.#events.update((SAVED_EVENTS) => {
             for (const event of events) {
                 SAVED_EVENTS.set(event.id, event);
-                this.#eventCache.invalidate(event.date, event);
+                this.#eventCache.invalidate(event.date);
             }
             return SAVED_EVENTS;
         });
@@ -56,7 +56,7 @@ export class EventStore {
         this.#events.update((SAVED_EVENTS) => {
             for (const event of events) {
                 SAVED_EVENTS.delete(event.id);
-                this.#eventCache.invalidate(event.date, event);
+                this.#eventCache.invalidate(event.date);
             }
             return SAVED_EVENTS;
         });
@@ -82,7 +82,7 @@ export class EventStore {
                 if (!SAVED_EVENTS.has(id)) continue;
                 const event = { ...SAVED_EVENTS.get(id)! };
                 SAVED_EVENTS.delete(id);
-                this.#eventCache.invalidate(event.date, event);
+                this.#eventCache.invalidate(event.date);
                 this.#fileEventSet.delete(id);
             }
 
@@ -97,7 +97,7 @@ export class EventStore {
                 if (!SAVED_EVENTS.has(id)) continue;
                 const event = { ...SAVED_EVENTS.get(id)! };
                 SAVED_EVENTS.delete(id);
-                this.#eventCache.invalidate(event.date, event);
+                this.#eventCache.invalidate(event.date);
                 this.#fileEventSet.delete(id);
             }
 

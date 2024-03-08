@@ -3,16 +3,12 @@ import { type Readable, derived, get, writable } from "svelte/store";
 
 abstract class CacheItem<T> {
     constructor(public toConsider: Readable<T[]>) {}
-    derived: T[] = [];
     dirty = writable(true);
     entities: Readable<T[]> = derived(
         [this.toConsider, this.dirty],
         ([entities]) => {
-            if (this.dirty) {
-                this.derived = this.update(entities);
-                this.dirty.set(false);
-            }
-            return this.derived;
+            this.dirty.set(false);
+            return this.update(entities);
         }
     );
     abstract update(entities: T[]): T[];
@@ -56,17 +52,17 @@ export abstract class EntityCache<T> {
     abstract getDayCache(day: number, month: number, year: number): DayCache<T>;
 
     public invalidate(date: CalEventDate, entity?: T) {
-        if (!date.year) return;
+        if (date.year == null) return;
         if (!this.cache.has(date.year)) return;
         const year = this.cache.get(date.year)!;
         year.dirty.set(true);
 
-        if (!date.month) return;
+        if (date.month == null) return;
         if (!year.cache.has(date.month)) return;
         const month = year.cache.get(date.month)!;
         month.dirty.set(true);
 
-        if (!date.day) return;
+        if (date.day == null) return;
         if (!month.cache.has(date.day)) return;
         const day = month.cache.get(date.day)!;
         day.dirty.set(true);

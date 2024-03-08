@@ -28,30 +28,29 @@ class DayMoonCache extends DayCache<MoonState> {
         super(day, month, year, toConsider);
     }
     update(moons: MoonState[]) {
-        if (moons) {
-            this.derived = [];
-            const year = this.yearCalculator.getYearFromCache(this.year);
-            const month = year.getMonthFromCache(this.month);
-            const daysBefore =
-                get(year.daysBefore) + get(month.daysBefore) + this.day - 1;
-            for (let moon of moons) {
-                const { offset, cycle } = moon;
-                const granularity = 24;
+        const derived: MoonState[] = [];
+        const year = this.yearCalculator.getYearFromCache(this.year);
+        const month = year.getMonthFromCache(this.month);
+        const daysBefore =
+            get(year.daysBefore) + get(month.daysBefore) + this.day - 1;
+        for (let moon of moons ?? []) {
+            const { offset, cycle } = moon;
+            const granularity = 24;
 
-                let data = (daysBefore - offset) / cycle;
-                let position = data - Math.floor(data);
+            let data = (daysBefore - offset) / cycle;
+            let position = data - Math.floor(data);
 
-                const phase = (position * granularity) % granularity;
+            const phase = (position * granularity) % granularity;
 
-                const options = MOON_PHASES[granularity];
+            const options = MOON_PHASES[granularity];
 
-                this.derived.push({
-                    ...moon,
-                    phase: options[wrap(Math.round(phase), options.length)],
-                });
-            }
+            derived.push({
+                ...moon,
+                phase: options[wrap(Math.round(phase), options.length)],
+            });
         }
-        return this.derived;
+
+        return derived;
     }
 }
 
