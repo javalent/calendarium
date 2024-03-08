@@ -47,7 +47,7 @@ export class EventStore {
         this.#events.update((SAVED_EVENTS) => {
             for (const event of events) {
                 SAVED_EVENTS.set(event.id, event);
-                this.#eventCache.invalidate(event.date);
+                this.#eventCache.invalidate(event.date, event);
             }
             return SAVED_EVENTS;
         });
@@ -56,7 +56,7 @@ export class EventStore {
         this.#events.update((SAVED_EVENTS) => {
             for (const event of events) {
                 SAVED_EVENTS.delete(event.id);
-                this.#eventCache.invalidate(event.date);
+                this.#eventCache.invalidate(event.date, event);
             }
             return SAVED_EVENTS;
         });
@@ -80,9 +80,9 @@ export class EventStore {
         this.#events.update((SAVED_EVENTS) => {
             for (const id of eventIds) {
                 if (!SAVED_EVENTS.has(id)) continue;
-                const date = { ...SAVED_EVENTS.get(id)!.date };
+                const event = { ...SAVED_EVENTS.get(id)! };
                 SAVED_EVENTS.delete(id);
-                this.#eventCache.invalidate(date);
+                this.#eventCache.invalidate(event.date, event);
                 this.#fileEventSet.delete(id);
             }
 
@@ -95,9 +95,9 @@ export class EventStore {
         this.#events.update((SAVED_EVENTS) => {
             for (const id of this.#fileEventSet) {
                 if (!SAVED_EVENTS.has(id)) continue;
-                const date = { ...SAVED_EVENTS.get(id)!.date };
+                const event = { ...SAVED_EVENTS.get(id)! };
                 SAVED_EVENTS.delete(id);
-                this.#eventCache.invalidate(date);
+                this.#eventCache.invalidate(event.date, event);
                 this.#fileEventSet.delete(id);
             }
 

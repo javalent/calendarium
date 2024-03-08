@@ -1,5 +1,11 @@
-import type { CalDate, CalEvent, CalEventDate } from "src/@types";
+import type {
+    CalDate,
+    CalEvent,
+    CalEventDate,
+    RangedCalEventDate,
+} from "src/@types";
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
+import type { EventType } from "src/events/event.types";
 class YearEventCache extends YearCache<CalEvent> {
     update(events: CalEvent[]) {
         if (events) {
@@ -175,5 +181,24 @@ export class EventCache extends EntityCache<CalEvent> {
         const monthCache = this.getMonthCache(month, year);
         if (monthCache.cache.has(day)) return monthCache.cache.get(day)!;
         return new DayEventCache(day, month, year, monthCache.entities);
+    }
+    public override invalidate(
+        date: CalEventDate | RangedCalEventDate,
+        event: CalEvent
+    ) {
+        if (!date.year) return;
+        if (!this.cache.has(date.year)) return;
+        const year = this.cache.get(date.year)!;
+        year.dirty.set(true);
+
+        if (!date.month) return;
+        if (!year.cache.has(date.month)) return;
+        const month = year.cache.get(date.month)!;
+        month.dirty.set(true);
+
+        if (!date.day) return;
+        if (!month.cache.has(date.day)) return;
+        const day = month.cache.get(date.day)!;
+        day.dirty.set(true);
     }
 }
