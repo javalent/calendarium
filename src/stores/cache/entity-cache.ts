@@ -55,7 +55,7 @@ export abstract class EntityCache<T> {
     abstract getMonthCache(month: number, year: number): MonthCache<T>;
     abstract getDayCache(day: number, month: number, year: number): DayCache<T>;
 
-    public invalidate(date: CalEventDate) {
+    public invalidate(date: CalEventDate, entity?: T) {
         if (!date.year) return;
         if (!this.cache.has(date.year)) return;
         const year = this.cache.get(date.year)!;
