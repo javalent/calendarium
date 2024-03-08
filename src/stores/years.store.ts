@@ -1,8 +1,9 @@
 import { derived, get } from "svelte/store";
 import type { StaticStore } from "./calendar.store";
-import type { CalEvent, LeapDay, Month, Week } from "src/@types";
+import type { CalEvent } from "src/@types";
 import { wrap } from "../utils/functions";
 import { MonthStore } from "./month.store";
+import type { Month, Week, LeapDay } from "src/schemas/calendar/timespans";
 
 /* export type YearStore = ReturnType<typeof createYearStore>; */
 export type YearCalculatorCache = Map<number, YearStore>;
@@ -24,7 +25,7 @@ export class YearStore {
     months = derived(this.staticStore.months, (months) => {
         return months.filter(
             (m) =>
-                !m.interval || this.year % (m.interval + (m.offset ?? 0)) == 0
+                !m.interval || (this.year - (m.offset ?? 0)) % m.interval == 0
         );
     });
     daysBefore = derived(
@@ -75,7 +76,8 @@ export class YearStore {
 
                     if (array[index + 1] && array[index + 1].exclusive) {
                         return (
-                            (this.year - (leapday.offset ?? 0)) % interval == 0 &&
+                            (this.year - (leapday.offset ?? 0)) % interval ==
+                                0 &&
                             (this.year - (leapday.offset ?? 0)) %
                                 array[index + 1].interval !=
                                 0
@@ -95,60 +97,6 @@ export class YearStore {
         return monthStore;
     }
 }
-
-/* export function createYearStore(year: number, store: StaticStore) {
-    const {
-        leapDays,
-        months: monthStore,
-        staticConfiguration,
-        weekdays,
-        years,
-    } = store;
-
-    const months = derived(monthStore, (months) => {
-        return months.filter(
-            (m) => !m.interval || year % (m.interval + (m.offset ?? 0)) == 0
-        );
-    });
-    const daysBefore = derived([months, leapDays], ([months, leapDays]) => {
-        return daysBeforeYear(year, months, leapDays);
-    });
-
-    const firstDay = derived(
-        [staticConfiguration, months, weekdays, leapDays],
-        ([config, months, weekdays, leapDays]) => {
-            return getFirstDayOfYear(
-                year,
-                months,
-                weekdays,
-                leapDays,
-                config.overflow,
-                config.firstWeekDay,
-                config.offset
-            );
-        }
-    );
-
-    const display = derived([years, staticConfiguration], ([years, config]) => {
-        if (!config.useCustomYears) return year;
-        return years[year].name;
-    });
-
-    const monthCache = new WeakMap<Month, MonthStore>();
-
-    return {
-        daysBefore,
-        firstDay,
-        display,
-        months,
-        getMonthFromCache: (month: Month) => {
-            if (!monthCache.has(month)) {
-                monthCache.set(month, createMonthStore(month, this, store));
-            }
-            return monthCache.get(month);
-        },
-    };
-} */
 
 export function getFirstDayOfYear(
     year: number,
