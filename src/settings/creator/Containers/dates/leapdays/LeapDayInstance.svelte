@@ -1,9 +1,17 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { ExtraButtonComponent } from "obsidian";
+    import { ExtraButtonComponent, setIcon } from "obsidian";
     import { getIntervalDescription } from "src/utils/functions";
     import type { LeapDay } from "src/schemas/calendar/timespans";
-    import { EDIT, TRASH } from "src/utils/icons";
+    import {
+        EDIT,
+        INTERCALARY,
+        MONTH,
+        TRASH,
+        setNodeIcon,
+    } from "src/utils/icons";
+    import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
+    import { getContext } from "svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -18,16 +26,31 @@
     };
     export let leapday: LeapDay;
 
-    $: description = getIntervalDescription(leapday);
+    let icon = leapday.intercalary ? INTERCALARY : MONTH;
+    const store = getContext("store");
+
+    const buildDescription = (descEl: HTMLElement) => {
+        let desc = $store.static.months[leapday.timespan].name;
+        if (leapday.intercalary) {
+            if (leapday.after === 0) {
+                desc += ", before 1";
+            } else {
+                desc += `, after ${leapday.after}`;
+            }
+        }
+        descEl.createSpan({ text: desc ?? "" });
+        descEl.createSpan({ text: getIntervalDescription(leapday) });
+    };
 </script>
 
 <div class="leapday">
-    <div class="leapday-info">
-        <span class="setting-item-name">
-            {leapday.name}
-        </span>
-        <div class="setting-item-description">{description}</div>
-    </div>
+    <SettingItem>
+        <div slot="name">{leapday.name}</div>
+        <div slot="desc" class="desc">
+            <div use:setNodeIcon={icon} />
+            <div class="description" use:buildDescription />
+        </div>
+    </SettingItem>
 
     <div class="icons">
         <div class="icon" use:edit on:click={() => dispatch("edit")} />
@@ -44,9 +67,6 @@
         gap: 1rem;
         margin-top: 0.5rem;
     }
-    .leapday-info {
-        width: 100%;
-    }
 
     .icons {
         display: flex;
@@ -54,7 +74,13 @@
         justify-self: flex-end;
         align-items: center;
     }
-    .leapday .icon {
-        align-items: center;
+    .desc {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .desc .description {
+        display: flex;
+        flex-flow: column;
     }
 </style>
