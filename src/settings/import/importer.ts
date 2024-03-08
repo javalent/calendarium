@@ -57,7 +57,7 @@ export default class Import {
                     length: m.length,
                     id: nanoid(6),
                     interval: m.interval,
-                    offset: 0,
+                    offset: m.offset,
                 };
             });
 
