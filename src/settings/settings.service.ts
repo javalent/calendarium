@@ -649,11 +649,6 @@ export default class SettingsService {
                 }
             }
 
-            console.log(
-                "🚀 ~ file: settings.service.ts:664 ~ data.paths:",
-                data.paths
-            );
-
             if (data.calendars.length) {
                 data.inlineEventsTag =
                     data.calendars.find((c) => c.inlineEventTag != null)
