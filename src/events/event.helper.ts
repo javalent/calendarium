@@ -470,19 +470,30 @@ export class CalEventHelper {
             order: input.order || "",
         };
     }
-
+    generateTimeStamp(date: ParseDate): string {
+        const year = date.year ?? "*";
+        const month = [date.month]
+            .flat()
+            .map((m) => toPaddedString(m, this.calendar, "month"));
+        const day = [date.day]
+            .flat()
+            .map((m) => toPaddedString(m, this.calendar, "day"));
+        return `${year}-${
+            (month.length > 1 ? "[" : "") +
+            month.join("-") +
+            (month.length > 1 ? "]" : "")
+        }-${
+            (day.length > 1 ? "[" : "") +
+            day.join("-") +
+            (day.length > 1 ? "]" : "")
+        }`;
+    }
     parsedToTimestamp(date: ParseDate): CalEventSort {
         // put repeating events off to the side
         if (date.year == null || date.month == null || date.day == null) {
             return {
                 timestamp: Number.MIN_VALUE,
-                order: date.order
-                    ? date.order
-                    : `${date.year || "*"}-${toPaddedString(
-                          date.month,
-                          this.calendar,
-                          "month"
-                      )}-${toPaddedString(date.day, this.calendar, "day")}`,
+                order: date.order ? date.order : this.generateTimeStamp(date),
             };
         }
         // otherwise create a date string
@@ -490,10 +501,10 @@ export class CalEventHelper {
         return {
             timestamp: Number(
                 `${date.year}${toPaddedString(
-                    date.month,
+                    [date.month].flat()[0],
                     this.calendar,
                     "month"
-                )}${toPaddedString(date.day, this.calendar, "day")}`
+                )}${toPaddedString([date.day].flat()[0], this.calendar, "day")}`
             ),
             order: date.order || "",
         };
