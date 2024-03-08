@@ -14,7 +14,6 @@
     import { WARNING } from "src/utils/icons";
 
     const mobile = Platform.isMobile;
-    console.log("🚀 ~ file: Creator.svelte:17 ~ mobile:", mobile);
 
     let ready = mobile;
 
