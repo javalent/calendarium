@@ -55,6 +55,7 @@ export class MonthStore {
         ],
         ([firstDayOfYear, daysBefore, weekdays, data]) => {
             if (!data.overflow) return 0;
+            if (this.month.type === "intercalary") return 0;
             return wrap(
                 (daysBefore % weekdays.length) + firstDayOfYear,
                 weekdays.length
