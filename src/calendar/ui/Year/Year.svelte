@@ -16,7 +16,7 @@
     const full = getTypedContext("full");
 
     $: yearStore = yearCalculator.getYearFromCache($displaying.year);
-    $: monthArray = store.staticStore.months;
+    $: monthArray = yearStore.months;
 
     /* const months = $monthArray.map((m) =>
         yearStore.getMonthFromCache($monthArray.indexOf(m))
