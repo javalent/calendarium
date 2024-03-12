@@ -40,13 +40,16 @@ export class API {
      * Used to retrieve a Calendar API.
      * This can be used to obtain calendar-specific information, such as lists of events.
      *
-     * @param calendarName Name of the calendar you need an API for.
+     * @param calendarName Name of the calendar you need an API for. Omit to get the currently defined default calendar.
      * @returns An instance of the Calendar API.
      */
-    getAPI(calendarName: string): CalendarAPI {
-        const calendar = this.plugin.data.calendars.find(
-            (c) => c.name == calendarName
+    getAPI(calendarName?: string): CalendarAPI {
+        const calendar = this.plugin.data.calendars.find((c) =>
+            calendarName
+                ? c.name == calendarName
+                : c.id == this.plugin.data.defaultCalendar
         );
+
         if (!calendar)
             throw new ReferenceError("No calendar store by that name exists.");
         const store = this.#getStore(calendar);

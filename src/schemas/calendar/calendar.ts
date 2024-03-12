@@ -2,6 +2,11 @@ import type { CalEventDate, CalEvent, CalEventCategory } from "../events";
 import type { Moon } from "./moons";
 import type { Week, Month, LeapDay, Era, Year } from "./timespans";
 
+/**
+ * This is a fully defined date.
+ *
+ * Please note that month is zero-indexed, but day and year are not.
+ */
 export type CalDate = {
     year: number;
     month: number;
