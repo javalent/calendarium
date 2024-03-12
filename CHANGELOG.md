@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.11](https://github.com/javalent/calendarium/compare/1.0.10...1.0.11) (2024-03-12)
+
+
+### Bug Fixes
+
+* Calendarium API now returns the default calendar's API if the calendar is omitted ([0ae5c5c](https://github.com/javalent/calendarium/commit/0ae5c5c16b730e55c5c184116ee90ec374b9f5c5))
+* Fixes issue where an intercalary month could cause Year view to not open ([08c1d2d](https://github.com/javalent/calendarium/commit/08c1d2d36ca9dcfee3b51fcc676f7d0b544a13b9))
+* Fixes issue where intercalary months might not always start on the first day ([60ac696](https://github.com/javalent/calendarium/commit/60ac6969d3ae3c24b0016c782e43620bb6630e1c))
+
 ## [1.0.10](https://github.com/javalent/calendarium/compare/1.0.9...1.0.10) (2024-03-08)
 
 
