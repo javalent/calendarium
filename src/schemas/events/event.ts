@@ -38,20 +38,20 @@ type BaseCalEvent = {
 };
 
 export type DatedCalEventInfo = {
-    type?: EventType.Date;
+    type?: typeof EventType.Date;
     date: CalEventDate;
 };
 export type DatedCalEvent = BaseCalEvent & DatedCalEventInfo;
 
 export type SpanCalEventInfo = {
-    type: EventType.Span;
+    type: typeof EventType.Range;
     date: CalEventDate;
     end: CalEventDate;
 };
 export type SpanCalEvent = BaseCalEvent & SpanCalEventInfo;
 
 export type RangedCalEventInfo = {
-    type: EventType.Range;
+    type: typeof EventType.Recurring;
     date: RangedCalEventDate;
 };
 export type RangeCalEvent = BaseCalEvent & RangedCalEventInfo;
