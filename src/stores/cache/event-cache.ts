@@ -12,7 +12,7 @@ class YearEventCache extends YearCache<CalEvent> {
     update(events: CalEvent[]) {
         return (events ?? [])?.filter((event) => {
             switch (event.type) {
-                case EventType.Range: {
+                case EventType.Recurring: {
                     const date = { ...event.date };
                     if (date.year === null) return true;
                     if (Array.isArray(date.year)) {
@@ -23,7 +23,7 @@ class YearEventCache extends YearCache<CalEvent> {
                         return date.year === this.year;
                     }
                 }
-                case EventType.Span: {
+                case EventType.Range: {
                     const date = { ...event.date };
                     const end = { ...event.end };
 
@@ -63,7 +63,7 @@ class MonthEventCache extends MonthCache<CalEvent> {
     update(events: CalEvent[]) {
         return (events ?? [])?.filter((event) => {
             switch (event.type) {
-                case EventType.Range: {
+                case EventType.Recurring: {
                     const date = { ...event.date };
                     if (date.year) {
                         if (Array.isArray(date.year)) {
@@ -84,7 +84,7 @@ class MonthEventCache extends MonthCache<CalEvent> {
                         return date.month === this.month;
                     }
                 }
-                case EventType.Span: {
+                case EventType.Range: {
                     const date = { ...event.date };
                     const end = { ...(event.end ?? {}) };
 
@@ -215,7 +215,7 @@ class DayEventCache extends DayCache<CalEvent> {
     update(events: CalEvent[]) {
         return (events ?? [])?.filter((event) => {
             switch (event.type) {
-                case EventType.Range: {
+                case EventType.Recurring: {
                     const date = { ...event.date };
 
                     if (date.day == null) return true;
@@ -230,7 +230,7 @@ class DayEventCache extends DayCache<CalEvent> {
                     }
                     return false;
                 }
-                case EventType.Span: {
+                case EventType.Range: {
                     if (this.isUndefined(event.date)) return false;
                     if (this.isEqual(event.date)) {
                         return true;

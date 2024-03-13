@@ -136,7 +136,7 @@ export class CalEventHelper {
             Array.isArray(date.year)
         ) {
             event = {
-                type: EventType.Range,
+                type: EventType.Recurring,
                 date: date as RangedCalEventDate,
             };
         } else if (end) {
@@ -148,7 +148,7 @@ export class CalEventHelper {
                 /* logError("End dates cannot be ranges.", end as InputDate, file); */
             }
             event = {
-                type: EventType.Span,
+                type: EventType.Range,
                 date: date as CalEventDate,
                 end: end as CalEventDate,
             };

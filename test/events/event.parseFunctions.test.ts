@@ -6,7 +6,7 @@ import type {
     CalEvent,
     Calendar,
     DatedCalEvent,
-    SpanCalEvent,
+    RangeCalEvent,
 } from "../../src/@types";
 import { CalEventHelper, ParseDate } from "../../src/events/event.helper";
 import { PRESET_CALENDARS } from "../../src/utils/presets";
@@ -125,7 +125,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
 
 test("parseFrontmatterEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: SpanCalEvent[] = [];
+    let actual: RangeCalEvent[] = [];
     gregorian.category = category;
     gregorian.parseFrontmatterEvent(
         {
@@ -142,13 +142,13 @@ test("parseFrontmatterEvent", () => {
         },
         file,
         (event) => {
-            actual.push(event as SpanCalEvent);
+            actual.push(event as RangeCalEvent);
         }
     );
 
     expect(actual.length).toEqual(1);
     expect(actual[0].id).toBeDefined();
-    expect(actual[0].type).toBe(EventType.Span);
+    expect(actual[0].type).toBe(EventType.Range);
     expect(actual[0].name).toEqual("Pretty name");
     expect(actual[0].description).toEqual("Fun text");
     expect(actual[0].date).toEqual(
@@ -176,7 +176,7 @@ test("parseFrontmatterEvent", () => {
 
 test("parseTimelineEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: SpanCalEvent[] = [];
+    let actual: RangeCalEvent[] = [];
 
     gregorian.parseInlineEvents(
         "<span class='ob-timelines'   \n" +
@@ -189,14 +189,14 @@ test("parseTimelineEvent", () => {
             "</span>",
         file,
         (event) => {
-            actual.push(event as SpanCalEvent);
+            actual.push(event as RangeCalEvent);
         },
         () => {}
     );
 
     expect(actual.length).toEqual(1);
     expect(actual[0].id).toBeDefined();
-    expect(actual[0].type).toBe(EventType.Span);
+    expect(actual[0].type).toBe(EventType.Range);
     expect(actual[0].name).toEqual("Pretty name");
     expect(actual[0].description?.trim()).toEqual("Fun text");
     expect(actual[0].date).toEqual(

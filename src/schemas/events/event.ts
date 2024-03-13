@@ -43,18 +43,18 @@ export type DatedCalEventInfo = {
 };
 export type DatedCalEvent = BaseCalEvent & DatedCalEventInfo;
 
-export type SpanCalEventInfo = {
+export type RangeCalEventInfo = {
     type: typeof EventType.Range;
     date: CalEventDate;
     end: CalEventDate;
 };
-export type SpanCalEvent = BaseCalEvent & SpanCalEventInfo;
+export type RangeCalEvent = BaseCalEvent & RangeCalEventInfo;
 
 export type RangedCalEventInfo = {
     type: typeof EventType.Recurring;
     date: RangedCalEventDate;
 };
-export type RangeCalEvent = BaseCalEvent & RangedCalEventInfo;
+export type RecurringCalEvent = BaseCalEvent & RangedCalEventInfo;
 
 /* export type FormulaCalEvent = BaseCalEvent & {
     type: EventType.Formula;
@@ -64,8 +64,8 @@ export type RangeCalEvent = BaseCalEvent & RangedCalEventInfo;
 export type CalEventInfo =
     | DatedCalEventInfo
     | RangedCalEventInfo
-    | SpanCalEventInfo;
-export type CalEvent = DatedCalEvent | RangeCalEvent | SpanCalEvent; /* 
+    | RangeCalEventInfo;
+export type CalEvent = DatedCalEvent | RecurringCalEvent | RangeCalEvent; /* 
     | FormulaCalEvent; */
 
 export type CalEventCategory = {
