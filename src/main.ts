@@ -15,6 +15,7 @@ import {
 import { CodeBlockService } from "./calendar/codeblock";
 import { DEFAULT_FORMAT } from "./utils/constants";
 import { CalendariumNotice } from "./utils/notice";
+import { CreateEventModal } from "./settings/modals/event/event";
 
 declare module "obsidian" {
     interface App {
@@ -173,6 +174,8 @@ export default class Calendarium extends Plugin {
         );
 
         this.watcher = new Watcher(this);
+
+        new CreateEventModal(this.defaultCalendar, this).open();
 
         (window["Calendarium"] = this.api) &&
             this.register(() => delete window["Calendarium"]);

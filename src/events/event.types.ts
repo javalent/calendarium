@@ -4,9 +4,9 @@
     Date,
 } */
 export const EventType = Object.freeze({
+    Date: "Date",
     Recurring: "Recurring",
     Range: "Range",
-    Date: "Date",
     // …
 });
 

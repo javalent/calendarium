@@ -219,7 +219,6 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
     width: 100%;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 0.5rem;
 }
 
 .calendarium-create-event .event-info > *,

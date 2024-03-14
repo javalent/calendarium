@@ -1,13 +1,4 @@
-import {
-    Modal,
-    App,
-    Setting,
-    Notice,
-    TextComponent,
-    DropdownComponent,
-    TextAreaComponent,
-    TFile,
-} from "obsidian";
+import { Setting, Notice, TextAreaComponent, TFile } from "obsidian";
 import type {
     CalDate,
     Calendar,
@@ -27,6 +18,7 @@ import { CalendariumModal } from "../modal";
 import { CalEventHelper } from "src/events/event.helper";
 import Calendarium from "src/main";
 import { CLOSE } from "src/utils/icons";
+import EventCreator from "./EventCreator.svelte";
 
 export class CreateEventModal extends CalendariumModal {
     saved = false;
@@ -58,12 +50,14 @@ export class CreateEventModal extends CalendariumModal {
     endDateEl: HTMLDivElement;
     startEl: HTMLDivElement;
     endEl: HTMLDivElement;
+    $UI: EventCreator;
     constructor(
         public calendar: Calendar,
+        public plugin: Calendarium,
         event?: CalEvent,
         date?: CalDate | CalEventDate
     ) {
-        super(app);
+        super(plugin.app);
         if (event) {
             this.event = copy(event);
             this.editing = true;
@@ -72,6 +66,7 @@ export class CreateEventModal extends CalendariumModal {
             this.event.date = copy(date);
         }
         this.containerEl.addClass("calendarium-create-event");
+        plugin.register(() => this.close());
     }
 
     async display() {
@@ -80,9 +75,9 @@ export class CreateEventModal extends CalendariumModal {
 
         this.infoEl = this.contentEl.createDiv("event-info");
         this.buildInfo();
-
+        /* 
         this.dateEl = this.contentEl.createDiv("event-date");
-        this.buildDate();
+        this.buildDate(); */
 
         new Setting(this.contentEl)
             .addButton((b) => {
@@ -102,7 +97,7 @@ export class CreateEventModal extends CalendariumModal {
                             this.event.sort
                         );
 
-                        if (this.event.end) {
+                        /* if (this.event.end) {
                             this.event.end = {
                                 year:
                                     this.event.end.year ?? this.event.date.year,
@@ -141,7 +136,7 @@ export class CreateEventModal extends CalendariumModal {
                             }
                         }
 
-                        this.saved = true;
+                        this.saved = true; */
 
                         // Saving this note to frontmatter
                         /* if (false) {
@@ -218,7 +213,7 @@ export class CreateEventModal extends CalendariumModal {
                     .onClick(() => this.close());
             });
     }
-    buildDate() {
+    /*     buildDate() {
         this.dateEl.empty();
         this.buildStartDate();
 
@@ -242,14 +237,13 @@ export class CreateEventModal extends CalendariumModal {
             this.buildEventFormulas(formulas);
         }
 
-        /* this.buildDateFields(this.endDateEl); */
 
         this.stringEl = this.dateEl.createDiv(
             "event-date-string setting-item-description"
         );
         this.buildDateString();
-    }
-    buildEventFormulas(formulas: HTMLDivElement): any {
+    } */
+    /*     buildEventFormulas(formulas: HTMLDivElement): any {
         formulas.empty();
         this.event.formulas = this.event.formulas ?? [
             { type: "interval", number: 1, timespan: "days" },
@@ -352,9 +346,18 @@ export class CreateEventModal extends CalendariumModal {
                 this.buildDateString();
             });
         year.inputEl.setAttr("type", "number");
-    }
+    } */
     buildInfo() {
         this.infoEl.empty();
+
+        new Setting(this.infoEl).setName("Event name").addText((t) =>
+            t
+                .setPlaceholder("Event name")
+                .setValue(this.event.name)
+                .onChange((v) => {
+                    this.event.name = v;
+                })
+        );
         new Setting(this.infoEl)
             .setName("Note")
             .setDesc("Link the event to a note.")
@@ -387,23 +390,21 @@ export class CreateEventModal extends CalendariumModal {
                 });
             });
 
-        new Setting(this.infoEl).setName("Event name").addText((t) =>
-            t
-                .setPlaceholder("Event name")
-                .setValue(this.event.name)
-                .onChange((v) => {
-                    this.event.name = v;
-                })
-        );
-
-        const descriptionEl = this.infoEl.createDiv("event-description");
-        descriptionEl.createEl("label", { text: "Event description" });
-        new TextAreaComponent(descriptionEl)
+        new Setting(this.infoEl).setName("Event description");
+        /* .addTextArea((t) => {
+                t.setPlaceholder("Event description")
+                    .setValue(this.event.description ?? "")
+                    .onChange((v) => {
+                        this.event.description = v;
+                    });
+            }); */
+        new TextAreaComponent(this.infoEl.createDiv("setting-item"))
             .setPlaceholder("Event description")
             .setValue(this.event.description ?? "")
             .onChange((v) => {
                 this.event.description = v;
-            });
+            })
+            .inputEl.setAttribute("style", "width: 100%;");
 
         new Setting(this.infoEl).setName("Event category").addDropdown((d) => {
             const options = Object.fromEntries(
@@ -411,10 +412,16 @@ export class CreateEventModal extends CalendariumModal {
                     return [category.id, category.name];
                 })
             );
-
             d.addOptions(options)
-                .setValue(this.event.category ?? "")
+                .setValue(this.event.category ?? this.calendar.categories[0].id)
                 .onChange((v) => (this.event.category = v));
+        });
+        const store = this.plugin.getStoreByCalendar(this.calendar)!;
+        this.$UI = new EventCreator({
+            target: this.infoEl,
+            props: {
+                event: this.event,
+            },
         });
     }
     async tryParse(/* note: string,  */ file: TFile) {
@@ -469,6 +476,9 @@ export class CreateEventModal extends CalendariumModal {
     async onOpen() {
         await this.display();
     }
+    onClose(): void {
+        this.$UI?.$destroy();
+    }
 }
 
 export async function addEventWithModal(
@@ -477,7 +487,7 @@ export async function addEventWithModal(
     date: CalDate | CalEventDate,
     event?: CalEvent
 ) {
-    const modal = new CreateEventModal(calendar, event, date);
+    const modal = new CreateEventModal(calendar, plugin, event, date);
 
     modal.onClose = async () => {
         if (!modal.saved) return;
