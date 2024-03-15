@@ -112,6 +112,7 @@
 {:else}
     <div
         class="day"
+        class:leapday={day.type == "leapday"}
         class:intercalary={day.type == "leapday" && day.intercalary}
         class:adjacent-month={adjacent}
         class:opened
@@ -124,12 +125,14 @@
         }}
         aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
     >
-        {#if day.type == "leapday" && day.numbered}
+        {#if day.type === "leapday" && day.intercalary && day.name?.length}
             {day.name}
         {/if}
-        <span class="day-number">
-            {day.number}
-        </span>
+        {#if day.type === "day" || day.numbered}
+            <span class="day-number">
+                {day.number}
+            </span>
+        {/if}
         {#key $events}
             {#if $full && $viewState != ViewState.Year}
                 {#if $displayMoons}
