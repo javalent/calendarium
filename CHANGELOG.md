@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.12](https://github.com/javalent/calendarium/compare/1.0.11...1.0.12) (2024-03-15)
+
+
+### Bug Fixes
+
+* Fixes issue where adding new moons would overwrite the first moon in the list ([2351e28](https://github.com/javalent/calendarium/commit/2351e28a1c29d20349707056b6d955f781893e1c))
+* Fixes issue where custom years could not be added (close [#112](https://github.com/javalent/calendarium/issues/112)) ([b64b4b8](https://github.com/javalent/calendarium/commit/b64b4b89e6fbfe4029b7af87e981464d66db851a))
+* Fixes issue where deleting a custom year could cause an incorrect invalid date warning ([4c38479](https://github.com/javalent/calendarium/commit/4c3847933b5ec7bab5daadaf69e44042e8221c24))
+* Improve intercalary leap day appearance ([82d05c2](https://github.com/javalent/calendarium/commit/82d05c2f5b42132e09ac966c362bfeeb16939e4d))
+* Improves moon creator appearance ([5a4f575](https://github.com/javalent/calendarium/commit/5a4f57587f72fd57f8d5bff7233361901319a7f2))
+* Improves user experience around custom years ([fb6fa21](https://github.com/javalent/calendarium/commit/fb6fa21d98b4b926cb83a567378a56c0382e356c))
+* Remove extraneous logs ([2c10b7b](https://github.com/javalent/calendarium/commit/2c10b7b59896ac5c25e16f98021b8b3a7a7c4f61))
+
 ## [1.0.11](https://github.com/javalent/calendarium/compare/1.0.10...1.0.11) (2024-03-12)
 
 
