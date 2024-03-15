@@ -431,7 +431,12 @@ function createStore(plugin: Calendarium, existing: Calendar) {
                         (e) => e.id === id
                     );
 
-                    data.static.moons.splice(index, 1, { ...moon });
+                    if (index < 0) {
+                        data.static.moons.push({ ...moon });
+                    } else {
+                        data.static.moons.splice(index, 1, { ...moon });
+                    }
+
                     return data;
                 }),
             delete: (id: string) =>
