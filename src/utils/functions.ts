@@ -278,7 +278,7 @@ export function isValidYear(year: number, calendar: Calendar) {
     if (year == null) return false;
     if (calendar?.static?.useCustomYears) {
         if (!calendar?.static?.years?.length) return false;
-        if (year < 0 || year >= calendar?.static?.years?.length) return false;
+        if (year < 0 || year > calendar?.static?.years?.length) return false;
     }
     return true;
 }
