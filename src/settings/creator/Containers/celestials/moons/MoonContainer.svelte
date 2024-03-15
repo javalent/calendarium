@@ -44,8 +44,6 @@
         on:click={() => ($displayMoons = !$displayMoons)}
     />
 
-    <AddNew on:add={(evt) => add(getDefaultMoon(evt.detail))} />
-
     {#if !$moonStore.length}
         <NoExistingItems message={"Create a new moon to see it here."} />
     {:else}
@@ -59,6 +57,8 @@
             {/each}
         </div>
     {/if}
+
+    <AddNew on:add={(evt) => add(getDefaultMoon(evt.detail))} />
 </Details>
 
 <style>
