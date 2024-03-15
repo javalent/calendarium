@@ -20,7 +20,7 @@
     const calendar = getContext("store");
     const plugin = getContext("plugin");
 
-    const { yearStore, staticStore } = calendar;
+    const { yearStore, staticStore, currentStore } = calendar;
     const { customYears } = yearStore;
 
     const grip = (node: HTMLElement) => {
@@ -28,9 +28,18 @@
     };
 
     const trash = (node: HTMLElement, item: Year) => {
-        new ExtraButtonComponent(node)
-            .setIcon(TRASH)
-            .onClick(() => yearStore.delete(item.id));
+        new ExtraButtonComponent(node).setIcon(TRASH).onClick(() => {
+            const index =
+                $yearStore?.findIndex((year) => year.id === item.id) ?? 0;
+            yearStore.delete(item.id);
+            if ($yearStore?.length) {
+                if (index > 0) {
+                    $currentStore.year = index;
+                } else {
+                    $currentStore.year = 1;
+                }
+            }
+        });
     };
 
     const name = (node: HTMLElement, item: Year) => {
@@ -150,6 +159,9 @@
         <AddNew
             on:add={(evt) => {
                 yearStore.add(evt.detail);
+                if ($yearStore?.length === 1) {
+                    $currentStore.year = 1;
+                }
             }}
         />
     {/if}

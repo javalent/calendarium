@@ -75,7 +75,7 @@
                 bind:value={$currentStore.year}
                 class:invalid={!$validYear}
             >
-                {#each $yearStore?.filter((m) => m && m.name) ?? [] as year, index}
+                {#each $yearStore?.filter((m) => m && m.name) ?? [] as year, index (year.id)}
                     <option value={index + 1}>{year.name}</option>
                 {/each}
             </select>
