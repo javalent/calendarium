@@ -114,12 +114,6 @@
     />
 
     {#if $customYears}
-        <AddNew
-            on:click={() => {
-                yearStore.add();
-            }}
-        />
-
         {#if !$yearStore?.length}
             <NoExistingItems message={"Create a new year to see it here."} />
         {:else}
@@ -152,6 +146,12 @@
                 {/each}
             </div>
         {/if}
+
+        <AddNew
+            on:add={(evt) => {
+                yearStore.add(evt.detail);
+            }}
+        />
     {/if}
 </Details>
 

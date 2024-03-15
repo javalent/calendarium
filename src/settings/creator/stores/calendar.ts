@@ -292,14 +292,14 @@ function createStore(plugin: Calendarium, existing: Calendar) {
         yearStore: {
             customYears,
             subscribe: yearStore.subscribe,
-            add: () =>
+            add: (name?: string) =>
                 update((data) => {
                     if (!data.static.years) {
                         data.static.years = [];
                     }
                     data.static.years.push({
                         type: "year",
-                        name: "",
+                        name: name ?? "",
                         id: nanoid(6),
                     });
                     return data;
