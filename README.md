@@ -10,7 +10,7 @@ Documentation now available at [https://plugins.javalent.com](https://plugins.ja
 
 ## Installing Calendarium
 
-Calendarium is now in beta testing with Obsidian Brat, and can be installed through there.
+Calendarium can be installed through the Obsidian Community Store.
 
 ## Contributors ✨
 
