@@ -76,8 +76,8 @@ export class CalEventHelper {
     }
 
     onNewCategory: (category: CalEventCategory) => void;
-
     category?: CalEventCategory | null = null;
+
     parseFrontmatterEvent(
         frontmatter: FrontMatterCache | undefined,
         file: { path: string; basename: string },
@@ -85,49 +85,88 @@ export class CalEventHelper {
     ) {
         if (!frontmatter) return;
         const dateField = "fc-date" in frontmatter ? "fc-date" : "fc-start";
+        const dateString =
+            frontmatter[dateField] ??
+            (this.useFilenameForEvents ? file.basename : null);
+        if (!dateString) return;
 
-        let cat: CalEventCategory | undefined, newCategory: boolean;
-        if (frontmatter?.["fc-category"] && !this.category) {
-            cat = this.calendar.categories.find(
-                (cat) => cat?.name == frontmatter["fc-category"]
-            );
-            if (!cat) {
-                cat = {
-                    id: nanoid(6),
-                    color: randomColor(),
-                    name: frontmatter["fc-category"],
-                };
-                newCategory = true;
-                this.calendar.categories.push(cat);
-            }
-        }
+        const event = this.parseEvent(
+            {
+                dateString: dateString,
+                eventName: frontmatter["fc-display-name"] ?? file.basename,
+                eventDesc: frontmatter["fc-description"],
+                eventImage: frontmatter["fc-img"],
+                categoryString:
+                    frontmatter?.["fc-category"] ?? this.category?.id ?? null,
+                endDateString: frontmatter["fc-end"],
+            },
 
-        let date = frontmatter[dateField]
-            ? this.parseFrontmatterDate(frontmatter[dateField], file)
-            : this.useFilenameForEvents
-            ? this.parseFilenameDate(file)
-            : null;
-        if (!date) return;
-
-        let end = frontmatter["fc-end"]
-            ? this.parseFrontmatterDate(frontmatter["fc-end"], file)
-            : null;
-
-        const info = this.resolveDates(date, end);
-        let event: CalEvent = {
-            id: nanoid(6),
-            name: frontmatter["fc-display-name"] ?? file.basename,
-            description: frontmatter["fc-description"],
-            sort: this.parsedToTimestamp(date),
-            note: file.path,
-            category: (cat ?? this.category)?.id ?? null,
-            img: frontmatter["fc-img"],
-            ...info,
-        };
+            file
+        );
+        if (!event) return;
 
         publish(event);
     }
-
+    parseInlineEvents(
+        contents: string,
+        file: { path: string; basename: string },
+        publish: CalEventCallback,
+        calendarCallback: (calendar: string, element: CalEventElement) => void
+    ) {
+        const domparser = new DOMParser();
+        // span or div with attributes:
+        // <span
+        //     data-category='orange'    // optional
+        //     data-date='144-Ches'      // mixed/short: year-...
+        //     data-end='144-Ches-03-07' // mixed/full with -07 as additional for order
+        //     data-img = 'Inline Example/Event_2.jpg'
+        //     data-name='Another Event'>
+        //     Event description
+        // </span>
+        // 4 segments: year-\d+-\d+-\d+ or year-monthName-\d+-\d+
+        // For repeating events, use *
+        for (const match of contents.matchAll(inlineDateSpans)) {
+            const doc = domparser.parseFromString(match[0], "text/html");
+            const element: CalEventElement = {
+                dataset: {
+                    // Calendarium mixed-date format
+                    date: doc.documentElement.getAttribute("data-date"),
+                    end: doc.documentElement.getAttribute("data-end"),
+                    // event attributes
+                    title: doc.documentElement.getAttribute("data-name"),
+                    class: doc.documentElement.getAttribute("data-category"),
+                    img: doc.documentElement.getAttribute("data-img"),
+                    calendar: doc.documentElement.getAttribute("data-calendar"),
+                },
+                content: doc.documentElement.textContent,
+            };
+            if (!element.dataset.date) {
+                continue; // span must contain a date
+            }
+            if (
+                element.dataset.calendar &&
+                element.dataset.calendar != this.calendar.name
+            ) {
+                //different calendar
+                calendarCallback(element.dataset.calendar, element);
+            } else {
+                const event = this.parseEvent(
+                    {
+                        dateString: element.dataset.date,
+                        eventName: element.dataset.title,
+                        eventDesc: element.content,
+                        eventImage: element.dataset.img,
+                        endDateString: element.dataset.end,
+                        categoryString: element.dataset.class,
+                    },
+                    file
+                );
+                if (event) {
+                    publish(event);
+                }
+            }
+        }
+    }
     resolveDates(date: ParseDate, end: ParseDate | null): CalEventInfo {
         let event: CalEventInfo;
         if (
@@ -180,94 +219,56 @@ export class CalEventHelper {
         return event;
     }
 
-    parseInlineEvents(
-        contents: string,
-        file: { path: string; basename: string },
-        publish: CalEventCallback,
-        calendarCallback: (calendar: string, element: CalEventElement) => void
-    ) {
-        const domparser = new DOMParser();
-        // span or div with attributes:
-        // <span
-        //     data-category='orange'    // optional
-        //     data-date='144-Ches'      // mixed/short: year-...
-        //     data-end='144-Ches-03-07' // mixed/full with -07 as additional for order
-        //     data-img = 'Inline Example/Event_2.jpg'
-        //     data-name='Another Event'>
-        //     Event description
-        // </span>
-        // 4 segments: year-\d+-\d+-\d+ or year-monthName-\d+-\d+
-        // For repeating events, use *
-        for (const match of contents.matchAll(inlineDateSpans)) {
-            const doc = domparser.parseFromString(match[0], "text/html");
-            const element: CalEventElement = {
-                dataset: {
-                    // Calendarium mixed-date format
-                    date: doc.documentElement.getAttribute("data-date"),
-                    end: doc.documentElement.getAttribute("data-end"),
-                    // event attributes
-                    title: doc.documentElement.getAttribute("data-name"),
-                    class: doc.documentElement.getAttribute("data-category"),
-                    img: doc.documentElement.getAttribute("data-img"),
-                    calendar: doc.documentElement.getAttribute("data-calendar"),
-                },
-                content: doc.documentElement.textContent,
-            };
-            if (!element.dataset.date) {
-                continue; // span must contain a date
-            }
-            if (
-                element.dataset.calendar &&
-                element.dataset.calendar != this.calendar.name
-            ) {
-                //different calendar
-                calendarCallback(element.dataset.calendar, element);
-            } else {
-                const event = this.parseEventElement(element, file);
-                if (event) {
-                    publish(event);
-                }
-            }
-        }
-    }
-
-    parseEventElement(
-        element: CalEventElement,
+    parseEvent(
+        {
+            dateString,
+            eventName,
+            eventDesc,
+            eventImage,
+            endDateString,
+            categoryString,
+        }: {
+            dateString: string;
+            eventName?: string | null;
+            eventDesc?: string | null;
+            eventImage?: string | null;
+            endDateString?: string | null;
+            categoryString?: string | null;
+        },
         file: { path: string; basename: string }
     ): CalEvent | null {
-        // parse date strings, will return with all elements present: year, month, day, hour/order
-        if (!element.dataset.date) {
-            return null; // span must contain a date
+        if (!dateString) {
+            return null;
         }
-        let date = this.parseCalDateString(element.dataset.date, file);
+        let date = this.parseDate(dateString, file);
+
         if (!date) return null;
         let cat: CalEventCategory | undefined;
-        if (element.dataset.class) {
+        if (categoryString) {
             cat = this.calendar.categories.find(
-                (cat) => cat?.name == element.dataset.class
+                (cat) =>
+                    cat?.name == categoryString || cat?.id == categoryString
             );
             if (!cat) {
                 cat = {
                     id: nanoid(6),
                     color: randomColor(),
-                    name: element.dataset.class,
+                    name: categoryString,
                 };
                 this.onNewCategory?.(cat);
                 this.calendar.categories.push(cat);
             }
         }
-        let end = element.dataset.end
-            ? this.parseCalDateString(element.dataset.end, file)
-            : null;
+        let end = endDateString ? this.parseDate(endDateString, file) : null;
         const info = this.resolveDates(date, end);
         let event: CalEvent = {
             id: nanoid(6),
-            name: element.dataset.title ?? file.basename,
-            description: element.content,
+            name: eventName ?? file.basename,
+            description: eventDesc,
             sort: this.parsedToTimestamp(date),
             note: file.path,
             category: (cat ?? this.category)?.id ?? null,
-            img: element.dataset.img,
+            img: eventImage,
             ...info,
         };
 
@@ -278,11 +279,10 @@ export class CalEventHelper {
         path: string;
         basename: string;
     }): ParseDate | null {
-        // TODO: Filename formatter for this calendar?
-        return this.parseCalDateString(file.basename, file);
+        return this.parseDate(file.basename, file);
     }
 
-    parseFrontmatterDate(
+    parseDate(
         date: string | InputDate,
         file: { path: string; basename: string }
     ): ParseDate | null {
@@ -321,6 +321,8 @@ export class CalEventHelper {
         datestring: string,
         file: { path: string; basename: string }
     ): ParseDate | null {
+        console.log("🚀 ~ file: event.helper.ts:369 ~ datestring:", datestring);
+
         let datebits = datestring.split(/(?!^)[-–—](?![^[]*])/);
         if (this.formatDigest != "YMD" && datebits.length < 3) {
             logError(
