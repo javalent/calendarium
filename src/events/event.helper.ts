@@ -513,20 +513,26 @@ export class CalEventHelper {
     parsedToTimestamp(date: ParseDate): CalEventSort {
         // put repeating events off to the side
         if (
-            [date.year].flat().some((y) => y == null) ||
-            [date.month].flat().some((m) => m == null) ||
-            [date.day].flat().some((d) => d == null)
+            [date.year].flat().every((y) => y == null) ||
+            [date.month].flat().every((m) => m == null) ||
+            [date.day].flat().every((d) => d == null)
         ) {
             return {
                 timestamp: Number.MIN_VALUE,
                 order: date.order ? date.order : this.generateTimeStamp(date),
             };
         }
+        let year: number;
+        if (Array.isArray(date.year)) {
+            year = date.year[0] ?? Number.MIN_VALUE;
+        } else {
+            year = date.year ?? Number.MIN_VALUE;
+        }
+
         // otherwise create a date string
-        // TODO: pad month by number of months & days by max days
         return {
             timestamp: Number(
-                `${date.year}${toPaddedString(
+                `${year}${toPaddedString(
                     [date.month].flat()[0],
                     this.calendar,
                     "month"
