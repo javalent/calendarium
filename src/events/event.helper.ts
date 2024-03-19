@@ -8,7 +8,7 @@ import type {
     CalEventCategory,
     CalEventDate,
     CalEventSort,
-    RangedCalEventDate,
+    RecurringCalEventDate,
     CalEventInfo,
     DatedCalEvent,
 } from "../@types";
@@ -137,7 +137,7 @@ export class CalEventHelper {
         ) {
             event = {
                 type: EventType.Recurring,
-                date: date as RangedCalEventDate,
+                date: date as RecurringCalEventDate,
             };
         } else if (
             date.year === null ||
@@ -155,7 +155,7 @@ export class CalEventHelper {
             }
             event = {
                 type: EventType.Recurring,
-                date: date as RangedCalEventDate,
+                date: date as RecurringCalEventDate,
             };
         } else if (end) {
             if (
@@ -488,27 +488,35 @@ export class CalEventHelper {
             order: input.order || "",
         };
     }
+    #stringifyDateBit(bit: string[]): string {
+        return (
+            (bit.length > 1 ? "[" : "") +
+            bit.join("-") +
+            (bit.length > 1 ? "]" : "")
+        );
+    }
     generateTimeStamp(date: ParseDate): string {
-        const year = date.year ?? "*";
+        const year = Array.isArray(date.year)
+            ? [date.year].flat().map((y) => `${y ?? "*"}`)
+            : [`${date.year ?? "*"}`];
+
         const month = [date.month]
             .flat()
             .map((m) => toPaddedString(m, this.calendar, "month"));
         const day = [date.day]
             .flat()
             .map((m) => toPaddedString(m, this.calendar, "day"));
-        return `${year}-${
-            (month.length > 1 ? "[" : "") +
-            month.join("-") +
-            (month.length > 1 ? "]" : "")
-        }-${
-            (day.length > 1 ? "[" : "") +
-            day.join("-") +
-            (day.length > 1 ? "]" : "")
-        }`;
+        return `${this.#stringifyDateBit(year)}-${this.#stringifyDateBit(
+            month
+        )}-${this.#stringifyDateBit(day)}`;
     }
     parsedToTimestamp(date: ParseDate): CalEventSort {
         // put repeating events off to the side
-        if (date.year == null || date.month == null || date.day == null) {
+        if (
+            [date.year].flat().some((y) => y == null) ||
+            [date.month].flat().some((m) => m == null) ||
+            [date.day].flat().some((d) => d == null)
+        ) {
             return {
                 timestamp: Number.MIN_VALUE,
                 order: date.order ? date.order : this.generateTimeStamp(date),
