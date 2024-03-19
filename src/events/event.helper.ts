@@ -321,8 +321,6 @@ export class CalEventHelper {
         datestring: string,
         file: { path: string; basename: string }
     ): ParseDate | null {
-        console.log("🚀 ~ file: event.helper.ts:369 ~ datestring:", datestring);
-
         let datebits = datestring.split(/(?!^)[-–—](?![^[]*])/);
         if (this.formatDigest != "YMD" && datebits.length < 3) {
             logError(
