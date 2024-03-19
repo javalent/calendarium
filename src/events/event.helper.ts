@@ -606,11 +606,20 @@ function wildNullNumber(data: any): [DateBit, DateBit] | DateBit {
     if (typeof data == "number") {
         return data;
     }
-    if (typeof data == "string" && /[-–—]/.test(data)) {
-        return data
+    if (typeof data == "string" && /\[.+?\]/.test(data)) {
+        const transformed = data
             .slice(1, -1)
             .split("-")
-            .map((v) => wildNullNumber(v) as DateBit) as [DateBit, DateBit];
+            .map((v) => wildNullNumber(v) as DateBit)
+            .sort((a, b) => {
+                if (typeof a === "number" && typeof b === "number") {
+                    return a - b;
+                }
+                return 0;
+            });
+        if (transformed.length === 1) return transformed[0];
+        if (transformed.length > 2) return [transformed[0], transformed.pop()!];
+        return transformed as [DateBit, DateBit];
     }
 
     return parseInt(data); // may return NaN, that's ok
