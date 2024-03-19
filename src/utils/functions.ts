@@ -338,12 +338,8 @@ export function areDatesEqual(date: CalDate, date2: CalDate) {
 }
 
 function resolve(number: FullCalEventDateBit): number {
-    number = number ?? Number.MIN_VALUE;
-    return Array.isArray(number)
-        ? (number.reduce(
-              ($1, $2) => ($1 ?? Number.MIN_VALUE) + ($2 ?? Number.MIN_VALUE)
-          ) as number)
-        : number;
+    if (Array.isArray(number)) return Number.MIN_VALUE;
+    return number ?? Number.MIN_VALUE;
 }
 function compare(a: FullCalEventDateBit, b: FullCalEventDateBit) {
     return resolve(a) != resolve(b);
