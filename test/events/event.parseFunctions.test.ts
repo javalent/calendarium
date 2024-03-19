@@ -66,7 +66,7 @@ test("parseFrontmatterDate / parseFilename", () => {
         order: "",
     };
     // read date string from frontmatter
-    expect(gregorian.parseFrontmatterDate("1966-04", file)).toEqual(expected);
+    expect(gregorian.parseDate("1966-04", file)).toEqual(expected);
 
     // read date from filename
     expect(
@@ -78,7 +78,7 @@ test("parseFrontmatterDate / parseFilename", () => {
 
     // read date from object
     expect(
-        gregorian.parseFrontmatterDate(
+        gregorian.parseDate(
             {
                 year: 1966,
                 month: 4,
@@ -98,7 +98,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
     };
     // read date string from frontmatter
     expect(
-        gregorian.parseFrontmatterDate("1966-04-01-01 some extra flavor", file)
+        gregorian.parseDate("1966-04-01-01 some extra flavor", file)
     ).toEqual(expected);
 
     // read date from filename
@@ -111,7 +111,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
 
     // read date from object
     expect(
-        gregorian.parseFrontmatterDate(
+        gregorian.parseDate(
             {
                 year: 1966,
                 month: 4,
@@ -224,26 +224,26 @@ test("parseTimelineEvent", () => {
 
 test("Repeating events", () => {
     const expected: ParseDate = {
-        year: null,
-        month: null,
-        day: null,
+        year: [null, null],
+        month: [null, null],
+        day: [null, null],
         order: "",
     };
     expect(gregorian.parseCalDateString("*-*-*", file)).toEqual(expected);
 
-    expect(gregorian.parseFrontmatterDate({}, file)).toEqual(expected);
+    expect(gregorian.parseDate({}, file)).toEqual(expected);
 
     expect(gregorian.parsedToTimestamp(expected)).toEqual({
         timestamp: Number.MIN_VALUE,
-        order: "*-*-*",
+        order: "[*-*]-[*-*]-[*-*]",
     });
 });
 
 test("Repeating events with extra", () => {
     const expected: ParseDate = {
-        year: null,
-        month: null,
-        day: null,
+        year: [null, null],
+        month: [null, null],
+        day: [null, null],
         order: "01 some extra flavor",
     };
     expect(
@@ -251,7 +251,7 @@ test("Repeating events with extra", () => {
     ).toEqual(expected);
 
     expect(
-        gregorian.parseFrontmatterDate(
+        gregorian.parseDate(
             {
                 order: "01 some extra flavor",
             },
@@ -267,9 +267,9 @@ test("Repeating events with extra", () => {
 
 test("Repeating events with extra", () => {
     const expected: ParseDate = {
-        year: null,
-        month: null,
-        day: null,
+        year: [null, null],
+        month: [null, null],
+        day: [null, null],
         order: "01 some extra flavor",
     };
     expect(
@@ -277,7 +277,7 @@ test("Repeating events with extra", () => {
     ).toEqual(expected);
 
     expect(
-        gregorian.parseFrontmatterDate(
+        gregorian.parseDate(
             {
                 order: "01 some extra flavor",
             },
@@ -295,15 +295,15 @@ test("Range Events", () => {
         year: [2018, 2024],
         month: 2,
         day: 1,
-        order: "", 
+        order: "",
     });
     expect(gregorian.parseCalDateString("[1991-*]-01-10", file)).toEqual({
         year: [1991, null],
         month: 0,
         day: 10,
-        order: "", 
+        order: "",
     });
-    
+
     expect(gregorian.parseCalDateString("2024-[02-03]-01", file)).toEqual({
         year: 2024,
         month: [1, 2],

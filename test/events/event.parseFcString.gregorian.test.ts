@@ -1,13 +1,21 @@
 /**
  * @vitest-environment happy-dom
  */
-import type { CalDate, CalEvent } from "../../src/@types";
+import type {
+    CalDate,
+    CalEvent,
+    CalEventDate,
+    RangeCalEvent,
+    RecurringCalEvent,
+    RecurringCalEventDate,
+} from "../../src/@types";
 import { CalEventHelper, ParseDate } from "../../src/events/event.helper";
 import { dateString, sortEventList } from "../../src/utils/functions";
 import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { vi, test, expect } from "vitest";
 
 import Moment from "moment";
+import { EventType } from "../../src/events/event.types";
 Object.defineProperty(window, "moment", { value: Moment });
 
 const GREGORIAN = PRESET_CALENDARS.find((p) => p.name == "Gregorian Calendar");
@@ -131,19 +139,18 @@ test("Sort Gregorian dates", () => {
 
     const calEvents: CalEvent[] = events.map((x) => {
         return {
-            date: x!,
+            date: x! as CalEventDate,
             description: "Test",
             id: "test",
             name: "Test",
             note: "Test",
             category: "Test",
             sort: helper.parsedToTimestamp(x!),
-            type: "Test",
+            type: EventType.Date,
         };
     });
 
     const sorted = sortEventList(calEvents);
-    console.log(sorted);
 
     expect(sorted[0].date).toEqual(events[4]);
     expect(sorted[1].date).toEqual(events[3]);
@@ -152,10 +159,8 @@ test("Sort Gregorian dates", () => {
     expect(sorted[4].date).toEqual(events[0]);
     expect(sorted[5].date).toEqual(events[1]);
     expect(sorted[6].date).toEqual(events[5]);
-
-    console.log(sorted);
 });
-/* 
+
 test("Parse Range dates", () => {
     const events = [
         helper.parseCalDateString("[1991-1993]-January-10", file),
@@ -172,21 +177,29 @@ test("Parse Range dates", () => {
         helper.parseCalDateString("1991-January-[*-10]", file),
         helper.parseCalDateString("1991-January-[10]", file),
         helper.parseCalDateString("1991-January-[*-*]", file),
-        helper.parseCalDateString("[1991-1993]-[January-February]-[10-12]", file),
+        helper.parseCalDateString(
+            "[1991-1993]-[January-February]-[10-12]",
+            file
+        ),
         helper.parseCalDateString("*-[January-February]-10", file),
     ];
 
-    const calEvents: CalEvent[] = events.map((x) => {
+    const calEvents: RecurringCalEvent[] = events.map((x) => {
         return {
-            date: x!,
+            date: x! as RecurringCalEventDate,
             description: "Test",
             id: "test",
-
             name: "Test",
             note: "Test",
             category: "Test",
             sort: helper.parsedToTimestamp(x!),
-            type: "Test",
+            type: EventType.Recurring,
         };
     });
-}); */
+
+    const sorted = sortEventList(calEvents);
+    console.log(
+        "🚀 ~ file: event.parseFcString.gregorian.test.ts:202 ~ sorted:",
+        sorted
+    );
+});

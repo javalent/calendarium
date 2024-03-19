@@ -1,13 +1,14 @@
 /**
  * @vitest-environment happy-dom
  */
-import type { CalDate, CalEvent } from "../../src/@types";
+import type { CalDate, CalEvent, CalEventDate } from "../../src/@types";
 import { CalEventHelper, ParseDate } from "../../src/events/event.helper";
 import { dateString, sortEventList } from "../../src/utils/functions";
 import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { vi, test, expect } from "vitest";
 
 import Moment from "moment";
+import { EventType } from "../../src/events/event.types";
 Object.defineProperty(window, "moment", { value: Moment });
 
 const HARPTOS = PRESET_CALENDARS.find((p) => p.name == "Calendar of Harptos");
@@ -370,14 +371,14 @@ test("Sort Harptos dates", () => {
 
     const fcEvents: CalEvent[] = events.map((x) => {
         return {
-            date: x!,
+            date: x! as CalEventDate,
             description: "Test",
             id: "test",
             name: "Test",
             note: "Test",
             category: "Test",
             sort: helper.parsedToTimestamp(x!),
-            type: "Test",
+            type: EventType.Date,
         };
     });
 
@@ -398,6 +399,4 @@ test("Sort Harptos dates", () => {
     expect(sorted[12].date).toEqual(events[12]);
     expect(sorted[13].date).toEqual(events[10]);
     expect(sorted[14].date).toEqual(events[11]);
-
-    console.log(sorted);
 });
