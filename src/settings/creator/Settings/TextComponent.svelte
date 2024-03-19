@@ -1,16 +1,16 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
-    const dispatch = createEventDispatcher();
+    type T = $$Generic<string | number>;
 
-    export let value: string | number;
+    export let value: T;
     export let name: string;
     export let warn: boolean = false;
     export let type = "text";
-
     export let desc: string | DocumentFragment;
-
     export let placeholder = name;
+
+    const dispatch = createEventDispatcher<{ change: T; blur: T }>();
     const descEl = (node: HTMLElement) => {
         node.append((desc as DocumentFragment).cloneNode(true));
     };
