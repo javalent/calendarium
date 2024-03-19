@@ -220,7 +220,17 @@ class Parser {
                     const otherHelper = this.getHelperByName(calendar);
                     //no calendar was found
                     if (!otherHelper) return;
-                    const event = otherHelper.parseEventElement(element, file);
+                    const event = otherHelper.parseEvent(
+                        {
+                            dateString: element.dataset.date!,
+                            eventName: element.dataset.title,
+                            eventDesc: element.content,
+                            eventImage: element.dataset.img,
+                            endDateString: element.dataset.end,
+                            categoryString: element.dataset.class,
+                        },
+                        file
+                    );
                     if (!event) return;
                     if (this.debug) {
                         console.info(
