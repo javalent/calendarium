@@ -36,16 +36,6 @@
     const close = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon(CLOSE).setTooltip("Close");
     };
-    const reveal = (node: HTMLElement) => {
-        new ExtraButtonComponent(node)
-            .setIcon(CALENDAR_SEARCH)
-            .setTooltip("Reveal");
-    };
-    const event = (node: HTMLElement) => {
-        new ExtraButtonComponent(node)
-            .setIcon(ADD_EVENT)
-            .setTooltip("New event");
-    };
 </script>
 
 <div class="day-view">
@@ -53,7 +43,7 @@
     <div class="nav">
         <div
             use:setClickableIcon={CALENDAR_SEARCH}
-            aria-label="Reveal"
+            aria-label="Reveal on Calendar"
             on:click={() => {
                 $ephemeral.displayDate($viewing);
             }}
