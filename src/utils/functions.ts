@@ -1,5 +1,11 @@
 import type { LeapDay, Day } from "src/schemas/calendar/timespans";
-import type { Calendar, CalDate, CalEvent, CalEventDate } from "../@types";
+import type {
+    Calendar,
+    CalDate,
+    CalEvent,
+    CalEventDate,
+    FullCalEventDateBit,
+} from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
 import type { DateBit } from "src/events/event.helper";
 
@@ -248,7 +254,7 @@ export function toShortMonthString(
 export function toPaddedString(
     data: [DateBit, DateBit] | DateBit,
     calendar: Calendar,
-    field: string
+    field: "month" | "day" | "year"
 ): string {
     const padding =
         field == "month" ? calendar.static.padMonths : calendar.static.padDays;
@@ -331,11 +337,15 @@ export function areDatesEqual(date: CalDate, date2: CalDate) {
     return true;
 }
 
-function resolve(number: number | number[] | null): number {
+function resolve(number: FullCalEventDateBit): number {
     number = number ?? Number.MIN_VALUE;
-    return Array.isArray(number) ? number.reduce(($1, $2) => $1 + $2) : number;
+    return Array.isArray(number)
+        ? (number.reduce(
+              ($1, $2) => ($1 ?? Number.MIN_VALUE) + ($2 ?? Number.MIN_VALUE)
+          ) as number)
+        : number;
 }
-function compare(a: number | number[] | null, b: number | number[] | null) {
+function compare(a: FullCalEventDateBit, b: FullCalEventDateBit) {
     return resolve(a) != resolve(b);
 }
 
