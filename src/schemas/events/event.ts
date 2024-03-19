@@ -9,16 +9,18 @@ export type CalEventSort = {
 };
 
 export type CalEventDate = {
-    year: number | null;
-    month: number | null;
-    day: number | null;
+    year: number;
+    month: number;
+    day: number;
 };
 
-export type RangedCalEventDate = {
-    year: Array<number> | number | null;
-    month: Array<number> | number | null;
-    day: Array<number> | number | null;
+export type RecurringCalEventDate = {
+    year: FullCalEventDateBit;
+    month: FullCalEventDateBit;
+    day: FullCalEventDateBit;
 };
+
+export type FullCalEventDateBit = [number | null, number | null] | number;
 
 type Formula = {
     type: "interval";
@@ -52,7 +54,7 @@ export type RangeCalEvent = BaseCalEvent & RangeCalEventInfo;
 
 export type RangedCalEventInfo = {
     type: typeof EventType.Recurring;
-    date: RangedCalEventDate;
+    date: RecurringCalEventDate;
 };
 export type RecurringCalEvent = BaseCalEvent & RangedCalEventInfo;
 
