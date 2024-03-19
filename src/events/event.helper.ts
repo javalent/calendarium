@@ -139,6 +139,24 @@ export class CalEventHelper {
                 type: EventType.Recurring,
                 date: date as RangedCalEventDate,
             };
+        } else if (
+            date.year === null ||
+            date.month === null ||
+            date.day === null
+        ) {
+            if (date.year === null) {
+                date.year = [null, null];
+            }
+            if (date.month === null) {
+                date.month = [null, null];
+            }
+            if (date.day === null) {
+                date.day = [null, null];
+            }
+            event = {
+                type: EventType.Recurring,
+                date: date as RangedCalEventDate,
+            };
         } else if (end) {
             if (
                 Array.isArray(end.day) ||
@@ -411,12 +429,12 @@ export class CalEventHelper {
         file: { path: string; basename: string },
         datestring?: string
     ): ParseDate | null {
-        const year = wildNullNumber(input.year);
+        let year = wildNullNumber(input.year);
         let month = wildNullNumber(input.month);
         let day = wildNullNumber(input.day);
 
         if (input.year === "*") {
-            // repeating, this is fine
+            year = [null, null];
         } else if (!input.year || [year].flat().some((y) => Number.isNaN(y))) {
             logError(
                 `Must specify a valid year: ${year}`,
@@ -428,7 +446,7 @@ export class CalEventHelper {
         }
 
         if (input.month === "*") {
-            // repeating, this is fine
+            month = [null, null];
         } else if (Array.isArray(month)) {
             month = month.map((m) => this.resolveMonth(m, input.month)) as [
                 DateBit,
@@ -438,7 +456,7 @@ export class CalEventHelper {
             month = this.resolveMonth(month, input.month);
         }
         if (input.day === "*") {
-            // repeating, this is fine
+            day = [null, null];
         } else if (Array.isArray(day)) {
             const results = day.map((d) =>
                 this.resolveDay(d, month, year, input)
