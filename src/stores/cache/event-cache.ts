@@ -2,12 +2,10 @@ import type {
     CalDate,
     CalEvent,
     CalEventDate,
-    RangedCalEventDate,
+    RecurringCalEventDate,
 } from "src/@types";
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
 import { EventType } from "src/events/event.types";
-import type { Readable } from "svelte/motion";
-import { derived } from "svelte/store";
 class YearEventCache extends YearCache<CalEvent> {
     update(events: CalEvent[]) {
         return (events ?? [])?.filter((event) => {
@@ -272,7 +270,7 @@ export class EventCache extends EntityCache<CalEvent> {
         if (monthCache.cache.has(day)) return monthCache.cache.get(day)!;
         return new DayEventCache(day, month, year, monthCache.entities);
     }
-    public override invalidate(date: CalEventDate | RangedCalEventDate) {
+    public override invalidate(date: CalEventDate | RecurringCalEventDate) {
         const yearCaches: YearCache<CalEvent>[] = [];
         if (date.year == null) {
             for (const cache of this.cache.values()) {
