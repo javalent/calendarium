@@ -8,7 +8,7 @@ export type CalEventSort = {
     order: string;
 };
 
-export type CalEventDate = {
+export type OneTimeCalEventDate = {
     year: number;
     month: number;
     day: number;
@@ -19,6 +19,8 @@ export type RecurringCalEventDate = {
     month: FullCalEventDateBit;
     day: FullCalEventDateBit;
 };
+
+export type CalEventDate = OneTimeCalEventDate | RecurringCalEventDate;
 
 export type FullCalEventDateBit = [number | null, number | null] | number;
 
@@ -41,14 +43,14 @@ type BaseCalEvent = {
 
 export type DatedCalEventInfo = {
     type?: typeof EventType.Date;
-    date: CalEventDate;
+    date: OneTimeCalEventDate;
 };
 export type DatedCalEvent = BaseCalEvent & DatedCalEventInfo;
 
 export type RangeCalEventInfo = {
     type: typeof EventType.Range;
-    date: CalEventDate;
-    end: CalEventDate;
+    date: OneTimeCalEventDate;
+    end: OneTimeCalEventDate;
 };
 export type RangeCalEvent = BaseCalEvent & RangeCalEventInfo;
 

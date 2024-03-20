@@ -1,7 +1,7 @@
 import type {
     CalDate,
     CalEvent,
-    CalEventDate,
+    OneTimeCalEventDate,
     RecurringCalEventDate,
 } from "src/@types";
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
@@ -160,7 +160,7 @@ class DayEventCache extends DayCache<CalEvent> {
             year: this.year,
         };
     }
-    isBefore(date: CalEventDate): boolean {
+    isBefore(date: OneTimeCalEventDate): boolean {
         const normalized = this.normalize(date);
         if (normalized.year < this.year) return true;
         if (normalized.month < this.month && normalized.year === this.year)
@@ -173,7 +173,7 @@ class DayEventCache extends DayCache<CalEvent> {
             return true;
         return false;
     }
-    isAfter(date: CalEventDate): boolean {
+    isAfter(date: OneTimeCalEventDate): boolean {
         const normalized = this.normalize(date);
         if (normalized.year > this.year) return true;
         if (normalized.month > this.month && normalized.year === this.year)
@@ -186,7 +186,7 @@ class DayEventCache extends DayCache<CalEvent> {
             return true;
         return false;
     }
-    isEqual(date: CalEventDate): boolean {
+    isEqual(date: OneTimeCalEventDate): boolean {
         const normalized = this.normalize(date);
         return (
             normalized.year == this.year &&
@@ -194,7 +194,7 @@ class DayEventCache extends DayCache<CalEvent> {
             normalized.day == this.day
         );
     }
-    normalize(date: CalEventDate): CalDate {
+    normalize(date: OneTimeCalEventDate): CalDate {
         const _date = { ...date };
         if (_date.day == null) {
             _date.day = this.date.day;
@@ -207,7 +207,7 @@ class DayEventCache extends DayCache<CalEvent> {
         }
         return _date as CalDate;
     }
-    isUndefined(date: CalEventDate): boolean {
+    isUndefined(date: OneTimeCalEventDate): boolean {
         return date.day === null && date.month === null && date.year === null;
     }
     update(events: CalEvent[]) {
@@ -270,7 +270,7 @@ export class EventCache extends EntityCache<CalEvent> {
         if (monthCache.cache.has(day)) return monthCache.cache.get(day)!;
         return new DayEventCache(day, month, year, monthCache.entities);
     }
-    public override invalidate(date: CalEventDate | RecurringCalEventDate) {
+    public override invalidate(date: OneTimeCalEventDate | RecurringCalEventDate) {
         const yearCaches: YearCache<CalEvent>[] = [];
         if (date.year == null) {
             for (const cache of this.cache.values()) {

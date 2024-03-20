@@ -11,6 +11,7 @@ import type {
     RecurringCalEventDate,
     CalEventInfo,
     DatedCalEvent,
+    OneTimeCalEventDate,
 } from "../@types";
 import { DEFAULT_FORMAT } from "../utils/constants";
 import randomColor from "randomcolor";
@@ -206,13 +207,13 @@ export class CalEventHelper {
             }
             event = {
                 type: EventType.Range,
-                date: date as CalEventDate,
-                end: end as CalEventDate,
+                date: date as OneTimeCalEventDate,
+                end: end as OneTimeCalEventDate,
             };
         } else {
             event = {
                 type: EventType.Date,
-                date: date as CalEventDate,
+                date: date as OneTimeCalEventDate,
             };
         }
 
