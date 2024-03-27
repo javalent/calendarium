@@ -6,3 +6,6 @@
         <slot name="desc" />
     </div>
 </div>
+<div class="setting-item-control">
+    <slot name="control" />
+</div>
