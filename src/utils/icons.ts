@@ -19,6 +19,7 @@ export const MONTH = "calendar-days";
 export const UNDO = "undo";
 export const REDO = "redo";
 export const RESET = "reset";
+export const HELP = "info";
 
 export const ADD = "plus-with-circle";
 export const ADD_EVENT = "calendar-plus";
