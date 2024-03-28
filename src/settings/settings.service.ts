@@ -709,19 +709,19 @@ export default class SettingsService {
                     ) {
                         (event as any as RecurringCalEvent).type =
                             EventType.Recurring;
-                        if (!event.date.year) {
+                        if (!event.date.year == null) {
                             (event as any as RecurringCalEvent).date.year = [
                                 null,
                                 null,
                             ];
                         }
-                        if (!event.date.month) {
+                        if (event.date.month == null) {
                             (event as any as RecurringCalEvent).date.month = [
                                 null,
                                 null,
                             ];
                         }
-                        if (!event.date.day) {
+                        if (!event.date.day == null) {
                             (event as any as RecurringCalEvent).date.day = [
                                 null,
                                 null,
