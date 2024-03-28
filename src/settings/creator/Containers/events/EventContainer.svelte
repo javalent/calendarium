@@ -9,7 +9,7 @@
     import { ExtraButtonComponent, prepareSimpleSearch } from "obsidian";
     import { getContext } from "svelte";
     import { derived, writable } from "svelte/store";
-    import { ADD, TRASH } from "src/utils/icons";
+    import { ADD, RESET, TRASH } from "src/utils/icons";
     import { eventDateString } from "src/utils/functions";
     import Pagination from "./Pagination.svelte";
     import Search from "./filters/Search.svelte";
@@ -91,7 +91,22 @@
         }
     };
     const resetIcon = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("reset");
+        new ExtraButtonComponent(node).setIcon(RESET);
+    };
+    const deleteIcon = (node: HTMLElement) => {
+        new ExtraButtonComponent(node).setIcon(TRASH).onClick(async () => {
+            if (
+                await confirmWithModal(
+                    plugin.app,
+                    "Are you sure you want to delete the filtered events from this calendar?",
+                )
+            ) {
+                eventStore.set(
+                    $eventStore.filter((e) => !$filtered.includes(e)),
+                );
+                $nameFilter = "";
+            }
+        });
     };
     const reset = () => {
         $nameFilter = "";
@@ -112,9 +127,10 @@
     <div class="setting-item filters-container">
         <Search filter={nameFilter} placeholder={"Search events"} />
         <div use:resetIcon on:click={() => reset()} />
+        <div use:deleteIcon />
     </div>
     <div class="existing-items setting-item">
-        {#each $sliced as event}
+        {#each $sliced as event (event.id)}
             <EventInstance
                 {event}
                 category={getCategory(event.category)}
