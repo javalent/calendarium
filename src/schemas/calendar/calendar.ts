@@ -12,6 +12,12 @@ export type CalDate = {
     month: number;
     day: number;
 };
+
+export type UndatedCalDate = {
+    year: null;
+    month: null;
+    day: null;
+};
 /**
  * Static
  */
@@ -41,7 +47,6 @@ type BaseCalendar = {
     name: string | null;
     description: string;
     static: StaticCalendarData;
-    current: CalDate | CalEventDate;
     events: CalEvent[];
     categories: CalEventCategory[];
     date?: number;
@@ -63,5 +68,5 @@ export type Calendar = BaseCalendar & {
 export type PresetCalendar = BaseCalendar & {
     id: null;
     name: string | null;
-    current: CalEventDate;
+    current: UndatedCalDate | CalDate;
 };

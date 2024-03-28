@@ -7,6 +7,7 @@ export const EventType = Object.freeze({
     Date: "Date",
     Range: "Range",
     Recurring: "Recurring",
+    Undated: "Undated",
     // …
 });
 

@@ -1,4 +1,5 @@
 import type { EventType } from "src/events/event.types";
+import type { UndatedCalDate } from "../calendar";
 
 /**
  * Events
@@ -25,12 +26,6 @@ export type CalEventDate = OneTimeCalEventDate | RecurringCalEventDate;
 export type RecurringCalEventDateBit = [number | null, number | null];
 export type FullCalEventDateBit = RecurringCalEventDateBit | number;
 
-type Formula = {
-    type: "interval";
-    number: number;
-    timespan: "days";
-};
-
 type BaseCalEvent = {
     id: string;
     name: string;
@@ -47,6 +42,11 @@ export type DatedCalEventInfo = {
     date: OneTimeCalEventDate;
 };
 export type DatedCalEvent = BaseCalEvent & DatedCalEventInfo;
+export type UndatedCalEventInfo = {
+    type: typeof EventType.Undated;
+    date: UndatedCalDate;
+};
+export type UndatedCalEvent = BaseCalEvent & UndatedCalEventInfo;
 
 export type RangeCalEventInfo = {
     type: typeof EventType.Range;
@@ -69,8 +69,13 @@ export type RecurringCalEvent = BaseCalEvent & RangedCalEventInfo;
 export type CalEventInfo =
     | DatedCalEventInfo
     | RangedCalEventInfo
-    | RangeCalEventInfo;
-export type CalEvent = DatedCalEvent | RecurringCalEvent | RangeCalEvent; /* 
+    | RangeCalEventInfo
+    | UndatedCalEventInfo;
+export type CalEvent =
+    | DatedCalEvent
+    | RecurringCalEvent
+    | RangeCalEvent
+    | UndatedCalEvent; /* 
     | FormulaCalEvent; */
 
 export type CalEventCategory = {
