@@ -30,10 +30,12 @@
             {event.name}
         </span>
         <div class="setting-item-description">
-            <div class="date">
-                {date}
-            </div>
-            <span class="clamp">{event.description ?? ""}</span>
+            <span class="date">
+                <em>
+                    {date}
+                </em>
+            </span>
+            <p class="clamp">{event.description ?? ""}</p>
         </div>
     </div>
 

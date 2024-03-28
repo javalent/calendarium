@@ -1,8 +1,6 @@
 <script lang="ts">
     import type { CalEvent } from "src/@types";
-    import { dateString } from "src/utils/functions";
     import EventInstance from "./EventInstance.svelte";
-    import AddNew from "../../Utilities/AddNew.svelte";
     import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
     import { CreateEventModal } from "src/settings/modals/event/event";
     import Details from "../../Utilities/Details.svelte";
@@ -17,6 +15,7 @@
     import { getContext } from "svelte";
     import { derived, writable } from "svelte/store";
     import { ADD, TRASH } from "src/utils/icons";
+    import { eventDateString } from "src/utils/functions";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
@@ -54,7 +53,7 @@
         return $calendar.categories.find(({ id }) => id == category);
     };
     const add = (event?: CalEvent) => {
-        /* const modal = new CreateEventModal($calendar, event);
+        const modal = new CreateEventModal($calendar, plugin, event);
         modal.onClose = () => {
             if (!modal.saved) return;
             if (modal.editing && event) {
@@ -63,7 +62,7 @@
                 eventStore.add({ ...modal.event });
             }
         };
-        modal.open(); */
+        modal.open();
     };
     const deleteAll = async () => {
         if (
@@ -123,13 +122,13 @@
     <ButtonComponent name={"Add event"} icon={ADD} on:click={() => add()} />
     <div class="existing-items">
         {#each $sliced as event}
-            <!-- <EventInstance
+            <EventInstance
                 {event}
                 category={getCategory(event.category)}
-                date={dateString(event.date, $calendar, event.end)}
+                date={eventDateString(event, $calendar)}
                 on:edit={() => add(event)}
                 on:delete={() => deleteEvent(event)}
-            /> -->
+            />
         {:else}
             <div />
             <div class="setting-item">
