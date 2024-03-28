@@ -6,44 +6,60 @@
     import Details from "../../Utilities/Details.svelte";
     import ButtonComponent from "../../Settings/ButtonComponent.svelte";
     import { confirmWithModal } from "src/settings/modals/confirm";
-    import {
-        Setting,
-        prepareFuzzySearch,
-        debounce,
-        SearchComponent,
-    } from "obsidian";
+    import { ExtraButtonComponent, prepareSimpleSearch } from "obsidian";
     import { getContext } from "svelte";
     import { derived, writable } from "svelte/store";
     import { ADD, TRASH } from "src/utils/icons";
     import { eventDateString } from "src/utils/functions";
+    import Pagination from "./Pagination.svelte";
+    import Search from "./filters/Search.svelte";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
     const { eventStore } = calendar;
     const { sortedStore } = eventStore;
 
-    const slicer = writable(1);
-    let filtered = false;
     let nameFilter = writable<string>("");
 
-    const sorted = derived([sortedStore, nameFilter], ([events, filter]) => {
-        if (!filter || !filter.length) {
-            filtered = false;
-            return events;
-        }
-        const results = [];
+    const slice = writable(50);
+    const page = writable(1);
+    const filtered = derived([sortedStore, nameFilter], ([events, name]) => {
+        let toConsider: CalEvent[] = [];
         for (const event of events) {
-            const result = prepareFuzzySearch(filter)(event.name);
-            if (result) {
-                results.push(event);
+            let should = true;
+            if (name.length) {
+                const search = prepareSimpleSearch(name);
+                if (!search(event.name)) {
+                    should = false;
+                } else {
+                    should = true;
+                }
+                if (event.description?.length) {
+                    const search = prepareSimpleSearch(name);
+
+                    if (!search(event.description)) {
+                        should = false;
+                    } else {
+                        should = true;
+                    }
+                }
+            }
+            if (should) {
+                toConsider.push(event);
             }
         }
-        filtered = true;
-        return results;
+
+        return toConsider;
     });
 
-    const sliced = derived([sorted, slicer], ([events, slicer]) =>
-        events.slice(0, 100 * slicer),
+    const pages = derived([slice, filtered], ([slice, filtered]) =>
+        Math.ceil(filtered.length / slice),
+    );
+    const sliced = derived(
+        [filtered, slice, page],
+        ([filtered, slice, page]) => {
+            return filtered.slice((page - 1) * slice, page * slice);
+        },
     );
 
     const deleteEvent = (item: CalEvent) => {
@@ -74,53 +90,30 @@
             eventStore.set([]);
         }
     };
-    const filter = (node: HTMLElement) => {
-        node.createDiv();
-        let search: SearchComponent;
-        new Setting(node)
-            .setName("Filter events")
-            .addSearch((s) => {
-                search = s;
-                s.onChange(
-                    debounce((v) => {
-                        $nameFilter = v;
-                    }, 250),
-                );
-            })
-            .addExtraButton((b) => {
-                b.setIcon(TRASH)
-                    .setTooltip("Delete filtered events")
-                    .onClick(async () => {
-                        if (
-                            await confirmWithModal(
-                                plugin.app,
-                                "Are you sure you want to delete the filtered events from this calendar?",
-                            )
-                        ) {
-                            eventStore.set(
-                                $eventStore.filter((e) => !$sorted.includes(e)),
-                            );
-                            search.setValue("");
-                            $nameFilter = "";
-                        }
-                    });
-            });
+    const resetIcon = (node: HTMLElement) => {
+        new ExtraButtonComponent(node).setIcon("reset");
+    };
+    const reset = () => {
+        $nameFilter = "";
     };
 </script>
 
 <Details
     name={"Events"}
-    desc={`Displaying ${$sorted.length}/${$calendar.events.length} events.`}
+    desc={`Displaying ${$filtered.length}/${$calendar.events.length} events.`}
 >
     <ButtonComponent
         name={"Delete all events"}
         icon={TRASH}
         on:click={() => deleteAll()}
     />
-    <div class="filter" use:filter />
-    <!-- <AddNew on:click={() => add()} /> -->
+
     <ButtonComponent name={"Add event"} icon={ADD} on:click={() => add()} />
-    <div class="existing-items">
+    <div class="setting-item filters-container">
+        <Search filter={nameFilter} placeholder={"Search events"} />
+        <div use:resetIcon on:click={() => reset()} />
+    </div>
+    <div class="existing-items setting-item">
         {#each $sliced as event}
             <EventInstance
                 {event}
@@ -128,9 +121,9 @@
                 date={eventDateString(event, $calendar)}
                 on:edit={() => add(event)}
                 on:delete={() => deleteEvent(event)}
+                {nameFilter}
             />
         {:else}
-            <div />
             <div class="setting-item">
                 <NoExistingItems
                     message={"Create a new event to see it here."}
@@ -138,19 +131,20 @@
             </div>
         {/each}
     </div>
-    {#if !filtered && $sliced.length < $eventStore.length}
-        <div class="more" on:click={() => $slicer++}>
-            <small>Load More Events...</small>
-        </div>
-    {/if}
+    <div class="pagination-container setting-item">
+        <Pagination {slice} {page} {pages} />
+    </div>
 </Details>
 
 <style>
-    .more {
-        text-align: center;
-        padding-top: 10px;
-        text-decoration: underline;
-        font-style: italic;
-        cursor: pointer;
+    .filters-container {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .existing-items {
+        flex-flow: column;
     }
 </style>
