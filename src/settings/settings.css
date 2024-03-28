@@ -213,30 +213,6 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
     gap: 0.25rem;
 }
 
-.calendarium-create-event .event-info {
-    display: flex;
-    flex-flow: column nowrap;
-    width: 100%;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
-
-.calendarium-create-event .event-info > *,
-.calendarium-create-event .setting-item {
-    width: 100%;
-    padding-top: 0;
-    padding-bottom: 0.75rem;
-    border: 0;
-}
-.calendarium-create-event .event-info > .event-description {
-    display: flex;
-    flex-flow: column nowrap;
-}
-
-.calendarium-create-event .event-info textarea {
-    resize: vertical;
-}
-
 /** Preset Calendar Modal */
 .calendarium-choose-preset .calendarium-preset-container {
     display: grid;
