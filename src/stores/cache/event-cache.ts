@@ -10,6 +10,9 @@ class YearEventCache extends YearCache<CalEvent> {
     update(events: CalEvent[]) {
         return (events ?? [])?.filter((event) => {
             switch (event.type) {
+                case EventType.Undated: {
+                    break;
+                }
                 case EventType.Recurring: {
                     const date = { ...event.date };
                     if (date.year === null) return true;
@@ -54,6 +57,9 @@ class MonthEventCache extends MonthCache<CalEvent> {
     update(events: CalEvent[]) {
         return (events ?? [])?.filter((event) => {
             switch (event.type) {
+                case EventType.Undated: {
+                    break;
+                }
                 case EventType.Recurring: {
                     const date = { ...event.date };
                     if (date.year) {
@@ -198,6 +204,9 @@ class DayEventCache extends DayCache<CalEvent> {
     update(events: CalEvent[]) {
         return (events ?? [])?.filter((event) => {
             switch (event.type) {
+                case EventType.Undated: {
+                    break;
+                }
                 case EventType.Recurring: {
                     const date = { ...event.date };
 

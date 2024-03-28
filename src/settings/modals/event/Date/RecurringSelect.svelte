@@ -1,10 +1,10 @@
 <script lang="ts">
     import { ExtraButtonComponent } from "obsidian";
-    import type { CalEventDate } from "src/schemas";
+    import type { CalEventDate, UndatedCalDate } from "src/schemas";
     import { TRASH, setNodeIcon } from "src/utils/icons";
     import type { Writable } from "svelte/store";
 
-    export let date: Writable<CalEventDate>;
+    export let date: Writable<CalEventDate | UndatedCalDate>;
     export let field: keyof CalEventDate;
     export let items: string[];
     let bit = $date[field] as [number, number];

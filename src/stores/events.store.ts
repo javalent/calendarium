@@ -1,6 +1,7 @@
 import type { CalDate, CalEvent, Calendar } from "src/@types";
 import { EventCache } from "./cache/event-cache";
 import { type Writable, derived, get, writable } from "svelte/store";
+import { EventType } from "src/events/event.types";
 
 export class EventStore {
     /**
@@ -46,6 +47,7 @@ export class EventStore {
     public insertEvents(...events: CalEvent[]) {
         this.#events.update((SAVED_EVENTS) => {
             for (const event of events) {
+                if (event.type === EventType.Undated) continue;
                 SAVED_EVENTS.set(event.id, event);
                 this.#eventCache.invalidate(event.date);
             }
@@ -55,6 +57,7 @@ export class EventStore {
     public removeEvents(...events: CalEvent[]) {
         this.#events.update((SAVED_EVENTS) => {
             for (const event of events) {
+                if (event.type === EventType.Undated) continue;
                 SAVED_EVENTS.delete(event.id);
                 this.#eventCache.invalidate(event.date);
             }
@@ -81,6 +84,7 @@ export class EventStore {
             for (const id of eventIds) {
                 if (!SAVED_EVENTS.has(id)) continue;
                 const event = { ...SAVED_EVENTS.get(id)! };
+                if (event.type === EventType.Undated) continue;
                 SAVED_EVENTS.delete(id);
                 this.#eventCache.invalidate(event.date);
                 this.#fileEventSet.delete(id);
@@ -96,6 +100,7 @@ export class EventStore {
             for (const id of this.#fileEventSet) {
                 if (!SAVED_EVENTS.has(id)) continue;
                 const event = { ...SAVED_EVENTS.get(id)! };
+                if (event.type === EventType.Undated) continue;
                 SAVED_EVENTS.delete(id);
                 this.#eventCache.invalidate(event.date);
                 this.#fileEventSet.delete(id);
