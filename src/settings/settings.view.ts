@@ -28,7 +28,7 @@ import {
 } from "./modals/confirm";
 import { CalendariumModal } from "./modals/modal";
 import { get } from "svelte/store";
-import createStore from "./creator/stores/calendar";
+import createStore, { type CreatorStore } from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import SettingsService from "./settings.service";
@@ -57,7 +57,7 @@ export enum Recurring {
     yearly = "Yearly",
 }
 interface Context {
-    store: ReturnType<typeof createStore>;
+    store: CreatorStore;
     plugin: Calendarium;
 }
 declare module "svelte" {
@@ -767,6 +767,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                         saving: false,
                         event: false,
                         calendar: false,
+                        savingEvent: false,
                     };
                     await this.settings$.save();
                 });
@@ -889,7 +890,7 @@ export default class CalendariumSettings extends PluginSettingTab {
 class CreatorModal extends CalendariumModal {
     calendar: Calendar;
     saved = false;
-    store: ReturnType<typeof createStore>;
+    store: CreatorStore;
     $app: CreatorController;
     constructor(
         public plugin: Calendarium,

@@ -37,6 +37,8 @@ function padDay(months: Month[]) {
     ).length;
 }
 
+export type CreatorStore = ReturnType<typeof createStore>;
+
 function createStore(plugin: Calendarium, existing: Calendar) {
     const store = writable<Calendar>(existing);
     const { subscribe, set, update } = store;
