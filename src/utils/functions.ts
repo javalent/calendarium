@@ -5,6 +5,7 @@ import type {
     CalEvent,
     CalEventDate,
     FullCalEventDateBit,
+    OneTimeCalEventDate,
 } from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
 import type { DateBit } from "src/events/event.helper";
@@ -95,7 +96,7 @@ export function ordinal(i: number) {
 export function dateString(
     date: CalEventDate,
     calendar: Calendar,
-    end?: CalEventDate | null,
+    end?: OneTimeCalEventDate | null,
     dateFormat?: string
 ) {
     if (!date || date.day == undefined) {
@@ -107,6 +108,9 @@ export function dateString(
     }
     const { day, month, year } = date;
     const { months, years, useCustomYears } = calendar.static;
+    if (Array.isArray(year) || Array.isArray(month) || Array.isArray(day)) {
+        return "Recurring";
+    }
 
     let startY: string = `${year}`;
     if (useCustomYears && years?.length && year) {

@@ -32,14 +32,7 @@ class YearEventCache extends YearCache<CalEvent> {
                     //Event is after the month
                     if (date.year > this.year) return false;
 
-                    //No end date and event is before the month
-                    if (!end && date.year < this.year) return false;
-
-                    if (
-                        date.year <= this.year &&
-                        end?.year &&
-                        end?.year >= this.year
-                    )
+                    if (date.year <= this.year && end.year >= this.year)
                         return true;
                     break;
                 }
@@ -84,46 +77,38 @@ class MonthEventCache extends MonthCache<CalEvent> {
                 }
                 case EventType.Range: {
                     const date = { ...event.date };
-                    const end = { ...(event.end ?? {}) };
-
-                    //No-month events are on every month.
-                    if (date.month == undefined) return true;
+                    const end = { ...event.end };
 
                     //Year and Month match
-                    if (
-                        (date.year == this.year || date.year == undefined) &&
-                        date.month == this.month
-                    )
+                    if (date.year == this.year && date.month == this.month)
                         return true;
 
                     //Event is after the month
                     if (
-                        (date.year != null && date.year > this.year) ||
+                        date.year > this.year ||
                         (date.year == this.year && date.month > this.month)
                     )
                         return false;
 
-                    //No end date and event is before the month
-                    if (
-                        !end &&
-                        (date.month != this.month ||
-                            (date.year != null && date.year < this.year))
-                    )
-                        return false;
-
-                    if (date.year == undefined)
-                        end.year = date.year = this.year;
-                    if (
-                        (date.year <= this.year || date.month <= this.month) &&
-                        end.year != null &&
-                        end.year >= this.year &&
-                        end.month != null &&
-                        end.month >= this.month
-                    )
+                    if (date.year < this.year && end.year > this.year) {
                         return true;
+                    }
+                    if (
+                        date.year == this.year &&
+                        date.month <= this.month &&
+                        end.year > this.year
+                    ) {
+                        return true;
+                    }
+                    if (
+                        date.year < this.year &&
+                        end.year == this.year &&
+                        end.month >= this.month
+                    ) {
+                        return true;
+                    }
 
                     return false;
-                    break;
                 }
                 case EventType.Date:
                 default: {
@@ -270,7 +255,9 @@ export class EventCache extends EntityCache<CalEvent> {
         if (monthCache.cache.has(day)) return monthCache.cache.get(day)!;
         return new DayEventCache(day, month, year, monthCache.entities);
     }
-    public override invalidate(date: OneTimeCalEventDate | RecurringCalEventDate) {
+    public override invalidate(
+        date: OneTimeCalEventDate | RecurringCalEventDate
+    ) {
         const yearCaches: YearCache<CalEvent>[] = [];
         if (date.year == null) {
             for (const cache of this.cache.values()) {
