@@ -1,6 +1,5 @@
 <script lang="ts">
     import { setNodeIcon } from "src/utils/icons";
-    import type createStore from "../stores/calendar";
     import { getContext } from "svelte";
     import { REDO, UNDO } from "src/utils/icons";
 

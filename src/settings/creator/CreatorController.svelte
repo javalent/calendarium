@@ -3,14 +3,14 @@
     import type { Calendar } from "src/schemas";
     import { setContext } from "svelte";
     import type { Writable } from "svelte/store";
-    import type createStore from "./stores/calendar";
     import QuickCreator from "./QuickCreator.svelte";
     import Creator from "./Creator.svelte";
+    import type { CreatorStore } from "./stores/calendar";
 
     export let plugin: Calendarium;
     export let color: string | null = null;
     export let top: number;
-    export let store: ReturnType<typeof createStore>;
+    export let store: CreatorStore;
     export let quick = false;
     setContext<Writable<Calendar>>("store", store);
     setContext<Calendarium>("plugin", plugin);
