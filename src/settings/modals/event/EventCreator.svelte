@@ -4,7 +4,7 @@
     import Date from "./Date/Date.svelte";
     import Info from "./Info/Info.svelte";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
-    import { App, ButtonComponent, ExtraButtonComponent } from "obsidian";
+    import { ButtonComponent } from "obsidian";
     import { createEventDispatcher } from "svelte";
     import type Calendarium from "src/main";
     import { writable } from "svelte/store";
