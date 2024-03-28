@@ -1,4 +1,8 @@
-<div class="setting-item-info">
+<script lang="ts">
+    export let isHeading = false;
+</script>
+
+<div class="setting-item-info" class:setting-item-heading={isHeading}>
     <span class="setting-item-name">
         <slot name="name" />
     </span>
