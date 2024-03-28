@@ -22,7 +22,8 @@ export type RecurringCalEventDate = {
 
 export type CalEventDate = OneTimeCalEventDate | RecurringCalEventDate;
 
-export type FullCalEventDateBit = [number | null, number | null] | number;
+export type RecurringCalEventDateBit = [number | null, number | null];
+export type FullCalEventDateBit = RecurringCalEventDateBit | number;
 
 type Formula = {
     type: "interval";
