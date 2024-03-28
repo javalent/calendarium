@@ -11,6 +11,8 @@ import type {
     Calendar,
     CalendariumData,
     MarkdownCalendariumData,
+    RangeCalEvent,
+    RecurringCalEvent,
     Version,
 } from "src/@types";
 import { DEFAULT_DATA } from "./settings.constants";
@@ -26,6 +28,7 @@ import {
     shouldTransitionMarkdownSettings,
 } from "./settings.utils";
 import { CHECK, LOADING } from "src/utils/icons";
+import { EventType } from "src/events/event.types";
 
 const SPLITTER = "--- BEGIN DATA ---";
 
@@ -693,6 +696,40 @@ export default class SettingsService {
                         order: "",
                     };
                     dirty = true;
+                }
+                if (!event.type) {
+                    if ("end" in event && typeof event.end == "object") {
+                        (event as any as RangeCalEvent).type = EventType.Range;
+                    } else if (
+                        "date" in event &&
+                        typeof event.date == "object" &&
+                        (!event.date.year ||
+                            !event.date.month ||
+                            !event.date.day)
+                    ) {
+                        (event as any as RecurringCalEvent).type =
+                            EventType.Recurring;
+                        if (!event.date.year) {
+                            (event as any as RecurringCalEvent).date.year = [
+                                null,
+                                null,
+                            ];
+                        }
+                        if (!event.date.month) {
+                            (event as any as RecurringCalEvent).date.month = [
+                                null,
+                                null,
+                            ];
+                        }
+                        if (!event.date.day) {
+                            (event as any as RecurringCalEvent).date.day = [
+                                null,
+                                null,
+                            ];
+                        }
+                    } else {
+                        event.type = EventType.Date;
+                    }
                 }
             }
             if (calendar.showIntercalarySeparately == null) {
