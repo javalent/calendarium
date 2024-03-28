@@ -97,7 +97,7 @@
     };
 
     const setRecurring = (field: keyof CalEventDate) => {
-        $date[field] = [$date[field] as number, null];
+        $event.date[field] = [$date[field] as number, null];
     };
 </script>
 
@@ -109,7 +109,7 @@
                 <div
                     use:rangedSetting
                     on:click={() => {
-                        $date = { ...$store.current };
+                        $event.date = { ...$store.current };
                         $event.type = EventType.Date;
                     }}
                 />
@@ -124,7 +124,7 @@
                 slot="control"
                 use:removeRecurring
                 on:click={() => {
-                    $date = {
+                    $event.date = {
                         year: null,
                         month: null,
                         day: null,
@@ -147,7 +147,7 @@
                         spellcheck="false"
                         placeholder="Year"
                         class:warning={$date.year == null}
-                        bind:value={$date.year}
+                        bind:value={$event.date.year}
                     />
 
                     {#if !$isRange}
@@ -158,14 +158,14 @@
                     {/if}
                 </div>
             {:else}
-                <RecurringDate {date} field={"year"} placeholder={"Year"} />
+                <RecurringDate {event} field={"year"} placeholder={"Year"} />
             {/if}
         </div>
         <div class="calendarium-date-field">
             <span>Month</span>
             {#if !$isRecurringMonth || $isRange}
                 <div class="recurring">
-                    <select class="dropdown" bind:value={$date.month}>
+                    <select class="dropdown" bind:value={$event.date.month}>
                         {#each [...months] as month, index}
                             <option value={index}>{month}</option>
                         {/each}
@@ -179,7 +179,7 @@
                     {/if}
                 </div>
             {:else}
-                <RecurringSelect items={[...months]} {date} field="month" />
+                <RecurringSelect items={[...months]} {event} field="month" />
             {/if}
         </div>
         <div class="calendarium-date-field">
@@ -192,7 +192,7 @@
                         spellcheck="false"
                         placeholder="Day"
                         class:warning={$date.day == null}
-                        bind:value={$date.day}
+                        bind:value={$event.date.day}
                     />
                     {#if !$isRange}
                         <div
@@ -202,7 +202,7 @@
                     {/if}
                 </div>
             {:else}
-                <RecurringDate {date} field={"day"} placeholder={"Day"} />
+                <RecurringDate {event} field={"day"} placeholder={"Day"} />
             {/if}
         </div>
     </div>

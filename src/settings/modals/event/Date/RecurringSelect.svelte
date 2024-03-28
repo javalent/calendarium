@@ -1,13 +1,13 @@
 <script lang="ts">
     import { ExtraButtonComponent } from "obsidian";
-    import type { CalEventDate, UndatedCalDate } from "src/schemas";
+    import type { CalEvent, CalEventDate, UndatedCalDate } from "src/schemas";
     import { TRASH, setNodeIcon } from "src/utils/icons";
     import type { Readable, Writable } from "svelte/store";
 
-    export let date: Readable<CalEventDate | UndatedCalDate>;
+    export let event: Writable<CalEvent>;
     export let field: keyof CalEventDate;
     export let items: string[];
-    let bit = $date[field] as [number, number];
+    let bit = $event.date[field] as [number, number];
 
     const removeRecurring = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
@@ -32,7 +32,7 @@
     <div
         use:removeRecurring
         on:click={() => {
-            $date.month = bit[0];
+            $event.date.month = bit[0];
         }}
     />
 </div>
