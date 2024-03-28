@@ -175,8 +175,6 @@ export default class Calendarium extends Plugin {
 
         this.watcher = new Watcher(this);
 
-        new CreateEventModal(this.defaultCalendar, this).open();
-
         (window["Calendarium"] = this.api) &&
             this.register(() => delete window["Calendarium"]);
 
