@@ -276,6 +276,27 @@ export class CalEventHelper {
         return event;
     }
 
+    parseFileForDates(
+        frontmatter: FrontMatterCache,
+        file: { path: string; basename: string }
+    ): CalEventInfo | null {
+        if (!frontmatter) return null;
+        const dateField = "fc-date" in frontmatter ? "fc-date" : "fc-start";
+        const dateString =
+            frontmatter[dateField] ??
+            (this.useFilenameForEvents ? file.basename : null);
+        if (!dateString) return null;
+
+        const date = this.parseCalDateString(dateString, file);
+
+        if (!date) return null;
+
+        let end = frontmatter["fc-end"]
+            ? this.parseDate(frontmatter["fc-end"], file)
+            : null;
+        return this.resolveDates(date, end);
+    }
+
     parseFilenameDate(file: {
         path: string;
         basename: string;
