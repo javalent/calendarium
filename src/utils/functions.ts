@@ -331,7 +331,7 @@ export function toPaddedString(
     return data == null ? "*" : String(data).padStart(padding ?? 0, "0");
 }
 
-export function isValidDay(day: number, calendar: Calendar) {
+export function isValidDay(day: number | null, calendar: Calendar) {
     if (day == null) return false;
     if (calendar?.current?.month == null) return false;
     if (day < 1) return false;
@@ -344,14 +344,14 @@ export function isValidDay(day: number, calendar: Calendar) {
     return true;
 }
 
-export function isValidMonth(month: number, calendar: Calendar) {
+export function isValidMonth(month: number | null, calendar: Calendar) {
     if (month == null) return false;
     if (!calendar?.static?.months?.length) return false;
     if (month < 0 || month >= calendar?.static?.months?.length) return false;
     return true;
 }
 
-export function isValidYear(year: number, calendar: Calendar) {
+export function isValidYear(year: number | null, calendar: Calendar) {
     if (year == null) return false;
     if (calendar?.static?.useCustomYears) {
         if (!calendar?.static?.years?.length) return false;

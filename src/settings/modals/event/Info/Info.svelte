@@ -17,12 +17,15 @@
     const helper = new CalEventHelper($store, plugin.data.parseDates);
 
     const suggest = (node: HTMLElement) => {
-        const text = new TextComponent(node);
-        let files = app.vault.getFiles();
+        const text = new TextComponent(node).setValue($event.note ?? "");
+        let files = plugin.app.vault.getFiles();
         text.setPlaceholder("Path");
         if ($event.note) {
             const [path, subpath] = $event.note.split(/[#^]/);
-            const note = app.metadataCache.getFirstLinkpathDest(path, "");
+            const note = plugin.app.metadataCache.getFirstLinkpathDest(
+                path,
+                "",
+            );
             if (note && note instanceof TFile) {
                 text.setValue(
                     `${note.basename}${subpath ? "#" : ""}${
@@ -35,16 +38,16 @@
         const modal = new FileInputSuggest(plugin.app, text, [...files]);
 
         modal.onSelect(async (value) => {
-            text.inputEl.blur();
             if (value.item) {
                 $event.note = value.item.path;
+                text.setValue(value.item.basename);
                 tryParse(value.item);
             }
         });
     };
     const tryParse = async (file: TFile) => {
         $event.name = file.basename;
-        const cache = app.metadataCache.getFileCache(file);
+        const cache = plugin.app.metadataCache.getFileCache(file);
 
         const { frontmatter } = cache ?? {};
         if (frontmatter) {
@@ -88,7 +91,12 @@
 <div class="setting-item">
     <SettingItem>
         <div slot="name">Event name</div>
-        <input type="text" slot="control" bind:value={$event.name} />
+        <input
+            type="text"
+            slot="control"
+            bind:value={$event.name}
+            class:warning={!$event.name || $event.name?.length == 0}
+        />
     </SettingItem>
 </div>
 <div class="setting-item">
@@ -129,5 +137,8 @@
     .desc {
         resize: vertical;
         width: 100%;
+    }
+    .warning {
+        border-color: var(--text-error);
     }
 </style>

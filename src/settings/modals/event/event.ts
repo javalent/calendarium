@@ -1,4 +1,3 @@
-import { Setting, Notice, TextAreaComponent, TFile } from "obsidian";
 import type {
     CalDate,
     Calendar,
@@ -6,17 +5,23 @@ import type {
     CalEventDate,
 } from "../../../@types";
 
-import { nanoid } from "../../../utils/functions";
-import { FileInputSuggest } from "obsidian-utilities";
+import {
+    isValidDay,
+    isValidMonth,
+    isValidYear,
+    nanoid,
+} from "../../../utils/functions";
 
 import copy from "fast-copy";
 import { CalendariumModal } from "../modal";
 import Calendarium from "src/main";
 import EventCreator from "./EventCreator.svelte";
 import { EventType } from "src/events/event.types";
+import { ConfirmModal } from "../confirm";
 
 export class CreateEventModal extends CalendariumModal {
     saved = true;
+    editing: boolean;
     event: CalEvent = {
         name: "",
         description: null,
@@ -34,18 +39,6 @@ export class CreateEventModal extends CalendariumModal {
         },
         type: EventType.Date,
     };
-    editing: boolean;
-    infoEl: HTMLDivElement;
-    dateEl: HTMLElement;
-    monthEl: HTMLDivElement;
-    dayEl: HTMLDivElement;
-    yearEl: HTMLDivElement;
-    fieldsEl: HTMLDivElement;
-    stringEl: HTMLDivElement;
-    startDateEl: HTMLDivElement;
-    endDateEl: HTMLDivElement;
-    startEl: HTMLDivElement;
-    endEl: HTMLDivElement;
     $UI: EventCreator;
     constructor(
         public calendar: Calendar,
@@ -88,6 +81,58 @@ export class CreateEventModal extends CalendariumModal {
     }
     onClose(): void {
         this.$UI?.$destroy();
+    }
+    async checkCanExit() {
+        if (this.isValidEvent()) return true;
+        /* if (this.plugin.data.exit.savingEvent) return true; */
+        return new Promise((resolve) => {
+            const modal = new ConfirmModal(
+                this.plugin.app,
+                "This event requires additional information to save. Exiting now will discard changes.",
+                {
+                    cta: "Exit",
+                    secondary: "Cancel",
+                    dontAsk: "Exit and don't ask again",
+                }
+            );
+            modal.onClose = async () => {
+                if (modal.dontAsk) {
+                    this.plugin.data.exit.savingEvent = true;
+                    await this.plugin.saveSettings();
+                }
+                resolve(modal.confirmed);
+            };
+            modal.open();
+        });
+    }
+    isValidEvent() {
+        if (!this.event.name) return false;
+        if (
+            this.event.type != EventType.Undated &&
+            (this.event.date.year == null ||
+                this.event.date.month == null ||
+                this.event.date.day == null)
+        ) {
+            return false;
+        }
+        if (
+            this.event.type === EventType.Range &&
+            (this.event.end == null ||
+                this.event.end.year == null ||
+                this.event.end.month == null ||
+                this.event.end.day == null)
+        ) {
+            return false;
+        }
+        return true;
+    }
+
+    async close() {
+        if (await this.checkCanExit()) {
+            /* this.saved = get(this.store.valid);
+            this.calendar = get(this.store); */
+            super.close();
+        }
     }
 }
 

@@ -2,9 +2,9 @@
     import { ExtraButtonComponent } from "obsidian";
     import type { CalEventDate, UndatedCalDate } from "src/schemas";
     import { TRASH, setNodeIcon } from "src/utils/icons";
-    import type { Writable } from "svelte/store";
+    import type { Readable, Writable } from "svelte/store";
 
-    export let date: Writable<CalEventDate | UndatedCalDate>;
+    export let date: Readable<CalEventDate | UndatedCalDate>;
     export let field: keyof CalEventDate;
     export let placeholder: string;
 
@@ -21,7 +21,7 @@
 
 <div class="recurring">
     <div use:setNodeIcon={"corner-down-right"} />
-    <input type="text" spellcheck="false" {placeholder} bind:value={bit[1]} />
+    <input type="number" spellcheck="false" {placeholder} bind:value={bit[1]} />
     <div
         use:removeRecurring
         on:click={() => {
