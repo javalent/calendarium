@@ -54,7 +54,7 @@
         return $calendar.categories.find(({ id }) => id == category);
     };
     const add = (event?: CalEvent) => {
-        const modal = new CreateEventModal($calendar, event);
+        /* const modal = new CreateEventModal($calendar, event);
         modal.onClose = () => {
             if (!modal.saved) return;
             if (modal.editing && event) {
@@ -63,7 +63,7 @@
                 eventStore.add({ ...modal.event });
             }
         };
-        modal.open();
+        modal.open(); */
     };
     const deleteAll = async () => {
         if (
@@ -123,13 +123,13 @@
     <ButtonComponent name={"Add event"} icon={ADD} on:click={() => add()} />
     <div class="existing-items">
         {#each $sliced as event}
-            <EventInstance
+            <!-- <EventInstance
                 {event}
                 category={getCategory(event.category)}
                 date={dateString(event.date, $calendar, event.end)}
                 on:edit={() => add(event)}
                 on:delete={() => deleteEvent(event)}
-            />
+            /> -->
         {:else}
             <div />
             <div class="setting-item">

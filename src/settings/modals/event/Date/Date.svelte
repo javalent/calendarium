@@ -1,0 +1,251 @@
+<script lang="ts">
+    import { ExtraButtonComponent, Setting } from "obsidian";
+    import { EventType } from "src/events/event.types";
+    import type {
+        CalEvent,
+        CalEventDate,
+        OneTimeCalEventDate,
+        RecurringCalEventDate,
+    } from "src/schemas";
+    import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
+    import type { CalendarStore } from "src/stores/calendar.store";
+    import { TRASH } from "src/utils/icons";
+
+    import { derived, get, writable, type Writable } from "svelte/store";
+    import RecurringDate from "./RecurringInput.svelte";
+    import RecurringSelect from "./RecurringSelect.svelte";
+
+    export let event: Writable<CalEvent>;
+    export let store: CalendarStore;
+
+    const date = writable($event.date);
+    const end = writable($event.type === EventType.Range ? $event.end : null);
+    end.subscribe((v) => {
+        if ($event.type === EventType.Range && v !== null) {
+            $event.end = v;
+        }
+    });
+
+    $: onetime = $date as OneTimeCalEventDate;
+
+    const { yearCalculator } = store;
+
+    let months: Set<string> = new Set();
+
+    const isRecurringYear = derived(date, (date) => Array.isArray(date.year));
+    const isRecurringMonth = derived(date, (date) => Array.isArray(date.month));
+    const isRecurringDay = derived(date, (date) => Array.isArray(date.day));
+    const isRecurring = derived(
+        [isRecurringYear, isRecurringMonth, isRecurringDay],
+        ([year, month, day]) => year || month || day,
+    );
+    isRecurring.subscribe((v) => {
+        if (v) {
+            $end = null;
+            $event.type = EventType.Recurring;
+        } else {
+            $event.type = EventType.Date;
+        }
+    });
+    const isRange = derived(end, (end) => end != null);
+    $: {
+        if ($isRange) {
+            $event.type = EventType.Range;
+        } else if ($isRecurring) {
+            $event.type = EventType.Recurring;
+        } else {
+            $event.type = EventType.Date;
+        }
+    }
+
+    $: {
+        const arr = [$date.year].flat();
+        if (arr.every((y) => y == null)) {
+            months = new Set($store.static.months.map((m) => m.name!));
+        } else {
+            months = new Set();
+            for (let i = 0; i < arr.length; i++) {
+                const year = arr[i];
+                if (!year) continue;
+                const monthsInYear =
+                    yearCalculator.getYearFromCache(year).months;
+                for (const month of get(monthsInYear)) {
+                    months.add(month.name!);
+                }
+            }
+        }
+    }
+
+    const recurringIcon = (node: HTMLElement) => {
+        new ExtraButtonComponent(node)
+            .setIcon("repeat")
+            .setTooltip("Make recurring");
+    };
+    const removeRecurring = (node: HTMLElement) => {
+        new ExtraButtonComponent(node)
+            .setIcon(TRASH)
+            .setTooltip("Make recurring");
+    };
+    const rangedSetting = (node: HTMLElement) => {
+        new ExtraButtonComponent(node).setIcon("calendar-range");
+    };
+
+    const setRecurring = (field: keyof CalEventDate) => {
+        $date[field] = [$date[field] as number, null];
+    };
+</script>
+
+{#if $isRange}
+    <div class="setting-item">
+        <SettingItem isHeading={true}>
+            <div slot="name">Start date</div>
+        </SettingItem>
+    </div>
+{/if}
+<div class="calendarium-date-field-container">
+    <div class="calendarium-date-field">
+        <span>Year</span>
+        {#if !$isRecurringYear || $isRange}
+            <div class="recurring">
+                <input
+                    type="text"
+                    spellcheck="false"
+                    placeholder="Year"
+                    bind:value={$date.year}
+                />
+
+                {#if !$isRange}
+                    <div
+                        use:recurringIcon
+                        on:click={() => setRecurring("year")}
+                    />
+                {/if}
+            </div>
+        {:else}
+            <RecurringDate {date} field={"year"} placeholder={"Year"} />
+        {/if}
+    </div>
+    <div class="calendarium-date-field">
+        <span>Month</span>
+        {#if !$isRecurringMonth || $isRange}
+            <div class="recurring">
+                <select class="dropdown" bind:value={$date.month}>
+                    {#each [...months] as month, index}
+                        <option value={index}>{month}</option>
+                    {/each}
+                </select>
+
+                {#if !$isRange}
+                    <div
+                        use:recurringIcon
+                        on:click={() => setRecurring("month")}
+                    />
+                {/if}
+            </div>
+        {:else}
+            <RecurringSelect items={[...months]} {date} field="month" />
+        {/if}
+    </div>
+    <div class="calendarium-date-field">
+        <span>Day</span>
+
+        {#if !$isRecurringDay || $isRange}
+            <div class="recurring">
+                <input
+                    type="text"
+                    spellcheck="false"
+                    placeholder="Day"
+                    bind:value={$date.day}
+                />
+                {#if !$isRange}
+                    <div
+                        use:recurringIcon
+                        on:click={() => setRecurring("day")}
+                    />
+                {/if}
+            </div>
+        {:else}
+            <RecurringDate {date} field={"day"} placeholder={"Day"} />
+        {/if}
+    </div>
+</div>
+{#if !$isRecurring}
+    {#if $end}
+        <div class="setting-item">
+            <SettingItem isHeading={true}>
+                <div slot="name">End date</div>
+                <div
+                    slot="control"
+                    use:removeRecurring
+                    on:click={() => ($end = null)}
+                />
+            </SettingItem>
+        </div>
+        <div class="calendarium-date-field-container">
+            <div class="calendarium-date-field">
+                <span>Year</span>
+                <input
+                    type="number"
+                    spellcheck="false"
+                    placeholder="Year"
+                    bind:value={$end.year}
+                />
+            </div>
+            <div class="calendarium-date-field">
+                <span>Month</span>
+                <select class="dropdown" bind:value={$end.month}>
+                    {#each [...months] as month, index}
+                        <option value={index}>{month}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="calendarium-date-field">
+                <span>Day</span>
+
+                <input
+                    type="number"
+                    spellcheck="false"
+                    placeholder="Day"
+                    bind:value={$end.day}
+                />
+            </div>
+        </div>
+    {:else}
+        <div class="ranged-event">
+            <span>Add end date</span>
+            <div use:rangedSetting on:click={() => ($end = { ...onetime })} />
+        </div>
+    {/if}
+{/if}
+
+<style scoped>
+    .calendarium-date-field-container.calendarium-date-field-container {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+        border: 0;
+        max-width: 100%;
+    }
+    .calendarium-date-field {
+        display: flex;
+        flex-flow: column;
+        gap: 0.5rem;
+    }
+
+    .recurring {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .ranged-event {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-muted);
+        font-style: italic;
+    }
+    .calendarium-date-field input,
+    .calendarium-date-field select {
+        width: 100%;
+    }
+</style>

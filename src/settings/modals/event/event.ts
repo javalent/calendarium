@@ -6,29 +6,24 @@ import type {
     CalEventDate,
 } from "../../../@types";
 
-import { dateString, nanoid } from "../../../utils/functions";
-
-import PathSuggestionModal from "../../../suggester/path";
+import { nanoid } from "../../../utils/functions";
 import { FileInputSuggest } from "obsidian-utilities";
-
-/* import EventCreator from "./EventCreator.svelte"; */
 
 import copy from "fast-copy";
 import { CalendariumModal } from "../modal";
-import { CalEventHelper } from "src/events/event.helper";
 import Calendarium from "src/main";
-import { CLOSE } from "src/utils/icons";
 import EventCreator from "./EventCreator.svelte";
+import { EventType } from "src/events/event.types";
 
 export class CreateEventModal extends CalendariumModal {
-    saved = false;
+    saved = true;
     event: CalEvent = {
         name: "",
         description: null,
         date: {
-            month: null,
-            day: null,
-            year: null,
+            month: this.calendar.current.month,
+            day: this.calendar.current.day,
+            year: this.calendar.current.year,
         },
         id: nanoid(6),
         note: null,
@@ -37,6 +32,7 @@ export class CreateEventModal extends CalendariumModal {
             timestamp: Number.MIN_VALUE,
             order: "",
         },
+        type: EventType.Date,
     };
     editing: boolean;
     infoEl: HTMLDivElement;
@@ -73,406 +69,20 @@ export class CreateEventModal extends CalendariumModal {
         this.contentEl.empty();
         this.titleEl.setText(this.editing ? "Edit event" : "New event");
 
-        this.infoEl = this.contentEl.createDiv("event-info");
-        this.buildInfo();
-        /* 
-        this.dateEl = this.contentEl.createDiv("event-date");
-        this.buildDate(); */
-
-        new Setting(this.contentEl)
-            .addButton((b) => {
-                b.setButtonText("Save")
-                    .setCta()
-                    .onClick(async () => {
-                        if (!this.event.name?.length) {
-                            new Notice("The event must have a name.");
-                            return;
-                        }
-
-                        const helper = new CalEventHelper(this.calendar, false);
-
-                        // refresh timestamp for date change
-                        this.event.sort = helper.timestampForCalEvent(
-                            this.event,
-                            this.event.sort
-                        );
-
-                        /* if (this.event.end) {
-                            this.event.end = {
-                                year:
-                                    this.event.end.year ?? this.event.date.year,
-                                month:
-                                    this.event.end.month ??
-                                    this.event.date.month,
-                                day: this.event.end.day ?? this.event.date.day,
-                            };
-                            const date = this.event.date;
-                            const end = this.event.end;
-
-                            const maxDays = Math.max(
-                                ...this.calendar.static.months.map(
-                                    (m) => m.length
-                                )
-                            );
-
-                            // total days per year (does not need to be accurate)
-                            const totalDays =
-                                maxDays * this.calendar.static.months.length;
-
-                            const dateNumber =
-                                (date.year! - 1) * totalDays +
-                                (date.month ?? -1) * maxDays +
-                                date.day!;
-
-                            const endNumber =
-                                (end.year! - 1) * totalDays +
-                                (end.month ?? -1) * maxDays +
-                                end.day!;
-
-                            if (dateNumber > endNumber) {
-                                const temp = { ...this.event.end };
-                                this.event.end = { ...this.event.date };
-                                this.event.date = { ...temp };
-                            }
-                        }
-
-                        this.saved = true; */
-
-                        // Saving this note to frontmatter
-                        /* if (false) {
-                            const [path, subpath] =
-                                this.event.note.split(/[#^]/);
-                            const note =
-                                this.app.metadataCache.getFirstLinkpathDest(
-                                    path,
-                                    ""
-                                );
-
-                            const frontmatter = [
-                                `fc-calendar: ${this.calendar.name}`,
-                                `fc-date: ${helper.toCalDateString(
-                                    this.event.date
-                                )}`,
-                            ];
-                            if (this.event.end) {
-                                frontmatter.push(
-                                    `fc-end: ${helper.toCalDateString(
-                                        this.event.end
-                                    )}`
-                                );
-                            }
-                            if (this.event.category) {
-                                const category = this.calendar.categories.find(
-                                    (c) => c.id == this.event.category
-                                )?.name;
-                                frontmatter.push(`fc-category: ${category}`);
-                            }
-                            if (note) {
-                                let content = await this.app.vault.read(note);
-                                if (
-                                    /^\-\-\-$\n[\s\S]*?^\-\-\-$/m.test(content)
-                                ) {
-                                    const [, existingString] = content.match(
-                                        /^\-\-\-$\n([\s\S]*?)^\-\-\-$/m
-                                    );
-                                    const existing = existingString
-                                        .split("\n")
-                                        .filter(
-                                            (e) =>
-                                                !/^fc-calendar/.test(e) &&
-                                                !/^fc-date/.test(e) &&
-                                                !/^fc-end/.test(e) &&
-                                                !/^fc-category/.test(e) &&
-                                                !/^fc-display-name/.test(e)
-                                        );
-                                    existing.unshift(...frontmatter);
-                                    content = content.replace(
-                                        /^\-\-\-$\n[\s\S]*?^\-\-\-$/m,
-                                        `---\n${existing.join("\n")}---`
-                                    );
-                                } else {
-                                    content = `---\n${frontmatter.join(
-                                        "\n"
-                                    )}\n---\n${content}`;
-                                }
-                                await this.app.vault.modify(note, content);
-                            } else {
-                                await this.app.vault.create(
-                                    this.event.note,
-                                    `---${frontmatter.join("\n")}---`
-                                );
-                            }
-                        } */
-
-                        this.close();
-                    });
-            })
-            .addExtraButton((b) => {
-                b.setIcon(CLOSE)
-                    .setTooltip("Cancel")
-                    .onClick(() => this.close());
-            });
-    }
-    /*     buildDate() {
-        this.dateEl.empty();
-        this.buildStartDate();
-
-        this.endEl = this.dateEl.createDiv();
-
-        if (!this.event.end) {
-            new Setting(this.endEl).setName("Add end date").addToggle((t) => {
-                t.setValue(false).onChange((v) => this.buildEndDate());
-            });
-        } else {
-            this.buildEndDate();
-        }
-        const formulas = this.dateEl.createDiv("calendarium-event-formula");
-        if (!this.event.formulas?.length) {
-            new Setting(formulas).setName("Add interval").addToggle((t) => {
-                t.setValue(false).onChange((v) =>
-                    this.buildEventFormulas(formulas)
-                );
-            });
-        } else {
-            this.buildEventFormulas(formulas);
-        }
-
-
-        this.stringEl = this.dateEl.createDiv(
-            "event-date-string setting-item-description"
-        );
-        this.buildDateString();
-    } */
-    /*     buildEventFormulas(formulas: HTMLDivElement): any {
-        formulas.empty();
-        this.event.formulas = this.event.formulas ?? [
-            { type: "interval", number: 1, timespan: "days" },
-        ];
-
-        new Setting(formulas)
-            .setName("Event interval")
-            .addText((t) => {
-                t.setValue(`${this.event.formulas?.[0].number ?? ""}`)
-                    .onChange((v) => {
-                        if (!this.event.formulas) {
-                            this.event.formulas = [
-                                {
-                                    type: "interval",
-                                    number: 1,
-                                    timespan: "days",
-                                },
-                            ];
-                        }
-                        this.event.formulas[0].number = Number(v);
-                    })
-                    .inputEl.setAttr("type", "number");
-            })
-            .addDropdown((d) => {
-                d.addOption("days", "days");
-            });
-    }
-    buildStartDate() {
-        this.startEl = this.dateEl.createDiv("calendarium-event-date");
-        this.startEl.createSpan({ text: "Start:" });
-        this.startDateEl = this.startEl.createDiv("calendarium-date-fields");
-
-        this.buildDateFields(this.startDateEl, this.event.date);
-    }
-    buildEndDate() {
-        this.event.end = this.event.end ?? { ...this.event.date };
-        this.endEl.empty();
-        this.endEl.addClass("calendarium-event-date");
-        this.endEl.createSpan({ text: "End:" });
-        this.endDateEl = this.endEl.createDiv("calendarium-date-fields");
-
-        this.buildDateFields(this.endDateEl, this.event.end);
-    }
-    buildDateString() {
-        this.stringEl.empty();
-        this.stringEl.createSpan({
-            text: dateString(this.event.date, this.calendar, this.event.end),
-        });
-    }
-    buildDateFields(el: HTMLElement, field = this.event.date) {
-        el.empty();
-        const dayEl = el.createDiv("calendarium-date-field");
-        dayEl.createEl("label", { text: "Day" });
-        const day = new TextComponent(dayEl)
-            .setPlaceholder("Day")
-            .setValue(`${field.day}`)
-            .onChange((v) => {
-                field.day = Number(v);
-                this.buildDateString();
-            });
-        day.inputEl.setAttr("type", "number");
-
-        const monthEl = el.createDiv("calendarium-date-field");
-        monthEl.createEl("label", { text: "Month" });
-        new DropdownComponent(monthEl)
-            .addOptions(
-                Object.fromEntries([
-                    ["select", "Select month"],
-                    ...this.calendar.static.months.map((month) => [
-                        month.name,
-                        month.name,
-                    ]),
-                ])
-            )
-            .setValue(
-                field.month != undefined
-                    ? this.calendar.static.months[field.month].name!
-                    : "select"
-            )
-            .onChange((v) => {
-                if (v === "select") field.month = null;
-                const index = this.calendar.static.months.find(
-                    (m) => m.name == v
-                )!;
-                field.month = this.calendar.static.months.indexOf(index);
-                this.buildDateString();
-            });
-
-        const yearEl = el.createDiv("calendarium-date-field");
-        yearEl.createEl("label", { text: "Year" });
-        const year = new TextComponent(yearEl)
-            .setPlaceholder("Year")
-            .setValue(`${field.year}`)
-            .onChange((v) => {
-                if (!v || v == undefined) {
-                    field.year = null;
-                } else {
-                    field.year = Number(v);
-                }
-                this.buildDateString();
-            });
-        year.inputEl.setAttr("type", "number");
-    } */
-    buildInfo() {
-        this.infoEl.empty();
-
-        new Setting(this.infoEl).setName("Event name").addText((t) =>
-            t
-                .setPlaceholder("Event name")
-                .setValue(this.event.name)
-                .onChange((v) => {
-                    this.event.name = v;
-                })
-        );
-        new Setting(this.infoEl)
-            .setName("Note")
-            .setDesc("Link the event to a note.")
-            .addText((text) => {
-                let files = this.app.vault.getFiles();
-                text.setPlaceholder("Path");
-                if (this.event.note) {
-                    const [path, subpath] = this.event.note.split(/[#^]/);
-                    const note = this.app.metadataCache.getFirstLinkpathDest(
-                        path,
-                        ""
-                    );
-                    if (note && note instanceof TFile) {
-                        text.setValue(
-                            `${note.basename}${subpath ? "#" : ""}${
-                                subpath ? subpath : ""
-                            }`
-                        );
-                    }
-                }
-
-                const modal = new FileInputSuggest(this.app, text, [...files]);
-
-                modal.onSelect(async (value) => {
-                    text.inputEl.blur();
-                    if (value.item) {
-                        this.event.note = value.item.path;
-                        this.tryParse(value.item);
-                    }
-                });
-            });
-
-        new Setting(this.infoEl).setName("Event description");
-        /* .addTextArea((t) => {
-                t.setPlaceholder("Event description")
-                    .setValue(this.event.description ?? "")
-                    .onChange((v) => {
-                        this.event.description = v;
-                    });
-            }); */
-        new TextAreaComponent(this.infoEl.createDiv("setting-item"))
-            .setPlaceholder("Event description")
-            .setValue(this.event.description ?? "")
-            .onChange((v) => {
-                this.event.description = v;
-            })
-            .inputEl.setAttribute("style", "width: 100%;");
-
-        new Setting(this.infoEl).setName("Event category").addDropdown((d) => {
-            const options = Object.fromEntries(
-                this.calendar.categories.map((category) => {
-                    return [category.id, category.name];
-                })
-            );
-            d.addOptions(options)
-                .setValue(this.event.category ?? this.calendar.categories[0].id)
-                .onChange((v) => (this.event.category = v));
-        });
-        const store = this.plugin.getStoreByCalendar(this.calendar)!;
         this.$UI = new EventCreator({
-            target: this.infoEl,
+            target: this.contentEl,
             props: {
                 event: this.event,
+                store: this.plugin.getStoreByCalendar(this.calendar),
+                plugin: this.plugin,
             },
         });
+        this.$UI.$on("cancel", () => {
+            this.saved = false;
+            this.close();
+        });
     }
-    async tryParse(/* note: string,  */ file: TFile) {
-        this.event.name = file.basename;
-        const cache = this.app.metadataCache.getFileCache(file);
 
-        const { frontmatter } = cache ?? {};
-        if (frontmatter) {
-            if ("fc-display-name" in frontmatter) {
-                this.event.name = frontmatter["fc-display-name"];
-            }
-
-            if ("fc-date" in frontmatter) {
-                const { day, month, year } = frontmatter["fc-date"];
-                if (day) this.event.date.day = day;
-                if (month) {
-                    if (typeof month === "string") {
-                        const indexer =
-                            this.calendar.static.months?.find(
-                                (m) => m.name == month
-                            ) ?? this.calendar.static.months?.[0];
-                        this.event.date.month =
-                            this.calendar.static.months?.indexOf(indexer);
-                    }
-                    if (typeof month == "number") {
-                        this.event.date.month = month - 1;
-                    }
-                }
-                if (year) this.event.date.year = year;
-            }
-            if ("fc-category" in frontmatter) {
-                if (
-                    !this.calendar.categories.find(
-                        (c) => c.name === frontmatter["fc-category"]
-                    )
-                ) {
-                    this.calendar.categories.push({
-                        name: frontmatter["fc-category"],
-                        color: "#808080",
-                        id: nanoid(6),
-                    });
-                }
-                this.event.category =
-                    this.calendar.categories.find(
-                        (c) => c.name === frontmatter["fc-category"]
-                    )?.id ?? null;
-            }
-        }
-
-        await this.display();
-    }
     async onOpen() {
         await this.display();
     }
