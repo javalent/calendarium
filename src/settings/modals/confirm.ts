@@ -7,7 +7,7 @@ export async function confirmWithModal(
     text: string,
     buttons: { cta: string; secondary: string } = {
         cta: "Yes",
-        secondary: "No"
+        secondary: "No",
     }
 ): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -27,18 +27,35 @@ export class ConfirmModal extends CalendariumModal {
     constructor(
         app: App,
         public text: string,
-        public buttons: { cta: string; secondary: string }
+        public buttons: { cta: string; secondary: string; dontAsk?: string }
     ) {
         super(app);
     }
     confirmed: boolean = false;
+    dontAsk: boolean = false;
     async display() {
         this.contentEl.empty();
         this.contentEl.addClass("confirm-modal");
         this.contentEl.createEl("p", {
-            text: this.text
+            text: this.text,
         });
-        const buttonEl = this.contentEl.createDiv(
+
+        const buttonContainerEl = this.contentEl.createDiv(
+            "calendarium-confirm-buttons-container"
+        );
+        if (this.buttons.dontAsk) {
+            buttonContainerEl.createEl("a").createEl("small", {
+                cls: "dont-ask",
+                text: this.buttons.dontAsk,
+            }).onclick = async () => {
+                this.confirmed = true;
+                this.dontAsk = true;
+                this.close();
+            };
+        } else {
+            buttonContainerEl.createDiv();
+        }
+        const buttonEl = buttonContainerEl.createDiv(
             "calendarium-confirm-buttons"
         );
         new ButtonComponent(buttonEl)
@@ -82,7 +99,7 @@ class ConfirmDeleteCalendarModal extends CalendariumModal {
         this.contentEl.empty();
         this.contentEl.addClass("confirm-modal");
         this.contentEl.createEl("p", {
-            text: "Are you sure you want to delete this calendar?"
+            text: "Are you sure you want to delete this calendar?",
         });
 
         const buttonContainerEl = this.contentEl.createDiv(
@@ -90,7 +107,7 @@ class ConfirmDeleteCalendarModal extends CalendariumModal {
         );
         buttonContainerEl.createEl("a").createEl("small", {
             cls: "dont-ask",
-            text: "Delete and don't ask again"
+            text: "Delete and don't ask again",
         }).onclick = async () => {
             this.confirmed = true;
             this.plugin.data.exit.calendar = true;
@@ -110,7 +127,7 @@ class ConfirmDeleteCalendarModal extends CalendariumModal {
             });
         buttonEl.createEl("a").createEl("small", {
             cls: "dont-ask",
-            text: "Cancel"
+            text: "Cancel",
         }).onclick = () => {
             this.close();
         };
@@ -129,7 +146,7 @@ export class ConfirmExitModal extends CalendariumModal {
         this.contentEl.empty();
         this.contentEl.addClass("confirm-modal");
         this.contentEl.createEl("p", {
-            text: "Additional information is required to save this calendar. Any changes you may have made will be discarded if you exit now."
+            text: "Additional information is required to save this calendar. Any changes you may have made will be discarded if you exit now.",
         });
 
         const buttonContainerEl = this.contentEl.createDiv(
@@ -137,7 +154,7 @@ export class ConfirmExitModal extends CalendariumModal {
         );
         buttonContainerEl.createEl("a").createEl("small", {
             cls: "dont-ask",
-            text: "Exit and don't ask again"
+            text: "Exit and don't ask again",
         }).onclick = async () => {
             this.confirmed = true;
             this.plugin.data.exit.saving = true;
@@ -157,7 +174,7 @@ export class ConfirmExitModal extends CalendariumModal {
             });
         buttonEl.createEl("a").createEl("small", {
             cls: "dont-ask",
-            text: "Keep editing"
+            text: "Keep editing",
         }).onclick = () => {
             this.close();
         };
@@ -190,7 +207,7 @@ class ConfirmDeleteEventModal extends CalendariumModal {
         this.contentEl.empty();
         this.contentEl.addClass("confirm-modal");
         this.contentEl.createEl("p", {
-            text: "Are you sure you wish to delete this event?"
+            text: "Are you sure you wish to delete this event?",
         });
 
         const buttonContainerEl = this.contentEl.createDiv(
@@ -198,7 +215,7 @@ class ConfirmDeleteEventModal extends CalendariumModal {
         );
         buttonContainerEl.createEl("a").createEl("small", {
             cls: "dont-ask",
-            text: "Delete and don't ask again"
+            text: "Delete and don't ask again",
         }).onclick = async () => {
             this.confirmed = true;
             this.plugin.data.exit.event = true;
@@ -218,7 +235,7 @@ class ConfirmDeleteEventModal extends CalendariumModal {
             });
         buttonEl.createEl("a").createEl("small", {
             cls: "dont-ask",
-            text: "Cancel"
+            text: "Cancel",
         }).onclick = () => {
             this.close();
         };
