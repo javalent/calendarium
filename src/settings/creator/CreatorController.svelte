@@ -12,8 +12,10 @@
     export let top: number;
     export let store: CreatorStore;
     export let quick = false;
+    export let original: string | null;
     setContext<Writable<Calendar>>("store", store);
     setContext<Calendarium>("plugin", plugin);
+    setContext<string | null>("original", original);
 </script>
 
 {#if quick}

@@ -3,12 +3,14 @@
     import type { CalEvent, CalEventCategory } from "src/@types";
     import {
         ExtraButtonComponent,
+        TFile,
         prepareSimpleSearch,
         renderMatches,
     } from "obsidian";
     import Dot from "../../Utilities/Dot.svelte";
-    import { EDIT, TRASH } from "src/utils/icons";
+    import { EDIT, EVENT_FROM_FRONTMATTER, TRASH } from "src/utils/icons";
     import type { Writable } from "svelte/store";
+    import { getContext } from "svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -21,7 +23,28 @@
     const edit = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon(EDIT).setTooltip("Edit");
     };
+
+    const open = (node: HTMLElement) => {
+        new ExtraButtonComponent(node)
+            .setIcon(EVENT_FROM_FRONTMATTER)
+            .setTooltip("Open note");
+    };
+    const plugin = getContext("plugin");
+    function tryOpen() {
+        if (event.note) {
+            const note = event.note.endsWith(".md")
+                ? event.note
+                : `${event.note}.md`;
+            const file = plugin.app.vault.getAbstractFileByPath(note);
+            if (file && file instanceof TFile) {
+                plugin.app.workspace.getLeaf().openFile(file);
+                plugin.app.setting.close();
+            }
+        }
+    }
+
     export let event: CalEvent;
+    export let file: boolean;
     export let category: CalEventCategory | undefined;
     export let date: string;
     export let nameFilter: Writable<string>;
@@ -77,11 +100,16 @@
             <span class="clamp" bind:this={descEl}></span>
         </div>
     </div>
-
-    <div class="icons">
-        <div class="icon" use:edit on:click={() => dispatch("edit")} />
-        <div class="icon" use:trash on:click={() => dispatch("delete")} />
-    </div>
+    {#if file}
+        <div class="icons">
+            <div class="icon" use:open on:click={() => tryOpen()} />
+        </div>
+    {:else}
+        <div class="icons">
+            <div class="icon" use:edit on:click={() => dispatch("edit")} />
+            <div class="icon" use:trash on:click={() => dispatch("delete")} />
+        </div>
+    {/if}
 </div>
 
 <style>

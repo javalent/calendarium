@@ -29,6 +29,12 @@ export class EventStore {
         return [...get(this.#events).values()];
     }
 
+    public getFileEvents() {
+        return [...get(this.#events).values()].filter((e) =>
+            this.isFileEvent(e.id)
+        );
+    }
+
     #eventCache: EventCache;
 
     constructor(public calendar: Calendar) {

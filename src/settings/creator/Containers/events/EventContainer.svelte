@@ -6,18 +6,25 @@
     import Details from "../../Utilities/Details.svelte";
     import { ExtraButtonComponent, prepareSimpleSearch } from "obsidian";
     import { getContext } from "svelte";
-    import { derived, writable } from "svelte/store";
+    import { derived, get, writable } from "svelte/store";
     import { ADD } from "src/utils/icons";
-    import { eventDateString } from "src/utils/functions";
+    import { eventDateString, sortEventList } from "src/utils/functions";
     import Pagination from "./Pagination.svelte";
     import Search from "./filters/Search.svelte";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
+    const original = getContext("original");
     const { eventStore } = calendar;
-    const { sortedStore } = eventStore;
 
     let nameFilter = writable<string>("");
+
+    const existing = plugin.getStore(original ?? "");
+    const fileEvents = existing?.eventStore.getFileEvents() ?? [];
+
+    const sortedStore = derived(eventStore, (events) =>
+        sortEventList([...fileEvents, ...events]),
+    );
 
     const slice = writable(50);
     const page = writable(1);
@@ -87,7 +94,7 @@
 
 <Details
     name={"Events"}
-    desc={`Displaying ${$filtered.length}/${$calendar.events.length} events.`}
+    desc={`Displaying ${$filtered.length}/${$sortedStore.length} events.`}
 >
     <div slot="context" class="context">
         <div class="setting-item filters-container">
@@ -95,11 +102,11 @@
         </div>
         <div use:addButton on:click={() => add()} />
     </div>
-    <!-- <ButtonComponent name={"Add event"} icon={ADD} on:click={() => add()} /> -->
     <div class="existing-items setting-item">
         {#each $sliced as event (event.id)}
             <EventInstance
                 {event}
+                file={fileEvents.contains(event)}
                 category={getCategory(event.category)}
                 date={eventDateString(event, $calendar)}
                 on:edit={() => add(event)}

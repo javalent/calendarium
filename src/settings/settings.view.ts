@@ -65,6 +65,7 @@ export enum Recurring {
 interface Context {
     store: CreatorStore;
     plugin: Calendarium;
+    original: string | null;
 }
 declare module "svelte" {
     function setContext<K extends keyof Context>(
@@ -102,6 +103,7 @@ declare module "obsidian" {
         };
         setting: {
             open(): void;
+            close(): void;
             openTabById(id: string): CalendariumSettings;
         };
     }
@@ -918,7 +920,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 });
             });
     }
-
+    modal: CreatorModal | null;
     launchCalendarCreator(
         calendar: Calendar | PresetCalendar = DEFAULT_CALENDAR,
         quick = false
@@ -931,12 +933,18 @@ export default class CalendariumSettings extends PluginSettingTab {
             clone.name = "";
         }
 
-        const modal = new CreatorModal(this.plugin, clone, quick);
         return new Promise((resolve, reject) => {
             try {
-                modal.onClose = () => {
-                    if (modal.saved) {
-                        calendar = copy(modal.calendar);
+                this.modal = new CreatorModal(
+                    this.plugin,
+                    clone,
+                    quick,
+                    original
+                );
+                this.modal!.onClose = () => {
+                    if (!this.modal) return;
+                    if (this.modal.saved) {
+                        calendar = copy(this.modal.calendar);
                         if (original) calendar.id = original;
                         resolve({
                             ...calendar,
@@ -949,14 +957,19 @@ export default class CalendariumSettings extends PluginSettingTab {
                             },
                         });
                     }
+                    this.modal = null;
                     resolve();
                 };
 
-                modal.open();
+                this.modal.open();
             } catch (e) {
                 reject();
             }
         });
+    }
+    override hide() {
+        this.modal?.forceClose();
+        this.modal = null;
     }
 }
 
@@ -968,7 +981,8 @@ class CreatorModal extends CalendariumModal {
     constructor(
         public plugin: Calendarium,
         calendar: Calendar,
-        public quick = false
+        public quick = false,
+        public original: string | null = null
     ) {
         super(plugin.app);
         this.modalEl.addClass("calendarium-creator");
@@ -994,6 +1008,10 @@ class CreatorModal extends CalendariumModal {
             modal.open();
         });
     }
+    async forceClose() {
+        this.saved = false;
+        super.close();
+    }
     async close() {
         if (await this.checkCanExit()) {
             this.saved = get(this.store.valid);
@@ -1009,6 +1027,7 @@ class CreatorModal extends CalendariumModal {
                 plugin: this.plugin,
                 top: 0,
                 quick: this.quick,
+                original: this.original,
             },
         });
         this.$app.$on("cancel", () => {
