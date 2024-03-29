@@ -4,12 +4,10 @@
     import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
     import { CreateEventModal } from "src/settings/modals/event/event";
     import Details from "../../Utilities/Details.svelte";
-    import ButtonComponent from "../../Settings/ButtonComponent.svelte";
-    import { confirmWithModal } from "src/settings/modals/confirm";
     import { ExtraButtonComponent, prepareSimpleSearch } from "obsidian";
     import { getContext } from "svelte";
     import { derived, writable } from "svelte/store";
-    import { ADD, RESET, TRASH } from "src/utils/icons";
+    import { ADD } from "src/utils/icons";
     import { eventDateString } from "src/utils/functions";
     import Pagination from "./Pagination.svelte";
     import Search from "./filters/Search.svelte";
@@ -80,36 +78,10 @@
         };
         modal.open();
     };
-    const deleteAll = async () => {
-        if (
-            await confirmWithModal(
-                plugin.app,
-                "Are you sure you want to delete all events from this calendar?",
-            )
-        ) {
-            eventStore.set([]);
-        }
-    };
-    const resetIcon = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon(RESET);
-    };
-    const deleteIcon = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon(TRASH).onClick(async () => {
-            if (
-                await confirmWithModal(
-                    plugin.app,
-                    "Are you sure you want to delete the filtered events from this calendar?",
-                )
-            ) {
-                eventStore.set(
-                    $eventStore.filter((e) => !$filtered.includes(e)),
-                );
-                $nameFilter = "";
-            }
-        });
-    };
-    const reset = () => {
-        $nameFilter = "";
+    const addButton = (node: HTMLElement) => {
+        new ExtraButtonComponent(node)
+            .setIcon(ADD)
+            .extraSettingsEl.onClickEvent((evt) => evt.preventDefault());
     };
 </script>
 
@@ -117,12 +89,13 @@
     name={"Events"}
     desc={`Displaying ${$filtered.length}/${$calendar.events.length} events.`}
 >
-    <ButtonComponent name={"Add event"} icon={ADD} on:click={() => add()} />
-    <div class="setting-item filters-container">
-        <Search filter={nameFilter} placeholder={"Search events"} />
-        <div use:resetIcon on:click={() => reset()} />
-        <div use:deleteIcon />
+    <div slot="context" class="context">
+        <div class="setting-item filters-container">
+            <Search filter={nameFilter} placeholder={"Search events"} />
+        </div>
+        <div use:addButton on:click={() => add()} />
     </div>
+    <!-- <ButtonComponent name={"Add event"} icon={ADD} on:click={() => add()} /> -->
     <div class="existing-items setting-item">
         {#each $sliced as event (event.id)}
             <EventInstance
@@ -156,5 +129,11 @@
     }
     .existing-items {
         flex-flow: column;
+        gap: 1rem;
+    }
+    .context {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 </style>

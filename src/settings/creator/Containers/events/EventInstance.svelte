@@ -74,7 +74,7 @@
                     {date}
                 </em>
             </span>
-            <p class="clamp" bind:this={descEl}></p>
+            <span class="clamp" bind:this={descEl}></span>
         </div>
     </div>
 

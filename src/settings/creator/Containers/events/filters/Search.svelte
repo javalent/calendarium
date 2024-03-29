@@ -10,10 +10,17 @@
             .onChange(
                 debounce((v) => {
                     $filter = v;
-                }, 10)
+                }, 10),
             );
         filter.subscribe((v) => {
             if (!v || !v.length) text.setValue("");
+        });
+
+        text.inputEl.onClickEvent((event) => {
+            event.preventDefault();
+        });
+        text.clearButtonEl.onClickEvent((event) => {
+            event.preventDefault();
         });
     };
 </script>
