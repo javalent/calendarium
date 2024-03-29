@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/javalent/calendarium/compare/1.0.12...1.1.0) (2024-03-29)
+
+
+### Features
+
+* Adds ability to define Recurring events, such as birthdays ([16ea511](https://github.com/javalent/calendarium/commit/16ea5117f4cd4f0169b56181e06473d4dd539e67))
+* Adds ability to import and export calendars in settings ([16ea511](https://github.com/javalent/calendarium/commit/16ea5117f4cd4f0169b56181e06473d4dd539e67))
+
+
+### Bug Fixes
+
+* General UI improvements ([16ea511](https://github.com/javalent/calendarium/commit/16ea5117f4cd4f0169b56181e06473d4dd539e67))
+
 ## [1.0.12](https://github.com/javalent/calendarium/compare/1.0.11...1.0.12) (2024-03-15)
 
 
