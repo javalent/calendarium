@@ -3,6 +3,7 @@ import type {
     Calendar,
     CalEvent,
     CalEventDate,
+    UndatedCalDate,
 } from "../../../@types";
 
 import {
@@ -44,7 +45,7 @@ export class CreateEventModal extends CalendariumModal {
         public calendar: Calendar,
         public plugin: Calendarium,
         event?: CalEvent,
-        date?: CalDate | CalEventDate
+        date?: CalDate | CalEventDate | UndatedCalDate
     ) {
         super(plugin.app);
         if (event) {
@@ -139,7 +140,7 @@ export class CreateEventModal extends CalendariumModal {
 export async function addEventWithModal(
     plugin: Calendarium,
     calendar: Calendar,
-    date: CalDate | CalEventDate,
+    date: CalDate | CalEventDate | UndatedCalDate,
     event?: CalEvent
 ) {
     const modal = new CreateEventModal(calendar, plugin, event, date);
