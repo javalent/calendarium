@@ -1,15 +1,14 @@
 <script lang="ts">
-    import { ButtonComponent, Platform } from "obsidian";
+    import { Platform } from "obsidian";
     import { onMount } from "svelte";
-
     import CreatorTitle from "./CreatorTitle.svelte";
     import History from "./Utilities/History.svelte";
     import Events from "./Containers/events/Events.svelte";
-    import { createEventDispatcher } from "svelte";
-    import { setNodeIcon } from "src/utils/icons";
     import Info from "./Containers/general/Info.svelte";
     import CurrentDate from "./Containers/dates/current/CurrentDate.svelte";
-    import { WARNING } from "src/utils/icons";
+    import type { CreatorSection } from "./creator.types";
+    import { writable } from "svelte/store";
+    import Sidebar from "./Containers/sidebar/Sidebar.svelte";
 
     const mobile = Platform.isMobile;
     let ready = mobile;
@@ -18,66 +17,19 @@
         ready = true;
     });
 
-    const SettingsSections = ["General", "Events"] as const;
-    type CreatorSection = (typeof SettingsSections)[number];
-    let SelectedSection: CreatorSection = SettingsSections[0];
-
-    $: validSection = (section: CreatorSection): boolean => {
-        switch (section) {
-            default: {
-                return true;
-            }
-        }
-    };
-
-    const dispatch = createEventDispatcher<{ cancel: null }>();
-    const cancel = (node: HTMLDivElement) => {
-        new ButtonComponent(node)
-            .setButtonText("Cancel")
-            .setCta()
-            .onClick(() => {
-                dispatch("cancel");
-            });
-    };
+    let selected = writable<CreatorSection>("General");
 </script>
 
 {#if !Platform.isMobile}
-    <div class="vertical-tab-header">
-        <CreatorTitle />
-        <div class="vertical-tab-header-group">
-            <div class="vertical-tab-header-group-items">
-                {#each SettingsSections as SECTION}
-                    <div
-                        class="vertical-tab-nav-item"
-                        class:is-active={SelectedSection === SECTION}
-                        on:click={() => (SelectedSection = SECTION)}
-                    >
-                        {SECTION}
-                        {#if !validSection(SECTION)}
-                            <div
-                                class="calendarium-warning x-small"
-                                use:setNodeIcon={WARNING}
-                            />
-                        {/if}
-                    </div>
-                {/each}
-            </div>
-        </div>
-
-        <div class="bottom">
-            <div class="cancel" use:cancel />
-        </div>
-    </div>
-    <div
-        class="vertical-tab-content-container {SelectedSection.toLowerCase()}s"
-    >
+    <Sidebar {selected} sections={["General", "Events"]} />
+    <div class="vertical-tab-content-container {$selected.toLowerCase()}s">
         <History></History>
         <div class="vertical-tab-content">
-            {#if SelectedSection == "General"}
+            {#if $selected == "General"}
                 <Info />
                 <CurrentDate />
             {/if}
-            {#if SelectedSection == "Events"}
+            {#if $selected == "Events"}
                 <Events />
             {/if}
         </div>
@@ -114,17 +66,6 @@
     .vertical-tab-content {
         padding: var(--size-4-8);
         padding-top: 0;
-    }
-    .vertical-tab-nav-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    .calendarium-warning {
-        color: var(--interactive-accent);
-    }
-    .is-active .calendarium-warning {
-        color: var(--text-on-accent);
     }
     .bottom {
         margin-top: auto;
