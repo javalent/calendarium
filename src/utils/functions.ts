@@ -7,8 +7,8 @@ import type {
     OneTimeCalEventDate,
 } from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
-import { type DateBit } from "src/events/event.helper";
-import { EventType } from "src/events/event.types";
+import type { DateBit } from "src/events/event.helper";
+import { EventType } from "../events/event.types";
 
 export function daysBetween(date1: Date, date2: Date) {
     const d1 = window.moment(date1);

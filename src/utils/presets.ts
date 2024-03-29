@@ -1,5 +1,5 @@
 import type { PresetCalendar } from "src/@types";
-import { EventType } from "src/events/event.types";
+import { EventType } from "../events/event.types";
 
 export const PRESET_CALENDARS: PresetCalendar[] = [
     {
