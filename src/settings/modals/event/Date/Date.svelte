@@ -284,6 +284,7 @@
         display: flex;
         flex-flow: column;
         gap: 0.5rem;
+        margin: 0;
     }
 
     .recurring {

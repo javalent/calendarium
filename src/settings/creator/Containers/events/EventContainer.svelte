@@ -117,12 +117,6 @@
     name={"Events"}
     desc={`Displaying ${$filtered.length}/${$calendar.events.length} events.`}
 >
-    <ButtonComponent
-        name={"Delete all events"}
-        icon={TRASH}
-        on:click={() => deleteAll()}
-    />
-
     <ButtonComponent name={"Add event"} icon={ADD} on:click={() => add()} />
     <div class="setting-item filters-container">
         <Search filter={nameFilter} placeholder={"Search events"} />
