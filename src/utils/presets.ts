@@ -1,4 +1,5 @@
 import type { PresetCalendar } from "src/@types";
+import { EventType } from "../events/event.types";
 
 export const PRESET_CALENDARS: PresetCalendar[] = [
     {
@@ -19,7 +20,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 {
                     type: "day",
                     name: "Sunday",
-                    abbreviation: "abc",
                     id: "ID_19ea684b4a08",
                 },
                 {
@@ -238,6 +238,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -255,6 +256,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -272,6 +274,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -289,6 +292,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -303,9 +307,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 25,
-                    year: null,
                     month: 11,
+                    year: [null, null],
                 },
+                type: EventType.Recurring,
                 category: "christian-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -323,6 +328,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "christian-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -340,6 +346,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "christian-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -357,6 +364,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "christian-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -374,6 +382,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "christian-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -391,6 +400,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "christian-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -405,9 +415,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -422,9 +433,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 14,
-                    year: null,
+                    year: [null, null],
                     month: 1,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -439,9 +451,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 31,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -730,6 +743,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -747,6 +761,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -764,6 +779,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -781,6 +797,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -798,6 +815,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -815,6 +833,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -829,9 +848,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 4,
-                    year: null,
+                    year: [null, null],
                     month: 8,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -846,9 +866,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 11,
-                    year: null,
+                    year: [null, null],
                     month: 3,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -863,9 +884,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 4,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -880,9 +902,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 4,
-                    year: null,
+                    year: [null, null],
                     month: 12,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -897,9 +920,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 11,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -914,9 +938,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 4,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -931,9 +956,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 7,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -948,9 +974,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 4,
-                    year: null,
+                    year: [null, null],
                     month: 8,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -965,9 +992,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 10,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1281,6 +1309,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1298,6 +1327,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1315,6 +1345,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1332,6 +1363,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1349,6 +1381,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1364,8 +1397,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 0,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1380,9 +1414,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1397,9 +1432,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1414,9 +1450,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 6,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1431,9 +1468,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 20,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1448,9 +1486,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 2,
-                    year: null,
+                    year: [null, null],
                     month: 1,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1465,9 +1504,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 16,
-                    year: null,
+                    year: [null, null],
                     month: 1,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1482,9 +1522,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 19,
-                    year: null,
+                    year: [null, null],
                     month: 1,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1499,9 +1540,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 29,
-                    year: null,
+                    year: [null, null],
                     month: 1,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1517,8 +1559,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 2,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1533,9 +1576,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 5,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1550,9 +1594,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 6,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1567,9 +1612,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 7,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1584,9 +1630,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 13,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1601,9 +1648,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 26,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1621,6 +1669,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1638,6 +1687,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1655,6 +1705,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1669,9 +1720,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 7,
-                    year: null,
+                    year: [null, null],
                     month: 3,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1686,9 +1738,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 15,
-                    year: null,
+                    year: [null, null],
                     month: 3,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1703,9 +1756,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 16,
-                    year: null,
+                    year: [null, null],
                     month: 3,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1720,9 +1774,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 27,
-                    year: null,
+                    year: [null, null],
                     month: 3,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1738,8 +1793,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 4,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1754,9 +1810,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 31,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1771,9 +1828,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 13,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1791,6 +1849,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1805,9 +1864,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 10,
-                    year: null,
+                    year: [null, null],
                     month: 5,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1822,9 +1882,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 3,
-                    year: null,
+                    year: [null, null],
                     month: 5,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1839,9 +1900,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 21,
-                    year: null,
+                    year: [null, null],
                     month: 5,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1856,9 +1918,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 22,
-                    year: null,
+                    year: [null, null],
                     month: 5,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1873,9 +1936,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 7,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1890,9 +1954,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 6,
-                    year: null,
+                    year: [null, null],
                     month: 7,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1907,9 +1972,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 9,
-                    year: null,
+                    year: [null, null],
                     month: 7,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1924,9 +1990,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 10,
-                    year: null,
+                    year: [null, null],
                     month: 7,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1941,9 +2008,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 16,
-                    year: null,
+                    year: [null, null],
                     month: 7,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1958,9 +2026,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 31,
-                    year: null,
+                    year: [null, null],
                     month: 7,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1975,9 +2044,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 3,
-                    year: null,
+                    year: [null, null],
                     month: 6,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -1992,9 +2062,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 14,
-                    year: null,
+                    year: [null, null],
                     month: 6,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2009,9 +2080,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 17,
-                    year: null,
+                    year: [null, null],
                     month: 6,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2026,9 +2098,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 15,
-                    year: null,
+                    year: [null, null],
                     month: 6,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2043,8 +2116,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 8,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2062,6 +2136,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2077,8 +2152,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 8,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2094,8 +2170,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 8,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2110,9 +2187,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 26,
-                    year: null,
+                    year: [null, null],
                     month: 8,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2127,9 +2205,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 29,
-                    year: null,
+                    year: [null, null],
                     month: 8,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2145,8 +2224,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 9,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2161,9 +2241,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 6,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2195,9 +2276,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 27,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2213,8 +2295,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 9,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2229,9 +2312,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 15,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2246,9 +2330,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 5,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2263,9 +2348,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 23,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2280,9 +2366,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 8,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2297,9 +2384,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 13,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2314,9 +2402,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 14,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2331,9 +2420,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 18,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2348,9 +2438,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 24,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2365,9 +2456,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 28,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2383,8 +2475,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 11,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2399,9 +2492,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2416,9 +2510,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 7,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2433,9 +2528,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 11,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2450,9 +2546,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 15,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2467,9 +2564,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 31,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2484,9 +2582,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 31,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2501,9 +2600,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 31,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2521,6 +2621,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2538,6 +2639,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2552,9 +2654,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 2,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2569,9 +2672,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 3,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2589,6 +2693,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2604,8 +2709,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 4,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2623,6 +2729,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2638,8 +2745,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 date: {
                     day: null,
                     year: null,
-                    month: 1,
+                    month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2945,6 +3053,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2959,9 +3068,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 13,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2975,9 +3085,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 14,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -2992,9 +3103,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 14,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3026,9 +3138,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 18,
-                    year: null,
+                    year: [null, null],
                     month: 1,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3060,9 +3173,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 5,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3077,9 +3191,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 15,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3094,9 +3209,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 11,
-                    year: null,
+                    year: [null, null],
                     month: 3,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3111,9 +3227,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 6,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3128,9 +3245,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 26,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3145,9 +3263,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 28,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3162,9 +3281,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 12,
-                    year: null,
+                    year: [null, null],
                     month: 5,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3196,9 +3316,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 14,
-                    year: null,
+                    year: [null, null],
                     month: 6,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3230,9 +3351,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 4,
-                    year: null,
+                    year: [null, null],
                     month: 7,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3281,9 +3403,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 9,
-                    year: null,
+                    year: [null, null],
                     month: 8,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3298,9 +3421,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3315,9 +3439,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 18,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3332,9 +3457,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 25,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3366,9 +3492,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 24,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3383,9 +3510,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 26,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3400,9 +3528,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 27,
-                    year: null,
+                    year: [null, null],
                     month: 11,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3420,6 +3549,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3437,6 +3567,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3454,6 +3585,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3699,6 +3831,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "natural-event",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3716,6 +3849,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "natural-event",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3733,6 +3867,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "natural-event",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3750,6 +3885,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3763,9 +3899,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
-                    month: null,
+                    year: [null, null],
+                    month: 0,
                 },
+                type: EventType.Recurring,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -3783,6 +3920,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "natural-event",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4033,6 +4171,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4050,6 +4189,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4067,6 +4207,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4084,6 +4225,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: null,
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4098,9 +4240,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4115,9 +4258,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 27,
-                    year: null,
+                    year: [null, null],
                     month: 0,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4132,9 +4276,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 7,
-                    year: null,
+                    year: [null, null],
                     month: 1,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4149,9 +4294,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 13,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4166,9 +4312,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 20,
-                    year: null,
+                    year: [null, null],
                     month: 2,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4183,9 +4330,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 11,
-                    year: null,
+                    year: [null, null],
                     month: 3,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4200,9 +4348,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 31,
-                    year: null,
+                    year: [null, null],
                     month: 3,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4217,9 +4366,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 18,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4234,9 +4384,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 26,
-                    year: null,
+                    year: [null, null],
                     month: 4,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4251,9 +4402,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 15,
-                    year: null,
+                    year: [null, null],
                     month: 5,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4268,9 +4420,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 20,
-                    year: null,
+                    year: [null, null],
                     month: 5,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4285,9 +4438,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 7,
-                    year: null,
+                    year: [null, null],
                     month: 6,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4302,9 +4456,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 14,
-                    year: null,
+                    year: [null, null],
                     month: 6,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4319,9 +4474,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 3,
-                    year: null,
+                    year: [null, null],
                     month: 7,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4336,9 +4492,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 12,
-                    year: null,
+                    year: [null, null],
                     month: 8,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4353,9 +4510,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 22,
-                    year: null,
+                    year: [null, null],
                     month: 8,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4370,9 +4528,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 13,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4387,9 +4546,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 21,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4404,9 +4564,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 2,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4421,9 +4582,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 5,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: "religious-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4438,9 +4600,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 20,
-                    year: null,
+                    year: [null, null],
                     month: 10,
                 },
+                type: EventType.Recurring,
                 category: "secular-holidays",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4744,6 +4907,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "natural-events",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4760,6 +4924,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "natural-events",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4776,6 +4941,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "natural-events",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4792,6 +4958,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     year: null,
                     month: null,
                 },
+                type: EventType.Undated,
                 category: "natural-events",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4806,9 +4973,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 2,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: "festivals",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4823,9 +4991,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 15,
                 },
+                type: EventType.Recurring,
                 category: "festivals",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4840,9 +5009,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 12,
                 },
+                type: EventType.Recurring,
                 category: "festivals",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4857,9 +5027,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 5,
                 },
+                type: EventType.Recurring,
                 category: "festivals",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4874,9 +5045,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 1,
                 },
+                type: EventType.Recurring,
                 category: "festivals",
                 sort: {
                     timestamp: Number.MIN_VALUE,
@@ -4891,9 +5063,10 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 note: null,
                 date: {
                     day: 1,
-                    year: null,
+                    year: [null, null],
                     month: 9,
                 },
+                type: EventType.Recurring,
                 category: "festivals",
                 sort: {
                     timestamp: Number.MIN_VALUE,

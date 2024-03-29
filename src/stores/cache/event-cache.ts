@@ -1,84 +1,146 @@
-import type { CalDate, CalEvent, CalEventDate } from "src/@types";
+import type {
+    CalDate,
+    CalEvent,
+    OneTimeCalEventDate,
+    RecurringCalEventDate,
+} from "src/@types";
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
+import { EventType } from "src/events/event.types";
 class YearEventCache extends YearCache<CalEvent> {
     update(events: CalEvent[]) {
-        if (events) {
-            this.derived = events.filter((event) => {
-                const date = { ...event.date };
-                const end = { ...event.end };
+        return (events ?? [])?.filter((event) => {
+            switch (event.type) {
+                case EventType.Undated: {
+                    break;
+                }
+                case EventType.Recurring: {
+                    const date = { ...event.date };
+                    if (date.year === null) return true;
+                    if (Array.isArray(date.year)) {
+                        const start = date.year[0] ?? this.year;
+                        const end = date.year[1] ?? this.year;
+                        return start <= this.year && end >= this.year;
+                    } else {
+                        return date.year === this.year;
+                    }
+                }
+                case EventType.Range: {
+                    const date = { ...event.date };
+                    const end = { ...event.end };
 
-                //Year and Month match
-                if (date.year == this.year || date.year == undefined)
-                    return true;
+                    //Year and Month match
+                    if (date.year == this.year || date.year == undefined)
+                        return true;
 
-                //Event is after the month
-                if (date.year > this.year) return false;
+                    //Event is after the month
+                    if (date.year > this.year) return false;
 
-                //No end date and event is before the month
-                if (!end && !event.formulas?.length && date.year < this.year)
-                    return false;
+                    if (date.year <= this.year && end.year >= this.year)
+                        return true;
+                    break;
+                }
+                case EventType.Date:
+                default: {
+                    const date = { ...event.date };
+                    //Year and Month match
+                    if (date.year == this.year || date.year == undefined)
+                        return true;
+                    break;
+                }
+            }
 
-                if (
-                    date.year <= this.year &&
-                    ((end?.year && end?.year >= this.year) ||
-                        event.formulas?.length)
-                )
-                    return true;
-
-                return false;
-            });
-        }
-        return this.derived;
+            return false;
+        });
     }
 }
 class MonthEventCache extends MonthCache<CalEvent> {
     update(events: CalEvent[]) {
-        if (events) {
-            this.derived = events.filter((event) => {
-                const date = { ...event.date };
-                const end = { ...(event.end ?? {}) };
+        return (events ?? [])?.filter((event) => {
+            switch (event.type) {
+                case EventType.Undated: {
+                    break;
+                }
+                case EventType.Recurring: {
+                    const date = { ...event.date };
+                    if (date.year) {
+                        if (Array.isArray(date.year)) {
+                            const start = date.year[0] ?? this.year;
+                            const end = date.year[1] ?? this.year;
+                            if (start > this.year || end < this.year)
+                                return false;
+                        } else if (date.year !== this.year) {
+                            return false;
+                        }
+                    }
+                    if (date.month === null) return true;
+                    if (Array.isArray(date.month)) {
+                        const start = date.month[0] ?? this.month;
+                        const end = date.month[1] ?? this.month;
+                        return start <= this.month && end >= this.month;
+                    } else {
+                        return date.month === this.month;
+                    }
+                }
+                case EventType.Range: {
+                    const date = { ...event.date };
+                    const end = { ...event.end };
 
-                //No-month events are on every month.
-                if (date.month == undefined) return true;
+                    //Year and Month match
+                    if (date.year == this.year && date.month == this.month)
+                        return true;
 
-                //Year and Month match
-                if (
-                    (date.year == this.year || date.year == undefined) &&
-                    date.month == this.month
-                )
-                    return true;
+                    //Event is after the month
+                    if (
+                        date.year > this.year ||
+                        (date.year == this.year && date.month > this.month)
+                    )
+                        return false;
 
-                //Event is after the month
-                if (
-                    (date.year != null && date.year > this.year) ||
-                    (date.year == this.year && date.month > this.month)
-                )
+                    if (date.year < this.year && end.year > this.year) {
+                        return true;
+                    }
+                    if (
+                        date.year == this.year &&
+                        date.month <= this.month &&
+                        end.year > this.year
+                    ) {
+                        return true;
+                    }
+                    if (
+                        date.year < this.year &&
+                        end.year == this.year &&
+                        end.month >= this.month
+                    ) {
+                        return true;
+                    }
+
                     return false;
+                }
+                case EventType.Date:
+                default: {
+                    const date = { ...event.date };
 
-                //No end date and event is before the month
-                if (
-                    !end &&
-                    !event.formulas?.length &&
-                    (date.month != this.month ||
-                        (date.year != null && date.year < this.year))
-                )
-                    return false;
+                    //No-month events are on every month.
+                    if (date.month == undefined) return true;
 
-                if (date.year == undefined) end.year = date.year = this.year;
-                if (
-                    (date.year <= this.year || date.month <= this.month) &&
-                    (event.formulas?.length ||
-                        (end.year != null &&
-                            end.year >= this.year &&
-                            end.month != null &&
-                            end.month >= this.month))
-                )
-                    return true;
+                    //Year and Month match
+                    if (
+                        (date.year == this.year || date.year == undefined) &&
+                        date.month == this.month
+                    )
+                        return true;
 
-                return false;
-            });
-        }
-        return this.derived;
+                    //Event is after the month
+                    if (
+                        (date.year != null && date.year > this.year) ||
+                        (date.year == this.year && date.month > this.month)
+                    )
+                        return false;
+                    break;
+                }
+            }
+            return false;
+        });
     }
 }
 class DayEventCache extends DayCache<CalEvent> {
@@ -89,8 +151,7 @@ class DayEventCache extends DayCache<CalEvent> {
             year: this.year,
         };
     }
-
-    isBefore(date: CalEventDate): boolean {
+    isBefore(date: OneTimeCalEventDate): boolean {
         const normalized = this.normalize(date);
         if (normalized.year < this.year) return true;
         if (normalized.month < this.month && normalized.year === this.year)
@@ -103,7 +164,7 @@ class DayEventCache extends DayCache<CalEvent> {
             return true;
         return false;
     }
-    isAfter(date: CalEventDate): boolean {
+    isAfter(date: OneTimeCalEventDate): boolean {
         const normalized = this.normalize(date);
         if (normalized.year > this.year) return true;
         if (normalized.month > this.month && normalized.year === this.year)
@@ -116,7 +177,7 @@ class DayEventCache extends DayCache<CalEvent> {
             return true;
         return false;
     }
-    isEqual(date: CalEventDate): boolean {
+    isEqual(date: OneTimeCalEventDate): boolean {
         const normalized = this.normalize(date);
         return (
             normalized.year == this.year &&
@@ -124,7 +185,7 @@ class DayEventCache extends DayCache<CalEvent> {
             normalized.day == this.day
         );
     }
-    normalize(date: CalEventDate): CalDate {
+    normalize(date: OneTimeCalEventDate): CalDate {
         const _date = { ...date };
         if (_date.day == null) {
             _date.day = this.date.day;
@@ -137,27 +198,54 @@ class DayEventCache extends DayCache<CalEvent> {
         }
         return _date as CalDate;
     }
-    isUndefined(date: CalEventDate): boolean {
+    isUndefined(date: OneTimeCalEventDate): boolean {
         return date.day === null && date.month === null && date.year === null;
     }
     update(events: CalEvent[]) {
-        if (events) {
-            this.derived = [];
-            for (const event of events) {
-                if (this.isUndefined(event.date)) continue;
-                // exact match
-                if (this.isEqual(event.date)) {
-                    this.derived.push(event);
-                } else if (
-                    event.end &&
-                    this.isBefore(event.date) &&
-                    this.isAfter(event.end)
-                ) {
-                    this.derived.push(event);
+        return (events ?? [])?.filter((event) => {
+            switch (event.type) {
+                case EventType.Undated: {
+                    break;
+                }
+                case EventType.Recurring: {
+                    const date = { ...event.date };
+
+                    if (date.day == null) return true;
+                    if (Array.isArray(date.day)) {
+                        const start = date.day[0] ?? this.month;
+                        const end = date.day[1] ?? this.month;
+                        if (start <= this.day && end >= this.day) {
+                            return true;
+                        }
+                    } else if (date.day === this.day) {
+                        return true;
+                    }
+                    return false;
+                }
+                case EventType.Range: {
+                    if (this.isUndefined(event.date)) return false;
+                    if (this.isEqual(event.date)) {
+                        return true;
+                    } else if (
+                        event.end &&
+                        this.isBefore(event.date) &&
+                        this.isAfter(event.end)
+                    ) {
+                        return true;
+                    }
+                    break;
+                }
+                case EventType.Date:
+                default: {
+                    if (this.isUndefined(event.date)) return false;
+                    if (this.isEqual(event.date)) {
+                        return true;
+                    }
+                    break;
                 }
             }
-        }
-        return this.derived;
+            return false;
+        });
     }
 }
 
@@ -175,5 +263,86 @@ export class EventCache extends EntityCache<CalEvent> {
         const monthCache = this.getMonthCache(month, year);
         if (monthCache.cache.has(day)) return monthCache.cache.get(day)!;
         return new DayEventCache(day, month, year, monthCache.entities);
+    }
+    public override invalidate(
+        date: OneTimeCalEventDate | RecurringCalEventDate
+    ) {
+        const yearCaches: YearCache<CalEvent>[] = [];
+        if (date.year == null) {
+            for (const cache of this.cache.values()) {
+                cache.dirty.set(true);
+                yearCaches.push(cache);
+            }
+        } else if (Array.isArray(date.year)) {
+            for (const year of [...this.cache.keys()]) {
+                if (
+                    year >= (date.year[0] ?? Number.MIN_SAFE_INTEGER) &&
+                    year <= (date.year[1] ?? Number.MAX_SAFE_INTEGER)
+                ) {
+                    const cache = this.cache.get(year)!;
+                    cache.dirty.set(true);
+                    yearCaches.push(cache);
+                }
+            }
+        } else if (this.cache.has(date.year)) {
+            const cache = this.cache.get(date.year)!;
+            cache.dirty.set(true);
+            yearCaches.push(cache);
+        }
+        //No years to invalidate.
+        if (!yearCaches.length) return;
+
+        const monthCaches: MonthCache<CalEvent>[] = [];
+        for (const yearCache of yearCaches) {
+            if (date.month == null) {
+                for (const cache of yearCache.cache.values()) {
+                    cache.dirty.set(true);
+                    monthCaches.push(cache);
+                }
+            } else if (Array.isArray(date.month)) {
+                for (const month of [...yearCache.cache.keys()]) {
+                    if (
+                        month >= (date.month[0] ?? Number.MIN_SAFE_INTEGER) &&
+                        month <= (date.month[1] ?? Number.MAX_SAFE_INTEGER)
+                    ) {
+                        const cache = yearCache.cache.get(month)!;
+                        cache.dirty.set(true);
+                        monthCaches.push(cache);
+                    }
+                }
+            } else if (yearCache.cache.has(date.month)) {
+                const cache = yearCache.cache.get(date.month)!;
+                cache.dirty.set(true);
+                monthCaches.push(cache);
+            }
+        }
+
+        //No months to invalidate.
+        if (!monthCaches.length) return;
+        const dayCaches: DayCache<CalEvent>[] = [];
+
+        for (const monthCache of monthCaches) {
+            if (date.day == null) {
+                for (const cache of monthCache.cache.values()) {
+                    cache.dirty.set(true);
+                    dayCaches.push(cache);
+                }
+            } else if (Array.isArray(date.day)) {
+                for (const day of [...monthCache.cache.keys()]) {
+                    if (
+                        day >= (date.day[0] ?? Number.MIN_SAFE_INTEGER) &&
+                        day <= (date.day[1] ?? Number.MAX_SAFE_INTEGER)
+                    ) {
+                        const cache = monthCache.cache.get(day)!;
+                        cache.dirty.set(true);
+                        dayCaches.push(cache);
+                    }
+                }
+            } else if (monthCache.cache.has(date.day)) {
+                const cache = monthCache.cache.get(date.day)!;
+                cache.dirty.set(true);
+                dayCaches.push(cache);
+            }
+        }
     }
 }

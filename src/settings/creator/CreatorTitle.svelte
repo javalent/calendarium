@@ -1,7 +1,6 @@
 <script lang="ts">
     import { setIcon } from "obsidian";
     import { getMissingNotice } from "./Utilities/utils";
-    import createStore from "./stores/calendar";
     import { getContext } from "svelte";
     import { CHECK, WARNING } from "src/utils/icons";
 

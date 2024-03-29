@@ -11,6 +11,7 @@ import {
     isValidMonth,
     isValidYear,
     nanoid,
+    sortEventList,
 } from "src/utils/functions";
 import { derived, writable } from "svelte/store";
 import copy from "fast-copy";
@@ -35,6 +36,8 @@ function padDay(months: Month[]) {
         ) + ""
     ).length;
 }
+
+export type CreatorStore = ReturnType<typeof createStore>;
 
 function createStore(plugin: Calendarium, existing: Calendar) {
     const store = writable<Calendar>(existing);
@@ -334,26 +337,7 @@ function createStore(plugin: Calendarium, existing: Calendar) {
         },
         eventStore: {
             subscribe: eventStore.subscribe,
-            sortedStore: derived(eventStore, (events) =>
-                events.sort((a, b) => {
-                    if (a.date.year != b.date.year) {
-                        return (
-                            (a.date.year ?? Number.MIN_VALUE) -
-                            (b.date.year ?? Number.MIN_VALUE)
-                        );
-                    }
-                    if (a.date.month != b.date.month) {
-                        return (
-                            (a.date.month ?? Number.MIN_VALUE) -
-                            (b.date.month ?? Number.MIN_VALUE)
-                        );
-                    }
-                    return (
-                        (a.date.day ?? Number.MIN_VALUE) -
-                        (b.date.day ?? Number.MIN_VALUE)
-                    );
-                })
-            ),
+            sortedStore: derived(eventStore, (events) => sortEventList(events)),
             set: (events: CalEvent[]) =>
                 update((data) => {
                     data.events = [...events];

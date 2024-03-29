@@ -15,6 +15,7 @@ import {
 import { CodeBlockService } from "./calendar/codeblock";
 import { DEFAULT_FORMAT } from "./utils/constants";
 import { CalendariumNotice } from "./utils/notice";
+import { CreateEventModal } from "./settings/modals/event/event";
 
 declare module "obsidian" {
     interface App {
@@ -131,11 +132,11 @@ export default class Calendarium extends Plugin {
      * Stores
      */
     private readonly stores: WeakMap<Calendar, CalendarStore> = new WeakMap();
-    public getStoreByCalendar(calendar: Calendar) {
+    public getStoreByCalendar(calendar: Calendar): CalendarStore {
         if (!this.stores.has(calendar)) {
             this.stores.set(calendar, createCalendarStore(calendar, this));
         }
-        return this.stores.get(calendar) ?? null;
+        return this.stores.get(calendar)!;
     }
     /** Get a store by ID */
     public getStore(calendar: string) {

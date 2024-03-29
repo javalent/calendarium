@@ -1,31 +1,10 @@
-export enum EventCombinator {
-    AND,
-    OR,
-    NAND,
-    XOR,
-}
-export enum EventOperator {
-    Plus,
-    Minus
-}
-export enum EventCondition {
-    Equals,
-    GreaterThan,
-    GreaterThanOrEqual,
-    LessThan,
-    LessThanOrEqual,
-    Every,
-}
-export enum EventTimespan {
-    Date,
-    Year,
-    Month,
-    MonthNumber,
-    Week,
-    WeekNumber,
-    WeekNumberInMonth,
+export const EventType = {
+    Date: "Date",
+    Range: "Range",
+    Recurring: "Recurring",
+    Undated: "Undated",
+    // …
+} as const;
 
-    Moon,
-    Random,
-    Event
-}
+// Overload the type
+export type EventType = (typeof EventType)[keyof typeof EventType];

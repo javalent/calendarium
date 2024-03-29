@@ -27,6 +27,7 @@ export type CalendariumData = {
     eventPreview: boolean;
     exit: {
         saving: boolean;
+        savingEvent: boolean;
         event: boolean;
         calendar: boolean;
     };

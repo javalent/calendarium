@@ -11,6 +11,7 @@ import {
     DropdownComponent,
     TFolder,
     normalizePath,
+    Menu,
 } from "obsidian";
 
 import copy from "fast-copy";
@@ -28,7 +29,7 @@ import {
 } from "./modals/confirm";
 import { CalendariumModal } from "./modals/modal";
 import { get } from "svelte/store";
-import createStore from "./creator/stores/calendar";
+import createStore, { type CreatorStore } from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import SettingsService from "./settings.service";
@@ -43,13 +44,18 @@ import {
     COLLAPSE,
     CUSTOM_CREATOR,
     EDIT,
+    EXPORT,
     IMPORT,
+    LOADING,
+    MENU,
     QUICK_CREATOR,
     RESET,
     RESTORE,
     TRASH,
     WARNING,
 } from "src/utils/icons";
+import CalendariumMenu from "src/utils/menu";
+import { CalendariumNotice } from "src/utils/notice";
 
 export enum Recurring {
     none = "None",
@@ -57,7 +63,7 @@ export enum Recurring {
     yearly = "Yearly",
 }
 interface Context {
-    store: ReturnType<typeof createStore>;
+    store: CreatorStore;
     plugin: Calendarium;
 }
 declare module "svelte" {
@@ -237,7 +243,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 });
             });
         new Setting(this.calendarsEl)
-            .setName("Import calendar")
+            .setName("Import from Fantasy Calendar")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
@@ -337,38 +343,131 @@ export default class CalendariumSettings extends PluginSettingTab {
         new Setting(this.calendarsEl)
             .setName("Create new calendar")
             .addButton((button) => {
-                button
-                    /*                 .setIcon(QUICK_CREATOR)
-                .setButtonText("Quick creator") */
-                    .onClick(async () => {
-                        const preset = await getPresetCalendar(this.plugin);
-                        if (!preset) return;
-                        const calendar = await this.launchCalendarCreator(
-                            preset,
-                            true
-                        );
-                        if (calendar) {
-                            await this.plugin.addNewCalendar(calendar);
-                            this.display();
-                        }
-                    });
+                button.onClick(async () => {
+                    const preset = await getPresetCalendar(this.plugin);
+                    if (!preset) return;
+                    const calendar = await this.launchCalendarCreator(
+                        preset,
+                        true
+                    );
+                    if (calendar) {
+                        await this.plugin.addNewCalendar(calendar);
+                        this.display();
+                    }
+                });
                 button.buttonEl.setAttr("style", "gap: 0.25rem;");
                 setIcon(button.buttonEl, QUICK_CREATOR);
-                button.buttonEl.createSpan().setText("Quick creator");
+                button.buttonEl.createSpan().setText("Quick");
             })
             .addButton((button: ButtonComponent) => {
-                button /* .setButtonText("Custom creator") */
-                    .onClick(async () => {
-                        const calendar = await this.launchCalendarCreator();
-                        if (calendar) {
-                            await this.plugin.addNewCalendar(calendar);
-                            this.display();
-                        }
-                    });
+                button.onClick(async () => {
+                    const calendar = await this.launchCalendarCreator();
+                    if (calendar) {
+                        await this.plugin.addNewCalendar(calendar);
+                        this.display();
+                    }
+                });
 
                 button.buttonEl.setAttr("style", "gap: 0.25rem;");
                 setIcon(button.buttonEl, CUSTOM_CREATOR);
-                button.buttonEl.createSpan().setText("Custom creator");
+                button.buttonEl.createSpan().setText("Full");
+            })
+            .addButton((button: ButtonComponent) => {
+                button.buttonEl.setAttr("style", "gap: 0.25rem;");
+                setIcon(button.buttonEl, IMPORT);
+                button.buttonEl.createSpan().setText("Import");
+                const input = createEl("input", {
+                    attr: {
+                        type: "file",
+                        name: "import-calendars",
+                        accept: ".json",
+                        multiple: true,
+                        style: "display: none;",
+                    },
+                });
+                input.onchange = async () => {
+                    try {
+                        const { files } = input;
+                        if (!files?.length) return;
+                        const fileArray = Array.from(files);
+                        let fileEls: WeakMap<File, HTMLElement> = new WeakMap();
+                        let headerEl: HTMLElement;
+                        const notice = new CalendariumNotice(
+                            createFragment((f) => {
+                                const c = f.createDiv("calendarium-notice");
+                                c.createEl("h4", {
+                                    text: "Calendarium",
+                                    cls: "calendarium-header",
+                                });
+                                headerEl = c.createDiv({
+                                    text: "Importing calendars...",
+                                });
+                                const fileContainer = c.createEl(
+                                    "p",
+                                    "calendarium-file-status-container"
+                                );
+                                for (const file of fileArray) {
+                                    const fileEl = fileContainer.createDiv({
+                                        cls: "calendarium-file-status",
+                                    });
+                                    fileEl.createDiv({
+                                        text: file.name,
+                                    });
+                                    fileEls.set(file, fileEl);
+                                }
+                            }),
+                            0
+                        );
+                        let imported = 0;
+                        for (const file of fileArray) {
+                            const fileEl = fileEls.get(file)!;
+                            const iconEl = fileEl.createDiv(
+                                "migrating-icon rotating"
+                            );
+                            setIcon(iconEl, LOADING);
+                            try {
+                                const calendar = JSON.parse(await file.text());
+                                this.settings$.updateCalendarsToNewSchema(
+                                    [calendar],
+                                    this.plugin.data
+                                );
+                                const validator = createStore(
+                                    this.plugin,
+                                    calendar
+                                );
+
+                                iconEl.removeClass("rotating");
+                                if (get(validator.valid)) {
+                                    calendar.id = nanoid(8);
+                                    await this.settings$.addCalendar(calendar);
+                                    iconEl.removeClass("loading");
+                                    iconEl.addClass("successful");
+                                    setIcon(iconEl, "check");
+                                    imported++;
+                                } else {
+                                    iconEl.addClass("error");
+                                    setIcon(iconEl, "cross");
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                iconEl.removeClass("rotating");
+                                iconEl.addClass("error");
+                                setIcon(iconEl, "cross");
+                            }
+                        }
+                        headerEl!.setText(
+                            `${imported} calendar${
+                                imported == 1 ? "" : "s"
+                            } imported.`
+                        );
+                        setTimeout(() => {
+                            notice.hide();
+                        }, 3000);
+                    } catch (e) {}
+                    this.display();
+                };
+                button.buttonEl.appendChild(input);
+                button.onClick(() => input.click());
             });
 
         this.existingEl = this.calendarsEl.createDiv("existing-calendars");
@@ -388,27 +487,52 @@ export default class CalendariumSettings extends PluginSettingTab {
                 .setName(calendar.name)
                 .setDesc(calendar.description ?? "")
                 .addExtraButton((b) => {
-                    b.setIcon(QUICK_CREATOR).onClick(async () => {
-                        const edited = await this.launchCalendarCreator(
-                            calendar,
-                            true
-                        );
-                        if (edited) {
-                            await this.plugin.addNewCalendar(edited, calendar);
-                            this.display();
-                        }
-                    });
+                    b.setIcon(QUICK_CREATOR)
+                        .setTooltip("Open quick creator")
+                        .onClick(async () => {
+                            const edited = await this.launchCalendarCreator(
+                                calendar,
+                                true
+                            );
+                            if (edited) {
+                                await this.plugin.addNewCalendar(
+                                    edited,
+                                    calendar
+                                );
+                                this.display();
+                            }
+                        });
                 })
                 .addExtraButton((b) => {
-                    b.setIcon(CUSTOM_CREATOR).onClick(async () => {
-                        const edited = await this.launchCalendarCreator(
-                            calendar
-                        );
-                        if (edited) {
-                            await this.plugin.addNewCalendar(edited, calendar);
-                            this.display();
-                        }
-                    });
+                    b.setIcon(CUSTOM_CREATOR)
+                        .setTooltip("Open custom creator")
+                        .onClick(async () => {
+                            const edited = await this.launchCalendarCreator(
+                                calendar
+                            );
+                            if (edited) {
+                                await this.plugin.addNewCalendar(
+                                    edited,
+                                    calendar
+                                );
+                                this.display();
+                            }
+                        });
+                })
+                .addExtraButton((b) => {
+                    b.setIcon(EXPORT)
+                        .setTooltip("Export this calendar")
+                        .onClick(async () => {
+                            const link = createEl("a");
+                            const file = new Blob([JSON.stringify(calendar)], {
+                                type: "json",
+                            });
+                            const url = URL.createObjectURL(file);
+                            link.href = url;
+                            link.download = `${calendar.name}.json`;
+                            link.click();
+                            URL.revokeObjectURL(url);
+                        });
                 })
 
                 .addExtraButton((b) => {
@@ -727,16 +851,6 @@ export default class CalendariumSettings extends PluginSettingTab {
                 /** Validate no existing paths... */
                 validateAndSend(path);
             });
-        /* const modal = new FolderSuggestionModal(this.app, text, [
-            ...this.folders,
-        ]);
-
-        modal.onClose = async () => {
-            const path = text.inputEl.value?.trim()
-                ? text.inputEl.value.trim()
-                : "/";
-            validateAndSend(path);
-        }; */
 
         const modal = new FolderInputSuggest(this.app, text, [...this.folders]);
 
@@ -767,6 +881,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                         saving: false,
                         event: false,
                         calendar: false,
+                        savingEvent: false,
                     };
                     await this.settings$.save();
                 });
@@ -816,7 +931,6 @@ export default class CalendariumSettings extends PluginSettingTab {
             clone.name = "";
         }
 
-        /* if (Platform.isMobile) { */
         const modal = new CreatorModal(this.plugin, clone, quick);
         return new Promise((resolve, reject) => {
             try {
@@ -843,53 +957,13 @@ export default class CalendariumSettings extends PluginSettingTab {
                 reject();
             }
         });
-        /* } else {
-            this.containerEl.addClass("calendarium-creator-open");
-            return new Promise((resolve) => {
-                const color = getComputedStyle(
-                    this.containerEl.closest(".modal")
-                ).backgroundColor;
-                const $app = new CalendarCreator({
-                    target: this.containerEl,
-                    props: {
-                        base: clone,
-                        plugin: this.plugin,
-                        width: this.contentEl.clientWidth,
-                        color,
-                        top: this.containerEl.scrollTop,
-                    },
-                });
-                const observer = new ResizeObserver(() => {
-                    $app.$set({ width: this.contentEl.clientWidth });
-                });
-                observer.observe(this.contentEl);
-                $app.$on(
-                    "exit",
-                    (
-                        evt: CustomEvent<{ saved: boolean; calendar: Calendar }>
-                    ) => {
-                        this.containerEl.removeClass(
-                            "calendarium-creator-open"
-                        );
-                        $app.$destroy();
-                        if (evt.detail.saved) {
-                            //saved
-                            calendar = copy(evt.detail.calendar);
-                            observer.disconnect();
-                            resolve(calendar);
-                        }
-                        resolve();
-                    }
-                );
-            });
-        } */
     }
 }
 
 class CreatorModal extends CalendariumModal {
     calendar: Calendar;
     saved = false;
-    store: ReturnType<typeof createStore>;
+    store: CreatorStore;
     $app: CreatorController;
     constructor(
         public plugin: Calendarium,

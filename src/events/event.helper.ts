@@ -1,17 +1,23 @@
 import type { FrontMatterCache, TFile } from "obsidian";
 import { nanoid, testLeapDay, toPaddedString, wrap } from "../utils/functions";
 import { DOMParser } from "xmldom";
+import { Err, Ok, type Result } from "@sniptt/monads";
 import type {
     Calendar,
     CalEvent,
     CalEventCategory,
     CalEventDate,
     CalEventSort,
+    RecurringCalEventDate,
+    CalEventInfo,
+    DatedCalEvent,
+    OneTimeCalEventDate,
 } from "../@types";
 import { DEFAULT_FORMAT } from "../utils/constants";
 import randomColor from "randomcolor";
 import { logError, logWarning } from "../utils/log";
 import type { LeapDay } from "src/schemas/calendar/timespans";
+import { EventType } from "./event.types";
 
 const inlineDateSpans: RegExp = /<(span|div)[\s\S]*?<\/(span|div)>/g;
 
@@ -39,10 +45,12 @@ export interface InputDate {
     order?: any;
 }
 
+export type DateBit = number | null;
+
 export interface ParseDate {
-    year: Nullable<number>;
-    month: Nullable<number>;
-    day: Nullable<number>;
+    year: [DateBit, DateBit] | DateBit;
+    month: [DateBit, DateBit] | DateBit;
+    day: [DateBit, DateBit] | DateBit;
     order: string;
 }
 
@@ -69,8 +77,8 @@ export class CalEventHelper {
     }
 
     onNewCategory: (category: CalEventCategory) => void;
-
     category?: CalEventCategory | null = null;
+
     parseFrontmatterEvent(
         frontmatter: FrontMatterCache | undefined,
         file: { path: string; basename: string },
@@ -78,46 +86,28 @@ export class CalEventHelper {
     ) {
         if (!frontmatter) return;
         const dateField = "fc-date" in frontmatter ? "fc-date" : "fc-start";
-        let date = frontmatter[dateField]
-            ? this.parseFrontmatterDate(frontmatter[dateField], file)
-            : this.useFilenameForEvents
-            ? this.parseFilenameDate(file)
-            : null;
+        const dateString =
+            frontmatter[dateField] ??
+            (this.useFilenameForEvents ? file.basename : null);
+        if (!dateString) return;
 
-        let end = frontmatter["fc-end"]
-            ? this.parseFrontmatterDate(frontmatter["fc-end"], file)
-            : null;
+        const event = this.parseEvent(
+            {
+                dateString: dateString,
+                eventName: frontmatter["fc-display-name"] ?? file.basename,
+                eventDesc: frontmatter["fc-description"],
+                eventImage: frontmatter["fc-img"],
+                categoryString:
+                    frontmatter?.["fc-category"] ?? this.category?.id ?? null,
+                endDateString: frontmatter["fc-end"],
+            },
 
-        let cat: CalEventCategory | undefined, newCategory: boolean;
-        if (frontmatter?.["fc-category"] && !this.category) {
-            cat = this.calendar.categories.find(
-                (cat) => cat?.name == frontmatter["fc-category"]
-            );
-            if (!cat) {
-                cat = {
-                    id: nanoid(6),
-                    color: randomColor(),
-                    name: frontmatter["fc-category"],
-                };
-                newCategory = true;
-                this.calendar.categories.push(cat);
-            }
-        }
-        if (date) {
-            publish({
-                id: nanoid(6),
-                name: frontmatter["fc-display-name"] ?? file.basename,
-                description: frontmatter["fc-description"],
-                date,
-                end,
-                sort: this.parsedToTimestamp(date),
-                note: file.path,
-                category: (cat ?? this.category)?.id ?? null,
-                img: frontmatter["fc-img"],
-            });
-        }
+            file
+        );
+        if (!event) return;
+
+        publish(event);
     }
-
     parseInlineEvents(
         contents: string,
         file: { path: string; basename: string },
@@ -161,64 +151,160 @@ export class CalEventHelper {
                 //different calendar
                 calendarCallback(element.dataset.calendar, element);
             } else {
-                const event = this.parseEventElement(element, file);
+                const event = this.parseEvent(
+                    {
+                        dateString: element.dataset.date,
+                        eventName: element.dataset.title,
+                        eventDesc: element.content,
+                        eventImage: element.dataset.img,
+                        endDateString: element.dataset.end,
+                        categoryString: element.dataset.class,
+                    },
+                    file
+                );
                 if (event) {
                     publish(event);
                 }
             }
         }
     }
+    resolveDates(date: ParseDate, end: ParseDate | null): CalEventInfo {
+        let event: CalEventInfo;
+        if (
+            Array.isArray(date.day) ||
+            Array.isArray(date.month) ||
+            Array.isArray(date.year)
+        ) {
+            event = {
+                type: EventType.Recurring,
+                date: date as RecurringCalEventDate,
+            };
+        } else if (
+            date.year === null ||
+            date.month === null ||
+            date.day === null
+        ) {
+            if (date.year === null) {
+                date.year = [null, null];
+            }
+            if (date.month === null) {
+                date.month = [null, null];
+            }
+            if (date.day === null) {
+                date.day = [null, null];
+            }
+            event = {
+                type: EventType.Recurring,
+                date: date as RecurringCalEventDate,
+            };
+        } else if (end) {
+            if (
+                Array.isArray(end.day) ||
+                Array.isArray(end.month) ||
+                Array.isArray(end.year)
+            ) {
+                /* logError("End dates cannot be ranges.", end as InputDate, file); */
+            }
+            event = {
+                type: EventType.Range,
+                date: date as OneTimeCalEventDate,
+                end: end as OneTimeCalEventDate,
+            };
+        } else {
+            event = {
+                type: EventType.Date,
+                date: date as OneTimeCalEventDate,
+            };
+        }
 
-    parseEventElement(
-        element: CalEventElement,
+        return event;
+    }
+
+    parseEvent(
+        {
+            dateString,
+            eventName,
+            eventDesc,
+            eventImage,
+            endDateString,
+            categoryString,
+        }: {
+            dateString: string;
+            eventName?: string | null;
+            eventDesc?: string | null;
+            eventImage?: string | null;
+            endDateString?: string | null;
+            categoryString?: string | null;
+        },
         file: { path: string; basename: string }
     ): CalEvent | null {
-        // parse date strings, will return with all elements present: year, month, day, hour/order
-        if (!element.dataset.date) {
-            return null; // span must contain a date
+        if (!dateString) {
+            return null;
         }
-        let date = this.parseCalDateString(element.dataset.date, file);
+        let date = this.parseDate(dateString, file);
+
         if (!date) return null;
-        let end = element.dataset.end
-            ? this.parseCalDateString(element.dataset.end, file)
-            : undefined;
         let cat: CalEventCategory | undefined;
-        if (element.dataset.class) {
+        if (categoryString) {
             cat = this.calendar.categories.find(
-                (cat) => cat?.name == element.dataset.class
+                (cat) =>
+                    cat?.name == categoryString || cat?.id == categoryString
             );
             if (!cat) {
                 cat = {
                     id: nanoid(6),
                     color: randomColor(),
-                    name: element.dataset.class,
+                    name: categoryString,
                 };
                 this.onNewCategory?.(cat);
                 this.calendar.categories.push(cat);
             }
         }
-        return {
+        let end = endDateString ? this.parseDate(endDateString, file) : null;
+        const info = this.resolveDates(date, end);
+        let event: CalEvent = {
             id: nanoid(6),
-            name: element.dataset.title ?? file.basename,
-            description: element.content,
-            date,
-            end,
+            name: eventName ?? file.basename,
+            description: eventDesc,
             sort: this.parsedToTimestamp(date),
             note: file.path,
             category: (cat ?? this.category)?.id ?? null,
-            img: element.dataset.img,
+            img: eventImage,
+            ...info,
         };
+
+        return event;
+    }
+
+    parseFileForDates(
+        frontmatter: FrontMatterCache,
+        file: { path: string; basename: string }
+    ): CalEventInfo | null {
+        if (!frontmatter) return null;
+        const dateField = "fc-date" in frontmatter ? "fc-date" : "fc-start";
+        const dateString =
+            frontmatter[dateField] ??
+            (this.useFilenameForEvents ? file.basename : null);
+        if (!dateString) return null;
+
+        const date = this.parseCalDateString(dateString, file);
+
+        if (!date) return null;
+
+        let end = frontmatter["fc-end"]
+            ? this.parseDate(frontmatter["fc-end"], file)
+            : null;
+        return this.resolveDates(date, end);
     }
 
     parseFilenameDate(file: {
         path: string;
         basename: string;
     }): ParseDate | null {
-        // TODO: Filename formatter for this calendar?
-        return this.parseCalDateString(file.basename, file);
+        return this.parseDate(file.basename, file);
     }
 
-    parseFrontmatterDate(
+    parseDate(
         date: string | InputDate,
         file: { path: string; basename: string }
     ): ParseDate | null {
@@ -257,8 +343,7 @@ export class CalEventHelper {
         datestring: string,
         file: { path: string; basename: string }
     ): ParseDate | null {
-        let datebits = datestring.split(/(?!^)[-–—]/);
-
+        let datebits = datestring.split(/(?!^)[-–—](?![^[]*])/);
         if (this.formatDigest != "YMD" && datebits.length < 3) {
             logError(
                 `Must specify all three segments in ${this.formatString} order`,
@@ -281,6 +366,77 @@ export class CalEventHelper {
         );
     }
 
+    resolveMonth(month: DateBit | string, input: any): number | null {
+        if (month === null) return 0;
+        if (typeof month === "number" && !Number.isNaN(month))
+            return wrap(month - 1, this.calendar.static.months.length);
+        if (Number.isNaN(month)) {
+            // Note: Number.isNaN(null) == false
+            // A null input month will not enter this block.
+            // Name in the month segment
+            let m = this.calendar.static.months.find(
+                (m) => m.name?.startsWith(input) || m.short?.startsWith(input)
+            );
+            if (m) {
+                return this.calendar.static.months.indexOf(m);
+            } else {
+                // Is this a well-known leapday?
+                let leapday = this.calendar.static.leapDays.find(
+                    (l) => l.name && l.name.startsWith(input)
+                );
+                if (leapday) {
+                    return leapday.timespan;
+                }
+            }
+        }
+        return 0;
+    }
+    resolveDay(
+        day: DateBit,
+        months: DateBit | DateBit[],
+        years: DateBit | DateBit[],
+        input: InputDate
+    ): Result<number | null, string> {
+        // validate the day against the month (and perhaps year)
+        if (typeof day === "number" && day < 1) return Ok(1);
+        if (typeof day === "number") {
+            for (const month of [months].flat()) {
+                if (!month) continue;
+                for (const year of [years].flat()) {
+                    const days = this.daysForMonth(month, year);
+                    if (day > days) {
+                        return Err(
+                            `Day '${input.day}' is incorrect for month '${input.month}', which has ${days} day(s)`
+                        );
+                    }
+                }
+            }
+            return Ok(day);
+        }
+        let leapday = this.calendar.static.leapDays.find(
+            (l) => l.name && l.name.startsWith(input.month)
+        );
+
+        if (leapday) {
+            for (const month of [months].flat()) {
+                if (!month) continue;
+                for (const year of [years].flat()) {
+                    day = this.findLeapDay(leapday, month, year);
+                    if (day == null) {
+                        return Err(
+                            `Leap day '${input.day}' isn't valid for year '${input.year}'`
+                        );
+                    } else if (input.year !== "*") {
+                        return Ok(day);
+                    }
+                }
+            }
+        }
+        if (day == null) return Ok(1);
+
+        return Ok(day);
+    }
+
     /**
      * Create a fully formed date from parsed data segments
      *
@@ -295,95 +451,58 @@ export class CalEventHelper {
         file: { path: string; basename: string },
         datestring?: string
     ): ParseDate | null {
-        const year = wildNullNumber(input.year);
+        let year = wildNullNumber(input.year);
         let month = wildNullNumber(input.month);
         let day = wildNullNumber(input.day);
 
         if (input.year === "*") {
-            // repeating, this is fine
-        } else if (!input.year || Number.isNaN(year)) {
-            logError(`Must specify a valid year`, input, file, datestring);
+            year = [null, null];
+        } else if (!input.year || [year].flat().some((y) => Number.isNaN(y))) {
+            logError(
+                `Must specify a valid year: ${year}`,
+                input,
+                file,
+                datestring
+            );
             return null;
         }
 
-        let leapday: LeapDay | undefined;
         if (input.month === "*") {
-            // repeating, this is fine
-        } else if (month != null && Number.isInteger(month)) {
-            month = wrap(month - 1, this.calendar.static.months.length);
-        } else if (Number.isNaN(month)) {
-            // Note: Number.isNaN(null) == false
-            // A null input month will not enter this block.
-            // Name in the month segment
-            let m = this.calendar.static.months.find(
-                (m) =>
-                    m.name?.startsWith(input.month) ||
-                    m.short?.startsWith(input.month)
-            );
-            if (m) {
-                month = this.calendar.static.months.indexOf(m);
-            } else {
-                // Is this a well-known leapday?
-                leapday = this.calendar.static.leapDays.find(
-                    (l) => l.name && l.name.startsWith(input.month)
-                );
-                if (leapday) {
-                    month = leapday.timespan;
-                }
-            }
+            month = [null, null];
+        } else if (Array.isArray(month)) {
+            month = month.map((m) => this.resolveMonth(m, input.month)) as [
+                DateBit,
+                DateBit
+            ];
         } else {
-            // short form (omitted), assume first month
-            month = 0;
+            month = this.resolveMonth(month, input.month);
         }
-
         if (input.day === "*") {
-            // repeating, this is fine
-        } else if (day != null && Number.isInteger(day)) {
-            if (day < 1) {
-                logWarning(
-                    `Must specify a valid day. Using 1`,
-                    input,
-                    file,
-                    datestring
-                );
-                day = 1;
-            } else if (month) {
-                // validate the day against the month (and perhaps year)
-                const days = this.daysForMonth(month, year);
-                if (day > days) {
-                    logError(
-                        `Day '${input.day}' is incorrect for month '${input.month}', which has ${days} day(s)`,
-                        input,
-                        file,
-                        datestring
-                    );
+            day = [null, null];
+        } else if (Array.isArray(day)) {
+            const results = day.map((d) =>
+                this.resolveDay(d, month, year, input)
+            );
+            let days: DateBit[] = [];
+            for (const result of results) {
+                if (result.isErr()) {
+                    logError(result.unwrapErr(), input, file, datestring);
                     return null;
+                } else {
+                    days.push(result.unwrap());
                 }
             }
-        } else if (leapday && month != null && year != null) {
-            // short form (omitted date), but a well-known leapday (e.g. Harptos Shieldmeet)
-            day = this.findLeapDay(leapday, month, year);
-            if (day == null) {
-                logError(
-                    `Leap day '${input.day}' isn't valid for year '${input.year}'`,
-                    input,
-                    file,
-                    datestring
-                );
-                return null;
-            } else if (!year && input.year !== "*") {
-                logWarning(
-                    `Unable to validate '${input.day}' for year '${input.year}'. Using ${day}`,
-                    input,
-                    file,
-                    datestring
-                );
-            }
+            day = [...days] as [DateBit, DateBit];
         } else {
             // short form, assume first day of month
-            day = 1;
+            const result = this.resolveDay(day, month, year, input);
+            if (result.isErr()) {
+                logError(result.unwrapErr(), input, file, datestring);
+                return null;
+            } else {
+                day = result.unwrap();
+            }
         }
-
         return {
             year,
             month,
@@ -391,30 +510,55 @@ export class CalEventHelper {
             order: input.order || "",
         };
     }
+    #stringifyDateBit(bit: string[]): string {
+        return (
+            (bit.length > 1 ? "[" : "") +
+            bit.join("-") +
+            (bit.length > 1 ? "]" : "")
+        );
+    }
+    generateTimeStamp(date: ParseDate): string {
+        const year = Array.isArray(date.year)
+            ? [date.year].flat().map((y) => `${y ?? "*"}`)
+            : [`${date.year ?? "*"}`];
 
+        const month = [date.month]
+            .flat()
+            .map((m) => toPaddedString(m, this.calendar, "month"));
+        const day = [date.day]
+            .flat()
+            .map((m) => toPaddedString(m, this.calendar, "day"));
+        return `${this.#stringifyDateBit(year)}-${this.#stringifyDateBit(
+            month
+        )}-${this.#stringifyDateBit(day)}`;
+    }
     parsedToTimestamp(date: ParseDate): CalEventSort {
         // put repeating events off to the side
-        if (date.year == null || date.month == null || date.day == null) {
+        if (
+            [date.year].flat().every((y) => y == null) ||
+            [date.month].flat().every((m) => m == null) ||
+            [date.day].flat().every((d) => d == null)
+        ) {
             return {
                 timestamp: Number.MIN_VALUE,
-                order: date.order
-                    ? date.order
-                    : `${date.year || "*"}-${toPaddedString(
-                          date.month,
-                          this.calendar,
-                          "month"
-                      )}-${toPaddedString(date.day, this.calendar, "day")}`,
+                order: date.order ? date.order : this.generateTimeStamp(date),
             };
         }
+        let year: number;
+        if (Array.isArray(date.year)) {
+            year = date.year[0] ?? Number.MIN_VALUE;
+        } else {
+            year = date.year ?? Number.MIN_VALUE;
+        }
+
         // otherwise create a date string
-        // TODO: pad month by number of months & days by max days
         return {
             timestamp: Number(
-                `${date.year}${toPaddedString(
-                    date.month,
+                `${year}${toPaddedString(
+                    [date.month].flat()[0],
                     this.calendar,
                     "month"
-                )}${toPaddedString(date.day, this.calendar, "day")}`
+                )}${toPaddedString([date.day].flat()[0], this.calendar, "day")}`
             ),
             order: date.order || "",
         };
@@ -429,7 +573,7 @@ export class CalEventHelper {
         }
         // rebuild the timestamp
         return this.parsedToTimestamp({
-            ...event.date!,
+            ...(event as DatedCalEvent).date!,
             order: old?.order || "",
         });
     }
@@ -440,7 +584,7 @@ export class CalEventHelper {
     findLeapDay(
         leapday: LeapDay,
         month: number,
-        year: number
+        year: number | null
     ): Nullable<number> {
         const cm = this.calendar.static.months[month];
         const leapdays: LeapDay[] = this.calendar.static.leapDays.filter(
@@ -477,18 +621,34 @@ export class CalEventHelper {
 }
 
 /**
- * Convert a string/null value to null, NaN, or a number.
+ * Convert a string/null value to null, NaN, number, or array of numbers.
  * - null or `*` are not a number, but are different than a string
  * - if the value fails to parse as a number, it is a string month name
  * @param data
  * @returns null, a number, or NaN
  */
-function wildNullNumber(data: any): Nullable<number> {
+function wildNullNumber(data: any): [DateBit, DateBit] | DateBit {
     if (data == null || data === "*") {
         return null;
     }
     if (typeof data == "number") {
         return data;
     }
+    if (typeof data == "string" && /\[.+?\]/.test(data)) {
+        const transformed = data
+            .slice(1, -1)
+            .split("-")
+            .map((v) => wildNullNumber(v) as DateBit)
+            .sort((a, b) => {
+                if (typeof a === "number" && typeof b === "number") {
+                    return a - b;
+                }
+                return 0;
+            });
+        if (transformed.length === 1) return transformed[0];
+        if (transformed.length > 2) return [transformed[0], transformed.pop()!];
+        return transformed as [DateBit, DateBit];
+    }
+
     return parseInt(data); // may return NaN, that's ok
 }

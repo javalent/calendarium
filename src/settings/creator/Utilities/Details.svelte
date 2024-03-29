@@ -22,6 +22,7 @@
 <details
     class="creator calendarium-nested-settings setting-item"
     class:always-open={alwaysOpen}
+    bind:open
     use:details
 >
     <summary class="calendarium-nested-summary">
@@ -31,16 +32,21 @@
                 <div class="setting-item-description">{desc}</div>
             </div>
         </div>
-        <div class="collapser">
-            <div class="warning-container">
-                {#if warn}
-                    <div class="x-small" use:setNodeIcon={WARNING} />
-                {/if}
-                <div class="handle" use:handle />
-            </div>
-            {#if warn && label}
-                <WarningLabel {label} />
+        <div class="right-side">
+            {#if open}
+                <slot name="context" class="context" />
             {/if}
+            <div class="collapser">
+                <div class="warning-container">
+                    {#if warn}
+                        <div class="x-small" use:setNodeIcon={WARNING} />
+                    {/if}
+                    <div class="handle" use:handle />
+                </div>
+                {#if warn && label}
+                    <WarningLabel {label} />
+                {/if}
+            </div>
         </div>
     </summary>
 
@@ -72,7 +78,11 @@
         display: flex;
         justify-content: space-between;
     }
-
+    .right-side {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
     summary::-webkit-details-marker,
     summary::marker {
         display: none !important;

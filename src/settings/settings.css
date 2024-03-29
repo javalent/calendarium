@@ -97,6 +97,22 @@
     }
 }
 
+/** Importing */
+.calendarium-notice .calendarium-file-status-container {
+    display: grid;
+    grid-template-columns: 1fr 18px;
+    gap: 0 0.5rem;
+}
+.calendarium-notice .calendarium-file-status {
+    display: contents;
+}
+.calendarium-notice .calendarium-file-status .successful {
+    color: var(--text-success);
+}
+.calendarium-notice .calendarium-file-status .error {
+    color: var(--text-error);
+}
+
 /** Confirm Buttons */
 .calendarium-confirm-buttons-container {
     display: flex;
@@ -211,31 +227,6 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
     justify-content: flex-end;
     align-items: center;
     gap: 0.25rem;
-}
-
-.calendarium-create-event .event-info {
-    display: flex;
-    flex-flow: column nowrap;
-    width: 100%;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 0.5rem;
-}
-
-.calendarium-create-event .event-info > *,
-.calendarium-create-event .setting-item {
-    width: 100%;
-    padding-top: 0;
-    padding-bottom: 0.75rem;
-    border: 0;
-}
-.calendarium-create-event .event-info > .event-description {
-    display: flex;
-    flex-flow: column nowrap;
-}
-
-.calendarium-create-event .event-info textarea {
-    resize: vertical;
 }
 
 /** Preset Calendar Modal */

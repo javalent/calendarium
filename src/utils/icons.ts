@@ -19,6 +19,7 @@ export const MONTH = "calendar-days";
 export const UNDO = "undo";
 export const REDO = "redo";
 export const RESET = "reset";
+export const HELP = "info";
 
 export const ADD = "plus-with-circle";
 export const ADD_EVENT = "calendar-plus";
@@ -31,7 +32,9 @@ export const COLLAPSE = "chevron-right";
 export const RESTORE = "archive-restore";
 export const QUICK_CREATOR = "sparkles";
 export const CUSTOM_CREATOR = "pencil-ruler";
+export const EXPORT = "download";
 export const GRIP = "grip-vertical";
+export const MENU = "menu";
 
 export const SELECT_MULTIPLE = "chevrons-up-down";
 

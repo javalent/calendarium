@@ -1,3 +1,6 @@
+import type { EventType } from "src/events/event.types";
+import type { UndatedCalDate } from "../calendar";
+
 /**
  * Events
  */
@@ -6,29 +9,74 @@ export type CalEventSort = {
     order: string;
 };
 
-export type CalEventDate = {
-    year: number | null;
-    month: number | null;
-    day: number | null;
+export type OneTimeCalEventDate = {
+    year: number;
+    month: number;
+    day: number;
 };
 
-type Formula = {
-    type: "interval";
-    number: number;
-    timespan: "days";
+export type RecurringCalEventDate = {
+    year: FullCalEventDateBit;
+    month: FullCalEventDateBit;
+    day: FullCalEventDateBit;
 };
-export type CalEvent = {
+
+export type CalEventDate = OneTimeCalEventDate | RecurringCalEventDate;
+
+export type RecurringCalEventDateBit = [number | null, number | null];
+export type FullCalEventDateBit = RecurringCalEventDateBit | number;
+
+type BaseCalEvent = {
+    id: string;
     name: string;
     description?: string | null;
-    date: CalEventDate;
-    end?: CalEventDate | null;
-    id: string;
+    img?: string | null;
     note?: string | null;
     category: string | null;
     sort: CalEventSort;
-    formulas?: Formula[];
-    img?: string | null;
+    type?: EventType;
 };
+
+export type DatedCalEventInfo = {
+    type?: typeof EventType.Date;
+    date: OneTimeCalEventDate;
+};
+export type DatedCalEvent = BaseCalEvent & DatedCalEventInfo;
+export type UndatedCalEventInfo = {
+    type: typeof EventType.Undated;
+    date: UndatedCalDate;
+};
+export type UndatedCalEvent = BaseCalEvent & UndatedCalEventInfo;
+
+export type RangeCalEventInfo = {
+    type: typeof EventType.Range;
+    date: OneTimeCalEventDate;
+    end: OneTimeCalEventDate;
+};
+export type RangeCalEvent = BaseCalEvent & RangeCalEventInfo;
+
+export type RangedCalEventInfo = {
+    type: typeof EventType.Recurring;
+    date: RecurringCalEventDate;
+};
+export type RecurringCalEvent = BaseCalEvent & RangedCalEventInfo;
+
+/* export type FormulaCalEvent = BaseCalEvent & {
+    type: EventType.Formula;
+    formulas: Formula[];
+}; */
+
+export type CalEventInfo =
+    | DatedCalEventInfo
+    | RangedCalEventInfo
+    | RangeCalEventInfo
+    | UndatedCalEventInfo;
+export type CalEvent =
+    | DatedCalEvent
+    | RecurringCalEvent
+    | RangeCalEvent
+    | UndatedCalEvent; /* 
+    | FormulaCalEvent; */
 
 export type CalEventCategory = {
     name: string;

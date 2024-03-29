@@ -2,12 +2,18 @@
  * @vitest-environment happy-dom
  */
 import type { Loc, Pos } from "obsidian";
-import type { CalEvent, Calendar } from "../../src/@types";
+import type {
+    CalEvent,
+    Calendar,
+    DatedCalEvent,
+    RangeCalEvent,
+} from "../../src/@types";
 import { CalEventHelper, ParseDate } from "../../src/events/event.helper";
 import { PRESET_CALENDARS } from "../../src/utils/presets";
 import { test, expect } from "vitest";
 
 import Moment from "moment";
+import { EventType } from "../../src/events/event.types";
 Object.defineProperty(window, "moment", { value: Moment });
 
 const GREGORIAN: Calendar = PRESET_CALENDARS.find(
@@ -60,7 +66,7 @@ test("parseFrontmatterDate / parseFilename", () => {
         order: "",
     };
     // read date string from frontmatter
-    expect(gregorian.parseFrontmatterDate("1966-04", file)).toEqual(expected);
+    expect(gregorian.parseDate("1966-04", file)).toEqual(expected);
 
     // read date from filename
     expect(
@@ -72,7 +78,7 @@ test("parseFrontmatterDate / parseFilename", () => {
 
     // read date from object
     expect(
-        gregorian.parseFrontmatterDate(
+        gregorian.parseDate(
             {
                 year: 1966,
                 month: 4,
@@ -92,7 +98,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
     };
     // read date string from frontmatter
     expect(
-        gregorian.parseFrontmatterDate("1966-04-01-01 some extra flavor", file)
+        gregorian.parseDate("1966-04-01-01 some extra flavor", file)
     ).toEqual(expected);
 
     // read date from filename
@@ -105,7 +111,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
 
     // read date from object
     expect(
-        gregorian.parseFrontmatterDate(
+        gregorian.parseDate(
             {
                 year: 1966,
                 month: 4,
@@ -119,7 +125,7 @@ test("parseFrontmatterDate / parseFilenameDate: extra", () => {
 
 test("parseFrontmatterEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: CalEvent[] = [];
+    let actual: RangeCalEvent[] = [];
     gregorian.category = category;
     gregorian.parseFrontmatterEvent(
         {
@@ -136,12 +142,13 @@ test("parseFrontmatterEvent", () => {
         },
         file,
         (event) => {
-            actual.push(event);
+            actual.push(event as RangeCalEvent);
         }
     );
 
     expect(actual.length).toEqual(1);
     expect(actual[0].id).toBeDefined();
+    expect(actual[0].type).toBe(EventType.Range);
     expect(actual[0].name).toEqual("Pretty name");
     expect(actual[0].description).toEqual("Fun text");
     expect(actual[0].date).toEqual(
@@ -169,7 +176,7 @@ test("parseFrontmatterEvent", () => {
 
 test("parseTimelineEvent", () => {
     let category = gregorian.calendar.categories[0];
-    let actual: CalEvent[] = [];
+    let actual: RangeCalEvent[] = [];
 
     gregorian.parseInlineEvents(
         "<span class='ob-timelines'   \n" +
@@ -182,13 +189,14 @@ test("parseTimelineEvent", () => {
             "</span>",
         file,
         (event) => {
-            actual.push(event);
+            actual.push(event as RangeCalEvent);
         },
         () => {}
     );
 
     expect(actual.length).toEqual(1);
     expect(actual[0].id).toBeDefined();
+    expect(actual[0].type).toBe(EventType.Range);
     expect(actual[0].name).toEqual("Pretty name");
     expect(actual[0].description?.trim()).toEqual("Fun text");
     expect(actual[0].date).toEqual(
@@ -216,26 +224,26 @@ test("parseTimelineEvent", () => {
 
 test("Repeating events", () => {
     const expected: ParseDate = {
-        year: null,
-        month: null,
-        day: null,
+        year: [null, null],
+        month: [null, null],
+        day: [null, null],
         order: "",
     };
     expect(gregorian.parseCalDateString("*-*-*", file)).toEqual(expected);
 
-    expect(gregorian.parseFrontmatterDate({}, file)).toEqual(expected);
+    expect(gregorian.parseDate({}, file)).toEqual(expected);
 
     expect(gregorian.parsedToTimestamp(expected)).toEqual({
         timestamp: Number.MIN_VALUE,
-        order: "*-*-*",
+        order: "[*-*]-[*-*]-[*-*]",
     });
 });
 
 test("Repeating events with extra", () => {
     const expected: ParseDate = {
-        year: null,
-        month: null,
-        day: null,
+        year: [null, null],
+        month: [null, null],
+        day: [null, null],
         order: "01 some extra flavor",
     };
     expect(
@@ -243,7 +251,7 @@ test("Repeating events with extra", () => {
     ).toEqual(expected);
 
     expect(
-        gregorian.parseFrontmatterDate(
+        gregorian.parseDate(
             {
                 order: "01 some extra flavor",
             },
@@ -259,9 +267,9 @@ test("Repeating events with extra", () => {
 
 test("Repeating events with extra", () => {
     const expected: ParseDate = {
-        year: null,
-        month: null,
-        day: null,
+        year: [null, null],
+        month: [null, null],
+        day: [null, null],
         order: "01 some extra flavor",
     };
     expect(
@@ -269,7 +277,7 @@ test("Repeating events with extra", () => {
     ).toEqual(expected);
 
     expect(
-        gregorian.parseFrontmatterDate(
+        gregorian.parseDate(
             {
                 order: "01 some extra flavor",
             },
@@ -280,5 +288,33 @@ test("Repeating events with extra", () => {
     expect(gregorian.parsedToTimestamp(expected)).toEqual({
         timestamp: Number.MIN_VALUE,
         order: "01 some extra flavor",
+    });
+});
+test("Range Events", () => {
+    expect(gregorian.parseCalDateString("[2018-2024]-03-01", file)).toEqual({
+        year: [2018, 2024],
+        month: 2,
+        day: 1,
+        order: "",
+    });
+    expect(gregorian.parseCalDateString("[1991-*]-01-10", file)).toEqual({
+        year: [1991, null],
+        month: 0,
+        day: 10,
+        order: "",
+    });
+
+    expect(gregorian.parseCalDateString("2024-[02-03]-01", file)).toEqual({
+        year: 2024,
+        month: [1, 2],
+        day: 1,
+        order: "",
+    });
+
+    expect(gregorian.parseCalDateString("2024-03-[01-10]", file)).toEqual({
+        year: 2024,
+        month: 2,
+        day: [1, 10],
+        order: "",
     });
 });

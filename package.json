@@ -13,6 +13,7 @@
     "author": "",
     "license": "MIT",
     "devDependencies": {
+        "@sniptt/monads": "^0.5.10",
         "@testing-library/jest-dom": "^6.1.3",
         "@testing-library/svelte": "^4.0.3",
         "@tsconfig/svelte": "^5.0.2",

@@ -1,6 +1,14 @@
-import type { LeapDay, Day } from "src/schemas/calendar/timespans";
-import type { Calendar, CalDate, CalEvent, CalEventDate } from "../@types";
+import type { LeapDay, Day, Month } from "src/schemas/calendar/timespans";
+import type {
+    Calendar,
+    CalDate,
+    CalEvent,
+    FullCalEventDateBit,
+    OneTimeCalEventDate,
+} from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
+import type { DateBit } from "src/events/event.helper";
+import { EventType } from "../events/event.types";
 
 export function daysBetween(date1: Date, date2: Date) {
     const d1 = window.moment(date1);
@@ -85,10 +93,80 @@ export function ordinal(i: number) {
     return i + "th";
 }
 
+function getRecurringYear(year: FullCalEventDateBit): string {
+    if (!Array.isArray(year)) return `${year}`;
+    if (year.every((y) => y == null)) {
+        return `every year`;
+    }
+    if (year[0] === null) {
+        return `every year until ${year[1]}`;
+    }
+    if (year[1] === null) {
+        return `every year starting ${year[0]}`;
+    }
+    return `${year[0]}-${year[1]}`;
+}
+
+function getRecurringMonth(
+    month: FullCalEventDateBit,
+    months: Month[]
+): string {
+    if (!Array.isArray(month)) {
+        return `${months[month].name}`;
+    }
+    if (month[0] == null && month[1] == null) {
+        return `every month`;
+    }
+    const first = month[0] === null ? 0 : month[0];
+    const second = month[1] === null ? months.length - 1 : month[1];
+
+    return `${months[first].name}-${months[second].name}`;
+}
+function getRecurringDay(day: FullCalEventDateBit): string {
+    if (!Array.isArray(day)) {
+        return ordinal(day);
+    }
+    if (day[0] == null && day[1] == null) {
+        return `every day`;
+    }
+    if (day[0] == null && day[1] != null) {
+        return `every day until ${day[1]}`;
+    }
+    if (day[1] == null && day[0] != null) {
+        return `every day after ${day[0]}`;
+    }
+    return `${day[0]}-${day[1]}`;
+}
+export function eventDateString(event: CalEvent, calendar: Calendar) {
+    switch (event.type) {
+        case EventType.Recurring: {
+            const { year, month, day } = event.date;
+            const { months, years, useCustomYears } = calendar.static;
+            let recurring: string = `${getRecurringDay(
+                day
+            )} of ${getRecurringMonth(month, months)}, ${getRecurringYear(
+                year
+            )}`;
+
+            return recurring[0].toUpperCase() + recurring.slice(1);
+        }
+        case EventType.Range: {
+            return dateString(event.date, calendar, event.end);
+        }
+        case EventType.Undated: {
+            return "No date";
+        }
+        case EventType.Date:
+        default: {
+            return dateString(event.date, calendar);
+        }
+    }
+}
+
 export function dateString(
-    date: CalEventDate,
+    date: OneTimeCalEventDate,
     calendar: Calendar,
-    end?: CalEventDate | null,
+    end?: OneTimeCalEventDate | null,
     dateFormat?: string
 ) {
     if (!date || date.day == undefined) {
@@ -100,7 +178,6 @@ export function dateString(
     }
     const { day, month, year } = date;
     const { months, years, useCustomYears } = calendar.static;
-
     let startY: string = `${year}`;
     if (useCustomYears && years?.length && year) {
         startY = years[year - 1].name ?? startY;
@@ -245,16 +322,16 @@ export function toShortMonthString(
 }
 
 export function toPaddedString(
-    data: Nullable<number>,
+    data: [DateBit, DateBit] | DateBit,
     calendar: Calendar,
-    field: string
+    field: "month" | "day" | "year"
 ): string {
     const padding =
         field == "month" ? calendar.static.padMonths : calendar.static.padDays;
     return data == null ? "*" : String(data).padStart(padding ?? 0, "0");
 }
 
-export function isValidDay(day: number, calendar: Calendar) {
+export function isValidDay(day: number | null, calendar: Calendar) {
     if (day == null) return false;
     if (calendar?.current?.month == null) return false;
     if (day < 1) return false;
@@ -267,14 +344,14 @@ export function isValidDay(day: number, calendar: Calendar) {
     return true;
 }
 
-export function isValidMonth(month: number, calendar: Calendar) {
+export function isValidMonth(month: number | null, calendar: Calendar) {
     if (month == null) return false;
     if (!calendar?.static?.months?.length) return false;
     if (month < 0 || month >= calendar?.static?.months?.length) return false;
     return true;
 }
 
-export function isValidYear(year: number, calendar: Calendar) {
+export function isValidYear(year: number | null, calendar: Calendar) {
     if (year == null) return false;
     if (calendar?.static?.useCustomYears) {
         if (!calendar?.static?.years?.length) return false;
@@ -313,21 +390,12 @@ export function testLeapDay(leapday: LeapDay, year: number) {
         });
 }
 
-export function areDatesEqual(date: CalDate, date2: CalDate) {
-    if (date.day != date2.day) return false;
-    if (
-        date.month != date2.month &&
-        date.month != undefined &&
-        date2.month != undefined
-    )
-        return false;
-    if (
-        date.year != date2.year &&
-        date.year != undefined &&
-        date2.year != undefined
-    )
-        return false;
-    return true;
+function resolve(number: FullCalEventDateBit | null): number {
+    if (Array.isArray(number)) return Number.MIN_VALUE;
+    return number ?? Number.MIN_VALUE;
+}
+function compare(a: FullCalEventDateBit | null, b: FullCalEventDateBit | null) {
+    return resolve(a) != resolve(b);
 }
 
 export function compareEvents(a: CalEvent, b: CalEvent) {
@@ -337,19 +405,13 @@ export function compareEvents(a: CalEvent, b: CalEvent) {
         }
         return a.sort.timestamp - b.sort.timestamp;
     }
-    if (a.date.year != b.date.year) {
-        return (
-            (a.date.year ?? Number.MIN_VALUE) -
-            (b.date.year ?? Number.MIN_VALUE)
-        );
+    if (compare(a.date.year, b.date.year)) {
+        return resolve(a.date.year) - resolve(b.date.year);
     }
-    if (a.date.month != b.date.month) {
-        return (
-            (a.date.month ?? Number.MIN_VALUE) -
-            (b.date.month ?? Number.MIN_VALUE)
-        );
+    if (compare(a.date.month, b.date.month)) {
+        return resolve(a.date.month) - resolve(b.date.month);
     }
-    return (a.date.day ?? Number.MIN_VALUE) - (b.date.day ?? Number.MIN_VALUE);
+    return resolve(a.date.day) - resolve(b.date.day);
 }
 
 export function sortEventList(list: CalEvent[]): CalEvent[] {

@@ -13,6 +13,7 @@
     import { ViewEventModal } from "../../event-modal";
     import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
     import { addEventWithModal } from "src/settings/modals/event/event";
+    import CalendariumMenu from "src/utils/menu";
     const dispatch = createEventDispatcher();
 
     export let event: CalEvent;
@@ -82,7 +83,7 @@
 
     const contextMenu = (evt: MouseEvent) => {
         evt.stopPropagation();
-        const menu = new Menu();
+        const menu = new CalendariumMenu(plugin);
         if (removeable) {
             menu.addItem((item) =>
                 item.setTitle("Edit event").onClick(() => {
