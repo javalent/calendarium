@@ -97,6 +97,22 @@
     }
 }
 
+/** Importing */
+.calendarium-notice .calendarium-file-status-container {
+    display: grid;
+    grid-template-columns: 1fr 18px;
+    gap: 0 0.5rem;
+}
+.calendarium-notice .calendarium-file-status {
+    display: contents;
+}
+.calendarium-notice .calendarium-file-status .successful {
+    color: var(--text-success);
+}
+.calendarium-notice .calendarium-file-status .error {
+    color: var(--text-error);
+}
+
 /** Confirm Buttons */
 .calendarium-confirm-buttons-container {
     display: flex;

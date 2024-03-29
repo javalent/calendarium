@@ -13,6 +13,7 @@ import type {
     MarkdownCalendariumData,
     RangeCalEvent,
     RecurringCalEvent,
+    UndatedCalEvent,
     Version,
 } from "src/@types";
 import { DEFAULT_DATA } from "./settings.constants";
@@ -662,7 +663,7 @@ export default class SettingsService {
 
         return dirty;
     }
-    private updateCalendarsToNewSchema(
+    public updateCalendarsToNewSchema(
         calendars: Calendar[],
         data: CalendariumData
     ): boolean {
@@ -698,18 +699,33 @@ export default class SettingsService {
                     dirty = true;
                 }
                 if (!event.type) {
-                    if ("end" in event && typeof event.end == "object") {
-                        (event as any as RangeCalEvent).type = EventType.Range;
-                    } else if (
-                        "date" in event &&
-                        typeof event.date == "object" &&
-                        (!event.date.year ||
-                            !event.date.month ||
-                            !event.date.day)
+                    //Check for an undated event.
+                    if (
+                        !event.date ||
+                        (event.date.year == null &&
+                            event.date.month == null &&
+                            event.date.day == null)
                     ) {
+                        (event as any as UndatedCalEvent).type =
+                            EventType.Undated;
+                        (event as any as UndatedCalEvent).date = {
+                            year: null,
+                            month: null,
+                            day: null,
+                        };
+                        continue;
+                    }
+                    //Check for an event that should be recurring.
+                    if (
+                        event.date.year == null ||
+                        event.date.month == null ||
+                        event.date.day == null
+                    ) {
+                        //Recurrences cannot have ranges.
+                        delete (event as any).end;
                         (event as any as RecurringCalEvent).type =
                             EventType.Recurring;
-                        if (!event.date.year == null) {
+                        if (event.date.year == null) {
                             (event as any as RecurringCalEvent).date.year = [
                                 null,
                                 null,
@@ -721,15 +737,32 @@ export default class SettingsService {
                                 null,
                             ];
                         }
-                        if (!event.date.day == null) {
+                        if (event.date.day == null) {
                             (event as any as RecurringCalEvent).date.day = [
                                 null,
                                 null,
                             ];
                         }
-                    } else {
-                        event.type = EventType.Date;
                     }
+                    //Check for range events.
+                    //At this point, the event date should be *fully defined*.
+                    //The event *end* date might not be; if that is the case. remove the end date.
+                    if ("end" in event) {
+                        if (
+                            event.end &&
+                            ((event as any as RangeCalEvent).end.year == null ||
+                                (event as any as RangeCalEvent).end.month ==
+                                    null ||
+                                (event as any as RangeCalEvent).end.day == null)
+                        ) {
+                            event.type = EventType.Date;
+                            delete (event as any).end;
+                            continue;
+                        }
+                        (event as any as RangeCalEvent).type = EventType.Range;
+                        continue;
+                    }
+                    event.type = EventType.Date;
                 }
             }
             if (calendar.showIntercalarySeparately == null) {
