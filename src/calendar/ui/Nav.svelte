@@ -3,9 +3,11 @@
     import { getTypedContext } from "../view";
     import { ViewState } from "src/stores/calendar.store";
     import { LEFT, RIGHT, SETTINGS } from "src/utils/icons";
+    import CalendariumMenu from "src/utils/menu";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
+    const plugin = getTypedContext("plugin");
     const store = $global;
     const { displayingMonth, displayingYear } = $ephemeral;
     const { currentDisplay } = store;
@@ -24,7 +26,7 @@
         new ExtraButtonComponent(node).setIcon(SETTINGS);
     };
     const openSettings = (evt: MouseEvent) => {
-        const menu = new Menu();
+        const menu = new CalendariumMenu(plugin);
 
         menu.setNoIcon();
 

@@ -6,9 +6,12 @@
         Menu,
         TextComponent,
     } from "obsidian";
+    import CalendariumMenu from "src/utils/menu";
+    import { getContext } from "svelte";
     import { createEventDispatcher } from "svelte";
     import type { Readable, Writable } from "svelte/store";
 
+    const plugin = getContext("plugin");
     export let slice: Writable<number>;
     export let page: Writable<number>;
     export let pages: Readable<number>;
@@ -47,7 +50,7 @@
     $: keys = [...Array($pages).keys()].map((k) => k + 1);
 
     const paginationMenu = (evt: MouseEvent) => {
-        const menu = new Menu();
+        const menu = new CalendariumMenu(plugin);
         for (const number of keys) {
             menu.addItem((item) => {
                 item.setTitle(`${number}`).onClick(() => {

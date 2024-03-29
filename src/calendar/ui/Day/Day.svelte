@@ -9,6 +9,7 @@
     import Flags from "../Events/Flags.svelte";
     import { addEventWithModal } from "src/settings/modals/event/event";
     import type { DayOrLeapDay } from "src/schemas/calendar/timespans";
+    import CalendariumMenu from "src/utils/menu";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -51,7 +52,7 @@
         $viewing.year == year.year;
 
     const openMenu = (evt: MouseEvent) => {
-        const menu = new Menu();
+        const menu = new CalendariumMenu(plugin);
 
         menu.setNoIcon();
 

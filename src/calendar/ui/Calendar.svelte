@@ -10,6 +10,7 @@
     import { writable } from "svelte/store";
     import Weekdays from "./Week/Weekdays.svelte";
     import { SELECT_MULTIPLE } from "src/utils/icons";
+    import CalendariumMenu from "src/utils/menu";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -40,7 +41,7 @@
         new ExtraButtonComponent(node).setIcon(SELECT_MULTIPLE);
     };
     const showMenu = (evt: MouseEvent) => {
-        const menu = new Menu();
+        const menu = new CalendariumMenu(plugin);
         for (const calendar of plugin.data.calendars.filter(
             (c) => c.id != $store.id,
         )) {
