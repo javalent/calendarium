@@ -25,7 +25,10 @@
     bind:open
     use:details
 >
-    <summary class="calendarium-nested-summary">
+    <summary
+        class="calendarium-nested-summary"
+        on:keyup={(evt) => evt.preventDefault()}
+    >
         <div class="setting-item setting-item-heading">
             <div class="setting-item-info">
                 <div class="setting-item-name">{name}</div>
