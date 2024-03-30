@@ -70,7 +70,6 @@
         padding-bottom: 6px;
         margin-right: 0.25rem;
         color: var(--text-muted);
-        cursor: pointer;
         font-size: 0.65em;
         display: flex;
         align-items: center;
