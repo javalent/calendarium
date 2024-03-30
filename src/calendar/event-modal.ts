@@ -12,11 +12,12 @@ export class ViewEventModal extends CalendariumModal {
         this.contentEl.empty();
         this.contentEl.createEl("h4", { text: this.event.name });
 
-        await MarkdownRenderer.renderMarkdown(
+        await MarkdownRenderer.render(
+            this.app,
             this.event.description ?? "",
             this.contentEl,
             this.event.note ?? "",
-            new Component()
+            this.plugin
         );
     }
     async onOpen() {
