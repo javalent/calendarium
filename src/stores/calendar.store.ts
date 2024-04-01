@@ -1,8 +1,4 @@
-import type {
-    Calendar,
-    CalDate,
-    CalEventCategory,
-} from "src/@types";
+import type { Calendar, CalDate, CalEventCategory } from "src/@types";
 import {
     type Readable,
     type Writable,
@@ -169,19 +165,7 @@ export function getEphemeralStore(
     const viewState = writable<ViewState>(ViewState.Month);
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
-/*     derived(
-        [
-            viewState,
-            viewing,
-            displayDayNumber,
-            displayMoons,
-            displayWeeks,
-            displaying,
-        ],
-        (a) => {
-            plugin.app.workspace.requestSaveLayout();
-        }
-    ).subscribe(() => {}); */
+
     return {
         initializeFromState: (state: EphemeralState) => {
             viewState.set(state.viewState);
@@ -233,7 +217,7 @@ export function getEphemeralStore(
             let { year, month } = displaying;
             let yearStore = yearCalculator.getYearFromCache(year);
             if (month == 0) {
-                year = year - 1;
+                year = year - 1 || -1;
                 yearStore = yearCalculator.getYearFromCache(year);
                 month = get(yearStore.months).length - 1;
             } else {
@@ -244,7 +228,7 @@ export function getEphemeralStore(
         getPreviousMonth: (month: number, year: number) => {
             let yearStore = yearCalculator.getYearFromCache(year);
             if (month == 0) {
-                year = year - 1;
+                year = year - 1 || -1;
                 yearStore = yearCalculator.getYearFromCache(year);
                 month = get(yearStore.months).length - 1;
             } else {
@@ -259,7 +243,7 @@ export function getEphemeralStore(
                         return {
                             ...displaying,
                             month: 0,
-                            year: displaying.year - 1,
+                            year: displaying.year - 1 || -1,
                         };
                     case ViewState.Week: {
                         let next = { ...displaying };
@@ -311,7 +295,7 @@ export function getEphemeralStore(
             let month = displaying.month;
             if (displaying.month == months.length - 1) {
                 yearStore = yearCalculator.getYearFromCache(
-                    displaying.year + 1
+                    displaying.year + 1 || 1
                 );
                 month = 0;
             } else {
@@ -323,7 +307,7 @@ export function getEphemeralStore(
             let yearStore = yearCalculator.getYearFromCache(year);
             const months = get(yearStore.months);
             if (month == months.length - 1) {
-                yearStore = yearCalculator.getYearFromCache(year + 1);
+                yearStore = yearCalculator.getYearFromCache(year + 1 || 1);
                 month = 0;
             } else {
                 month = month + 1;
@@ -337,7 +321,7 @@ export function getEphemeralStore(
                         return {
                             ...displaying,
                             month: 0,
-                            year: displaying.year + 1,
+                            year: displaying.year + 1 || 1,
                         };
                     case ViewState.Week: {
                         let next = { ...displaying };
@@ -448,7 +432,7 @@ function incrementMonth(date: CalDate, yearCalculator: YearStoreCache) {
     const months = get(year.months);
     if (next.month == months.length - 1) {
         next.month = 0;
-        next.year++;
+        next.year = next.year + 1 || 1;
     } else {
         next.month++;
     }
@@ -457,7 +441,8 @@ function incrementMonth(date: CalDate, yearCalculator: YearStoreCache) {
 function decrementMonth(date: CalDate, yearCalculator: YearStoreCache) {
     const next = { ...date };
     if (next.month == 0) {
-        next.year = next.year - 1;
+        next.year = next.year - 1 || -1;
+
         const year = yearCalculator.getYearFromCache(next.year);
         const months = get(year.months);
         next.month = months.length - 1;

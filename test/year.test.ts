@@ -1,5 +1,5 @@
 import type { Calendar } from "../src/@types";
-import { daysBeforeYear, getFirstDayOfYear } from "../src/stores/years.store";
+import { daysFromYearOne, getFirstDayOfYear } from "../src/stores/years.store";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 import { test, expect } from "vitest";
 
@@ -9,17 +9,31 @@ const GREGORIAN: Calendar = PRESET_CALENDARS.find(
 
 test("Days Before Year (Gregorian)", () => {
     expect(
-        daysBeforeYear(1, GREGORIAN.static.months, GREGORIAN.static.leapDays)
+        daysFromYearOne(1, GREGORIAN.static.months, GREGORIAN.static.leapDays)
     ).toBe(0);
     expect(
-        daysBeforeYear(2, GREGORIAN.static.months, GREGORIAN.static.leapDays)
+        daysFromYearOne(2, GREGORIAN.static.months, GREGORIAN.static.leapDays)
     ).toBe(365);
     expect(
-        daysBeforeYear(5, GREGORIAN.static.months, GREGORIAN.static.leapDays)
+        daysFromYearOne(5, GREGORIAN.static.months, GREGORIAN.static.leapDays)
     ).toBe(365 * 4 + 1);
     expect(
-        daysBeforeYear(20, GREGORIAN.static.months, GREGORIAN.static.leapDays)
+        daysFromYearOne(20, GREGORIAN.static.months, GREGORIAN.static.leapDays)
     ).toBe(365 * 19 + 4);
+});
+test("Days Before Negative Year (Gregorian)", () => {
+    expect(
+        daysFromYearOne(-1, GREGORIAN.static.months, GREGORIAN.static.leapDays)
+    ).toBe(365);
+    expect(
+        daysFromYearOne(-2, GREGORIAN.static.months, GREGORIAN.static.leapDays)
+    ).toBe(365 * 2);
+    expect(
+        daysFromYearOne(-4, GREGORIAN.static.months, GREGORIAN.static.leapDays)
+    ).toBe(365 * 4 + 1);
+    expect(
+        daysFromYearOne(-20, GREGORIAN.static.months, GREGORIAN.static.leapDays)
+    ).toBe(365 * 20 + 5);
 });
 
 test("First Weekday (Gregorian)", () => {
@@ -34,4 +48,26 @@ test("First Weekday (Gregorian)", () => {
             GREGORIAN.static.offset
         )
     ).toBe(0);
+    expect(
+        getFirstDayOfYear(
+            2024,
+            GREGORIAN.static.months,
+            GREGORIAN.static.weekdays,
+            GREGORIAN.static.leapDays,
+            GREGORIAN.static.overflow,
+            GREGORIAN.static.firstWeekDay,
+            GREGORIAN.static.offset
+        )
+    ).toBe(1);
+    expect(
+        getFirstDayOfYear(
+            2024,
+            GREGORIAN.static.months,
+            GREGORIAN.static.weekdays,
+            GREGORIAN.static.leapDays,
+            GREGORIAN.static.overflow,
+            GREGORIAN.static.firstWeekDay,
+            GREGORIAN.static.offset
+        )
+    ).toBe(1);
 });

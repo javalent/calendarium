@@ -31,7 +31,7 @@ export class YearStore {
     daysBefore = derived(
         [this.months, this.staticStore.leapDays],
         ([months, leapDays]) => {
-            return daysBeforeYear(this.year, months, leapDays);
+            return daysFromYearOne(this.year, months, leapDays);
         }
     );
     firstDay = derived(
@@ -108,36 +108,53 @@ export function getFirstDayOfYear(
     offset?: number
 ) {
     if (!overflow) return 0;
-    if (year <= 1) return firstWeekDay;
+    if (year === 1) return firstWeekDay;
+
+    /** If the year is negative, then everything needs to be inverted. */
+    const mult = year < 0 ? -1 : 1;
+
     return wrap(
-        (daysBeforeYear(year, months, leapDays) % weekdays.length) +
-            firstWeekDay +
-            (offset ?? 0),
+        mult *
+            ((daysFromYearOne(year, months, leapDays) % weekdays.length) +
+                mult * firstWeekDay +
+                mult * (offset ?? 0)),
         weekdays.length
     );
 }
 
-export function daysBeforeYear(
-    year: number,
+/**
+ * This needs to calculate how many days there are between a given year and a hypothetical "year zero".
+ *
+ * If the year passed in is negative, it should calcaulate "up".
+ */
+export function daysFromYearOne(
+    original: number,
     months: Month[],
     leapDays: LeapDay[],
     includeIntercalary: boolean = false
 ) {
-    if (year < 1) return 0;
+    if (original == 1) return 0;
+    let year = original >= 1 ? original : original + 1;
+
     return (
         Math.abs(year - 1) *
             months
                 .filter((m) => includeIntercalary || m.type == "month")
                 .reduce((a, b) => a + b.length, 0) +
-        leapDaysBeforeYear(year, leapDays)
+        leapDaysBeforeYear(original, leapDays)
     );
 }
 
-export function leapDaysBeforeYear(year: number, leapDays: LeapDay[]) {
+export function leapDaysBeforeYear(original: number, leapDays: LeapDay[]) {
+    let year = Math.abs(original);
+
     /** If we're checking year 1, there are no leap days. */
     if (year == 1) return 0;
-    /** Subtract 1 from tester. We're looking for leap days BEFORE the year. */
-    const yearPrior = year - 1;
+    /** Subtract 1 from tester. We're looking for leap days BEFORE the year.
+     * If the year is negative, then we don't want to substract anything.
+     */
+    const yearPrior = original < 0 ? year : year - 1;
+
     let total = 0;
     /** Iterate over each leap day. */
     for (const { interval, offset } of leapDays.filter((l) => !l.intercalary)) {
