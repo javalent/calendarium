@@ -7,11 +7,12 @@ import {
     writable,
 } from "svelte/store";
 import { YearStoreCache } from "./years.store";
-import { dateString } from "src/utils/functions";
+import { compareDates, compareEvents, dateString } from "src/utils/functions";
 import { MoonCache } from "./cache/moon-cache";
 import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
 import type { MoonState } from "src/schemas/calendar/moons";
+import { EraCache } from "./cache/era-cache";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -42,6 +43,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             })
     );
     const moonCache = new MoonCache(moonStates, yearCalculator);
+    const eraCache = new EraCache(staticStore.eras);
 
     let ephemeralStore = getEphemeralStore(
         store,
@@ -109,6 +111,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         }, */
 
         moonCache,
+        eraCache,
         categories,
         //Readable store containing static calendar data
         staticStore,
@@ -147,6 +150,7 @@ export interface EphemeralState {
     displayMoons: boolean;
     displayWeeks: boolean;
     displayDayNumber: boolean;
+    displayAbsoluteYear: boolean;
     displaying: CalDate;
     viewing: CalDate | null;
 }
@@ -162,6 +166,7 @@ export function getEphemeralStore(
     const displayMoons = writable(base.static.displayMoons);
     const displayDayNumber = writable(base.static.displayDayNumber);
     const displayWeeks = writable(base.displayWeeks);
+    const displayAbsoluteYear = writable(base.displayAbsoluteYear);
     const viewState = writable<ViewState>(ViewState.Month);
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
@@ -172,6 +177,7 @@ export function getEphemeralStore(
             displayDayNumber.set(state.displayDayNumber);
             displayMoons.set(state.displayMoons);
             displayWeeks.set(state.displayWeeks);
+            displayAbsoluteYear.set(state.displayAbsoluteYear);
             displaying.set(state.displaying);
             viewing.set(state.viewing);
         },
@@ -181,6 +187,7 @@ export function getEphemeralStore(
                 viewState: get(viewState),
                 displaying: get(displaying),
                 displayDayNumber: get(displayDayNumber),
+                displayAbsoluteYear: get(displayAbsoluteYear),
                 displayMoons: get(displayMoons),
                 displayWeeks: get(displayWeeks),
             };
@@ -188,6 +195,7 @@ export function getEphemeralStore(
         displayMoons,
         displayDayNumber,
         displayWeeks,
+        displayAbsoluteYear,
         viewState,
 
         //Displayed Date
@@ -399,6 +407,14 @@ function createStaticStore(store: Writable<Calendar>) {
     const moons = derived(staticData, (data) => data.moons);
     const weekdays = derived(staticData, (data) => data.weekdays);
     const years = derived(staticData, (data) => data.years ?? []);
+    const eras = derived(staticData, (data) =>
+        (data.eras ?? []).sort((a, b) => {
+            if (a.isStartingEra) return Number.NEGATIVE_INFINITY;
+            if (b.isStartingEra) return Number.POSITIVE_INFINITY;
+            return compareDates(a.date, b.date);
+        })
+    );
+    console.log("🚀 ~ file: calendar.store.ts:403 ~ eras:", get(eras));
 
     function getDaysInAYear() {
         return get(months).reduce((a, b) => a + b.length, 0);
@@ -423,6 +439,7 @@ function createStaticStore(store: Writable<Calendar>) {
         staticConfiguration,
         weekdays,
         years,
+        eras,
     };
 }
 

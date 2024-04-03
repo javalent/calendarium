@@ -4,17 +4,36 @@
     import { ViewState } from "src/stores/calendar.store";
     import { LEFT, RIGHT, SETTINGS } from "src/utils/icons";
     import CalendariumMenu from "src/utils/menu";
+    import { derived } from "svelte/store";
+    import { formatEra, getEraYear } from "src/stores/cache/era-cache";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
     const plugin = getTypedContext("plugin");
     const store = $global;
-    const { displayingMonth, displayingYear } = $ephemeral;
-    const { currentDisplay } = store;
+    const { displaying, displayingMonth, displayingYear, displayAbsoluteYear } =
+        $ephemeral;
+    const { currentDisplay, eraCache } = store;
     $: displayMoons = $ephemeral.displayMoons;
     $: displayWeeks = $ephemeral.displayWeeks;
     $: displayDayNumber = $ephemeral.displayDayNumber;
     $: viewState = $ephemeral.viewState;
+
+    $: eras = eraCache.getMonthCache(
+        $displaying.month,
+        $displaying.year,
+    ).entities;
+    $: displayedYear = derived(
+        [eras, displayingYear, displayAbsoluteYear],
+        ([eras, displayingYear, displayAbsoluteYear]) => {
+            if (displayAbsoluteYear) return displayingYear;
+            if (typeof displayingYear != "number") return displayingYear;
+            if (!eras?.length) return displayingYear;
+            return getEraYear(eras[0], displayingYear);
+        },
+    );
+
+    $: console.log("🚀 ~ file: Nav.svelte:25 ~ eraYears:", $displayedYear);
 
     const left = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon(LEFT);
@@ -30,17 +49,24 @@
 
         menu.setNoIcon();
 
-        menu.addItem((item) => {
+        /* menu.addItem((item) => {
             item.setTitle("Go to day").onClick(() => {
-                /* openDate(); */
+
             });
-        });
+        }); */
         menu.addSeparator();
         menu.addItem((item) => {
             item.setTitle(
                 `${$displayWeeks ? "Hide" : "Display"} week numbers`,
             ).onClick(async () => {
                 $displayWeeks = !$displayWeeks;
+            });
+        });
+        menu.addItem((item) => {
+            item.setTitle(
+                `Show ${$displayAbsoluteYear ? "era" : "absolute"} year`,
+            ).onClick(async () => {
+                $displayAbsoluteYear = !$displayAbsoluteYear;
             });
         });
         menu.addItem((item) => {
@@ -60,15 +86,16 @@
 
         menu.showAtMouseEvent(evt);
     };
+
+    function changeYear(currentTarget: EventTarget & HTMLSpanElement) {
+        if (!isNaN(Number(currentTarget.textContent))) {
+            $displaying.year = Number(currentTarget.textContent);
+        }
+    }
 </script>
 
 <div class="calendarium-nav-container">
     <div class="view-state-switcher">
-        <!-- <span
-            class="view-state"
-            class:active={$viewState == ViewState.Day}
-            on:click={() => ($viewState = ViewState.Day)}>Day</span
-        > -->
         <span
             class="view-state"
             class:active={$viewState == ViewState.Week}
@@ -93,8 +120,33 @@
                         >{$displayingMonth.name}</span
                     >
                 {/if}
-                <span class="calendarium-year year">{$displayingYear}</span>
+                <span
+                    class="calendarium-year year"
+                    contenteditable="plaintext-only"
+                    on:keypress={(evt) => {
+                        if (
+                            !evt.code.contains("Digit") &&
+                            !evt.code.contains("Arrow") &&
+                            evt.code != "Backspace" &&
+                            evt.code != "Minus"
+                        ) {
+                            evt.preventDefault();
+                        }
+                    }}
+                    on:input={(evt) => {
+                        changeYear(evt.currentTarget);
+                    }}>{$displayedYear}</span
+                >
             </h3>
+            <div class="eras eras-container">
+                {#if $eras.length}
+                    {#each $eras as era}
+                        <span class="era"
+                            >{formatEra(era, $displayingYear)}</span
+                        >
+                    {/each}
+                {/if}
+            </div>
         </div>
         <div class="right-nav calendarium-right-nav">
             <div class="container">
@@ -166,8 +218,9 @@
         justify-content: space-between;
         align-items: stretch;
     }
-    .year {
-        color: var(--interactive-accent);
+    .year,
+    .era {
+        color: var(--text-accent);
     }
     .container {
         display: flex;
