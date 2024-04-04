@@ -5,104 +5,113 @@
         invalidMonthLabel,
         invalidYearLabel,
     } from "../Utilities/utils";
+    import type { CalDate } from "src/schemas";
+    import { derived, type Readable, type Writable } from "svelte/store";
+    import { isValidDay, isValidMonth, isValidYear } from "src/utils/functions";
+
+    export let date: Readable<CalDate>;
 
     const calendar = getContext("store");
-    const {
-        monthStore,
-        validDay,
-        validMonth,
-        validYear,
-        yearStore,
-        currentStore,
-    } = calendar;
+    const { monthStore, yearStore } = calendar;
+    const validDay = derived([calendar, date], ([calendar, date]) => {
+        return isValidDay(date.day, calendar);
+    });
+    const validMonth = derived([calendar, date], ([calendar, date]) => {
+        return isValidMonth(date.month, calendar);
+    });
+    const validYear = derived([calendar, date], ([calendar, date]) => {
+        return isValidYear(date.year, calendar);
+    });
 </script>
 
-<div class="calendarium-date-field-container">
+<div class="setting-item calendarium-date-field-container">
     <div class="calendarium-date-field">
+        <label for="">Day</label>
         <div class="warning-container">
-            <label for="">Day</label>
-            {#if !$validDay}
-                <div class="setting-item-description">
-                    {#if !$validDay}
-                        {invalidDayLabel($currentStore.day, $calendar)}
-                    {/if}
-                </div>
-            {/if}
-        </div>
-        <input
-            type="number"
-            spellcheck="false"
-            placeholder="Day"
-            class:invalid={!$validDay}
-            bind:value={$currentStore.day}
-        />
-    </div>
-    <div class="calendarium-date-field">
-        <div class="warning-container">
-            <label for="">Month</label>
-            {#if !$validMonth}
-                <div class="setting-item-description">
-                    {#if !$validMonth}
-                        {invalidMonthLabel($currentStore.month, $calendar)}
-                    {/if}
-                </div>
-            {/if}
-        </div>
-        <select
-            class="dropdown"
-            bind:value={$currentStore.month}
-            class:invalid={!$validMonth}
-        >
-            {#each $monthStore.filter((m) => m.name) as month, index}
-                <option value={index}>{month.name}</option>
-            {/each}
-        </select>
-    </div>
-    <div class="calendarium-date-field">
-        <div class="warning-container">
-            <label for="">Year</label>
-            {#if !$validYear}
-                <div class="setting-item-description">
-                    {#if !$validYear}
-                        {invalidYearLabel($currentStore.year, $calendar)}
-                    {/if}
-                </div>
-            {/if}
-        </div>
-        {#if $calendar.static.useCustomYears}
-            <select
-                class="dropdown"
-                bind:value={$currentStore.year}
-                class:invalid={!$validYear}
-            >
-                {#each $yearStore?.filter((m) => m && m.name) ?? [] as year, index (year.id)}
-                    <option value={index + 1}>{year.name}</option>
-                {/each}
-            </select>
-        {:else}
             <input
                 type="number"
                 spellcheck="false"
-                placeholder="Year"
-                class:invalid={!$validYear}
-                bind:value={$currentStore.year}
+                placeholder="Day"
+                class:invalid={!$validDay}
+                bind:value={$date.day}
             />
-        {/if}
+            {#if !$validDay}
+                <div class="setting-item-description">
+                    {#if !$validDay}
+                        {invalidDayLabel($date.day, $calendar)}
+                    {/if}
+                </div>
+            {/if}
+        </div>
+    </div>
+    <div class="calendarium-date-field">
+        <label for="">Month</label>
+        <div class="warning-container">
+            <select
+                class="dropdown"
+                bind:value={$date.month}
+                class:invalid={!$validMonth}
+            >
+                {#each $monthStore.filter((m) => m.name) as month, index}
+                    <option value={index}>{month.name}</option>
+                {/each}
+            </select>
+            {#if !$validMonth}
+                <div class="setting-item-description">
+                    {#if !$validMonth}
+                        {invalidMonthLabel($date.month, $calendar)}
+                    {/if}
+                </div>
+            {/if}
+        </div>
+    </div>
+    <div class="calendarium-date-field">
+        <label for="">Year</label>
+        <div class="warning-container">
+            {#if $calendar.static.useCustomYears}
+                <select
+                    class="dropdown"
+                    bind:value={$date.year}
+                    class:invalid={!$validYear}
+                >
+                    {#each $yearStore?.filter((m) => m && m.name) ?? [] as year, index (year.id)}
+                        <option value={index + 1}>{year.name}</option>
+                    {/each}
+                </select>
+            {:else}
+                <input
+                    type="number"
+                    spellcheck="false"
+                    placeholder="Year"
+                    class:invalid={!$validYear}
+                    bind:value={$date.year}
+                />
+            {/if}
+            {#if !$validYear}
+                <div class="setting-item-description">
+                    {#if !$validYear}
+                        {invalidYearLabel($date.year, $calendar)}
+                    {/if}
+                </div>
+            {/if}
+        </div>
     </div>
 </div>
 
 <style>
     .calendarium-date-field-container.calendarium-date-field-container {
         display: flex;
+        align-items: flex-start;
         flex-direction: row;
         gap: 1rem;
         border: 0;
     }
     .calendarium-date-field {
         display: grid;
-        grid-auto-rows: 1fr;
+        grid-auto-rows: auto 1fr;
         flex: 1 1 0;
         gap: 0.5rem;
+        margin: 0;
     }
 
     .calendarium-date-field .setting-item-description {
@@ -118,5 +127,8 @@
         flex-flow: column nowrap;
         align-items: flex-start;
         gap: 0.25rem;
+    }
+    select {
+        width: 100%;
     }
 </style>

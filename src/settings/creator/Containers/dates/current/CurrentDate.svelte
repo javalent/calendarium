@@ -11,11 +11,12 @@
         : "Invalid date";
 </script>
 
+
 <Details
     name={"Current date"}
     warn={!$validDate}
     label={"Invalid current date specified"}
     {desc}
 >
-    <DateWithValidation />
+    <DateWithValidation date={currentStore} />
 </Details>
