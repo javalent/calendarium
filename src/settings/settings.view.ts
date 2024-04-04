@@ -29,7 +29,7 @@ import {
 } from "./modals/confirm";
 import { CalendariumModal } from "./modals/modal";
 import { get } from "svelte/store";
-import createStore, { type CreatorStore } from "./creator/stores/calendar";
+import createCreatorStore, { type CreatorStore } from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import SettingsService from "./settings.service";
@@ -433,7 +433,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                                     [calendar],
                                     this.plugin.data
                                 );
-                                const validator = createStore(
+                                const validator = createCreatorStore(
                                     this.plugin,
                                     calendar
                                 );
@@ -989,7 +989,7 @@ class CreatorModal extends CalendariumModal {
         this.modalEl.addClasses(["mod-sidebar-layout", "mod-settings"]);
         this.contentEl.addClass("vertical-tabs-container");
         this.calendar = copy(calendar);
-        this.store = createStore(this.plugin, this.calendar);
+        this.store = createCreatorStore(this.plugin, this.calendar);
         this.scope.register([Platform.isMacOS ? "Meta" : "Ctrl"], "z", () => {
             if (get(this.store.canUndo)) this.store.undo();
         });

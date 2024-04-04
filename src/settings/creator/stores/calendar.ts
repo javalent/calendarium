@@ -22,6 +22,7 @@ import type {
     Year,
     LeapDay,
     Day,
+    Era,
 } from "src/schemas/calendar/timespans";
 
 function padMonth(months: Month[]) {
@@ -37,9 +38,9 @@ function padDay(months: Month[]) {
     ).length;
 }
 
-export type CreatorStore = ReturnType<typeof createStore>;
+export type CreatorStore = ReturnType<typeof createCreatorStore>;
 
-function createStore(plugin: Calendarium, existing: Calendar) {
+function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const store = writable<Calendar>(existing);
     const { subscribe, set, update } = store;
 
@@ -111,6 +112,7 @@ function createStore(plugin: Calendarium, existing: Calendar) {
     const moonStore = derived(staticStore, (data) => data.moons);
     const displayMoons = derived(staticStore, (data) => data.displayMoons);
     const leapDayStore = derived(staticStore, (data) => data.leapDays);
+    const eraStore = derived(staticStore, (data) => data.eras);
     const eventStore = derived(store, (data) => data.events);
     const categoryStore = derived(store, (data) => data.categories);
     const validMonths = derived(staticStore, (data) => {
@@ -435,6 +437,17 @@ function createStore(plugin: Calendarium, existing: Calendar) {
             monthStore,
             (months) => months.filter((m) => m.name?.length).length == 0
         ),
+        eraStore: {
+            subscribe: eraStore.subscribe,
+            set: (eras: Era[]) =>
+                update((data) => {
+                    data.static.eras = [...eras];
+                    return data;
+                }),
+            add: (era: Era) => {},
+            update: (id: string, era: Era) => {},
+            delete: (id: string) => {},
+        },
         leapDayStore: {
             subscribe: leapDayStore.subscribe,
             set: (leapDays: LeapDay[]) =>
@@ -472,4 +485,4 @@ function createStore(plugin: Calendarium, existing: Calendar) {
     };
 }
 
-export default createStore;
+export default createCreatorStore;
