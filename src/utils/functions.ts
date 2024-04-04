@@ -5,28 +5,11 @@ import type {
     CalEvent,
     FullCalEventDateBit,
     OneTimeCalEventDate,
+    CalEventDate,
 } from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
 import type { DateBit } from "src/events/event.helper";
 import { EventType } from "../events/event.types";
-
-export function daysBetween(date1: Date, date2: Date) {
-    const d1 = window.moment(date1);
-    const d2 = window.moment(date2);
-
-    let days = d2.diff(d1, "days");
-
-    if (
-        (d1.year() < d2.year() || d1.dayOfYear() < d2.dayOfYear()) &&
-        (d1.hour() > d2.hour() ||
-            d1.minute() > d2.minute() ||
-            d1.second() > d2.second() ||
-            d1.millisecond() > d2.millisecond())
-    ) {
-        days += 1;
-    }
-    return days;
-}
 
 export function wrap(value: number, size: number): number {
     return ((value % size) + size) % size;
@@ -405,13 +388,25 @@ export function compareEvents(a: CalEvent, b: CalEvent) {
         }
         return a.sort.timestamp - b.sort.timestamp;
     }
-    if (compare(a.date.year, b.date.year)) {
-        return resolve(a.date.year) - resolve(b.date.year);
+    if (a.type !== EventType.Undated && b.type === EventType.Undated) {
+        return Number.POSITIVE_INFINITY;
     }
-    if (compare(a.date.month, b.date.month)) {
-        return resolve(a.date.month) - resolve(b.date.month);
+    if (a.type === EventType.Undated && b.type !== EventType.Undated) {
+        return Number.NEGATIVE_INFINITY;
     }
-    return resolve(a.date.day) - resolve(b.date.day);
+    if (a.type === EventType.Undated || b.type === EventType.Undated) {
+        return 0;
+    }
+    return compareDates(a.date, b.date);
+}
+export function compareDates(a: CalEventDate, b: CalEventDate) {
+    if (compare(a.year, b.year)) {
+        return resolve(a.year) - resolve(b.year);
+    }
+    if (compare(a.month, b.month)) {
+        return resolve(a.month) - resolve(b.month);
+    }
+    return resolve(a.day) - resolve(b.day);
 }
 
 export function sortEventList(list: CalEvent[]): CalEvent[] {
