@@ -11,8 +11,13 @@
     const ephemeral = getTypedContext("ephemeralStore");
     const plugin = getTypedContext("plugin");
     const store = $global;
-    const { displaying, displayingMonth, displayingYear, displayAbsoluteYear } =
-        $ephemeral;
+    const {
+        displaying,
+        displayingMonth,
+        displayingYear,
+        displayAbsoluteYear,
+        hideEra,
+    } = $ephemeral;
     const { currentDisplay, eraCache } = store;
     $: displayMoons = $ephemeral.displayMoons;
     $: displayWeeks = $ephemeral.displayWeeks;
@@ -64,23 +69,32 @@
         });
         menu.addItem((item) => {
             item.setTitle(
+                $displayDayNumber ? "Hide day number" : "Display day number",
+            ).onClick(async () => {
+                $displayDayNumber = !$displayDayNumber;
+            });
+        });
+        menu.addSeparator();
+        menu.addItem((item) => {
+            item.setTitle(`${$hideEra ? "Show" : "Hide"} era`).onClick(
+                async () => {
+                    $hideEra = !$hideEra;
+                },
+            );
+        });
+        menu.addItem((item) => {
+            item.setTitle(
                 `Show ${$displayAbsoluteYear ? "era" : "absolute"} year`,
             ).onClick(async () => {
                 $displayAbsoluteYear = !$displayAbsoluteYear;
             });
         });
+        menu.addSeparator();
         menu.addItem((item) => {
             item.setTitle(
                 $displayMoons ? "Hide moons" : "Display moons",
             ).onClick(() => {
                 $displayMoons = !$displayMoons;
-            });
-        });
-        menu.addItem((item) => {
-            item.setTitle(
-                $displayDayNumber ? "Hide day number" : "Display day number",
-            ).onClick(async () => {
-                $displayDayNumber = !$displayDayNumber;
             });
         });
 
@@ -139,7 +153,7 @@
                 >
             </h3>
             <div class="eras eras-container">
-                {#if $eras.length}
+                {#if $eras.length && !$hideEra}
                     {#each $eras as era}
                         <span class="era"
                             >{formatEra(era, $displayingYear)}</span
