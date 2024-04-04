@@ -12,7 +12,10 @@
 
 <div class="text-area-component setting-item" class:cls>
     <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label>{name}</label>
+    <div class="info">
+        <label>{name}</label>
+        <slot name="control" />
+    </div>
     <textarea
         spellcheck="false"
         {placeholder}
@@ -22,6 +25,11 @@
 </div>
 
 <style>
+    .info {
+        display: flex;
+        justify-content: space-between;
+        margin-right: 0;
+    }
     .text-area-component {
         display: flex;
         flex-flow: column nowrap;
