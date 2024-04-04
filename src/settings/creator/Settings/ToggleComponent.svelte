@@ -1,11 +1,15 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
     export let name: string;
     export let desc: string | DocumentFragment;
+
     export let value: boolean;
     export let disabled = false;
     const descEl = (node: HTMLElement) => {
         node.append(desc);
     };
+    const dispatch = createEventDispatcher<{ click: MouseEvent }>();
 </script>
 
 <div class="setting-item mod-toggle">
@@ -24,7 +28,11 @@
             class="checkbox-container"
             class:is-disabled={disabled}
             class:is-enabled={value}
-            on:click
+            on:click={(evt) => {
+                if (!disabled) {
+                    dispatch("click", evt);
+                }
+            }}
         />
     </div>
 </div>
