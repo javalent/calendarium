@@ -1,4 +1,4 @@
-import type { CalDate } from "./calendar";
+import type { CalDate, StaticCalendarData } from "./calendar";
 
 /**
  * Timespans
@@ -90,12 +90,20 @@ export type Season = {
 export type Era = {
     id: string;
     name: string;
+    description?: string;
     format: string;
-    restart: boolean;
     endsYear: boolean;
-    event: boolean;
-    start: CalDate;
+    isEvent: boolean;
     eventDescription?: string;
     eventCategory?: string;
-    description?: string;
-};
+    static?: Partial<Omit<StaticCalendarData, "Eras">>;
+    isStartingEra: boolean;
+} & (
+    | {
+          isStartingEra: true;
+      }
+    | {
+          date: CalDate;
+          end?: CalDate;
+      }
+);
