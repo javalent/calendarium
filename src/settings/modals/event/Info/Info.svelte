@@ -116,7 +116,11 @@
     <div class="setting-item">
         <SettingItem>
             <div slot="name">Event category</div>
-            <select slot="control" bind:value={$event.category}>
+            <select
+                slot="control"
+                class="dropdown"
+                bind:value={$event.category}
+            >
                 {#each $store.categories as category}
                     <option
                         value={category.id}
