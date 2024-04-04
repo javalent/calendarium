@@ -150,6 +150,7 @@ export interface EphemeralState {
     displayMoons: boolean;
     displayWeeks: boolean;
     displayDayNumber: boolean;
+    hideEra: boolean;
     displayAbsoluteYear: boolean;
     displaying: CalDate;
     viewing: CalDate | null;
@@ -166,6 +167,7 @@ export function getEphemeralStore(
     const displayMoons = writable(base.static.displayMoons);
     const displayDayNumber = writable(base.static.displayDayNumber);
     const displayWeeks = writable(base.displayWeeks);
+    const hideEra = writable(base.hideEra);
     const displayAbsoluteYear = writable(base.displayAbsoluteYear);
     const viewState = writable<ViewState>(ViewState.Month);
     let currentState = ViewState.Month;
@@ -177,6 +179,7 @@ export function getEphemeralStore(
             displayDayNumber.set(state.displayDayNumber);
             displayMoons.set(state.displayMoons);
             displayWeeks.set(state.displayWeeks);
+            hideEra.set(state.hideEra);
             displayAbsoluteYear.set(state.displayAbsoluteYear);
             displaying.set(state.displaying);
             viewing.set(state.viewing);
@@ -187,6 +190,7 @@ export function getEphemeralStore(
                 viewState: get(viewState),
                 displaying: get(displaying),
                 displayDayNumber: get(displayDayNumber),
+                hideEra: get(hideEra),
                 displayAbsoluteYear: get(displayAbsoluteYear),
                 displayMoons: get(displayMoons),
                 displayWeeks: get(displayWeeks),
@@ -195,6 +199,7 @@ export function getEphemeralStore(
         displayMoons,
         displayDayNumber,
         displayWeeks,
+        hideEra,
         displayAbsoluteYear,
         viewState,
 
