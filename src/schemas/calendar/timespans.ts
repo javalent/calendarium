@@ -86,7 +86,9 @@ export type Month = RegularMonth | IntercalaryMonth;
 /**
  * Years
  */
-export type Year = TimeSpan;
+export type Year = TimeSpan & {
+    type: typeof TimeSpanType.Year
+};
 
 /**
  * Misc

@@ -9,7 +9,7 @@ export interface EventLike {
     id: string;
     name: string;
     type: EventLikeType;
-    date: CalEventDate;
+    date: CalEventDate | UndatedCalDate;
     category: string | null;
     description?: string | null;
     note?: string | null;
@@ -47,6 +47,7 @@ export type DatedCalEventInfo = {
     date: OneTimeCalEventDate;
 };
 export type DatedCalEvent = BaseCalEvent & DatedCalEventInfo;
+
 export type UndatedCalEventInfo = {
     type: typeof EventType.Undated;
     date: UndatedCalDate;
@@ -66,11 +67,6 @@ export type RangedCalEventInfo = {
 };
 export type RecurringCalEvent = BaseCalEvent & RangedCalEventInfo;
 
-/* export type FormulaCalEvent = BaseCalEvent & {
-    type: EventType.Formula;
-    formulas: Formula[];
-}; */
-
 export type CalEventInfo =
     | DatedCalEventInfo
     | RangedCalEventInfo
@@ -80,8 +76,7 @@ export type CalEvent =
     | DatedCalEvent
     | RecurringCalEvent
     | RangeCalEvent
-    | UndatedCalEvent; /* 
-    | FormulaCalEvent; */
+    | UndatedCalEvent;
 
 export type CalEventCategory = {
     name: string;
