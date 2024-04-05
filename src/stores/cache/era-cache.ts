@@ -20,43 +20,56 @@ export class EraCache extends EntityCache<Era> {
 }
 
 class YearEraCache extends YearCache<Era> {
+    //This is the list of eras that occur in or prior to the specified year.
+    //If any dated eras are found, the starting year is not included.
     update(entities: Era[]): Era[] {
         if (!entities.length) return [];
         const list: Era[] = [];
         for (let i = entities.length - 1; i >= 0; i--) {
             const era = entities[i];
             if (era.isStartingEra) {
-                list.push(era);
+                if (!list.length) list.push(era);
             } else if (era.date.year <= this.year) {
-                if (!era.end || era.end.year >= this.year) {
-                    list.push(era);
+                if (era.end && era.end.year < this.year) {
                     break;
                 }
+                list.push(era);
             }
         }
         return list;
     }
 }
 class MonthEraCache extends MonthCache<Era> {
+    /**
+     * This is a list of eras that occur *in this month*.
+     * If an era occurs exactly in this month, then that era should be used.
+     */
     update(entities: Era[]): Era[] {
         if (!entities.length) return [];
         const list: Era[] = [];
-        for (let i = entities.length - 1; i >= 0; i--) {
+        for (let i = 0; i < entities.length; i++) {
             const era = entities[i];
             if (era.isStartingEra) {
                 list.push(era);
-            } else if (
+                break;
+            }
+            if (era.date.year === this.year && era.date.month === this.month) {
+                list.push(era);
+                break;
+            }
+            if (
                 era.date.year < this.year ||
-                (era.date.year === this.year && era.date.month <= this.month)
+                (era.date.year === this.year && era.date.month < this.month)
             ) {
                 if (
-                    !era.end ||
-                    era.end.year > this.year ||
-                    (era.end.year === this.year && era.end.month >= this.month)
+                    era.end &&
+                    (era.end.year < this.year ||
+                        (era.end.year === this.year &&
+                            era.end.month < this.month))
                 ) {
-                    list.push(era);
                     break;
                 }
+                list.push(era);
             }
         }
         return list;
@@ -66,7 +79,7 @@ class DayEraCache extends DayCache<Era> {
     update(entities: Era[]): Era[] {
         if (!entities.length) return [];
         const list: Era[] = [];
-        for (let i = entities.length - 1; i >= 0; i--) {
+        for (let i = 0; i < entities.length; i++) {
             const era = entities[i];
             if (
                 era.isStartingEra ||
@@ -75,19 +88,6 @@ class DayEraCache extends DayCache<Era> {
                     era.date.day === this.day)
             ) {
                 list.push(era);
-            } else if (era.date.month < this.month) {
-                if (
-                    !era.end ||
-                    era.end.year > this.year ||
-                    (era.end.year === this.year &&
-                        era.end.month > this.month) ||
-                    (era.end.year === this.year &&
-                        era.end.month === this.month &&
-                        era.end.day >= this.day)
-                ) {
-                    list.push(era);
-                    break;
-                }
             }
         }
         return list;
