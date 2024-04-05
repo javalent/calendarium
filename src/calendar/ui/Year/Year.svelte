@@ -2,6 +2,8 @@
     import { getTypedContext } from "src/calendar/view";
     import Month from "../Month/Month.svelte";
     import { nanoid } from "src/utils/functions";
+    import { onMount } from "svelte";
+    import { afterUpdate } from "svelte";
 
     let yearContainer: HTMLDivElement;
 
@@ -18,9 +20,8 @@
     $: yearStore = yearCalculator.getYearFromCache($displaying.year);
     $: monthArray = yearStore.months;
 
-    /* const months = $monthArray.map((m) =>
-        yearStore.getMonthFromCache($monthArray.indexOf(m))
-    ); */
+    let _refs: HTMLElement[] = [];
+    $: refs = _refs.filter(Boolean);
     const focus = (year: HTMLElement) => {
         const header = year.querySelector(
             `#${getIdForMonth($displayedMonth.name)}`,
@@ -38,6 +39,28 @@
         }
         return id_map.get(month);
     };
+
+    const monthInFrame = getTypedContext("monthInFrame");
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+        if (!mounted) {
+            mounted = true;
+            return;
+        }
+
+        if (
+            entry.boundingClientRect.top < 0 &&
+            entry.target instanceof HTMLElement
+        ) {
+            $monthInFrame = Number(entry.target.dataset.index) + 1;
+        }
+    });
+
+    let mounted = false;
+    onMount(() => {
+        for (const ref of refs) {
+            intersectionObserver.observe(ref);
+        }
+    });
 </script>
 
 <div class="year-container calendarium">
@@ -51,6 +74,8 @@
             <div
                 class="month-container calendarium"
                 id={getIdForMonth(month.name)}
+                data-index={index}
+                bind:this={refs[index]}
             >
                 <Month year={$displaying.year} month={index} />
             </div>

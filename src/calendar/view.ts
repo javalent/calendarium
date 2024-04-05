@@ -22,6 +22,7 @@ interface CalendarContext {
     plugin: Calendarium;
     ephemeralStore: Writable<EphemeralStore>;
     full: Writable<boolean>;
+    monthInFrame: Writable<number | null>;
 }
 
 export function setTypedContext<T extends keyof CalendarContext>(
