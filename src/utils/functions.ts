@@ -6,6 +6,7 @@ import type {
     FullCalEventDateBit,
     OneTimeCalEventDate,
     CalEventDate,
+    EventLike,
 } from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
 import type { DateBit } from "src/events/event.helper";
@@ -381,7 +382,7 @@ function compare(a: FullCalEventDateBit | null, b: FullCalEventDateBit | null) {
     return resolve(a) != resolve(b);
 }
 
-export function compareEvents(a: CalEvent, b: CalEvent) {
+export function compareEvents(a: EventLike, b: EventLike) {
     if (a.sort && b.sort) {
         if (a.sort.timestamp == b.sort.timestamp) {
             return a.sort.order.localeCompare(b.sort.order);
@@ -397,6 +398,7 @@ export function compareEvents(a: CalEvent, b: CalEvent) {
     if (a.type === EventType.Undated || b.type === EventType.Undated) {
         return 0;
     }
+    
     return compareDates(a.date, b.date);
 }
 export function compareDates(a: CalEventDate, b: CalEventDate) {
@@ -409,7 +411,7 @@ export function compareDates(a: CalEventDate, b: CalEventDate) {
     return resolve(a.day) - resolve(b.day);
 }
 
-export function sortEventList(list: CalEvent[]): CalEvent[] {
+export function sortEventList(list: EventLike[]): EventLike[] {
     return list.sort((a, b) => compareEvents(a, b));
 }
 

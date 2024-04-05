@@ -9,7 +9,7 @@ export interface EventLike {
     id: string;
     name: string;
     type: EventLikeType;
-    date: CalEventDate | UndatedCalDate;
+    date: CalEventDate;
     category: string | null;
     description?: string | null;
     note?: string | null;
