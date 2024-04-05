@@ -1,10 +1,10 @@
 import { Component, MarkdownRenderer } from "obsidian";
-import type { CalEvent } from "src/@types";
-import type FantasyCalendar from "src/main";
+import type { CalEvent, EventLike } from "src/@types";
+import type Calendarium from "src/main";
 import { CalendariumModal } from "src/settings/modals/modal";
 
 export class ViewEventModal extends CalendariumModal {
-    constructor(public event: CalEvent, public plugin: FantasyCalendar) {
+    constructor(public event: EventLike, public plugin: Calendarium) {
         super(plugin.app);
         this.containerEl.addClass("fantasy-calendar-view-event");
     }
