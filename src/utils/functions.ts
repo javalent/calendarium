@@ -415,7 +415,7 @@ export function compareDates(
     return resolve(a.day) - resolve(b.day);
 }
 
-export function sortEventList(list: EventLike[]): EventLike[] {
+export function sortEventList<T extends EventLike>(list: T[]): T[] {
     return list.sort((a, b) => compareEvents(a, b));
 }
 

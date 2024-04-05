@@ -18,16 +18,31 @@
         displayAbsoluteYear,
         hideEra,
     } = $ephemeral;
-    const { currentDisplay, eraCache } = store;
+    const { currentDisplay, yearCalculator } = store;
+    const monthInFrame = getTypedContext("monthInFrame");
+    const viewState = $ephemeral.viewState;
+
     $: displayMoons = $ephemeral.displayMoons;
     $: displayWeeks = $ephemeral.displayWeeks;
     $: displayDayNumber = $ephemeral.displayDayNumber;
-    $: viewState = $ephemeral.viewState;
 
-    $: eras = eraCache.getMonthCache(
-        $displaying.month,
-        $displaying.year,
-    ).entities;
+    $: yearCache = yearCalculator
+        .getYearFromCache($displaying.year)
+        .getMonthFromCache($displaying.month).eras;
+
+    $: eraMonth = derived(
+        [monthInFrame, viewState, displaying],
+        ([monthInFrame, viewState, displaying]) => {
+            if (viewState == ViewState.Year && monthInFrame != null) {
+                return monthInFrame;
+            }
+            return displaying.month;
+        },
+    );
+
+    $: eras = yearCalculator
+        .getYearFromCache($displaying.year)
+        .getMonthFromCache($eraMonth).eras;
     $: displayedYear = derived(
         [eras, displayingYear, displayAbsoluteYear],
         ([eras, displayingYear, displayAbsoluteYear]) => {
@@ -37,6 +52,14 @@
             return getEraYear(eras[0], displayingYear);
         },
     );
+
+    viewState.subscribe((value) => {
+        if (value === ViewState.Year) {
+            $monthInFrame = $displaying.month;
+        } else {
+            $monthInFrame = null;
+        }
+    });
 
     const left = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon(LEFT);
@@ -153,9 +176,9 @@
             <div class="eras eras-container">
                 {#if $eras.length && !$hideEra}
                     <!-- {#each $eras as era} -->
-                        <span class="era"
-                            >{formatEra($eras[0], $displayingYear)}</span
-                        >
+                    <span class="era"
+                        >{formatEra($eras[0], $displayingYear)}</span
+                    >
                     <!-- {/each} -->
                 {/if}
             </div>

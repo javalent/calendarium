@@ -1,9 +1,9 @@
 import { derived, get } from "svelte/store";
 import type { StaticStore } from "./calendar.store";
 import type { CalEvent } from "src/@types";
-import { wrap } from "../utils/functions";
+import { sortEventList, wrap } from "../utils/functions";
 import { MonthStore } from "./month.store";
-import type { Month, Week, LeapDay } from "src/schemas/calendar/timespans";
+import type { Month, Week, LeapDay, Era } from "src/schemas/calendar/timespans";
 
 /* export type YearStore = ReturnType<typeof createYearStore>; */
 export type YearCalculatorCache = Map<number, YearStore>;
@@ -27,6 +27,23 @@ export class YearStore {
             (m) =>
                 !m.interval || (this.year - (m.offset ?? 0)) % m.interval == 0
         );
+    });
+    eras = derived(this.staticStore.eras, (eras) => {
+        const sorted = sortEventList(eras);
+
+        const list: Era[] = [];
+        for (let i = sorted.length - 1; i >= 0; i--) {
+            const era = sorted[i];
+            if (era.isStartingEra) {
+                if (!list.length) list.push(era);
+            } else if (era.date.year <= this.year) {
+                if (era.end && era.end.year < this.year) {
+                    break;
+                }
+                list.push(era);
+            }
+        }
+        return list;
     });
     daysBefore = derived(
         [this.months, this.staticStore.leapDays],

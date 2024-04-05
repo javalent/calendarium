@@ -1,11 +1,12 @@
 import { type StaticStore } from "./calendar.store";
 import { YearStore } from "./years.store";
-import { type Readable, derived } from "svelte/store";
+import { type Readable, derived, get } from "svelte/store";
 import { nanoid, wrap } from "../utils/functions";
 import type {
     Month,
     DayOrLeapDay,
     DefinedLeapDay,
+    Era,
 } from "src/schemas/calendar/timespans";
 
 export class MonthStore {
@@ -72,6 +73,36 @@ export class MonthStore {
     );
     days = derived(this.leapDays, (leapDays) => {
         return this.month.length + leapDays.length;
+    });
+    eras = derived(this.year.eras, (eras) => {
+        const list: Era[] = [];
+        const index = get(this.index);
+        for (let i = 0; i < eras.length; i++) {
+            const era = eras[i];
+            if (era.isStartingEra) {
+                list.push(era);
+                break;
+            }
+            if (era.date.year === this.year.year && era.date.month === index) {
+                list.push(era);
+                break;
+            }
+            if (
+                era.date.year < this.year.year ||
+                (era.date.year === this.year.year && era.date.month < index)
+            ) {
+                if (
+                    era.end &&
+                    (era.end.year < this.year.year ||
+                        (era.end.year === this.year.year &&
+                            era.end.month < index))
+                ) {
+                    break;
+                }
+                list.push(era);
+            }
+        }
+        return list;
     });
     lastDay = derived(
         [this.year.firstDay, this.daysBefore, this.weekdays, this.days],

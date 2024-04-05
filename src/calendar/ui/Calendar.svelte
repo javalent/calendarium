@@ -11,6 +11,7 @@
     import Weekdays from "./Week/Weekdays.svelte";
     import { SELECT_MULTIPLE } from "src/utils/icons";
     import CalendariumMenu from "src/utils/menu";
+    import { setContext } from "svelte";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -30,6 +31,8 @@
 
     const plugin = getTypedContext("plugin");
     let otherCalendars = writable(plugin.data.calendars);
+
+    setContext("monthInFrame", writable<number | null>(null));
 
     //don't like this... find a better way
     plugin.app.workspace.on(

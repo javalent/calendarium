@@ -48,7 +48,6 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             })
     );
     const moonCache = new MoonCache(moonStates, yearCalculator);
-    const eraCache = new EraCache(staticStore.eras);
 
     let ephemeralStore = getEphemeralStore(
         store,
@@ -104,9 +103,14 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
 
         getEventsForDate: (date: CalDate): Readable<EventLike[]> => {
             const events = eventStore.getEventsForDate(date);
-            const eras = eraCache.getItemsOrRecalculate(date);
+            const eras = yearCalculator
+                .getYearFromCache(date.year)
+                .getMonthFromCache(date.month).eras;
             return derived([events, eras], ([events, eras]) => {
-                return [...events, ...eras.filter((e) => e.isEvent)];
+                return [
+                    ...events,
+                    ...eras.filter((e) => e.isEvent && e.date.day === date.day),
+                ];
             });
         },
         /* addEvent: (date: CalDate) => {
@@ -124,7 +128,6 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         }, */
 
         moonCache,
-        eraCache,
         categories,
         //Readable store containing static calendar data
         staticStore,
