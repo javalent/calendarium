@@ -444,9 +444,27 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     data.static.eras = [...eras];
                     return data;
                 }),
-            add: (era: Era) => {},
-            update: (id: string, era: Era) => {},
-            delete: (id: string) => {},
+            add: (era: Era) =>
+                update((data) => {
+                    data.static.eras.push(copy(era));
+                    return data;
+                }),
+            update: (id: string, era: Era) =>
+                update((data) => {
+                    const index = data.static.eras.findIndex(
+                        (e) => e.id === id
+                    );
+
+                    data.static.eras.splice(index, 1, copy(era));
+                    return data;
+                }),
+            delete: (id: string) =>
+                update((data) => {
+                    data.static.eras = data.static.eras.filter(
+                        (c) => c.id !== id
+                    );
+                    return data;
+                }),
         },
         leapDayStore: {
             subscribe: leapDayStore.subscribe,
