@@ -38,8 +38,6 @@
         },
     );
 
-    $: console.log("🚀 ~ file: Nav.svelte:25 ~ eraYears:", $displayedYear);
-
     const left = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon(LEFT);
     };
@@ -220,9 +218,11 @@
     }
     .view-state:not(.active):hover {
         background-color: var(--interactive-hover);
+        color: var(--text-on-accent);
     }
     .view-state.active {
         background-color: var(--interactive-accent);
+        color: var(--text-on-accent);
     }
     .calendarium-nav.nav.nav {
         padding: 10px 0px;
