@@ -1,4 +1,9 @@
-import type { Calendar, CalDate, CalEventCategory, EventLike } from "src/@types";
+import type {
+    Calendar,
+    CalDate,
+    CalEventCategory,
+    EventLike,
+} from "src/@types";
 import {
     type Readable,
     type Writable,
@@ -101,11 +106,8 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             const events = eventStore.getEventsForDate(date);
             const eras = eraCache.getItemsOrRecalculate(date);
             return derived([events, eras], ([events, eras]) => {
-                return [
-                    ...events,
-                    ...eras.filter(e => e.isEvent)
-                ]
-            })
+                return [...events, ...eras.filter((e) => e.isEvent)];
+            });
         },
         /* addEvent: (date: CalDate) => {
             const modal = new CreateEventModal(plugin, calendar, null, date);
@@ -264,9 +266,13 @@ export function getEphemeralStore(
             displaying.update((displaying) => {
                 switch (currentState) {
                     case ViewState.Year:
+                        let month =
+                            (displaying.year - 1 || -1) === base.current.year
+                                ? base.current.month
+                                : 0;
                         return {
                             ...displaying,
-                            month: 0,
+                            month,
                             year: displaying.year - 1 || -1,
                         };
                     case ViewState.Week: {
@@ -342,9 +348,13 @@ export function getEphemeralStore(
             displaying.update((displaying) => {
                 switch (currentState) {
                     case ViewState.Year:
+                        let month =
+                            (displaying.year + 1 || 1) === base.current.year
+                                ? base.current.month
+                                : 0;
                         return {
                             ...displaying,
-                            month: 0,
+                            month,
                             year: displaying.year + 1 || 1,
                         };
                     case ViewState.Week: {
