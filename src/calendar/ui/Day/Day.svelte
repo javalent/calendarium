@@ -2,14 +2,18 @@
     import { MonthStore } from "src/stores/month.store";
     import { getTypedContext } from "../../view";
     import Dots from "../Events/Dots.svelte";
-    import { Menu, TFile } from "obsidian";
+    import { TFile } from "obsidian";
     import type { CalEvent } from "src/@types";
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Flags from "../Events/Flags.svelte";
     import { addEventWithModal } from "src/settings/modals/event/event";
-    import type { DayOrLeapDay } from "src/schemas/calendar/timespans";
+    import {
+        TimeSpanType,
+        type DayOrLeapDay,
+    } from "src/schemas/calendar/timespans";
     import CalendariumMenu from "src/utils/menu";
+    import { isCalEvent } from "src/events/event.types";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -23,10 +27,9 @@
     $: index = month.index;
     $: year = month.year;
     $: current = $store.current;
-    $: eventStore = $store.eventStore;
     $: viewing = $ephemeral.viewing;
     $: viewState = $ephemeral.viewState;
-    $: events = eventStore.getEventsForDate({
+    $: events = $store.getEventsForDate({
         day: day.number,
         month: $index,
         year: year.year,
@@ -87,6 +90,7 @@
         );
         let notes: { event: CalEvent; file: TFile }[] = [];
         for (const event of $events) {
+            if (!isCalEvent(event)) continue;
             if (!event.note) continue;
             const file = plugin.app.vault.getAbstractFileByPath(event.note);
             if (file && file instanceof TFile) {
@@ -113,8 +117,8 @@
 {:else}
     <div
         class="day"
-        class:leapday={day.type == "leapday"}
-        class:intercalary={day.type == "leapday" && day.intercalary}
+        class:leapday={day.type == TimeSpanType.LeapDay}
+        class:intercalary={day.type == TimeSpanType.LeapDay && day.intercalary}
         class:adjacent-month={adjacent}
         class:opened
         class:today
@@ -126,10 +130,10 @@
         }}
         aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
     >
-        {#if day.type === "leapday" && day.intercalary && day.name?.length}
+        {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
             {day.name}
         {/if}
-        {#if day.type === "day" || day.numbered}
+        {#if day.type === TimeSpanType.Day || day.numbered}
             <span class="day-number">
                 {day.number}
             </span>

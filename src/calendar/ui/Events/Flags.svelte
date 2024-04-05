@@ -1,10 +1,10 @@
 <script lang="ts">
     import Flag from "./Flag.svelte";
-    import type { CalEvent } from "src/@types";
+    import type { CalEvent, EventLike } from "src/@types";
     import { sortEventList } from "src/utils/functions";
     import { onMount } from "svelte";
 
-    export let events: CalEvent[] = [];
+    export let events: EventLike[] = [];
     export let dayView: boolean = false;
 
     /* export */ let height: number;

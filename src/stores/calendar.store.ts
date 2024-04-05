@@ -1,4 +1,4 @@
-import type { Calendar, CalDate, CalEventCategory } from "src/@types";
+import type { Calendar, CalDate, CalEventCategory, EventLike } from "src/@types";
 import {
     type Readable,
     type Writable,
@@ -96,6 +96,17 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         },
         updateCalendar: (calendar: Calendar) => update((cal) => calendar),
         eventStore,
+
+        getEventsForDate: (date: CalDate): Readable<EventLike[]> => {
+            const events = eventStore.getEventsForDate(date);
+            const eras = eraCache.getItemsOrRecalculate(date);
+            return derived([events, eras], ([events, eras]) => {
+                return [
+                    ...events,
+                    ...eras.filter(e => e.isEvent)
+                ]
+            })
+        },
         /* addEvent: (date: CalDate) => {
             const modal = new CreateEventModal(plugin, calendar, null, date);
 

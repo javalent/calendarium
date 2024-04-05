@@ -1,5 +1,5 @@
 import type Calendarium from "src/main";
-import type { Era } from "src/schemas/calendar/timespans";
+import { TimeSpanType, type Era } from "src/schemas/calendar/timespans";
 import {
     CalendariumModal,
     CanceableCalendariumModal,
@@ -8,21 +8,20 @@ import { nanoid } from "src/utils/functions";
 import type { CreatorStore } from "../../../stores/calendar";
 import EraEdit from "./EraEdit.svelte";
 import copy from "fast-copy";
+import { get } from "svelte/store";
 
 export class EraEditModal extends CanceableCalendariumModal<Era> {
     era: Era = {
         id: nanoid(6),
+        type: TimeSpanType.Era,
         name: "",
         description: "",
         format: "{{era_name}}",
         endsYear: false,
         isEvent: false,
+        category: null,
         isStartingEra: false,
-        date: {
-            year: 1,
-            month: 0,
-            day: 1,
-        },
+        date: copy(get(this.store.currentStore)),
     };
     $ui: EraEdit;
     constructor(

@@ -28,7 +28,7 @@
         .getMonthFromCache($viewing!.month);
     $: daysBeforeMonth = displayedMonth.daysBefore;
     $: daysBeforeDay = $daysBeforeMonth + $viewing!.day;
-    $: events = store.eventStore.getEventsForDate($viewing!);
+    $: events = store.getEventsForDate($viewing!);
     $: moons = store.moonCache.getItemsOrRecalculate($viewing!);
     $: displayDayNumber = $ephemeral.displayDayNumber;
     $: displayMoons = $ephemeral.displayMoons;

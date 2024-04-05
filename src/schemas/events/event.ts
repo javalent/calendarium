@@ -1,9 +1,25 @@
 import type { EventType } from "src/events/event.types";
 import type { UndatedCalDate } from "../calendar";
+import type { EventLikeType } from "../enums";
 
 /**
  * Events
  */
+export interface EventLike {
+    id: string;
+    name: string;
+    type: EventLikeType;
+    date: CalEventDate | UndatedCalDate;
+    category: string | null;
+    description?: string | null;
+    note?: string | null;
+    sort?: CalEventSort;
+}
+interface BaseCalEvent extends EventLike {
+    type: EventType;
+    img?: string | null;
+}
+
 export type CalEventSort = {
     timestamp: number;
     order: string;
@@ -25,17 +41,6 @@ export type CalEventDate = OneTimeCalEventDate | RecurringCalEventDate;
 
 export type RecurringCalEventDateBit = [number | null, number | null];
 export type FullCalEventDateBit = RecurringCalEventDateBit | number;
-
-type BaseCalEvent = {
-    id: string;
-    name: string;
-    description?: string | null;
-    img?: string | null;
-    note?: string | null;
-    category: string | null;
-    sort: CalEventSort;
-    type?: EventType;
-};
 
 export type DatedCalEventInfo = {
     type?: typeof EventType.Date;

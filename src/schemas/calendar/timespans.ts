@@ -1,19 +1,30 @@
+import type { EventLike } from "../events";
 import type { CalDate, StaticCalendarData } from "./calendar";
 
 /**
  * Timespans
  */
 export type TimeSpan = {
-    type: string;
     name: string | null;
     id: string;
 };
+
+export const TimeSpanType = {
+    Era: "era",
+    Day: "day",
+    LeapDay: "leapday",
+    Month: "month",
+    IntercalaryMonth: "intercalary",
+    Year: "year",
+} as const;
+
+export type TimeSpanType = (typeof TimeSpanType)[keyof typeof TimeSpanType];
 
 /**
  * Days
  */
 export type BaseDay = TimeSpan & {
-    type: "day" | "leapday";
+    type: typeof TimeSpanType.Day | typeof TimeSpanType.LeapDay;
     name?: string | null;
     id?: string;
 };
@@ -23,7 +34,7 @@ export type DefinedBaseDay = {
 };
 
 export type Day = BaseDay & {
-    type: "day";
+    type: typeof TimeSpanType.Day;
     abbreviation?: string;
 };
 
@@ -37,7 +48,7 @@ export type LeapDayCondition = {
 };
 
 export type LeapDay = BaseDay & {
-    type: "leapday";
+    type: typeof TimeSpanType.LeapDay;
     short?: string;
     interval: LeapDayCondition[];
     timespan: number;
@@ -56,17 +67,17 @@ type BaseMonth = TimeSpan & {
     length: number;
     interval: number;
     offset: number;
-    type: "month" | "intercalary";
+    type: typeof TimeSpanType.Month | typeof TimeSpanType.IntercalaryMonth;
     subtitle?: string;
     short?: string;
 };
 
 export type IntercalaryMonth = BaseMonth & {
-    type: "intercalary";
+    type: typeof TimeSpanType.IntercalaryMonth;
 };
 
 export type RegularMonth = BaseMonth & {
-    type: "month";
+    type: typeof TimeSpanType.Month;
     week?: Week;
 };
 
@@ -87,23 +98,24 @@ export type Season = {
         day: Day;
     };
 };
-export type Era = {
-    id: string;
+export type Era = EventLike & {
+    type: typeof TimeSpanType.Era;
     name: string;
     description?: string;
     format: string;
     endsYear: boolean;
-    isEvent: boolean;
+    category: string | null;
     eventDescription?: string;
-    eventCategory?: string;
     static?: Partial<Omit<StaticCalendarData, "Eras">>;
     isStartingEra: boolean;
 } & (
-    | {
-          isStartingEra: true;
-      }
-    | {
-          date: CalDate;
-          end?: CalDate;
-      }
-);
+        | {
+              isStartingEra: true;
+              isEvent: false;
+          }
+        | {
+              date: CalDate;
+              end?: CalDate;
+              isEvent: boolean;
+          }
+    );

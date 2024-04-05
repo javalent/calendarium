@@ -1,12 +1,13 @@
 <svelte:options accessors />
 
 <script lang="ts">
-    import { Menu, TFile, setIcon } from "obsidian";
+    import { TFile, setIcon } from "obsidian";
 
-    import type { CalDate, CalEvent } from "src/@types";
+    import type { EventLike } from "src/@types";
     import {
         EVENT_FROM_FRONTMATTER,
         EVENT_LINKED_TO_NOTE,
+        setNodeIcon,
     } from "src/utils/icons";
     import { createEventDispatcher } from "svelte";
     import { getTypedContext } from "../../view";
@@ -14,9 +15,12 @@
     import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
     import { addEventWithModal } from "src/settings/modals/event/event";
     import CalendariumMenu from "src/utils/menu";
+    import { isCalEvent } from "src/events/event.types";
+    import { formatEra } from "src/stores/cache/era-cache";
+    import { isEra } from "src/schemas/enums";
     const dispatch = createEventDispatcher();
 
-    export let event: CalEvent;
+    export let event: EventLike;
     /* export let date: CalDate; */
     export let dayView: boolean = false;
 
@@ -83,20 +87,29 @@
 
     const contextMenu = (evt: MouseEvent) => {
         evt.stopPropagation();
+        if (!isCalEvent(event)) return;
         const menu = new CalendariumMenu(plugin);
         if (removeable) {
             menu.addItem((item) =>
                 item.setTitle("Edit event").onClick(() => {
+                    if (!isCalEvent(event)) return;
                     addEventWithModal(plugin, $calendar, event.date, event);
                 }),
             );
             menu.addItem((item) =>
                 item.setTitle("Delete event").onClick(() => {
+                    if (!isCalEvent(event)) return;
                     $store.eventStore.removeEvents(event);
                 }),
             );
         }
         menu.showAtMouseEvent(evt);
+    };
+    const getName = (event: EventLike): string => {
+        if (isEra(event) && !event.isStartingEra) {
+            return formatEra(event, event.date.year);
+        }
+        return event.name;
     };
 </script>
 
@@ -122,10 +135,13 @@
 >
     <div class="flag-content">
         <span class:clamp={!dayView} class:day-view={dayView}>
-            {event.name}</span
+            {getName(event)}</span
         >
         {#if event.note}
             <div class="note" use:note />
+        {/if}
+        {#if event.type === "era"}
+            <div class="era" use:setNodeIcon={"calendar-range"} />
         {/if}
     </div>
 </div>
