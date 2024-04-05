@@ -8,6 +8,7 @@
     import Dates from "./Containers/dates/Dates.svelte";
     import Celestials from "./Containers/celestials/Celestials.svelte";
     import Events from "./Containers/events/Events.svelte";
+    import Eras from "./Containers/eras/EraContainer.svelte";
     import { SettingsSections, type CreatorSection } from "./creator.types";
     import { writable } from "svelte/store";
     import Sidebar from "./Containers/sidebar/Sidebar.svelte";
@@ -27,7 +28,7 @@
 </script>
 
 {#if Platform.isTablet || Platform.isDesktop}
-    <Sidebar {selected} sections={[...SettingsSections]} />
+    <Sidebar {selected} sections={[...SettingsSections]} on:cancel/>
     <div class="vertical-tab-content-container {$selected.toLowerCase()}">
         <History></History>
         <div class="vertical-tab-content">
@@ -37,10 +38,11 @@
             {#if $selected == "Dates"}
                 <Dates />
             {/if}
-            <!-- {#if $SelectedSection === "Eras"}
-                <Eras {plugin} {calendar} />
-            {/if} -->
-            <!-- {#if SelectedSection === "Weather"}
+            {#if $selected === "Eras"}
+                <Eras />
+            {/if}
+            <!--  -->
+            <!-- {#if $selected === "Weather"}
                 <Weather {plugin} {calendar} />
             {/if} -->
             {#if $selected == "Events"}

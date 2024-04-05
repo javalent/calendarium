@@ -201,18 +201,17 @@
                     <select
                         slot="control"
                         class="dropdown"
-                        bind:value={era.eventCategory}
+                        bind:value={era.category}
                     >
                         <option
                             value=""
-                            selected={!era.eventCategory}
-                            on:select={() => (era.eventCategory = undefined)}
-                            >None</option
+                            selected={!era.category}
+                            on:select={() => (era.category = null)}>None</option
                         >
                         {#each $store.categories as category}
                             <option
                                 value={category.id}
-                                selected={era.eventCategory === category.id}
+                                selected={era.category === category.id}
                                 >{category.name}</option
                             >
                         {/each}
