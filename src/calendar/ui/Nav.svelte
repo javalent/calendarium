@@ -152,11 +152,11 @@
             </h3>
             <div class="eras eras-container">
                 {#if $eras.length && !$hideEra}
-                    {#each $eras as era}
+                    <!-- {#each $eras as era} -->
                         <span class="era"
-                            >{formatEra(era, $displayingYear)}</span
+                            >{formatEra($eras[0], $displayingYear)}</span
                         >
-                    {/each}
+                    <!-- {/each} -->
                 {/if}
             </div>
         </div>
