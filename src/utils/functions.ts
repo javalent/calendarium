@@ -7,6 +7,7 @@ import type {
     OneTimeCalEventDate,
     CalEventDate,
     EventLike,
+    UndatedCalDate,
 } from "../@types";
 import { DEFAULT_FORMAT } from "./constants";
 import type { DateBit } from "src/events/event.helper";
@@ -398,10 +399,13 @@ export function compareEvents(a: EventLike, b: EventLike) {
     if (a.type === EventType.Undated || b.type === EventType.Undated) {
         return 0;
     }
-    
+
     return compareDates(a.date, b.date);
 }
-export function compareDates(a: CalEventDate, b: CalEventDate) {
+export function compareDates(
+    a: CalEventDate | UndatedCalDate,
+    b: CalEventDate | UndatedCalDate
+) {
     if (compare(a.year, b.year)) {
         return resolve(a.year) - resolve(b.year);
     }
