@@ -9,12 +9,12 @@
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
     import Details from "src/settings/creator/Utilities/Details.svelte";
     import type { CreatorStore } from "src/settings/creator/stores/calendar";
-    import { formatEra } from "src/stores/cache/era-cache";
     import { derived, writable, type Readable } from "svelte/store";
     import { slide } from "svelte/transition";
     import DateWithValidation from "src/settings/creator/Utilities/DateWithValidation.svelte";
     import { setContext } from "svelte";
     import { TRASH } from "src/utils/icons";
+    import { formatEra } from "src/utils/functions";
 
     export let era: Era;
     export let store: CreatorStore;

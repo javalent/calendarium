@@ -17,7 +17,6 @@ import { MoonCache } from "./cache/moon-cache";
 import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
 import type { MoonState } from "src/schemas/calendar/moons";
-import { EraCache } from "./cache/era-cache";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 

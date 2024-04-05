@@ -5,7 +5,7 @@
     import { LEFT, RIGHT, SETTINGS } from "src/utils/icons";
     import CalendariumMenu from "src/utils/menu";
     import { derived } from "svelte/store";
-    import { formatEra, getEraYear } from "src/stores/cache/era-cache";
+    import { formatEra, getEraYear } from "src/utils/functions";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");

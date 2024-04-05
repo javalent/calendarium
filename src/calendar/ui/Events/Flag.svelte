@@ -16,8 +16,8 @@
     import { addEventWithModal } from "src/settings/modals/event/event";
     import CalendariumMenu from "src/utils/menu";
     import { isCalEvent } from "src/events/event.types";
-    import { formatEra } from "src/stores/cache/era-cache";
     import { isEra } from "src/schemas/enums";
+    import { formatEra } from "src/utils/functions";
     const dispatch = createEventDispatcher();
 
     export let event: EventLike;

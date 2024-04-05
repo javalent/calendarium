@@ -1,4 +1,4 @@
-import type { LeapDay, Day, Month } from "src/schemas/calendar/timespans";
+import type { LeapDay, Day, Month, Era } from "src/schemas/calendar/timespans";
 import type {
     Calendar,
     CalDate,
@@ -421,4 +421,33 @@ export function sortEventList<T extends EventLike>(list: T[]): T[] {
 
 export function getAbbreviation(day: Day) {
     return day.abbreviation ? day.abbreviation : (day.name ?? "").slice(0, 3);
+}
+
+export function getEraYear(era: Era, year: number): number {
+    if (era.isStartingEra) return year;
+    return year - era.date.year + 1;
+}
+
+/**
+ * {{year}} - Displays the current year
+ * {{abs_year}} - Displays the current year, but without a minus in front of it if is negative. (Useful for eras such as 'Before Christ', as the year wasn't -300 BC, it was simply 300 BC)
+ * {{nth_year}} - This displays the current year, but with 'st', 'nd', 'rd' or 'th' after it, when applicable.
+ * {{abs_nth_year}} - Combination of abs_year and nth_year.
+ * {{era_year}} - The current era year. If any eras in the past has restarted the year count, this number will be different than the year number.
+ * {{era_nth_year}} - Similar to nth_year, but counting only the era years.
+ * {{era_name}} - Inserts the current name of the era
+ */
+export function formatEra(era: Era, year: string | number | null): string {
+    if (!year) return era.name;
+    if (typeof year != "number") return era.name;
+    if (!era.format?.length) return era.name;
+    const eraYear = getEraYear(era, year);
+    return era.format
+        .replace("{{year}}", `${year}`)
+        .replace("{{abs_year}}", `${Math.abs(year)}`)
+        .replace("{{nth_year}}", `${ordinal(year)}`)
+        .replace("{{abs_nth_year}}", `${ordinal(Math.abs(year))}`)
+        .replace("{{era_year}}", `${eraYear}`)
+        .replace("{{era_nth_year}}", `${ordinal(eraYear)}`)
+        .replace("{{era_name}}", `${era.name}`);
 }
