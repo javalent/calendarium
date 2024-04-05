@@ -193,28 +193,32 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 {
                     name: "Before Christ",
                     format: "Year {{abs_year}} - {{era_name}}",
-                    start: {
-                        year: -1,
-                        month: 0,
-                        day: 31,
-                    },
                     id: "ID_9a2978c92baa",
-                    restart: false,
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: true,
+                    date: {
+                        year: 1,
+                        month: 0,
+                        day: 1,
+                    },
                 },
                 {
                     name: "Anno Domini",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
+                    date: {
                         year: 1,
                         month: 0,
                         day: 1,
                     },
                     id: "ID_a8db38899a2b",
-                    restart: false,
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
             ],
             offset: 0,
@@ -410,7 +414,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "New Year's Day",
                 description:
-                    "New Year's Day marks the start of a new year on the Gregorian Calendar. It starts when the clock strikes midnight and is often celebrated with fireworks, champagne and kissing.",
+                    "New Year's Day marks the date of a new year on the Gregorian Calendar. It dates when the clock strikes midnight and is often celebrated with fireworks, champagne and kissing.",
                 id: "824609",
                 note: null,
                 date: {
@@ -467,6 +471,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "On this day in 1582 the Gregorian calendar was officially introduced, following Thursday October 4th on the Julian Calendar",
                 id: "824614",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 15,
                     year: 1582,
@@ -714,15 +719,17 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 {
                     name: "Common Year",
                     format: "Year {{year}} CY",
-                    start: {
+                    date: {
                         year: 1,
                         month: 0,
                         day: 1,
                     },
                     id: "ID_db994869db7b",
-                    restart: false,
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
             ],
         },
@@ -1215,80 +1222,99 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 {
                     name: "Age of Serpents",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
+                    date: {
                         year: 4720,
                         month: 8,
                         day: 15,
                     },
                     id: "ID_eb4af87babaa",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
+
                 {
                     name: "Age of Darkness",
                     format: "Year {{abs_year}} - {{era_name}}",
-                    start: {
+                    date: {
                         year: -5300,
                         month: 0,
                         day: 1,
                     },
                     id: "ID_58e99a8b9b9a",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
                 {
                     name: "Age of Anguish",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
+                    date: {
                         year: -4500,
                         month: 8,
                         day: 1,
                     },
                     id: "ID_3af84ada898a",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
                 {
                     name: "Age of Destiny",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
+                    date: {
                         year: -3500,
                         month: 8,
                         day: 1,
                     },
                     id: "ID_abc87ad9fbfb",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
                 {
                     name: "Age of Enthronement",
                     format: "Year {{year}} AR - {{era_name}}",
-                    start: {
+                    date: {
                         year: 1,
                         month: 8,
                         day: 1,
                     },
                     id: "ID_19197be9dac8",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
                 {
                     name: "Age of Lost Omens",
                     format: "Year {{year}} AR - {{era_name}}",
-                    start: {
+                    date: {
                         year: 4606,
                         month: 8,
                         day: 1,
                     },
                     id: "ID_7b585b5bd9ea",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
             ],
         },
@@ -1481,7 +1507,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "Merrymead",
                 description:
-                    "Druma, Cayden Cailean\n\nA holiday occurring on 2 Calistril, Merrymead was started in Druma and is supposed to be a time to share of the last of the previous year's mead with the rest of the community.\n\nIn current times, most people just use it as an excuse to drink excessively. The poor travel from bar to bar drinking whatever alcohol they can afford, while the wealthy will set aside specific vintages for this day. A known consequence of this day are 'mead riots' that happen when there are more celebrants than there is alcohol to serve them. This leads to a violent, destructive group of people in a crowded bar. If this is a common occurrence for particular cities, they may reinforce their guard force for the inevitably eventful night.",
+                    "Druma, Cayden Cailean\n\nA holiday occurring on 2 Calistril, Merrymead was dateed in Druma and is supposed to be a time to share of the last of the previous year's mead with the rest of the community.\n\nIn current times, most people just use it as an excuse to drink excessively. The poor travel from bar to bar drinking whatever alcohol they can afford, while the wealthy will set aside specific vintages for this day. A known consequence of this day are 'mead riots' that happen when there are more celebrants than there is alcohol to serve them. This leads to a violent, destructive group of people in a crowded bar. If this is a common occurrence for particular cities, they may reinforce their guard force for the inevitably eventful night.",
                 id: "824502",
                 note: null,
                 date: {
@@ -1697,7 +1723,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "First Cut",
                 description:
-                    "Falcon's Hollow\n\nThe First Cut celebration in Falcon's Hollow used to mark the start of the work in the woods each spring. Now, however, it is a meaningless ramshackle ceremony as Thuldrin Kreed forces the lumber crews to work through even during the coldest months in the winter. Still, First Cut brings people out to celebrate the start of the spring.",
+                    "Falcon's Hollow\n\nThe First Cut celebration in Falcon's Hollow used to mark the date of the work in the woods each spring. Now, however, it is a meaningless ramshackle ceremony as Thuldrin Kreed forces the lumber crews to work through even during the coldest months in the winter. Still, First Cut brings people out to celebrate the date of the spring.",
                 id: "824514",
                 note: null,
                 date: {
@@ -2257,6 +2283,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "Solku\n\nBastion Day is a two-day festival held annually on 19 and 20 Lamashan in the Katapeshi town of Solku honoring the founding of the town, when it is traditional to host a stranger from one noon until the next.",
                 id: "824545",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 19,
                     year: 4712,
@@ -3119,6 +3146,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "A day of remembrance; Ice sculptures are created (and destroyed) to commemorate the destruction of the Glass Tower on 9 Olarune in 918 by abjurers. ",
                 id: "824465",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 9,
                     year: 998,
@@ -3154,6 +3182,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "In commemoration of the destruction of the nation of Cyre, those who survived gather to remember the loss of their kingdom on this date in the year 994. ",
                 id: "824467",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 20,
                     year: 995,
@@ -3297,6 +3326,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "On this day in 914, the Church of the Silver Flame officially assumed control of the government of Thrane. On each anniversary, the Purified give thanks for their just rule, while also honoring the memory of King Thalin, whose death paved the way for their governance.",
                 id: "824475",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 21,
                     year: 915,
@@ -3332,6 +3362,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "Legend tells of King Galifar II's fascination with aerial scouts and cavalry. The evolution of this annual contest took centuries, but has given Sharn an exotic and well anticipated event involving beasts and their riders in a symbiotic quest for glory* over a course that finds them weaving through the spires of the city. \n\n\n\n*the winner also receives 500gp and a land grant located elsewhere in Breland.",
                 id: "824477",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 21,
                     year: 201,
@@ -3367,6 +3398,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "Commemorating the conclusion of the lycanthropic purge (832 YK - 880 YK), on Victory Day the adult faithful of the Silver Flame attend sermons on triumph, defeat, and the somewhat questionable methods utilized by the templars during the purge - while the children of the faithful act out great battles with toy swords. ",
                 id: "824479",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 9,
                     year: 881,
@@ -3384,6 +3416,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "Honoring the memory of Fathen, a great hero of the Silver Crusade (832 YK - 880 YK), who, in the last days of the purge, was torn apart by wererats on the streets of North Market. Faithful gather on this day at the Shrine of Fathen the Martyr to listen to a sermon from the priest of High Hope. This holiday is often uncomfortable and tense for shifter communities in Sharn. ",
                 id: "824480",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 25,
                     year: 881,
@@ -3473,6 +3506,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     "On this day in 996, the Treaty of Thronehold was signed, formally ending the Last War. Annual celebratory feasts are held throughout the Five Nations to mark this auspicious and long-awaited event. ",
                 id: "824485",
                 note: null,
+                type: EventType.Date,
                 date: {
                     day: 11,
                     year: 997,
@@ -3789,28 +3823,33 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 {
                     name: "Before Christ",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
-                        year: -9000,
-                        month: 0,
-                        day: 0,
-                    },
                     id: "ID_897bba588a98",
-                    restart: false,
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: true,
+                    date: {
+                        year: 0,
+                        day: 0,
+                        month: 0,
+                    },
                 },
                 {
                     name: "Anno Domini",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
+                    date: {
                         year: 1,
                         month: 0,
                         day: 1,
                     },
                     id: "ID_185ab9b8b95a",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
             ],
         },
@@ -3823,7 +3862,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "Winter Solstice",
                 description:
-                    "The Winter Solstice is the day of the year with the least time between sunrise and sunset. Many western cultures consider it the official start of winter.",
+                    "The Winter Solstice is the day of the year with the least time between sunrise and sunset. Many western cultures consider it the official date of winter.",
                 id: "824455",
                 note: null,
                 date: {
@@ -3841,7 +3880,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "Summer Solstice",
                 description:
-                    "The Summer Solstice is the day of the year with the most time between \nsunrise and sunset. Many western cultures consider it the official start\n of summer.",
+                    "The Summer Solstice is the day of the year with the most time between \nsunrise and sunset. Many western cultures consider it the official date\n of summer.",
                 id: "824456",
                 note: null,
                 date: {
@@ -3859,7 +3898,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "Spring Equinox",
                 description:
-                    "The Spring Equinox,\nalso called the Vernal Equinox, is the day between the winter and\nsummer solstices where the day is the exact same length as the night.\nMany western cultures consider it the official start of Spring.\n",
+                    "The Spring Equinox,\nalso called the Vernal Equinox, is the day between the winter and\nsummer solstices where the day is the exact same length as the night.\nMany western cultures consider it the official date of Spring.\n",
                 id: "824457",
                 note: null,
                 date: {
@@ -3877,7 +3916,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "Autumnal Equinox",
                 description:
-                    "The Autumnal Equinox,\nalso called the Fall Equinox, is the midpoint between the summer and\nwinter solstices, where the day is the exact same length as the night.\nMany western cultures consider it the official start of Autumn.\n",
+                    "The Autumnal Equinox,\nalso called the Fall Equinox, is the midpoint between the summer and\nwinter solstices, where the day is the exact same length as the night.\nMany western cultures consider it the official date of Autumn.\n",
                 id: "824458",
                 note: null,
                 date: {
@@ -3894,7 +3933,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             },
             {
                 name: "New Year's Day",
-                description: "New Year's day marks the start of a new year.",
+                description: "New Year's day marks the date of a new year.",
                 id: "824459",
                 note: null,
                 date: {
@@ -4103,54 +4142,64 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 {
                     name: "The Founding",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
-                        year: 1,
-                        month: 0,
-                        day: 1,
-                    },
                     id: "ID_cb9baaabab7a",
-                    restart: false,
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: true,
+                    date: {
+                        year: 0,
+                        day: 0,
+                        month: 0,
+                    },
                 },
                 {
                     name: "Age of Arcanum",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
+                    date: {
                         year: -1500,
                         month: 0,
                         day: 1,
                     },
                     id: "ID_499b3ae8c868",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
                 {
                     name: "The Calamity",
                     format: "Year {{year}} - {{era_name}}",
-                    start: {
+                    date: {
                         year: -665,
                         month: 0,
                         day: 1,
                     },
                     id: "ID_7ac8c9590999",
-                    restart: false,
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
                 {
                     name: "Post-Divergence",
                     format: "Year {{year}} P.D.",
-                    start: {
+                    date: {
                         year: 1,
                         month: 0,
                         day: 1,
                     },
                     id: "ID_58aad97ac84b",
-                    restart: false,
+
                     endsYear: false,
-                    event: false,
+                    isEvent: false,
+                    type: "era",
+                    category: null,
+                    isStartingEra: false,
                 },
             ],
         },
@@ -4289,7 +4338,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "Renewal Festival",
                 description:
-                    "Spring begins early in the month of Dualahei, officially starting on the 13th with the Renewal Festival.",
+                    "Spring begins early in the month of Dualahei, officially dateing on the 13th with the Renewal Festival.",
                 id: "824437",
                 note: null,
                 date: {
@@ -4379,7 +4428,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "Zenith",
                 description:
-                    "Summer begins in the middle of Unndilar, officially starting at noon on the 26th day known as the Zenith.",
+                    "Summer begins in the middle of Unndilar, officially dateing at noon on the 26th day known as the Zenith.",
                 id: "824442",
                 note: null,
                 date: {
@@ -5004,7 +5053,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             {
                 name: "Highharvesttide",
                 description:
-                    'Highharvestide was an annual festival in the Calendar of Harptos, taking place between 30 Eleint and 1 Marpenoth. It was traditionally a feast to celebrate the harvest and the abundance of food, but also the time when those wishing to travel left on their journeys before winter set in.\n\nPreparations for the feast started as early as a tenday before, while preparing, cooking, and preserving the harvest for the cold winter months. Traditions varied from community to community, but examples of festive activity included food-related contests; races and challenges of skill and strength; receiving homemade sweets from the local clergy; and priests blessing larders, wine cellars, grain bins, and food preserves.\n\nThis day was often an important anniversary to various governments. Often, taxes and tithes came due, rulers held "open courts" to hear the concerns of their citizens, oaths were publicly renewed, troops received marching orders to new duty stations, and guilds met to confer on prices and rate changes for goods and services.\n\nAccording to tradition, dwarves only drank water and elves drank only dew on this day. However, these traditions began to fade in the 14th and 15th century DR.\n\nIt was said that children born on this day were favored by Tymora to have lifelong good luck but be smitten with wanderlust. Another legend was that human females born on this day had control over their reproductive system (i.e., got pregnant only when they wanted to) by force of will alone, and that they could instantly sense when they had been poisoned, either by ingestion or being bitten by a venomous creature for example.',
+                    'Highharvestide was an annual festival in the Calendar of Harptos, taking place between 30 Eleint and 1 Marpenoth. It was traditionally a feast to celebrate the harvest and the abundance of food, but also the time when those wishing to travel left on their journeys before winter set in.\n\nPreparations for the feast dateed as early as a tenday before, while preparing, cooking, and preserving the harvest for the cold winter months. Traditions varied from community to community, but examples of festive activity included food-related contests; races and challenges of skill and strength; receiving homemade sweets from the local clergy; and priests blessing larders, wine cellars, grain bins, and food preserves.\n\nThis day was often an important anniversary to various governments. Often, taxes and tithes came due, rulers held "open courts" to hear the concerns of their citizens, oaths were publicly renewed, troops received marching orders to new duty stations, and guilds met to confer on prices and rate changes for goods and services.\n\nAccording to tradition, dwarves only drank water and elves drank only dew on this day. However, these traditions began to fade in the 14th and 15th century DR.\n\nIt was said that children born on this day were favored by Tymora to have lifelong good luck but be smitten with wanderlust. Another legend was that human females born on this day had control over their reproductive system (i.e., got pregnant only when they wanted to) by force of will alone, and that they could instantly sense when they had been poisoned, either by ingestion or being bitten by a venomous creature for example.',
                 id: "824594",
                 note: null,
                 date: {
