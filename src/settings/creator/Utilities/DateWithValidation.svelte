@@ -6,21 +6,34 @@
         invalidYearLabel,
     } from "../Utilities/utils";
     import type { CalDate } from "src/schemas";
-    import { derived, type Readable, type Writable } from "svelte/store";
+    import { derived, type Readable } from "svelte/store";
     import { isValidDay, isValidMonth, isValidYear } from "src/utils/functions";
+    import { createEventDispatcher } from "svelte";
 
     export let date: Readable<CalDate>;
 
     const calendar = getContext("store");
     const { monthStore, yearStore } = calendar;
     const validDay = derived([calendar, date], ([calendar, date]) => {
-        return isValidDay(date.day, calendar);
+        return isValidDay(date, calendar);
     });
     const validMonth = derived([calendar, date], ([calendar, date]) => {
         return isValidMonth(date.month, calendar);
     });
     const validYear = derived([calendar, date], ([calendar, date]) => {
         return isValidYear(date.year, calendar);
+    });
+
+    const dispatch = createEventDispatcher<{ valid: boolean }>();
+
+    const isValid = derived(
+        [validDay, validMonth, validYear],
+        ([day, month, year]) => {
+            return day && month && year;
+        },
+    );
+    isValid.subscribe((v) => {
+        dispatch("valid", v);
     });
 </script>
 
@@ -38,7 +51,7 @@
             {#if !$validDay}
                 <div class="setting-item-description">
                     {#if !$validDay}
-                        {invalidDayLabel($date.day, $calendar)}
+                        {invalidDayLabel($date, $calendar)}
                     {/if}
                 </div>
             {/if}

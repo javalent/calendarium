@@ -316,14 +316,16 @@ export function toPaddedString(
     return data == null ? "*" : String(data).padStart(padding ?? 0, "0");
 }
 
-export function isValidDay(day: number | null, calendar: Calendar) {
+export function isValidDay(date: CalDate, calendar: Calendar) {
+    if (date === null) return false
+    const { day, month, year } = date;
     if (day == null) return false;
-    if (calendar?.current?.month == null) return false;
+    if (month == null) return false;
     if (day < 1) return false;
     if (
         day < 1 ||
-        day > calendar?.static?.months[calendar.current?.month]?.length ||
-        !calendar?.static?.months[calendar.current?.month]?.length
+        day > calendar?.static?.months[month]?.length ||
+        !calendar?.static?.months[month]?.length
     )
         return false;
     return true;

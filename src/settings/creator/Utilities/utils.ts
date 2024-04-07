@@ -1,5 +1,6 @@
-import type { Calendar } from "src/@types";
+import type { CalDate, Calendar } from "src/@types";
 import { isValidDay, isValidMonth, isValidYear } from "src/utils/functions";
+import { get } from "svelte/store";
 
 export function getMissingNotice(calendar: Calendar) {
     let missingArr: string[] = [];
@@ -9,7 +10,7 @@ export function getMissingNotice(calendar: Calendar) {
     }
 
     if (
-        !isValidDay(calendar.current.day, calendar) ||
+        !isValidDay(calendar.current, calendar) ||
         !isValidMonth(calendar.current.month, calendar) ||
         !isValidYear(calendar.current.year, calendar)
     ) {
@@ -84,7 +85,7 @@ export function getMissingNotice(calendar: Calendar) {
 
 export function getCanSave(calendar: Calendar) {
     if (
-        isValidDay(calendar.current.day, calendar) &&
+        isValidDay(calendar.current, calendar) &&
         isValidMonth(calendar.current.month, calendar) &&
         isValidYear(calendar.current.year, calendar) &&
         calendar.static.months?.length &&
@@ -105,13 +106,18 @@ export function getCanSave(calendar: Calendar) {
     return false;
 }
 
-export function invalidDayLabel(day: number, calendar: Calendar) {
+export function invalidDayLabel(date: CalDate, calendar: Calendar) {
+    if (date === null) return false;
+    const { day, month, year } = date;
+    if (day == null) return false;
+    if (month == null) return false;
+    if (day < 1) return false;
     if (day == null) return "No day specified";
     if (calendar?.current?.month == null) return "No month selected";
     if (
         day < 1 ||
-        day > calendar?.static?.months[calendar.current?.month]?.length ||
-        !calendar?.static?.months[calendar.current?.month]?.length
+        day > calendar?.static?.months[month]?.length ||
+        !calendar?.static?.months[month]?.length
     )
         return "Day does not exist in selected month";
 }

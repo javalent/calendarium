@@ -141,7 +141,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const validName = derived(store, (calendar) => calendar.name?.length > 0);
 
     const validDay = derived([store, currentStore], ([calendar, current]) => {
-        return isValidDay(current.day, calendar);
+        return isValidDay(current, calendar);
     });
     const validMonth = derived([store, currentStore], ([calendar, current]) => {
         return isValidMonth(current.month, calendar);
