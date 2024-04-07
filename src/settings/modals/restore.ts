@@ -8,7 +8,7 @@ export class RestoreCalendarModal extends SaveableCalendariumModal<Calendar[]> {
         super();
     }
     permanentlyDelete: string[] = [];
-    saveText: string = "Save";
+    saveText: string = "Restore";
     async display() {
         this.contentEl.empty();
         if (!this.item) this.item = [];
