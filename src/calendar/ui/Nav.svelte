@@ -152,23 +152,7 @@
                         >{$displayingMonth.name}</span
                     >
                 {/if}
-                <span
-                    class="calendarium-year year"
-                    contenteditable="plaintext-only"
-                    on:keypress={(evt) => {
-                        if (
-                            !evt.code.contains("Digit") &&
-                            !evt.code.contains("Arrow") &&
-                            evt.code != "Backspace" &&
-                            evt.code != "Minus"
-                        ) {
-                            evt.preventDefault();
-                        }
-                    }}
-                    on:input={(evt) => {
-                        changeYear(evt.currentTarget);
-                    }}>{$displayedYear}</span
-                >
+                <span class="calendarium-year year">{$displayedYear}</span>
             </h3>
             <div class="eras eras-container">
                 {#if $eras.length && !$hideEra}

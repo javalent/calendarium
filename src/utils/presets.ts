@@ -192,7 +192,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             eras: [
                 {
                     name: "Before Christ",
-                    format: "Year {{abs_year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     id: "ID_9a2978c92baa",
                     endsYear: false,
                     isEvent: false,
@@ -207,7 +207,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "Anno Domini",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: 1,
                         month: 0,
@@ -718,7 +718,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             eras: [
                 {
                     name: "Common Year",
-                    format: "Year {{year}} CY",
+                    format: "{{era_name}}",
                     date: {
                         year: 1,
                         month: 0,
@@ -1221,7 +1221,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             eras: [
                 {
                     name: "Age of Serpents",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: 4720,
                         month: 8,
@@ -1238,7 +1238,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
 
                 {
                     name: "Age of Darkness",
-                    format: "Year {{abs_year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: -5300,
                         month: 0,
@@ -1254,7 +1254,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "Age of Anguish",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: -4500,
                         month: 8,
@@ -1270,7 +1270,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "Age of Destiny",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: -3500,
                         month: 8,
@@ -1286,7 +1286,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "Age of Enthronement",
-                    format: "Year {{year}} AR - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: 1,
                         month: 8,
@@ -1302,7 +1302,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "Age of Lost Omens",
-                    format: "Year {{year}} AR - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: 4606,
                         month: 8,
@@ -3822,7 +3822,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             eras: [
                 {
                     name: "Before Christ",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     id: "ID_897bba588a98",
                     endsYear: false,
                     isEvent: false,
@@ -3837,7 +3837,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "Anno Domini",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: 1,
                         month: 0,
@@ -4141,7 +4141,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             eras: [
                 {
                     name: "The Founding",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     id: "ID_cb9baaabab7a",
                     endsYear: false,
                     isEvent: false,
@@ -4156,7 +4156,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "Age of Arcanum",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: -1500,
                         month: 0,
@@ -4172,7 +4172,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "The Calamity",
-                    format: "Year {{year}} - {{era_name}}",
+                    format: "{{era_name}}",
                     date: {
                         year: -665,
                         month: 0,
@@ -4187,7 +4187,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
                 {
                     name: "Post-Divergence",
-                    format: "Year {{year}} P.D.",
+                    format: "{{era_name}}",
                     date: {
                         year: 1,
                         month: 0,
