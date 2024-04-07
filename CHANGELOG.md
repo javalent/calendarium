@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.2.0](https://github.com/javalent/calendarium/compare/1.1.0...1.2.0) (2024-04-07)
+
+
+### Features
+
+* Add additional options around eras to the calendar settings cog ([9e74749](https://github.com/javalent/calendarium/commit/9e747496611f78251105b26a190d24a681a2384b))
+* Can now edit basic information about eras in the calendar creator ([e32ecea](https://github.com/javalent/calendarium/commit/e32eceabd87073aae5f542797d450f7d497591c2))
+* Display era events on the calendar UI ([2c8f102](https://github.com/javalent/calendarium/commit/2c8f102aee8c923acb57b2cc38328131941be342))
+* Enables the "End Year" setting for eras ([9f5048b](https://github.com/javalent/calendarium/commit/9f5048b2e0e98d33e6d597fe2ddb04560b7db2ca))
+* Era edit experience in Creator ([7ed29ec](https://github.com/javalent/calendarium/commit/7ed29ec28fbe2f4ebbdd74da6e50e09dc17dc50d))
+* Eras now support end dates ([b95a604](https://github.com/javalent/calendarium/commit/b95a604ed27efadf2e99f2d74bc4939b7e2661d2))
+
+
+### Bug Fixes
+
+* Adds ability to see events from files in the Calendar creator, with a link to ope the file. ([f0b8f2b](https://github.com/javalent/calendarium/commit/f0b8f2bd67b40c400270ea4baff24e9ab74baf45))
+* Adds generic compareDates method + updated compareEvents to use it ([489b5a7](https://github.com/javalent/calendarium/commit/489b5a7b60c3ca7421d88b0e421ff361e5de255f))
+* Allow negative years but skip year zero ([3488dbd](https://github.com/javalent/calendarium/commit/3488dbd6ff51c17257c2333077c18033b6d5be9b))
+* Display proper era for the currently viewed month in Year view ([ba7659c](https://github.com/javalent/calendarium/commit/ba7659cef07113e6044a878e7d878b6ac8f60203))
+* Fixes "Go to date" menu item in Calendar UI not doing anything ([0d6cadf](https://github.com/javalent/calendarium/commit/0d6cadfea79d1a12d56522eec1d60c1e0f5078d0))
+* Fixes CSS for view state buttons in calendar UI ([adfb4ca](https://github.com/javalent/calendarium/commit/adfb4ca273ebf5394e00cd7d42572557c1ea4abc))
+* Fixes dropdown in event modal not using the correct class ([cd120e0](https://github.com/javalent/calendarium/commit/cd120e0daa75dac9f4941b96e7f088d6698bfe16))
+* Fixes era formats in presets ([ee557e1](https://github.com/javalent/calendarium/commit/ee557e18be90048c6ab88f54070de7f1558c8fb4))
+* Fixes issue where a disabled Toggle component could still be clicked ([dfded00](https://github.com/javalent/calendarium/commit/dfded005b1445d92429b648ecc6f6ee58b58718b))
+* Fixes issue where typing a space in the event search would collapse the view ([a1e4d92](https://github.com/javalent/calendarium/commit/a1e4d92bc79ea336d9016a4e53571582d1b253e0))
+* Fixes to the invalid date detection ([0257e8c](https://github.com/javalent/calendarium/commit/0257e8cd35329e8dfe9e42db68bd24236dc9e7f4))
+* Fixes updating eras in the creator ([c692388](https://github.com/javalent/calendarium/commit/c692388b10eb0ffc88d7811a9881a683151a83bb))
+* Properly display eras when moving between years ([418566b](https://github.com/javalent/calendarium/commit/418566b7d4bb4c14d29192e570f4d16e48b7daf9))
+* Properly display only the latest valid era ([29fdcc9](https://github.com/javalent/calendarium/commit/29fdcc952dd85bd446e0ab85f65350e70b4a279f))
+* Remove cursor decoration from week numbers ([1fffb45](https://github.com/javalent/calendarium/commit/1fffb4591e14a16c6dd3ccaa96db6dd315cc5b93))
+* Remove deprecated API call ([c102c9f](https://github.com/javalent/calendarium/commit/c102c9fd189a7b1fae095134976779f10444f106))
+* UI sync between quick and full creator ([cea0927](https://github.com/javalent/calendarium/commit/cea0927fa46893bf4ed3b346484f92e630eec0b1))
+* Uses correct text on the Restore calendars modal button ([48c11f3](https://github.com/javalent/calendarium/commit/48c11f30525acb7f011161739309b6708cc66292))
+* Uses existing ephemeral store in the UI instead of initializing a new one ([60737af](https://github.com/javalent/calendarium/commit/60737afe58d138c616023fb0233384c87bea119f))
+
 ## [1.1.0](https://github.com/javalent/calendarium/compare/1.0.12...1.1.0) (2024-03-29)
 
 
