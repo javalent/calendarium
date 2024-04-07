@@ -68,11 +68,11 @@
         menu.showAtMouseEvent(evt);
     };
     $: weekForDay =
-        $daysAsWeeks.find((w) =>
+        $daysAsWeeks?.find((w) =>
             w.find((day) => day && day.number == $displaying.day),
         ) ?? [];
     $: weekNumber =
-        $daysAsWeeks.findIndex((w) =>
+        $daysAsWeeks?.findIndex((w) =>
             w.find((day) => day && day.number == $displaying.day),
         ) +
         $firstWeekNumber +

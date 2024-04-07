@@ -6,6 +6,7 @@
     import CalendariumMenu from "src/utils/menu";
     import { derived } from "svelte/store";
     import { formatEra, getEraYear } from "src/utils/functions";
+    import { GoToDateModal } from "../date-switcher/date";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -25,10 +26,6 @@
     $: displayMoons = $ephemeral.displayMoons;
     $: displayWeeks = $ephemeral.displayWeeks;
     $: displayDayNumber = $ephemeral.displayDayNumber;
-
-    $: yearCache = yearCalculator
-        .getYearFromCache($displaying.year)
-        .getMonthFromCache($displaying.month).eras;
 
     $: eraMonth = derived(
         [monthInFrame, viewState, displaying],
@@ -75,11 +72,11 @@
 
         menu.setNoIcon();
 
-        /* menu.addItem((item) => {
+        menu.addItem((item) => {
             item.setTitle("Go to day").onClick(() => {
-
+                new GoToDateModal(plugin, store).open();
             });
-        }); */
+        });
         menu.addSeparator();
         menu.addItem((item) => {
             item.setTitle(
