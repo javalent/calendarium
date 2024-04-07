@@ -87,7 +87,7 @@ export type Month = RegularMonth | IntercalaryMonth;
  * Years
  */
 export type Year = TimeSpan & {
-    type: typeof TimeSpanType.Year
+    type: typeof TimeSpanType.Year;
 };
 
 /**
@@ -114,6 +114,7 @@ export type Era = EventLike & {
         | {
               isStartingEra: true;
               isEvent: false;
+              endsYear: false;
           }
         | {
               date: CalDate;
