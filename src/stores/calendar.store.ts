@@ -12,7 +12,12 @@ import {
     writable,
 } from "svelte/store";
 import { YearStoreCache } from "./years.store";
-import { compareDates, compareEvents, dateString } from "src/utils/functions";
+import {
+    compareDates,
+    compareEvents,
+    dateString,
+    sortEventList,
+} from "src/utils/functions";
 import { MoonCache } from "./cache/moon-cache";
 import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
@@ -442,7 +447,6 @@ function createStaticStore(store: Writable<Calendar>) {
             return compareDates(a.date, b.date);
         })
     );
-    console.log("🚀 ~ file: calendar.store.ts:403 ~ eras:", get(eras));
 
     function getDaysInAYear() {
         return get(months).reduce((a, b) => a + b.length, 0);

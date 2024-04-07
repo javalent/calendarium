@@ -6,12 +6,7 @@ import type {
     UndatedCalDate,
 } from "../../../@types";
 
-import {
-    isValidDay,
-    isValidMonth,
-    isValidYear,
-    nanoid,
-} from "../../../utils/functions";
+import { nanoid } from "../../../utils/functions";
 
 import copy from "fast-copy";
 import { CalendariumModal } from "../modal";
