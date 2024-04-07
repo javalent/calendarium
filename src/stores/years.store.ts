@@ -1,9 +1,15 @@
 import { derived, get } from "svelte/store";
 import type { StaticStore } from "./calendar.store";
-import type { CalEvent } from "src/@types";
+import type { CalDate, CalEvent } from "src/@types";
 import { sortEventList, wrap } from "../utils/functions";
 import { MonthStore } from "./month.store";
-import type { Month, Week, LeapDay, Era } from "src/schemas/calendar/timespans";
+import {
+    type Month,
+    type Week,
+    type LeapDay,
+    type Era,
+    TimeSpanType,
+} from "src/schemas/calendar/timespans";
 
 /* export type YearStore = ReturnType<typeof createYearStore>; */
 export type YearCalculatorCache = Map<number, YearStore>;
@@ -22,18 +28,10 @@ export class YearStoreCache {
 export class YearStore {
     monthCache = new Map<number, MonthStore>();
     constructor(public year: number, public staticStore: StaticStore) {}
-    months = derived(this.staticStore.months, (months) => {
-        return months.filter(
-            (m) =>
-                !m.interval || (this.year - (m.offset ?? 0)) % m.interval == 0
-        );
-    });
     eras = derived(this.staticStore.eras, (eras) => {
-        const sorted = sortEventList(eras);
-
         const list: Era[] = [];
-        for (let i = sorted.length - 1; i >= 0; i--) {
-            const era = sorted[i];
+        for (let i = eras.length - 1; i >= 0; i--) {
+            const era = eras[i];
             if (era.isStartingEra) {
                 if (!list.length) list.push(era);
             } else if (era.date.year <= this.year) {
@@ -45,6 +43,18 @@ export class YearStore {
         }
         return list;
     });
+    months = derived([this.staticStore.months, this.eras], ([months, eras]) => {
+        let end = eras.find(
+            (era) => era.endsYear && era.date.year === this.year
+        );
+        if (end) {
+            months = months.slice(0, (end.date as CalDate).month + 1);
+        }
+        return months.filter(
+            (m) =>
+                !m.interval || (this.year - (m.offset ?? 0)) % m.interval == 0
+        );
+    });
     daysBefore = derived(
         [this.months, this.staticStore.leapDays],
         ([months, leapDays]) => {
@@ -54,13 +64,25 @@ export class YearStore {
     firstDay = derived(
         [
             this.staticStore.staticConfiguration,
-            this.months,
+            this.staticStore.months,
             this.staticStore.weekdays,
             this.staticStore.leapDays,
+            this.staticStore.eras,
         ],
-        ([config, months, weekdays, leapDays]) => {
+        ([config, months, weekdays, leapDays, eras]) => {
+            let year = this.year;
+
+            //find the
+            for (let i = eras.length - 1; i >= 0; i--) {
+                const era = eras[i];
+                if (era.isStartingEra) break;
+                if (!era.endsYear) continue;
+                if (era.date.year >= this.year) continue;
+                /** Normalize the year to consider off the last era that ended the year. */
+                year = this.year - era.date.year;
+            }
             return getFirstDayOfYear(
-                this.year,
+                year,
                 months,
                 weekdays,
                 leapDays,

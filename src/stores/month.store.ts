@@ -127,23 +127,44 @@ export class MonthStore {
             this.firstDay,
             this.leapDays,
             this.staticStore.staticData,
+            this.eras,
+            this.staticStore.eras,
         ],
-        ([weekdays, days, firstDay, leapDays, data]) => {
+        ([weekdays, days, firstDay, leapDays, data, eras, allEras]) => {
             let weekArray: (DayOrLeapDay | null)[][] = [];
             let daysAdded = 0;
             let intercals = 0;
             while (daysAdded < days) {
                 //Initialize the day array.
                 //The first week of the month should include negative numbers for the prior month.
+                //If the year before this was ended early due to an era and I am the first month, I should not
+                //show negatives.
+                let showNegatives = true;
+                if (!weekArray.length && get(this.index) === 0) {
+                    for (let i = allEras.length - 1; i >= 0; i--) {
+                        const era = allEras[i];
+
+                        if (era.isStartingEra) break;
+                        if (!era.endsYear) continue;
+                        if (era.date.year !== this.year.year - 1) continue;
+
+                        /** Normalize the year to consider off the last era that ended the year. */
+                        showNegatives = false;
+                        break;
+                    }
+                }
+
                 let dayArray: (DayOrLeapDay | null)[] =
                     weekArray.length === 0
                         ? [...Array(firstDay).keys()].reverse().map((k) => {
-                              return {
-                                  type: "day",
-                                  number: -1 * k,
-                                  name: null,
-                                  id: nanoid(3),
-                              };
+                              return showNegatives
+                                  ? {
+                                        type: "day",
+                                        number: -1 * k,
+                                        name: null,
+                                        id: nanoid(3),
+                                    }
+                                  : null;
                           })
                         : [];
 
@@ -209,6 +230,16 @@ export class MonthStore {
                         (this.month.type == "intercalary" || !data.overflow)
                     ) {
                         break;
+                    }
+                    let shouldEndEra = eras.find(
+                        (era) =>
+                            era.endsYear &&
+                            era.date.year === this.year.year &&
+                            era.date.month === get(this.index)
+                    );
+                    if (shouldEndEra && shouldEndEra.date.day === daysAdded) {
+                        weekArray.push(dayArray);
+                        return weekArray;
                     }
                 }
                 weekArray.push(dayArray);
