@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/javalent/calendarium/compare/1.2.1...1.2.2) (2024-04-09)
+
+
+### Bug Fixes
+
+* Persist ephemeral states between sessions ([65e50d3](https://github.com/javalent/calendarium/commit/65e50d32f621d47050e48c61d14b3903de76ac3c))
+
 ## [1.2.1](https://github.com/javalent/calendarium/compare/1.2.0...1.2.1) (2024-04-09)
 
 
