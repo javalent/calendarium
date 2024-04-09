@@ -18,6 +18,9 @@
     export let event: Writable<CalEvent>;
     export let store: CalendarStore;
 
+    $: config = store.staticStore.staticConfiguration;
+    $: useCustomYears = $config.useCustomYears;
+
     const date = derived(event, (event) => event.date);
     const end = writable($event.type === EventType.Range ? $event.end : null);
     end.subscribe((v) => {
@@ -142,13 +145,20 @@
             <span>Year</span>
             {#if !$isRecurringYear || $isRange}
                 <div class="recurring">
-                    <input
-                        type="number"
-                        spellcheck="false"
-                        placeholder="Year"
-                        class:warning={$date.year == null}
-                        bind:value={$event.date.year}
-                    />
+                    {#if useCustomYears}
+                        <select class="dropdown" bind:value={$event.date.year}>
+                            {#each [...($store.static.years ?? [])] as year, index}
+                                <option value={index}>{year.name}</option>
+                            {/each}
+                        </select>{:else}
+                        <input
+                            type="number"
+                            spellcheck="false"
+                            placeholder="Year"
+                            class:warning={$date.year == null}
+                            bind:value={$event.date.year}
+                        />
+                    {/if}
 
                     {#if !$isRange}
                         <div
@@ -157,6 +167,12 @@
                         />
                     {/if}
                 </div>
+            {:else if useCustomYears}
+                <RecurringSelect
+                    {event}
+                    field={"year"}
+                    items={($store.static.years ?? []).map((y) => y.name ?? "")}
+                />
             {:else}
                 <RecurringDate {event} field={"year"} placeholder={"Year"} />
             {/if}

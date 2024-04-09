@@ -43,7 +43,7 @@ export type RecurringCalEventDateBit = [number | null, number | null];
 export type FullCalEventDateBit = RecurringCalEventDateBit | number;
 
 export type DatedCalEventInfo = {
-    type?: typeof EventType.Date;
+    type: typeof EventType.Date;
     date: OneTimeCalEventDate;
 };
 export type DatedCalEvent = BaseCalEvent & DatedCalEventInfo;

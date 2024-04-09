@@ -127,6 +127,14 @@ export function eventDateString(event: CalEvent, calendar: Calendar) {
         case EventType.Recurring: {
             const { year, month, day } = event.date;
             const { months, years, useCustomYears } = calendar.static;
+            if (useCustomYears && years?.length) {
+                for (const y of [year].flat()) {
+                    if (!y) continue;
+                    if (y < 0 || y > years.length) {
+                        return `Invalid custom year (${y})`;
+                    }
+                }
+            }
             let recurring: string = `${getRecurringDay(
                 day
             )} of ${getRecurringMonth(month, months)}, ${getRecurringYear(
@@ -165,9 +173,11 @@ export function dateString(
     const { months, years, useCustomYears } = calendar.static;
     let startY: string = `${year}`;
     if (useCustomYears && years?.length && year) {
-        startY = years[year - 1].name ?? startY;
+        if (year < 0 || year >= years.length)
+            return `Invalid custom year (${year})`;
+        startY = years[year - 1]?.name ?? startY;
     }
-    if (month != undefined && !months[month]) return "Invalid Date";
+    if (month != undefined && !months[month]) return "Invalid date";
 
     const startM = month == undefined ? undefined : months[month].name;
     const startD = ordinal(day);
@@ -317,7 +327,7 @@ export function toPaddedString(
 }
 
 export function isValidDay(date: CalDate, calendar: Calendar) {
-    if (date === null) return false
+    if (date === null) return false;
     const { day, month, year } = date;
     if (day == null) return false;
     if (month == null) return false;

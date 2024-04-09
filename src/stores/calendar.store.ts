@@ -3,6 +3,7 @@ import type {
     CalDate,
     CalEventCategory,
     EventLike,
+    StaticCalendarData,
 } from "src/@types";
 import {
     type Readable,
@@ -182,6 +183,7 @@ export function getEphemeralStore(
     yearCalculator: YearStoreCache
 ) {
     const displaying = writable({ ...base.current });
+
     const viewing = writable<CalDate | null>();
 
     const displayMoons = writable(base.static.displayMoons);
@@ -236,6 +238,16 @@ export function getEphemeralStore(
             displayWeeks.set(state.displayWeeks);
             hideEra.set(state.hideEra);
             displayAbsoluteYear.set(state.displayAbsoluteYear);
+            const config = get(staticStore.staticData);
+
+            if (
+                config.useCustomYears &&
+                (state.displaying.year < 0 ||
+                    state.displaying.year > (config.years?.length ?? 0) - 1)
+            ) {
+                state.displaying.year = 0;
+            }
+
             displaying.set(state.displaying);
             viewing.set(state.viewing);
         },
@@ -279,26 +291,17 @@ export function getEphemeralStore(
         displayingYear: derived(
             [displaying, staticStore.years, staticStore.staticConfiguration],
             ([date, years, config]) =>
-                config.useCustomYears ? years[date.year].name : date.year
+                config.useCustomYears ? years[date.year]?.name : date.year
         ),
-        previousMonth: derived([displaying], ([displaying]) => {
-            let { year, month } = displaying;
-            let yearStore = yearCalculator.getYearFromCache(year);
-            if (month == 0) {
-                year = year - 1 || -1;
-                yearStore = yearCalculator.getYearFromCache(year);
-                month = get(yearStore.months).length - 1;
-            } else {
-                month = month - 1;
-            }
-            return yearStore.getMonthFromCache(month);
-        }),
         getPreviousMonth: (month: number, year: number) => {
             let yearStore = yearCalculator.getYearFromCache(year);
             if (month == 0) {
-                year = year - 1 || -1;
-                yearStore = yearCalculator.getYearFromCache(year);
-                month = get(yearStore.months).length - 1;
+                const config = get(staticStore.staticConfiguration);
+                if (config.useCustomYears && year > 0) {
+                    year = year - 1 || -1;
+                    yearStore = yearCalculator.getYearFromCache(year);
+                    month = get(yearStore.months).length - 1;
+                }
             } else {
                 month = month - 1;
             }
@@ -326,7 +329,11 @@ export function getEphemeralStore(
                             w.find((d) => d && d.number == displaying.day)
                         );
                         if (weekIndex < 1) {
-                            next = decrementMonth(next, yearCalculator);
+                            next = decrementMonth(
+                                next,
+                                yearCalculator,
+                                get(staticStore.staticData)
+                            );
                             year = yearCalculator.getYearFromCache(next.year);
                             month = year.getMonthFromCache(next.month);
                             weekArray = get(month.daysAsWeeks);
@@ -339,7 +346,11 @@ export function getEphemeralStore(
                             ) {
                                 weekIndex--;
                                 if (weekIndex < 1) {
-                                    next = decrementMonth(next, yearCalculator);
+                                    next = decrementMonth(
+                                        next,
+                                        yearCalculator,
+                                        get(staticStore.staticData)
+                                    );
                                     year = yearCalculator.getYearFromCache(
                                         next.year
                                     );
@@ -355,32 +366,31 @@ export function getEphemeralStore(
                         return next;
                     }
                     case ViewState.Month:
-                        return decrementMonth(displaying, yearCalculator);
+                        return decrementMonth(
+                            displaying,
+                            yearCalculator,
+                            get(staticStore.staticData)
+                        );
                     case ViewState.Day:
-                        return incrementDay(displaying, yearCalculator);
+                        return incrementDay(
+                            displaying,
+                            yearCalculator,
+                            get(staticStore.staticData)
+                        );
                 }
             }),
-
-        nextMonth: derived([displaying], ([displaying]) => {
-            let yearStore = yearCalculator.getYearFromCache(displaying.year);
-            const months = get(yearStore.months);
-            let month = displaying.month;
-            if (displaying.month == months.length - 1) {
-                yearStore = yearCalculator.getYearFromCache(
-                    displaying.year + 1 || 1
-                );
-                month = 0;
-            } else {
-                month = month + 1;
-            }
-            return yearStore.getMonthFromCache(month);
-        }),
         getNextMonth: (month: number, year: number) => {
             let yearStore = yearCalculator.getYearFromCache(year);
             const months = get(yearStore.months);
             if (month == months.length - 1) {
-                yearStore = yearCalculator.getYearFromCache(year + 1 || 1);
-                month = 0;
+                const config = get(staticStore.staticData);
+                if (
+                    config.useCustomYears &&
+                    year < (config.years?.length ?? 0)
+                ) {
+                    yearStore = yearCalculator.getYearFromCache(year + 1 || 1);
+                    month = 0;
+                }
             } else {
                 month = month + 1;
             }
@@ -414,7 +424,11 @@ export function getEphemeralStore(
                                 (d) => d && d.number >= monthLength
                             )
                         ) {
-                            next = incrementMonth(next, yearCalculator);
+                            next = incrementMonth(
+                                next,
+                                yearCalculator,
+                                get(staticStore.staticData)
+                            );
                             year = yearCalculator.getYearFromCache(next.year);
                             month = year.getMonthFromCache(next.month);
                             weekArray = get(month.daysAsWeeks);
@@ -431,7 +445,11 @@ export function getEphemeralStore(
                             ) {
                                 weekIndex++;
                                 if (weekIndex + 1 >= weekArray.length) {
-                                    next = incrementMonth(next, yearCalculator);
+                                    next = incrementMonth(
+                                        next,
+                                        yearCalculator,
+                                        get(staticStore.staticData)
+                                    );
                                     year = yearCalculator.getYearFromCache(
                                         next.year
                                     );
@@ -446,9 +464,17 @@ export function getEphemeralStore(
                         return next;
                     }
                     case ViewState.Month:
-                        return incrementMonth(displaying, yearCalculator);
+                        return incrementMonth(
+                            displaying,
+                            yearCalculator,
+                            get(staticStore.staticData)
+                        );
                     case ViewState.Day:
-                        return incrementDay(displaying, yearCalculator);
+                        return incrementDay(
+                            displaying,
+                            yearCalculator,
+                            get(staticStore.staticData)
+                        );
                 }
             }),
 
@@ -457,12 +483,20 @@ export function getEphemeralStore(
         goToPreviousDay: () =>
             viewing.update((viewing) => {
                 if (!viewing) return viewing;
-                return decrementDay(viewing, yearCalculator);
+                return decrementDay(
+                    viewing,
+                    yearCalculator,
+                    get(staticStore.staticData)
+                );
             }),
         goToNextDay: () =>
             viewing.update((viewing) => {
                 if (!viewing) return viewing;
-                return incrementDay(viewing, yearCalculator);
+                return incrementDay(
+                    viewing,
+                    yearCalculator,
+                    get(staticStore.staticData)
+                );
             }),
     };
 }
@@ -510,51 +544,76 @@ function createStaticStore(store: Writable<Calendar>) {
     };
 }
 
-function incrementMonth(date: CalDate, yearCalculator: YearStoreCache) {
+function incrementMonth(
+    date: CalDate,
+    yearCalculator: YearStoreCache,
+    config: StaticCalendarData
+) {
     const next = { ...date };
     const year = yearCalculator.getYearFromCache(date.year);
     const months = get(year.months);
     if (next.month == months.length - 1) {
-        next.month = 0;
-        next.year = next.year + 1 || 1;
+        if (
+            !config.useCustomYears ||
+            next.year < (config.years?.length || 0) - 1
+        ) {
+            next.month = 0;
+            next.year = next.year + 1 || 1;
+        }
     } else {
         next.month++;
     }
     return next;
 }
-function decrementMonth(date: CalDate, yearCalculator: YearStoreCache) {
+function decrementMonth(
+    date: CalDate,
+    yearCalculator: YearStoreCache,
+    config: StaticCalendarData
+) {
     const next = { ...date };
     if (next.month == 0) {
-        next.year = next.year - 1 || -1;
+        if (!config.useCustomYears || next.year - 1 > -1) {
+            next.year = config.useCustomYears
+                ? next.year - 1
+                : next.year - 1 || -1;
 
-        const year = yearCalculator.getYearFromCache(next.year);
-        const months = get(year.months);
-        next.month = months.length - 1;
+            const year = yearCalculator.getYearFromCache(next.year);
+            const months = get(year.months);
+            next.month = months.length - 1;
+        }
     } else {
         next.month--;
     }
     return next;
 }
 
-function incrementDay(date: CalDate, yearCalculator: YearStoreCache) {
+function incrementDay(
+    date: CalDate,
+    yearCalculator: YearStoreCache,
+    config: StaticCalendarData
+) {
     let next = { ...date };
     const days = get(
         yearCalculator.getYearFromCache(next.year).getMonthFromCache(next.month)
             .days
     );
     if (next.day + 1 > days) {
-        next = incrementMonth(date, yearCalculator);
+        next = incrementMonth(date, yearCalculator, config);
         next.day = 1;
     } else {
         next.day++;
     }
     return next;
 }
-function decrementDay(date: CalDate, yearCalculator: YearStoreCache) {
+function decrementDay(
+    date: CalDate,
+    yearCalculator: YearStoreCache,
+    config: StaticCalendarData
+) {
     let next = { ...date };
 
     if (next.day - 1 <= 0) {
-        next = decrementMonth(date, yearCalculator);
+        next = decrementMonth(date, yearCalculator, config);
         next.day = get(
             yearCalculator
                 .getYearFromCache(next.year)

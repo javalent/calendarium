@@ -776,18 +776,23 @@ export default class SettingsService {
                 if ("start" in era) {
                     era.date = { ...(era as any).start };
                     delete (era as any).start;
+                    dirty = true;
                 }
                 if (!("type" in (era as any))) {
                     era.type = "era";
+                    dirty = true;
                 }
                 if ("event" in era) {
                     era.isEvent = (era as any).event;
+                    dirty = true;
                 }
                 if (!("isStartingEra" in (era as any))) {
                     era.isStartingEra = false;
+                    dirty = true;
                 }
                 if ("restart" in era) {
                     delete era.restart;
+                    dirty = true;
                 }
             }
         }
