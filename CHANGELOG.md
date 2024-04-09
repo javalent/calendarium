@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/javalent/calendarium/compare/1.2.0...1.2.1) (2024-04-09)
+
+
+### Bug Fixes
+
+* Fixes transform of eras defined with legacy schema ([d8ccde9](https://github.com/javalent/calendarium/commit/d8ccde941d296d1e7b54e18b4a6e1e3c1fb89e1d))
+
 ## [1.2.0](https://github.com/javalent/calendarium/compare/1.1.0...1.2.0) (2024-04-07)
 
 
