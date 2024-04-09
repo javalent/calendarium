@@ -199,7 +199,7 @@ export default class Calendarium extends Plugin {
         this.settings$.onLayoutReadyAndSettingsLoad(() => {
             this.watcher.load();
             this.addSettingTab(new CalendariumSettings(this, this.settings$));
-            this.addCalendarView({ startup: true });
+            /* this.addCalendarView({ startup: true }); */
         });
 
         this.app.workspace.trigger("parse-style-settings");
