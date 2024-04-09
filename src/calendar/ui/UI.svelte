@@ -18,7 +18,10 @@
     $: {
         if (store) {
             setTypedContext("store", writable(store));
-            setTypedContext("ephemeralStore", writable(store.ephemeralStore));
+            setTypedContext(
+                "ephemeralStore",
+                writable(store.getEphemeralStore()),
+            );
         }
     }
 </script>

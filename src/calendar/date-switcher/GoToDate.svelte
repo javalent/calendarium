@@ -2,16 +2,19 @@
     import type Calendarium from "src/main";
     import DateWithValidation from "src/settings/creator/Utilities/DateWithValidation.svelte";
     import createCreatorStore from "src/settings/creator/stores/calendar";
-    import type { CalendarStore } from "src/stores/calendar.store";
+    import type {
+        CalendarStore,
+        EphemeralStore,
+    } from "src/stores/calendar.store";
     import { createEventDispatcher } from "svelte";
     import { setContext } from "svelte";
     import { derived, writable } from "svelte/store";
 
     export let store: CalendarStore;
+    export let ephemeralStore: EphemeralStore;
     export let plugin: Calendarium;
 
-    const ephemeral = store.ephemeralStore;
-    const { displaying } = ephemeral;
+    const { displaying } = ephemeralStore;
 
     const date = writable($displaying);
 
@@ -23,7 +26,7 @@
 
     const go = () => {
         if (!$valid) return;
-        store.ephemeralStore.displayDate($date);
+        ephemeralStore.displayDate($date);
         dispatch("close");
     };
 </script>
