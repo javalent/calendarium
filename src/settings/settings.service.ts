@@ -10,6 +10,7 @@ import {
 import type {
     Calendar,
     CalendariumData,
+    DatedCalEvent,
     MarkdownCalendariumData,
     RangeCalEvent,
     RecurringCalEvent,
@@ -698,7 +699,7 @@ export default class SettingsService {
                     };
                     dirty = true;
                 }
-                if (!event.type) {
+                if (!(event as any).type) {
                     //Check for an undated event.
                     if (
                         !event.date ||
@@ -725,19 +726,19 @@ export default class SettingsService {
                         delete (event as any).end;
                         (event as any as RecurringCalEvent).type =
                             EventType.Recurring;
-                        if (event.date.year == null) {
+                        if ((event as any).date.year == null) {
                             (event as any as RecurringCalEvent).date.year = [
                                 null,
                                 null,
                             ];
                         }
-                        if (event.date.month == null) {
+                        if ((event as any).date.month == null) {
                             (event as any as RecurringCalEvent).date.month = [
                                 null,
                                 null,
                             ];
                         }
-                        if (event.date.day == null) {
+                        if ((event as any).date.day == null) {
                             (event as any as RecurringCalEvent).date.day = [
                                 null,
                                 null,
@@ -755,7 +756,8 @@ export default class SettingsService {
                                     null ||
                                 (event as any as RangeCalEvent).end.day == null)
                         ) {
-                            event.type = EventType.Date;
+                            (event as any as DatedCalEvent).type =
+                                EventType.Date;
                             delete (event as any).end;
                             continue;
                         }
@@ -769,6 +771,24 @@ export default class SettingsService {
                 calendar.showIntercalarySeparately = (<any>(
                     data
                 )).showIntercalary;
+            }
+            for (const era of calendar.static?.eras) {
+                if ("start" in era) {
+                    era.date = { ...(era as any).start };
+                    delete (era as any).start;
+                }
+                if (!("type" in (era as any))) {
+                    era.type = "era";
+                }
+                if ("event" in era) {
+                    era.isEvent = (era as any).event;
+                }
+                if (!("isStartingEra" in (era as any))) {
+                    era.isStartingEra = false;
+                }
+                if ("restart" in era) {
+                    delete era.restart;
+                }
             }
         }
         return dirty;

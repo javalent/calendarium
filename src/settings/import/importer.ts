@@ -13,6 +13,7 @@ import { DEFAULT_CALENDAR } from "../settings.constants";
 import { nanoid } from "../../utils/functions";
 import type { Moon } from "src/schemas/calendar/moons";
 import type { Week, Month, LeapDay, Era } from "src/schemas/calendar/timespans";
+import { EventType } from "../../events/event.types";
 
 export default class Import {
     static import(objects: ImportedCalendar[]) {
@@ -121,17 +122,18 @@ export default class Import {
                     eras.push({
                         id: nanoid(6),
                         endsYear: era.endsYear,
-                        restart: false,
-                        event: false,
+                        isEvent: false,
+                        isStartingEra: false,
                         name: era.name ?? `Era ${eras.length + 1}`,
                         description: era.description,
-                        format:
-                            era.formatting ?? "Year {{year}} - {{era_name}}",
-                        start: {
+                        format: era.formatting ?? "{{era_name}}",
+                        date: {
                             year: era.date?.year ?? 1,
                             month: era.date?.timespan ?? 0,
                             day: era.date?.day ?? 0,
                         },
+                        type: "era",
+                        category: null,
                     });
                 }
             }
@@ -242,6 +244,7 @@ export default class Import {
                         description: event.description,
                         id: `${event.id}`,
                         note: null,
+                        type: EventType.Date,
                         date,
                         category:
                             existingCategories.get(event.event_category_id)
