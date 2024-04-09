@@ -16,7 +16,6 @@
         displaying,
         displayingMonth,
         displayingYear,
-        displayAbsoluteYear,
         hideEra,
     } = $ephemeral;
     const { currentDisplay, yearCalculator } = store;
@@ -26,6 +25,7 @@
     $: displayMoons = $ephemeral.displayMoons;
     $: displayWeeks = $ephemeral.displayWeeks;
     $: displayDayNumber = $ephemeral.displayDayNumber;
+    $: displayAbsoluteYear = $ephemeral.displayAbsoluteYear;
 
     $: eraMonth = derived(
         [monthInFrame, viewState, displaying],

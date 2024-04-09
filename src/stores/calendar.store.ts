@@ -193,7 +193,42 @@ export function getEphemeralStore(
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
 
+    const ephemeralStore: Readable<EphemeralState> = derived(
+        [
+            viewState,
+            displayDayNumber,
+            displayMoons,
+            displayWeeks,
+            hideEra,
+            displayAbsoluteYear,
+            displaying,
+            viewing,
+        ],
+        ([
+            viewState,
+            displayDayNumber,
+            displayMoons,
+            displayWeeks,
+            hideEra,
+            displayAbsoluteYear,
+            displaying,
+            viewing,
+        ]) => {
+            return {
+                viewState,
+                displayDayNumber,
+                displayMoons,
+                displayWeeks,
+                hideEra,
+                displayAbsoluteYear,
+                displaying,
+                viewing,
+            };
+        }
+    );
+
     return {
+        ephemeralStore,
         initializeFromState: (state: EphemeralState) => {
             viewState.set(state.viewState);
             displayDayNumber.set(state.displayDayNumber);

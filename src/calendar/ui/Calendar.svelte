@@ -26,6 +26,8 @@
     $: weekdays = $displayedMonth.weekdays;
     $: weeks = $displayedMonth.weeks;
     $: viewState = $ephemeral.viewState;
+    $: ephemeralStore = $ephemeral.ephemeralStore;
+    $: ephemeralStore.subscribe(() => plugin.app.workspace.requestSaveLayout());
 
     $: viewing = $ephemeral.viewing;
 
