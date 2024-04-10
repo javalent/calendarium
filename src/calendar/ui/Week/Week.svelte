@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getTypedContext } from "src/calendar/view";
+    import { getTypedContext } from "src/calendar/view.types";
     import Day from "../Day/Day.svelte";
     import { get } from "svelte/store";
     import type { DayOrLeapDay } from "src/schemas/calendar/timespans";

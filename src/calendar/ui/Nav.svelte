@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ExtraButtonComponent, Menu } from "obsidian";
-    import { getTypedContext } from "../view";
+    import { getTypedContext } from "../view.types";
     import { ViewState } from "src/stores/calendar.store";
     import { LEFT, RIGHT, SETTINGS } from "src/utils/icons";
     import CalendariumMenu from "src/utils/menu";
@@ -12,12 +12,7 @@
     const ephemeral = getTypedContext("ephemeralStore");
     const plugin = getTypedContext("plugin");
     const store = $global;
-    const {
-        displaying,
-        displayingMonth,
-        displayingYear,
-        hideEra,
-    } = $ephemeral;
+    const { displaying, displayingMonth, displayingYear, hideEra } = $ephemeral;
     const { currentDisplay, yearCalculator } = store;
     const monthInFrame = getTypedContext("monthInFrame");
     const viewState = $ephemeral.viewState;
@@ -74,7 +69,7 @@
 
         menu.addItem((item) => {
             item.setTitle("Go to day").onClick(() => {
-                new GoToDateModal(plugin, store).open();
+                new GoToDateModal(plugin, store, $ephemeral).open();
             });
         });
         menu.addSeparator();

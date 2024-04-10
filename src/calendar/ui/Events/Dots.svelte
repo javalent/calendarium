@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getTypedContext } from "../../view";
+    import { getTypedContext } from "../../view.types";
     import Dot from "./Dot.svelte";
     import type { CalEvent, EventLike } from "src/@types";
 
