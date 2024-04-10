@@ -29,7 +29,9 @@ import {
 } from "./modals/confirm";
 import { CalendariumModal } from "./modals/modal";
 import { get } from "svelte/store";
-import createCreatorStore, { type CreatorStore } from "./creator/stores/calendar";
+import createCreatorStore, {
+    type CreatorStore,
+} from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import SettingsService from "./settings.service";
@@ -73,40 +75,6 @@ declare module "svelte" {
         value: Context[K]
     ): void;
     function getContext<K extends keyof Context>(key: K): Context[K];
-}
-declare module "obsidian" {
-    interface App {
-        internalPlugins: {
-            getPluginById(id: "daily-notes"): {
-                _loaded: boolean;
-                instance: {
-                    options: {
-                        format: string;
-                    };
-                };
-            };
-            getPluginById(id: "sync"): {
-                _loaded: boolean;
-                instance: Events & {
-                    getStatus():
-                        | "error"
-                        | "paused"
-                        | "syncing"
-                        | "uninitialized"
-                        | "synced";
-                    on(name: "status-change", callback: () => any): EventRef;
-                };
-            };
-            getPluginById(id: "page-preview"): {
-                _loaded: boolean;
-            };
-        };
-        setting: {
-            open(): void;
-            close(): void;
-            openTabById(id: string): CalendariumSettings;
-        };
-    }
 }
 
 export default class CalendariumSettings extends PluginSettingTab {
