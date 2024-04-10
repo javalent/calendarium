@@ -43,7 +43,7 @@ export class EraEditModal extends CanceableCalendariumModal<Era> {
             target: this.contentEl,
             props: {
                 era: this.era,
-                plugin: this.plugin,
+                /* plugin: this.plugin, */
                 store: this.store,
             },
         });

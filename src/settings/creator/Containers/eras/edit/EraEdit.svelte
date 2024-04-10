@@ -18,7 +18,7 @@
 
     export let era: Era;
     export let store: CreatorStore;
-    export let plugin: Calendarium;
+    /* export let plugin: Calendarium; */
     setContext("store", store);
 
     const { eraStore } = store;
@@ -223,13 +223,6 @@
 {/if}
 
 <style>
-    .info {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-right: 0;
-    }
     .text-area-component {
         display: flex;
         flex-flow: column nowrap;

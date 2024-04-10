@@ -71,10 +71,6 @@
         flex-flow: column;
         gap: 0.5rem;
     }
-    .desc .description {
-        display: flex;
-        flex-flow: column;
-    }
     .clamp {
         display: -webkit-box;
         -webkit-line-clamp: 1;
