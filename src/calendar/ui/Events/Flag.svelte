@@ -10,7 +10,7 @@
         setNodeIcon,
     } from "src/utils/icons";
     import { createEventDispatcher } from "svelte";
-    import { getTypedContext } from "../../view.types";
+    import { getTypedContext } from "../../view.utils";
     import { ViewEventModal } from "../../event-modal";
     import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
     import { addEventWithModal } from "src/settings/modals/event/event";

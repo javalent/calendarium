@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getTypedContext } from "src/calendar/view.types";
+    import { getTypedContext } from "src/calendar/view.utils";
     import Month from "../Month/Month.svelte";
     import { nanoid } from "src/utils/functions";
     import { onMount } from "svelte";

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ViewState } from "src/stores/calendar.store";
-    import { getTypedContext } from "../../view.types";
+    import { getTypedContext } from "../../view.utils";
     import Weekdays from "../Week/Weekdays.svelte";
     import Week from "../Week/Week.svelte";
 

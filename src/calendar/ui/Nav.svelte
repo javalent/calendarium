@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ExtraButtonComponent, Menu } from "obsidian";
-    import { getTypedContext } from "../view.types";
+    import { getTypedContext } from "../view.utils";
     import { ViewState } from "src/stores/calendar.store";
     import { LEFT, RIGHT, SETTINGS } from "src/utils/icons";
     import CalendariumMenu from "src/utils/menu";

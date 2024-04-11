@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getTypedContext } from "src/calendar/view.types";
+    import { getTypedContext } from "src/calendar/view.utils";
     import { getAbbreviation } from "src/utils/functions";
 
     export let year: number;
