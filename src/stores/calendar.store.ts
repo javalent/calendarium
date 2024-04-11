@@ -29,6 +29,8 @@ export type CalendarStore = ReturnType<typeof createCalendarStore>;
 export interface CalendarStoreState {
     ephemeral: EphemeralState;
     calendar: string;
+    id: string;
+    child?: string;
 }
 export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     const store = writable(calendar);
@@ -54,18 +56,27 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     );
     const moonCache = new MoonCache(moonStates, yearCalculator);
 
-    let ephemeralStore = getEphemeralStore(
-        store,
-        staticStore,
-        calendar,
-        yearCalculator
-    );
+    const EPHEMERAL_STORE_CACHE: Map<string, EphemeralStore> = new Map();
+
+    const _getEphemeralStore = (id: string) => {
+        if (EPHEMERAL_STORE_CACHE.has(id)) {
+            return EPHEMERAL_STORE_CACHE.get(id)!;
+        }
+        const ephemeralStore = getEphemeralStore(
+            store,
+            staticStore,
+            calendar,
+            yearCalculator
+        );
+        EPHEMERAL_STORE_CACHE.set(id, ephemeralStore);
+        return ephemeralStore;
+    };
 
     return {
-        getStoreState: () => {
+        getStoreState: (id: string) => {
             return {
                 calendar: calendar.id,
-                ephemeral: ephemeralStore.getEphemeralState(),
+                ephemeral: _getEphemeralStore(id).getEphemeralState(),
             };
         },
 
@@ -137,16 +148,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         //Readable store containing static calendar data
         staticStore,
 
-        ephemeralStore,
-        getEphemeralStore: () => {
-            ephemeralStore = getEphemeralStore(
-                store,
-                staticStore,
-                calendar,
-                yearCalculator
-            );
-            return ephemeralStore;
-        },
+        getEphemeralStore: _getEphemeralStore,
         yearCalculator,
         hasCategory: (category: string) =>
             get(categories).find((f) => f.id === category) != null,
