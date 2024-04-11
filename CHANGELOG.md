@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://github.com/javalent/calendarium/compare/1.2.2...1.3.0) (2024-04-11)
+
+
+### Features
+
+* New Agenda view that replaces the existing day view. Clicking a day will now open a synced Agenda view that can be placed wherever you like. ([d9e92d1](https://github.com/javalent/calendarium/commit/d9e92d1e625ce7e6ce22cf74e030f89b07f37dc7))
+
+
+### Bug Fixes
+
+* Allow views to get their specific ephemeral stores back ([0730445](https://github.com/javalent/calendarium/commit/073044509e6a4afd58160f2a795957b4c7d5921f))
+* Fixes issues with custom years (close [#120](https://github.com/javalent/calendarium/issues/120)) ([5bd3413](https://github.com/javalent/calendarium/commit/5bd34137fab66124e7e420b403e75ea0ef353380))
+* Properly detach ephemeral states between views with the same calendar ([1b188f7](https://github.com/javalent/calendarium/commit/1b188f7913255dd8092a32e6e44251e29e51cfd6))
+* Stop opening calendar view on startup (close [#115](https://github.com/javalent/calendarium/issues/115)) ([f797307](https://github.com/javalent/calendarium/commit/f797307463485ea1c866d672ca623ee964b5deba))
+
 ## [1.2.2](https://github.com/javalent/calendarium/compare/1.2.1...1.2.2) (2024-04-09)
 
 
