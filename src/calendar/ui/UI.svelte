@@ -1,13 +1,15 @@
 <script lang="ts">
     import type Calendarium from "src/main";
     import Calendar from "./Calendar.svelte";
-    import CalendariumView, { setTypedContext } from "../view";
+    import CalendariumView from "../view";
     import { writable } from "svelte/store";
     import { type CalendarStore } from "src/stores/calendar.store";
+    import { type ViewParent } from "../view.types";
+    import { setTypedContext } from "../view.utils";
 
     export let store: CalendarStore | null;
     export let plugin: Calendarium;
-    export let view: CalendariumView | null = null;
+    export let view: ViewParent;
     export let full: boolean;
     setTypedContext("plugin", plugin);
     setTypedContext("view", view);
@@ -20,7 +22,7 @@
             setTypedContext("store", writable(store));
             setTypedContext(
                 "ephemeralStore",
-                writable(store.getEphemeralStore()),
+                writable(store.getEphemeralStore(view.id)),
             );
         }
     }

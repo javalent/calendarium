@@ -1,6 +1,6 @@
 <script lang="ts">
     import { MonthStore } from "src/stores/month.store";
-    import { getTypedContext } from "../../view";
+    import { ViewType } from "../../view.types";
     import Dots from "../Events/Dots.svelte";
     import { TFile } from "obsidian";
     import type { CalEvent } from "src/@types";
@@ -14,6 +14,8 @@
     } from "src/schemas/calendar/timespans";
     import CalendariumMenu from "src/utils/menu";
     import { isCalEvent } from "src/events/event.types";
+    import { openAgendaView } from "src/calendar/view.agenda";
+    import { getTypedContext } from "src/calendar/view.utils";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -21,6 +23,7 @@
 
     const plugin = getTypedContext("plugin");
     const store = getTypedContext("store");
+    const view = getTypedContext("view");
     const ephemeral = getTypedContext("ephemeralStore");
     const full = getTypedContext("full");
     $: calendar = $store;
@@ -110,6 +113,11 @@
         }
         menu.showAtMouseEvent(evt);
     };
+
+    const handleClick = () => {
+        $viewing = { day: day.number, month: $index, year: year.year };
+        openAgendaView(view);
+    };
 </script>
 
 {#if $viewState == ViewState.Year && adjacent}
@@ -123,8 +131,7 @@
         class:opened
         class:today
         class:full={$full}
-        on:click={() =>
-            ($viewing = { day: day.number, month: $index, year: year.year })}
+        on:click={() => handleClick()}
         on:contextmenu={(evt) => {
             openMenu(evt);
         }}

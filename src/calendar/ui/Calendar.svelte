@@ -1,9 +1,9 @@
 <script lang="ts">
     import Nav from "./Nav.svelte";
     import Month from "./Month/Month.svelte";
-    import { ExtraButtonComponent, Menu } from "obsidian";
-    import { getTypedContext } from "../view";
-    import DayView from "./Day/DayView.svelte";
+    import { ExtraButtonComponent } from "obsidian";
+   import { getTypedContext } from "../view.utils";
+
     import { ViewState } from "src/stores/calendar.store";
     import Year from "./Year/Year.svelte";
     import Week from "./Week/Week.svelte";
@@ -29,8 +29,6 @@
     $: ephemeralStore = $ephemeral.ephemeralStore;
     $: ephemeralStore.subscribe(() => plugin.app.workspace.requestSaveLayout());
 
-    $: viewing = $ephemeral.viewing;
-
     const plugin = getTypedContext("plugin");
     let otherCalendars = writable(plugin.data.calendars);
 
@@ -52,18 +50,7 @@
         )) {
             menu.addItem((item) =>
                 item.setTitle(calendar.name).onClick(() => {
-                    const newStore = plugin.getStore(calendar.id);
-                    if (!newStore)
-                        throw new Error(
-                            "Could not find a calendar by that name",
-                        );
-                    global.set(newStore);
-                    ephemeral.set(newStore.ephemeralStore);
-                    if (view) {
-                        view.store = newStore;
-                        view.calendar = calendar.id;
-                        plugin.app.workspace.requestSaveLayout();
-                    }
+                    view.switchCalendar(calendar.id);
                 }),
             );
         }
@@ -113,13 +100,8 @@
                     dayArray={weekForDay}
                     {weekNumber}
                 />
-            {:else if $viewState == ViewState.Day}
-                <DayView />
             {/if}
         </div>
-        {#if $viewing}
-            <DayView />
-        {/if}
     </div>
 {/key}
 

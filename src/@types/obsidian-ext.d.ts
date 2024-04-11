@@ -67,5 +67,17 @@ declare module "obsidian" {
             name: "calendarium-settings-external-load",
             callback: () => any
         ): EventRef;
+
+        trigger(
+            name: "calendarium:view-parent:change-calendar",
+            data: { parent: string; calendar: string }
+        ): void;
+        on(
+            name: "calendarium:view-parent:change-calendar",
+            callback: (data: { parent: string; calendar: string }) => any
+        ): EventRef;
+    }
+    interface View {
+        protected close(): void;
     }
 }

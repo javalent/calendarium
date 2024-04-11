@@ -7,29 +7,76 @@ import {
     type EditorSuggestTriggerInfo,
     TFile,
     parseYaml,
+    type MarkdownPostProcessorContext,
+    MarkdownRenderChild,
+    Notice,
 } from "obsidian";
 import type { CalendariumCodeBlockParameters } from "src/@types";
 import Calendarium from "src/main";
 
 import Ui from "./ui/UI.svelte";
+import { nanoid } from "src/utils/functions";
+import type { CalendarStore } from "src/stores/calendar.store";
+import { ViewType, type ViewParent } from "./view.types";
 export class CodeBlockService extends Component {
     constructor(public plugin: Calendarium) {
         super();
     }
+
     onload(): void {
         this.plugin.registerMarkdownCodeBlockProcessor(
             "calendarium",
             (source, el, ctx) => {
-                this.postProcess(source, el);
+                this.postProcess(source, el, ctx);
             }
         );
         this.plugin.registerEditorSuggest(
             new CalendariumEditorSuggester(this.plugin)
         );
     }
-    postProcess(source: string, el: HTMLElement) {
+    postProcess(
+        source: string,
+        el: HTMLElement,
+        ctx: MarkdownPostProcessorContext
+    ) {
+        ctx.addChild(new CodeBlockContainer(this.plugin, source, el));
+    }
+}
+
+class CodeBlockContainer extends MarkdownRenderChild implements ViewParent {
+    ui: Ui;
+    constructor(
+        public plugin: Calendarium,
+        public source: string,
+        containerEl: HTMLElement
+    ) {
+        super(containerEl);
+    }
+    getViewType: () => string = () => ViewType.Calendarium;
+    switchCalendar(calendar: string): void {
+        const newStore = this.plugin.getStore(calendar);
+        if (!newStore) {
+            new Notice("There was an issue opening that calendar.");
+            throw new Error("Could not find a calendar by that name");
+        }
+        this.store = newStore;
+        this.calendar = calendar;
+
+        this.ui.$set({ store: this.store });
+
+        this.plugin.app.workspace.requestSaveLayout();
+        this.plugin.app.workspace.trigger(
+            "calendarium:view-parent:change-calendar",
+            { parent: this.id, calendar }
+        );
+    }
+    child: string | null;
+    id: string = nanoid(12);
+    calendar: string;
+    store: CalendarStore;
+    onload(): void {
         const params: CalendariumCodeBlockParameters =
-            parseYaml(source ?? "") ?? {};
+            parseYaml(this.source ?? "") ?? {};
         let name = params.calendar ?? this.plugin.defaultCalendar.name;
         let calendar = this.plugin.calendars.find((c) => c.name === name);
         if (!calendar) {
@@ -38,20 +85,32 @@ export class CodeBlockService extends Component {
 
         const store = this.plugin.getStore(calendar.id);
         if (!store) {
-            el.replaceWith(
+            this.containerEl.replaceWith(
                 createEl("code", {
                     text: "No calendar by that name was found.",
                 })
             );
             return;
         }
-        new Ui({
-            target: el,
+        this.store = store;
+        this.calendar = calendar.id;
+
+        this.ui = new Ui({
+            target: this.containerEl,
             props: {
-                store,
+                store: this.store,
+                view: this,
                 plugin: this.plugin,
                 full: false,
             },
+        });
+        this.plugin.register(() => {
+            this.ui?.$destroy();
+            const pre = createEl("pre");
+            pre.createEl("code", {
+                text: "Calendarium has been unloaded. Re-enable the plugin to render your calendars.",
+            });
+            this.containerEl.replaceWith(pre);
         });
     }
 }

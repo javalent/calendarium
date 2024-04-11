@@ -3,7 +3,7 @@ import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
 import CalendariumSettings from "./settings/settings.view";
 
 import type { Calendar, CalendariumData } from "./@types";
-import CalendariumView, { VIEW_TYPE } from "./calendar/view";
+import CalendariumView from "./calendar/view";
 
 import { type CalendarEventTree, Watcher } from "./watcher/watcher";
 import { API } from "./api/api";
@@ -16,45 +16,8 @@ import { CodeBlockService } from "./calendar/codeblock";
 import { DEFAULT_FORMAT } from "./utils/constants";
 import { CalendariumNotice } from "./utils/notice";
 import { CreateEventModal } from "./settings/modals/event/event";
-
-declare module "obsidian" {
-    interface App {
-        plugins: {
-            plugins: {
-                "fantasy-calendar": Plugin;
-            };
-        };
-    }
-    interface Workspace {
-        trigger(name: "parse-style-settings"): void; // trigger style settings
-        on(name: "calendarium-updated", callback: () => any): EventRef;
-        on(
-            name: "calendarium-event-update",
-            callback: (tree: CalendarEventTree) => any
-        ): EventRef;
-        on(name: "calendarium-settings-change", callback: () => any): EventRef;
-        trigger(name: "calendarium-updated"): void;
-        trigger(name: "calendarium-settings-change"): void;
-        trigger(name: "calendarium-settings-external-load"): void;
-        trigger(
-            name: "calendarium-event-update",
-            tree: CalendarEventTree
-        ): void;
-        trigger(
-            name: "link-hover",
-            popover: any, //hover popover, but don't need
-            target: HTMLElement, //targetEl
-            note: string, //linkText
-            source: string //source
-        ): void;
-        trigger(name: "calendarium-settings-loaded"): void;
-        on(name: "calendarium-settings-loaded", callback: () => any): EventRef;
-        on(
-            name: "calendarium-settings-external-load",
-            callback: () => any
-        ): EventRef;
-    }
-}
+import { ViewType } from "./calendar/view.types";
+import { AgendaView } from "./calendar/view.agenda";
 
 declare global {
     interface Window {
@@ -99,6 +62,9 @@ export default class Calendarium extends Plugin {
     }
     public onSettingsLoaded(callback: () => any) {
         this.settings$.onSettingsLoaded(callback);
+    }
+    public onLayoutReadyAndSettingsLoad(callback: () => any) {
+        this.settings$.onLayoutReadyAndSettingsLoad(callback);
     }
     public async saveCalendars() {
         await this.settings$.saveAndTrigger();
@@ -179,8 +145,12 @@ export default class Calendarium extends Plugin {
             this.register(() => delete window["Calendarium"]);
 
         this.registerView(
-            VIEW_TYPE,
+            ViewType.Calendarium,
             (leaf: WorkspaceLeaf) => new CalendariumView(leaf, this)
+        );
+        this.registerView(
+            ViewType.Agenda,
+            (leaf: WorkspaceLeaf) => new AgendaView(leaf, this)
         );
 
         new CodeBlockService(this).load();
@@ -188,13 +158,17 @@ export default class Calendarium extends Plugin {
         this.app.workspace.onLayoutReady(async () => {
             this.addCommands();
 
-            this.addRibbonIcon(VIEW_TYPE, "Open Calendarium", (evt) => {
-                this.addCalendarView({
-                    full: evt.getModifierState(
-                        Platform.isMacOS ? "Meta" : "Control"
-                    ),
-                });
-            });
+            this.addRibbonIcon(
+                ViewType.Calendarium,
+                "Open Calendarium",
+                (evt) => {
+                    this.addCalendarView({
+                        full: evt.getModifierState(
+                            Platform.isMacOS ? "Meta" : "Control"
+                        ),
+                    });
+                }
+            );
         });
         this.settings$.onLayoutReadyAndSettingsLoad(() => {
             this.watcher.load();
@@ -227,7 +201,7 @@ export default class Calendarium extends Plugin {
     addCalendarView(params: { full?: boolean; startup?: boolean } = {}) {
         if (
             params?.startup &&
-            this.app.workspace.getLeavesOfType(VIEW_TYPE)?.length
+            this.app.workspace.getLeavesOfType(ViewType.Calendarium)?.length
         )
             return;
         this.getLeaf(params?.full ?? false);
@@ -238,7 +212,7 @@ export default class Calendarium extends Plugin {
             : this.app.workspace.getRightLeaf(false);
 
         leaf?.setViewState({
-            type: VIEW_TYPE,
+            type: ViewType.Calendarium,
         });
 
         if (leaf) this.app.workspace.revealLeaf(leaf);

@@ -1,26 +1,34 @@
 <script lang="ts">
-    import { ExtraButtonComponent } from "obsidian";
-    import Flags from "../Events/Flags.svelte";
-    import MoonUI from "../Moon.svelte";
-    import { getTypedContext } from "../../view";
+    import Flags from "../ui/Events/Flags.svelte";
+    import MoonUI from "../ui/Moon.svelte";
     import { dateString } from "src/utils/functions";
     import {
-        ADD_EVENT,
         CALENDAR_SEARCH,
-        CLOSE,
         LEFT,
         RIGHT,
         setClickableIcon,
-        setNodeIcon,
     } from "src/utils/icons";
-    import { addEventWithModal } from "src/settings/modals/event/event";
-    import { derived } from "svelte/store";
+    import { derived, get, writable } from "svelte/store";
+    import type { CalendarStore } from "src/stores/calendar.store";
+    import type Calendarium from "src/main";
+    import { setTypedContext } from "../view.utils";
+    import { onDestroy } from "svelte";
 
-    const global = getTypedContext("store");
-    const plugin = getTypedContext("plugin");
-    const ephemeral = getTypedContext("ephemeralStore");
-    $: store = $global;
-    const viewing = derived([$ephemeral.viewing], ([view]) => view!);
+    export let store: CalendarStore;
+    export let plugin: Calendarium;
+    export let parent: string;
+
+    setTypedContext("store", writable(store));
+    setTypedContext("plugin", plugin);
+
+    $: ephemeral = store.getEphemeralStore(parent);
+    $: ephViewing = ephemeral.viewing;
+    $: {
+        if (!$ephViewing) {
+            $ephViewing = { ...get(store.current) };
+        }
+    }
+    $: viewing = derived([ephemeral.viewing], ([view]) => view!);
     $: date = dateString($viewing!, $store);
     $: yearCalculator = store.yearCalculator;
     $: displayedMonth = yearCalculator
@@ -30,33 +38,33 @@
     $: daysBeforeDay = $daysBeforeMonth + $viewing!.day;
     $: events = store.getEventsForDate($viewing!);
     $: moons = store.moonCache.getItemsOrRecalculate($viewing!);
-    $: displayDayNumber = $ephemeral.displayDayNumber;
-    $: displayMoons = $ephemeral.displayMoons;
+    $: displayDayNumber = ephemeral.displayDayNumber;
+    $: displayMoons = ephemeral.displayMoons;
 
-    const close = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon(CLOSE).setTooltip("Close");
-    };
+    /* onDestroy(() => {
+        ephemeral.viewing.set(null);
+    }); */
 </script>
 
 <div class="day-view">
-    <hr />
     <div class="nav">
-        <div
-            use:setClickableIcon={CALENDAR_SEARCH}
-            aria-label="Reveal on Calendar"
-            on:click={() => {
-                $ephemeral.displayDate($viewing);
-            }}
-        />
+        <div style="flex: 1;">
+            <div
+                use:setClickableIcon={CALENDAR_SEARCH}
+                aria-label="Reveal on Calendar"
+                on:click={() => {
+                    ephemeral.displayDate($viewing);
+                }}
+            />
+        </div>
         <div class="date">
             <div
                 class="arrow"
                 use:setClickableIcon={LEFT}
                 aria-label="Previous"
                 on:click={() => {
-                    $ephemeral.goToPreviousDay();
-
-                    $ephemeral.displayDate($viewing);
+                    ephemeral.goToPreviousDay();
+                    ephemeral.displayDate($viewing);
                 }}
             ></div>
 
@@ -75,18 +83,12 @@
                 use:setClickableIcon={RIGHT}
                 aria-label="Next"
                 on:click={() => {
-                    $ephemeral.goToNextDay();
-                    $ephemeral.displayDate($viewing);
+                    ephemeral.goToNextDay();
+                    ephemeral.displayDate($viewing);
                 }}
             ></div>
         </div>
-        <!-- <div class="actions">
-            <div
-                use:event
-                on:click={() => addEventWithModal(plugin, $store, $viewing)}
-            />
-        </div> -->
-        <div use:close on:click={() => $ephemeral.viewing.set(null)} />
+        <div style="flex: 1;" />
     </div>
 
     <div class="context">
@@ -118,9 +120,6 @@
         flex-flow: column nowrap;
         gap: 0.5rem;
         min-height: 300px;
-    }
-    hr {
-        margin: 0.5em 0;
     }
     .nav {
         display: flex;
