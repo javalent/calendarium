@@ -18,7 +18,7 @@
     const descFormat = () =>
         createFragment((e) => {
             e.createSpan({
-                text: "Event dates will be parsed using this format.",
+                text: "Event dates will be displayed using this format.",
             });
             e.createEl("br");
             e.createSpan({
@@ -71,7 +71,7 @@
             }}
         />
         <TextComponent
-            name={"Date format"}
+            name={"Display date format"}
             desc={descFormat()}
             value={$calendar.dateFormat ?? DEFAULT_FORMAT}
             on:blur={(evt) => {
