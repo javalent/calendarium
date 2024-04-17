@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.1](https://github.com/javalent/calendarium/compare/1.3.0...1.3.1) (2024-04-17)
+
+
+### Bug Fixes
+
+* expose events with no name as a warning ([79d0e1d](https://github.com/javalent/calendarium/commit/79d0e1d5e0b62f9fb39ccd89b5e09e541f9f327e))
+* No longer save on exit when incomplete event information is provided ([b59162e](https://github.com/javalent/calendarium/commit/b59162e6b5ae30095a72e142abbfa9e9e718fcf9))
+* Specify that the date format for a calendar is for display only ([376aa5a](https://github.com/javalent/calendarium/commit/376aa5a151e0f528d13da2d3829a6070525df3bb))
+
 ## [1.3.0](https://github.com/javalent/calendarium/compare/1.2.2...1.3.0) (2024-04-11)
 
 
