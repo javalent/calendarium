@@ -80,7 +80,7 @@ export class CreateEventModal extends CalendariumModal {
     }
     async checkCanExit() {
         if (this.isValidEvent()) return true;
-        /* if (this.plugin.data.exit.savingEvent) return true; */
+        if (this.plugin.data.exit.savingEvent) return true;
         return new Promise((resolve) => {
             const modal = new ConfirmModal(
                 this.plugin.app,
@@ -125,8 +125,7 @@ export class CreateEventModal extends CalendariumModal {
 
     async close() {
         if (await this.checkCanExit()) {
-            /* this.saved = get(this.store.valid);
-            this.calendar = get(this.store); */
+            this.saved = this.isValidEvent();
             super.close();
         }
     }
