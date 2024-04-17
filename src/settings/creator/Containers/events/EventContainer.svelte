@@ -33,6 +33,9 @@
         for (const event of events) {
             let should = true;
             if (name.length) {
+                if (!event.name) {
+                    continue;
+                }
                 const search = prepareSimpleSearch(name);
                 if (!search(event.name)) {
                     should = false;

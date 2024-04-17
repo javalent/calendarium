@@ -7,6 +7,7 @@
     import {
         EVENT_FROM_FRONTMATTER,
         EVENT_LINKED_TO_NOTE,
+        WARNING,
         setNodeIcon,
     } from "src/utils/icons";
     import { createEventDispatcher } from "svelte";
@@ -21,6 +22,7 @@
     const dispatch = createEventDispatcher();
 
     export let event: EventLike;
+
     /* export let date: CalDate; */
     export let dayView: boolean = false;
 
@@ -31,27 +33,6 @@
         start = false,
         end = false,
         first = false;
-    /*     $: {
-        if (event.end != undefined && !dayView) {
-            multi = true;
-            start =
-                date.day === event.date.day &&
-                (event.date.month == undefined ||
-                    date.month == event.date.month) &&
-                (event.date.year == undefined || date.year === event.date.year);
-            first = start || date.day == 1;
-            end =
-                date.day === event.end.day &&
-                (event.end.month == undefined ||
-                    date.month == event.end.month) &&
-                (event.end.year == undefined || date.year === event.end.year);
-            if (start && end) {
-                multi = false;
-                start = false;
-                end = false;
-            }
-        }
-    } */
 
     $: calendar = $store;
     $: categories = $store.categories;
@@ -134,9 +115,16 @@
     on:contextmenu={contextMenu}
 >
     <div class="flag-content">
-        <span class:clamp={!dayView} class:day-view={dayView}>
-            {getName(event)}</span
-        >
+        {#if !event.name}
+            <div class="no-name">
+                <div use:setNodeIcon={WARNING} />
+                <span>(no name)</span>
+            </div>
+        {:else}
+            <span class:clamp={!dayView} class:day-view={dayView}>
+                {getName(event)}</span
+            >
+        {/if}
         {#if event.note}
             <div class="note" use:note />
         {/if}
@@ -167,6 +155,11 @@
         justify-content: space-between;
     }
 
+    .no-name {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
     .clamp {
         display: -webkit-box;
         -webkit-line-clamp: 2;

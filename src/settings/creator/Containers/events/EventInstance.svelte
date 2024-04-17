@@ -6,9 +6,15 @@
         TFile,
         prepareSimpleSearch,
         renderMatches,
+        setIcon,
     } from "obsidian";
     import Dot from "../../Utilities/Dot.svelte";
-    import { EDIT, EVENT_FROM_FRONTMATTER, TRASH } from "src/utils/icons";
+    import {
+        EDIT,
+        EVENT_FROM_FRONTMATTER,
+        TRASH,
+        WARNING,
+    } from "src/utils/icons";
     import type { Writable } from "svelte/store";
     import { getContext } from "svelte";
 
@@ -52,7 +58,10 @@
     let nameEl: HTMLElement, descEl: HTMLElement;
     $: {
         if (nameEl && descEl) {
-            if ($nameFilter.length) {
+            if (!event.name) {
+                setIcon(nameEl.createDiv(), WARNING);
+                nameEl.createSpan({ text: "(no name)" });
+            } else if ($nameFilter.length) {
                 const nameResult = prepareSimpleSearch($nameFilter)(event.name);
                 if (nameResult) {
                     nameEl.empty();
