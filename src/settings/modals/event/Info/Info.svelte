@@ -1,6 +1,6 @@
 <script lang="ts">
     import { TextComponent, type App, TFile } from "obsidian";
-    import { FileInputSuggest } from "obsidian-utilities";
+    import { FileInputSuggest } from "@javalent/utilities";
     import { CalEventHelper } from "src/events/event.helper";
     import { EventType } from "src/events/event.types";
     import type Calendarium from "src/main";

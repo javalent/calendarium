@@ -36,7 +36,7 @@ import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import SettingsService from "./settings.service";
 import { RestoreCalendarModal } from "./modals/restore";
-import { FolderInputSuggest } from "obsidian-utilities";
+import { FolderInputSuggest } from "@javalent/utilities";
 import { getPresetCalendar } from "./preset";
 import CreatorController from "./creator/CreatorController.svelte";
 import {
