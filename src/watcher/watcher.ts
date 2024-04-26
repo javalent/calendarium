@@ -4,6 +4,7 @@ import {
     TFolder,
     getAllTags,
     FuzzySuggestModal,
+    TAbstractFile,
 } from "obsidian";
 import type { Calendar } from "src/@types";
 import type Calendarium from "src/main";
@@ -98,12 +99,6 @@ export class Watcher extends Component {
             },
         });
 
-        /** Send the worker the calendars so I don't have to with every message. */
-        this.worker.postMessage<CalendarsMessage>({
-            type: "calendars",
-            calendars: this.calendars,
-        });
-
         /** Plugin's saveCalendars method was called (calendar settings updated). */
         this.registerEvent(
             this.plugin.app.workspace.on("calendarium-updated", () => {
@@ -114,17 +109,6 @@ export class Watcher extends Component {
             })
         );
 
-        /** Send the workers the options so I don't have to with every message. */
-        this.worker.postMessage<OptionsMessage>({
-            type: "options",
-            parseTitle: this.plugin.data.parseDates,
-            addToDefaultIfMissing: this.plugin.data.addToDefaultIfMissing,
-            format: this.plugin.format,
-            defaultCalendar: this.plugin.defaultCalendar?.name,
-            inlineEventsTag: this.plugin.data.inlineEventsTag,
-            paths: this.plugin.data.paths,
-            debug: this.plugin.data.debug,
-        });
         this.registerEvent(
             this.plugin.app.workspace.on("calendarium-settings-change", () => {
                 this.worker.postMessage<OptionsMessage>({
@@ -145,7 +129,7 @@ export class Watcher extends Component {
             this.metadataCache.on("changed", (file) => {
                 /** Already being parsed. */
                 if (this.queue.has(file.path)) return;
-                this.startParsing([file.path]);
+                this.parseFile(file);
             })
         );
         /** A file has been renamed and should be checked for events.
@@ -163,7 +147,7 @@ export class Watcher extends Component {
                     type: "calendars",
                     calendars: this.calendars,
                 });
-                this.startParsing([abstractFile.path]);
+                this.parseFile(abstractFile);
             })
         );
         /** A file has been deleted and should be checked for events to unlink. */
@@ -182,6 +166,24 @@ export class Watcher extends Component {
         );
 
         //worker messages
+        /** Send the worker the calendars so I don't have to with every message. */
+        this.worker.postMessage<CalendarsMessage>({
+            type: "calendars",
+            calendars: this.calendars,
+        });
+
+        /** Send the workers the options so I don't have to with every message. */
+        this.worker.postMessage<OptionsMessage>({
+            type: "options",
+            parseTitle: this.plugin.data.parseDates,
+            addToDefaultIfMissing: this.plugin.data.addToDefaultIfMissing,
+            format: this.plugin.format,
+            defaultCalendar: this.plugin.defaultCalendar?.name,
+            inlineEventsTag: this.plugin.data.inlineEventsTag,
+            paths: this.plugin.data.paths,
+            debug: this.plugin.data.debug,
+        });
+
         /** The worker will ask for file information from files in its queue here */
         this.worker.addEventListener(
             "message",
@@ -205,8 +207,7 @@ export class Watcher extends Component {
                             data,
                         });
                     } else if (file instanceof TFolder) {
-                        const paths = file.children.map((f) => f.path);
-                        this.startParsing(paths);
+                        this.parseFile(file);
                     }
                 }
             }
@@ -241,6 +242,7 @@ export class Watcher extends Component {
                 }
             }
         );
+
         this.worker.addEventListener(
             "message",
             async (evt: MessageEvent<NewCategoryMessage>) => {
@@ -288,35 +290,49 @@ export class Watcher extends Component {
                 }
             }
         );
+
         this.start();
     }
     start(calendar?: Calendar) {
         const calendars = calendar ? [calendar] : this.calendars;
         if (!calendars.length) return;
-        let folders: Set<string> = new Set();
 
         const folder = this.vault.getRoot();
         if (!folder || !(folder instanceof TFolder)) return;
-        for (const child of folder.children) {
-            folders.add(child.path);
-        }
-
-        if (!folders.size) return;
 
         if (this.plugin.data.debug) {
             if (calendar) {
-                console.info(
-                    `Starting rescan for ${calendar.name} (${folders.size})`
-                );
+                console.info(`Starting rescan for ${calendar.name}`);
             } else {
                 console.info(
-                    `Starting rescan for ${calendars.length} calendars (${folders.size})`
+                    `Starting rescan for ${calendars.length} calendars`
                 );
             }
         }
-        this.startParsing([...folders]);
-    }
 
+        this.parseFile(folder);
+    }
+    getFiles(folder: TAbstractFile): string[] {
+        let files = [];
+        if (folder instanceof TFolder) {
+            for (const child of folder.children) {
+                files.push(child.path);
+            }
+        }
+
+        if (folder instanceof TFile && folder.extension === "md") {
+            files.push(folder.path);
+        }
+        return files;
+    }
+    parseFile(folder: TAbstractFile) {
+        const parsing: Set<string> = new Set();
+        for (const path of this.getFiles(folder)) {
+            parsing.add(path);
+        }
+
+        this.startParsing([...parsing]);
+    }
     startParsing(paths: string[]) {
         for (const path of paths) {
             this.queue.add(path);
