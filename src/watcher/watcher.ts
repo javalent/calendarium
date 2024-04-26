@@ -291,7 +291,9 @@ export class Watcher extends Component {
             }
         );
 
-        this.start();
+        this.plugin.app.workspace.onLayoutReady(() => {
+            this.start();
+        });
     }
     start(calendar?: Calendar) {
         const calendars = calendar ? [calendar] : this.calendars;
