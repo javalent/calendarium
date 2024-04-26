@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.2](https://github.com/javalent/calendarium/compare/1.3.1...1.3.2) (2024-04-26)
+
+
+### Bug Fixes
+
+* Defer watcher until layout ready to help improve launch times ([1fe974b](https://github.com/javalent/calendarium/commit/1fe974bd83c8d7489840d0b46875f9cfb683e42a))
+* Switch to @javalent/utilities module ([d309b7e](https://github.com/javalent/calendarium/commit/d309b7e2d69ec97900797878b49400f20c3ccc8e))
+* Watcher should now skip non-markdown files ([23b9f42](https://github.com/javalent/calendarium/commit/23b9f42f0452130a7a0d1f2a3f80baf465b5e3cb))
+
 ## [1.3.1](https://github.com/javalent/calendarium/compare/1.3.0...1.3.1) (2024-04-17)
 
 
