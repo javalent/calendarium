@@ -11,8 +11,8 @@ export interface OptionsMessage {
     addToDefaultIfMissing: boolean;
     format: string;
     parseTitle: boolean;
-    paths: [string, string][];
-    inlineEventsTag: string;
+    paths: (readonly [string, string])[];
+    inlineEventsTag?: string | null;
     debug: boolean;
 }
 export interface CalendarsMessage {

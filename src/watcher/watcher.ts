@@ -10,7 +10,7 @@ import type { Calendar } from "src/@types";
 import type Calendarium from "src/main";
 //have to ignore until i fix typing issue
 //@ts-expect-error
-import Worker from "./watcher.worker";
+import CalWorker from "./watcher.worker";
 import type {
     CalendarsMessage,
     GetFileCacheMessage,
@@ -64,7 +64,7 @@ export class Watcher extends Component {
         super();
     }
 
-    worker = new Worker();
+    worker: Worker = new CalWorker();
     onload() {
         /** Rescan for events for all calendars */
         this.plugin.addCommand({
@@ -120,6 +120,7 @@ export class Watcher extends Component {
                     defaultCalendar: this.plugin.defaultCalendar?.name,
                     paths: this.plugin.data.paths,
                     debug: this.plugin.data.debug,
+                    inlineEventsTag: this.plugin.data.inlineEventsTag,
                 });
             })
         );
@@ -203,7 +204,7 @@ export class Watcher extends Component {
                             path,
                             cache,
                             file: { path: file.path, basename: file.basename },
-                            allTags,
+                            allTags: allTags ?? [],
                             data,
                         });
                     } else if (file instanceof TFolder) {
@@ -347,6 +348,5 @@ export class Watcher extends Component {
 
     onunload() {
         this.worker.terminate();
-        this.worker = null;
     }
 }

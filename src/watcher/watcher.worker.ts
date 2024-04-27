@@ -15,7 +15,10 @@ import type {
 
 const ctx: Worker = self as any;
 
-function resolveTags(inlineTags: (string | null)[], allTags: string[]) {
+function resolveTags(
+    inlineTags: (string | null | undefined)[],
+    allTags: string[]
+) {
     return inlineTags.some(
         (tag) => tag && (allTags.includes(tag) || allTags.includes(`#${tag}`))
     );
@@ -30,8 +33,8 @@ class Parser {
     addToDefaultIfMissing: boolean;
     debug: boolean;
     eventHelpers: Map<string, CalEventHelper> = new Map();
-    paths: [string, string][];
-    inlineEventsTag: string | null = null;
+    paths: (readonly [string, string])[];
+    inlineEventsTag?: string | null = null;
 
     constructor() {
         //Register Options Changer
