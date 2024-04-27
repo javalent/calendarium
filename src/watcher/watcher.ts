@@ -191,9 +191,11 @@ export class Watcher extends Component {
             async (event: MessageEvent<GetFileCacheMessage>) => {
                 if (event.data.type == "get") {
                     const { path } = event.data;
+
                     this.queue.delete(path);
                     const file =
                         this.plugin.app.vault.getAbstractFileByPath(path);
+
                     if (file instanceof TFile) {
                         const cache =
                             this.metadataCache.getFileCache(file) ?? {};
@@ -208,7 +210,13 @@ export class Watcher extends Component {
                             data,
                         });
                     } else if (file instanceof TFolder) {
-                        this.parseFile(file);
+                        this.worker.postMessage<Partial<FileCacheMessage>>({
+                            type: "file",
+                            path,
+                        });
+                        for (const child of file.children) {
+                            this.parseFile(child);
+                        }
                     }
                 }
             }
@@ -220,7 +228,6 @@ export class Watcher extends Component {
             async (evt: MessageEvent<UpdateEventMessage>) => {
                 if (evt.data.type == "update") {
                     const { id, index, event, original } = evt.data;
-
                     const calendar = this.calendars.find((c) => c.id == id);
 
                     if (!calendar) return;
@@ -317,17 +324,15 @@ export class Watcher extends Component {
     }
     getFiles(folder: TAbstractFile): string[] {
         let files = [];
-        if (folder instanceof TFolder) {
-            for (const child of folder.children) {
-                files.push(child.path);
-            }
-        }
-
-        if (folder instanceof TFile && folder.extension === "md") {
+        if (
+            folder instanceof TFolder ||
+            (folder instanceof TFile && folder.extension === "md")
+        ) {
             files.push(folder.path);
         }
         return files;
     }
+
     parseFile(folder: TAbstractFile) {
         const parsing: Set<string> = new Set();
         for (const path of this.getFiles(folder)) {

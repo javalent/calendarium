@@ -110,8 +110,26 @@ class Parser {
         this.parsing = true;
         while (this.queue.length) {
             const path = this.queue.shift();
+
             if (!path) break;
-            await this.getFileData(path);
+
+            const event = await this.getFileData(path);
+
+            if (!event || !path.endsWith(".md")) {
+                continue;
+            }
+            if (!event.data) continue;
+
+            const { data, cache, allTags, file } = event;
+
+            if (this.debug) {
+                console.debug(
+                    `Parsing ${path} for calendar events (${this.queue.length} to go)`
+                );
+            }
+            setTimeout(() => {
+                this.parseFileForEvents(data, cache, allTags, file);
+            }, 0);
         }
         this.parsing = false;
         if (this.debug) {
@@ -120,7 +138,20 @@ class Parser {
 
         ctx.postMessage<SaveMessage>({ type: "save" });
     }
-    async getFileData(path: string): Promise<void> {
+    async getFileData(path: string): Promise<FileCacheMessage | null> {
+        return new Promise((resolve) => {
+            ctx.addEventListener(
+                "message",
+                (event: MessageEvent<FileCacheMessage | null>) => {
+                    if (event.data?.type == "file") {
+                        resolve(event.data);
+                    }
+                }
+            );
+            ctx.postMessage<GetFileCacheMessage>({ path, type: "get" });
+        });
+    }
+    async getFileDataOld(path: string): Promise<void> {
         let self = this;
         return new Promise((resolve) => {
             function resolution(
@@ -136,6 +167,9 @@ class Parser {
 
                 ctx.removeEventListener("message", resolution);
                 const { data, cache, allTags, file } = event.data;
+
+                if (!data) return;
+
                 if (path.endsWith(".md")) {
                     if (self.debug) {
                         console.debug(
