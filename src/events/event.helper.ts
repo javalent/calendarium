@@ -67,7 +67,7 @@ export class CalEventHelper {
     constructor(calendar: Calendar, parseTitleForEvents: boolean) {
         this.calendar = calendar;
         this.useFilenameForEvents = parseTitleForEvents;
-        this.formatString = calendar.dateFormat || DEFAULT_FORMAT;
+        this.formatString = /* calendar.dateFormat  || */ DEFAULT_FORMAT;
         this.formatDigest = this.formatString
             .toUpperCase()
             .replace(/[^\w]/g, "")
