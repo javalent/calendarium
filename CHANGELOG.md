@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/javalent/calendarium/compare/1.3.3...1.3.4) (2024-07-18)
+
+
+### Bug Fixes
+
+* Fix issue where display date format could interfere with event parsing. ([17638df](https://github.com/javalent/calendarium/commit/17638df6d9b0e51d7902cd7af8a5296b76639a60))
+
 ## [1.3.3](https://github.com/javalent/calendarium/compare/1.3.2...1.3.3) (2024-04-27)
 
 
