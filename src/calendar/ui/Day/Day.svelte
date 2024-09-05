@@ -27,6 +27,7 @@
     const ephemeral = getTypedContext("ephemeralStore");
     const full = getTypedContext("full");
     $: calendar = $store;
+    $: config = calendar.staticStore.staticConfiguration;
     $: index = month.index;
     $: year = month.year;
     $: current = $store.current;
@@ -56,6 +57,30 @@
         $viewing.day == day.number &&
         $viewing.month == $index &&
         $viewing.year == year.year;
+
+    $: number = `${day.number}`;
+    $: {
+        if ($config.dayDisplayCallback) {
+            try {
+                const frame = document.body.createEl("iframe");
+                const funct = (frame.contentWindow as any).Function;
+                const func = new funct(
+                    "day",
+                    "calendar",
+                    $config.dayDisplayCallback,
+                );
+                number = func.call(undefined, day, $calendar) ?? number;
+                document.body.removeChild(frame);
+            } catch (e) {
+                console.error(e);
+            }
+            if (
+                number == null ||
+                (typeof number != "number" && typeof number != "string")
+            )
+                number = `${day.number}`;
+        }
+    }
 
     const openMenu = (evt: MouseEvent) => {
         const menu = new CalendariumMenu(plugin);
@@ -142,7 +167,7 @@
         {/if}
         {#if day.type === TimeSpanType.Day || day.numbered}
             <span class="day-number">
-                {day.number}
+                {number}
             </span>
         {/if}
         {#key $events}

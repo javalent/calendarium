@@ -4,10 +4,12 @@
     import CurrentDate from "./current/CurrentDate.svelte";
     import LeapDayContainer from "./leapdays/LeapDayContainer.svelte";
     import YearContainer from "./years/YearContainer.svelte";
+    import DayCallback from "./day-callback/DayCallback.svelte";
 </script>
 
 <CurrentDate />
 <WeekdayContainer />
 <MonthContainer />
-<LeapDayContainer  />
-<YearContainer  />
+<LeapDayContainer />
+<YearContainer />
+<DayCallback />

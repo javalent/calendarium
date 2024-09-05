@@ -530,6 +530,7 @@ function createStaticStore(store: Writable<Calendar>) {
             offset: data.offset,
             incrementDay: data.incrementDay,
             useCustomYears: data.useCustomYears,
+            dayDisplayCallback: data.dayDisplayCallback,
         };
     });
     return {

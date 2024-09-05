@@ -37,6 +37,7 @@ export type StaticCalendarData = {
     years?: Year[];
     padMonths?: number;
     padDays?: number;
+    dayDisplayCallback?: string;
 };
 
 /**
