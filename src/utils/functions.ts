@@ -120,7 +120,10 @@ function getRecurringDay(day: FullCalEventDateBit): string {
     if (day[1] == null && day[0] != null) {
         return `every day after ${day[0]}`;
     }
-    return `${day[0]}-${day[1]}`;
+    if (day[0] == null || day[1] == null) {
+        return "";
+    } 
+    return `${ordinal(day[0])}—${ordinal(day[1])}`;
 }
 export function eventDateString(event: CalEvent, calendar: Calendar) {
     switch (event.type) {
