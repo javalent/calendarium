@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/javalent/calendarium/compare/1.3.3...1.4.0) (2024-09-05)
+
+
+### Features
+
+* Adds ability to specify a callback to obtain the displayed day number in the calendar UI ([524796c](https://github.com/javalent/calendarium/commit/524796c4e7049e1eba318759b9bf56f8f2e2273f))
+
+
+### Bug Fixes
+
+* Fix issue where display date format could interfere with event parsing. ([17638df](https://github.com/javalent/calendarium/commit/17638df6d9b0e51d7902cd7af8a5296b76639a60))
+* Fixes tests ([bbbf752](https://github.com/javalent/calendarium/commit/bbbf7522f1da2fafa16c5c77a550aa90bae162f8))
+
 ## [1.3.3](https://github.com/javalent/calendarium/compare/1.3.2...1.3.3) (2024-04-27)
 
 
