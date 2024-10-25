@@ -20,7 +20,7 @@
 </script>
 
 {#if !store}
-    <p>No calendars created! Create one in settings to get started.</p>
+    <p>Could not find linked calendar.</p>
 {:else}
     {#key store}
         <Agenda />
