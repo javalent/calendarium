@@ -19,6 +19,7 @@
     import { isCalEvent } from "src/events/event.types";
     import { isEra } from "src/schemas/enums";
     import { formatEra } from "src/utils/functions";
+    import { SettingsService } from "src/settings/settings.service";
     const dispatch = createEventDispatcher();
 
     export let event: EventLike;
@@ -78,9 +79,13 @@
                 }),
             );
             menu.addItem((item) =>
-                item.setTitle("Delete event").onClick(() => {
+                item.setTitle("Delete event").onClick(async () => {
                     if (!isCalEvent(event)) return;
                     $store.eventStore.removeEvents(event);
+                    $calendar.events = $calendar.events.filter(
+                        (e) => e.id != event.id,
+                    );
+                    await SettingsService.saveCalendars();
                 }),
             );
         }
