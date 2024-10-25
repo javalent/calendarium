@@ -13,12 +13,7 @@ import {
     writable,
 } from "svelte/store";
 import { YearStoreCache } from "./years.store";
-import {
-    compareDates,
-    compareEvents,
-    dateString,
-    sortEventList,
-} from "src/utils/functions";
+import { compareDates, dateString } from "src/utils/functions";
 import { MoonCache } from "./cache/moon-cache";
 import type Calendarium from "src/main";
 import { EventStore } from "./events.store";

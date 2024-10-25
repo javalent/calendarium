@@ -1,14 +1,13 @@
 import { derived, get } from "svelte/store";
-import type { StaticStore } from "./calendar.store";
-import type { CalDate, CalEvent } from "src/@types";
-import { sortEventList, wrap } from "../utils/functions";
+import { type StaticStore } from "./calendar.store";
+import { type CalDate } from "src/@types";
+import { daysFromYearOne, getFirstDayOfYear, leapDaysBeforeYear, wrap } from "../utils/functions";
 import { MonthStore } from "./month.store";
 import {
     type Month,
     type Week,
     type LeapDay,
     type Era,
-    TimeSpanType,
 } from "src/schemas/calendar/timespans";
 
 /* export type YearStore = ReturnType<typeof createYearStore>; */
@@ -135,101 +134,4 @@ export class YearStore {
         }
         return monthStore;
     }
-}
-
-export function getFirstDayOfYear(
-    year: number,
-    months: Month[],
-    weekdays: Week,
-    leapDays: LeapDay[],
-    overflow: boolean,
-    firstWeekDay: number,
-    offset?: number
-) {
-    if (!overflow) return 0;
-    if (year === 1) return firstWeekDay;
-
-    /** If the year is negative, then everything needs to be inverted. */
-    const mult = year < 0 ? -1 : 1;
-
-    return wrap(
-        mult *
-            ((daysFromYearOne(year, months, leapDays) % weekdays.length) +
-                mult * firstWeekDay +
-                mult * (offset ?? 0)),
-        weekdays.length
-    );
-}
-
-/**
- * This needs to calculate how many days there are between a given year and a hypothetical "year zero".
- *
- * If the year passed in is negative, it should calcaulate "up".
- */
-export function daysFromYearOne(
-    original: number,
-    months: Month[],
-    leapDays: LeapDay[],
-    includeIntercalary: boolean = false
-) {
-    if (original == 1) return 0;
-    let year = original >= 1 ? original : original + 1;
-
-    return (
-        Math.abs(year - 1) *
-            months
-                .filter((m) => includeIntercalary || m.type == "month")
-                .reduce((a, b) => a + b.length, 0) +
-        leapDaysBeforeYear(original, leapDays)
-    );
-}
-
-export function leapDaysBeforeYear(original: number, leapDays: LeapDay[]) {
-    let year = Math.abs(original);
-
-    /** If we're checking year 1, there are no leap days. */
-    if (year == 1) return 0;
-    /** Subtract 1 from tester. We're looking for leap days BEFORE the year.
-     * If the year is negative, then we don't want to substract anything.
-     */
-    const yearPrior = original < 0 ? year : year - 1;
-
-    let total = 0;
-    /** Iterate over each leap day. */
-    for (const { interval, offset } of leapDays.filter((l) => !l.intercalary)) {
-        let leapdays = 0;
-
-        /** Iterate over each condition on each leapday. */
-        for (let i = 0; i < interval.length; i++) {
-            const condition = interval[i];
-            /** Determine how many leap days match non-exclusive rules AFTER this rule.
-             * This has to be done to avoid "double-counting" days for days that match multiple rules.
-             */
-            const rest = interval
-                .slice(i + 1)
-                .filter((c) => !c.exclusive)
-                .map((c) =>
-                    Math.floor(
-                        (yearPrior + (c.ignore ? 0 : offset)) / c.interval
-                    )
-                )
-                .reduce((a, b) => a + b, 0);
-            /** Calculate how many days match this rule. */
-            const calc = Math.floor(
-                (yearPrior + (condition.ignore ? 0 : offset)) /
-                    condition.interval
-            );
-            if (condition.exclusive) {
-                /** If the rule is exlusive, subtract the result from the total, then add in the rest. */
-                leapdays -= calc;
-                leapdays += rest;
-            } else {
-                /** If the rule is exlusive, add the result to the total, then subtract out the rest. */
-                leapdays += calc;
-                leapdays -= rest;
-            }
-        }
-        total += leapdays;
-    }
-    return total;
 }

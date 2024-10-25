@@ -1,5 +1,5 @@
-import type { Calendar } from "../src/@types/calendar";
-import { leapDaysBeforeYear } from "../src/stores/years.store";
+import type { Calendar } from "../src/schemas/calendar";
+import { leapDaysBeforeYear } from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 import { vi, test, expect } from "vitest";
 

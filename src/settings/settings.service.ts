@@ -4,7 +4,6 @@ import {
     type PluginManifest,
     parseYaml,
     setIcon,
-    debounce,
     Scope,
 } from "obsidian";
 import type {
