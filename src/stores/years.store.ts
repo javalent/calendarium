@@ -1,14 +1,9 @@
 import { derived, get } from "svelte/store";
 import { type StaticStore } from "./calendar.store";
-import { type CalDate } from "src/@types";
-import { daysFromYearOne, getFirstDayOfYear, leapDaysBeforeYear, wrap } from "../utils/functions";
+import { type CalDate } from "src/schemas";
+import { daysFromYearOne, getFirstDayOfYear } from "../utils/functions";
 import { MonthStore } from "./month.store";
-import {
-    type Month,
-    type Week,
-    type LeapDay,
-    type Era,
-} from "src/schemas/calendar/timespans";
+import { type Era } from "src/schemas/calendar/timespans";
 
 /* export type YearStore = ReturnType<typeof createYearStore>; */
 export type YearCalculatorCache = Map<number, YearStore>;

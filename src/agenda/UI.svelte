@@ -28,12 +28,4 @@
 {/if}
 
 <style scoped>
-    .calendar-container {
-        padding: 0 8px 20px 8px;
-        background: inherit;
-        display: flex;
-        flex-flow: column;
-        overflow: auto;
-        height: 100%;
-    }
 </style>
