@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.1](https://github.com/javalent/calendarium/compare/1.4.0...1.4.1) (2024-10-25)
+
+
+### Bug Fixes
+
+* Improves message when improper calendar state sent to Agenda view ([b9a5db5](https://github.com/javalent/calendarium/commit/b9a5db5b1fc0d6a646e86bfa19d22b9789ff6c71))
+* **refactor:** Migrated to new singleton settings service, removed some plugin dependencies ([c2b9d16](https://github.com/javalent/calendarium/commit/c2b9d16c274248e1cf5f2f44422ba8aa5a907f10))
+* Removing an event from the UI now saves ([5bbe3bf](https://github.com/javalent/calendarium/commit/5bbe3bf870f637010431b1e7e2d9c59a6b4ea46a))
+* Tests ([e02cec9](https://github.com/javalent/calendarium/commit/e02cec9ec279aaf952942ef1f7717575a7249c0c))
+* Updates to the calendar now properly refresh linked Agenda views ([e838c7a](https://github.com/javalent/calendarium/commit/e838c7afb68c208a1149ff17f41a104bdea5cb5b))
+
 ## [1.4.0](https://github.com/javalent/calendarium/compare/1.3.3...1.4.0) (2024-09-05)
 
 
