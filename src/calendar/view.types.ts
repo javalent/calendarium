@@ -45,6 +45,7 @@ export interface CalendarContext {
     ephemeralStore: Writable<EphemeralStore>;
     full: Writable<boolean>;
     monthInFrame: Writable<number | null>;
+    parent: string;
 }
 
 export interface ViewParent extends Component {

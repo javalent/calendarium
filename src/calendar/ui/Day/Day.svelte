@@ -14,7 +14,7 @@
     } from "src/schemas/calendar/timespans";
     import CalendariumMenu from "src/utils/menu";
     import { isCalEvent } from "src/events/event.types";
-    import { openAgendaView } from "src/calendar/view.agenda";
+    import { openAgendaView } from "src/agenda/view.agenda";
     import { getTypedContext } from "src/calendar/view.utils";
 
     export let month: MonthStore;

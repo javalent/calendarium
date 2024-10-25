@@ -6,14 +6,14 @@ import {
     type ViewParent,
     type CalendariumViewStates,
     ViewType,
-} from "./view.types";
-import Agenda from "./agenda/Agenda.svelte";
-import CalendariumView from "./view";
+} from "../calendar/view.types";
+import UI from "./UI.svelte";
+import CalendariumView from "../calendar/view";
 
 export class AgendaView extends ItemView {
     navigation: boolean = false;
-    store: CalendarStore;
-    ui: Agenda;
+    store: CalendarStore | null;
+    ui: UI;
     calendar: string;
     id: string = nanoid(12);
     parent: string;
@@ -29,6 +29,15 @@ export class AgendaView extends ItemView {
                     this.setStore(calendar);
                 }
             )
+        );
+        this.plugin.registerEvent(
+            this.app.workspace.on("calendarium-updated", () => {
+                if (!this.plugin.hasCalendar(this.calendar)) {
+                    this.calendar = this.plugin.defaultCalendar?.id;
+                }
+                this.store = this.plugin.getStore(this.calendar);
+                this.ui.$set({ store: this.store });
+            })
         );
     }
     async setState(
@@ -62,7 +71,7 @@ export class AgendaView extends ItemView {
         if (store) {
             this.store = store;
             if (!this.ui) {
-                this.ui = new Agenda({
+                this.ui = new UI({
                     target: this.contentEl,
                     props: {
                         store: this.store,
@@ -95,7 +104,7 @@ export class AgendaView extends ItemView {
     protected async onClose(): Promise<void> {
         this.ui?.$destroy();
         super.onClose();
-        this.store.getEphemeralStore(this.parent).viewing.set(null);
+        this.store?.getEphemeralStore(this.parent).viewing.set(null);
     }
 }
 

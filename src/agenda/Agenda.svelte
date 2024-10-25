@@ -1,6 +1,7 @@
 <script lang="ts">
-    import Flags from "../ui/Events/Flags.svelte";
-    import MoonUI from "../ui/Moon.svelte";
+    import { getTypedContext } from "src/calendar/view.utils";
+    import Flags from "../calendar/ui/Events/Flags.svelte";
+    import MoonUI from "../calendar/ui/Moon.svelte";
     import { dateString } from "src/utils/functions";
     import {
         CALENDAR_SEARCH,
@@ -8,36 +9,29 @@
         RIGHT,
         setClickableIcon,
     } from "src/utils/icons";
-    import { derived, get, writable } from "svelte/store";
-    import type { CalendarStore } from "src/stores/calendar.store";
-    import type Calendarium from "src/main";
-    import { setTypedContext } from "../view.utils";
-    import { onDestroy } from "svelte";
+    import { derived, get } from "svelte/store";
 
-    export let store: CalendarStore;
-    export let plugin: Calendarium;
-    export let parent: string;
+    const store = getTypedContext("store");
+    const parent = getTypedContext("parent");
 
-    setTypedContext("store", writable(store));
-    setTypedContext("plugin", plugin);
-
-    $: ephemeral = store.getEphemeralStore(parent);
+    $: calendar = $store;
+    $: ephemeral = $store.getEphemeralStore(parent);
     $: ephViewing = ephemeral.viewing;
     $: {
         if (!$ephViewing) {
-            $ephViewing = { ...get(store.current) };
+            $ephViewing = { ...get($store.current) };
         }
     }
     $: viewing = derived([ephemeral.viewing], ([view]) => view!);
-    $: date = dateString($viewing!, $store);
-    $: yearCalculator = store.yearCalculator;
+    $: date = dateString($viewing!, $calendar);
+    $: yearCalculator = $store.yearCalculator;
     $: displayedMonth = yearCalculator
         .getYearFromCache($viewing!.year)
         .getMonthFromCache($viewing!.month);
     $: daysBeforeMonth = displayedMonth.daysBefore;
     $: daysBeforeDay = $daysBeforeMonth + $viewing!.day;
-    $: events = store.getEventsForDate($viewing!);
-    $: moons = store.moonCache.getItemsOrRecalculate($viewing!);
+    $: events = $store.getEventsForDate($viewing!);
+    $: moons = $store.moonCache.getItemsOrRecalculate($viewing!);
     $: displayDayNumber = ephemeral.displayDayNumber;
     $: displayMoons = ephemeral.displayMoons;
 

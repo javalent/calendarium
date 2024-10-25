@@ -297,8 +297,6 @@ class SettingsServiceClass {
     }
 
     public async saveCalendars() {
-        console.log("🚀 ~ file: settings.service.ts:300 ~ saveCalendars:");
-
         await this.saveAndTrigger();
     }
     /**

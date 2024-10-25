@@ -17,7 +17,7 @@ import { DEFAULT_FORMAT } from "./utils/constants";
 import { CalendariumNotice } from "./utils/notice";
 
 import { ViewType } from "./calendar/view.types";
-import { AgendaView } from "./calendar/view.agenda";
+import { AgendaView } from "./agenda/view.agenda";
 
 declare global {
     interface Window {
