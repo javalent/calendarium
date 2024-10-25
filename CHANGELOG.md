@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/javalent/calendarium/compare/1.4.1...1.4.2) (2024-10-25)
+
+
+### Bug Fixes
+
+* **chore:** Fix import paths ([85ba76a](https://github.com/javalent/calendarium/commit/85ba76abdd3e0a42359823d9943dfab1a9090dd8))
+
 ## [1.4.1](https://github.com/javalent/calendarium/compare/1.4.0...1.4.1) (2024-10-25)
 
 
