@@ -2,6 +2,7 @@ import Calendarium from "src/main";
 import { CalendarAPI } from "./calendar";
 import type { CalDate, Calendar } from "src/@types";
 import type { CalendarStore } from "src/stores/calendar.store";
+import { SettingsService } from "src/settings/settings.service";
 
 export class API {
     constructor(private plugin: Calendarium) {}
@@ -9,7 +10,7 @@ export class API {
         let store: CalendarStore | null = null;
         if (typeof calendar === "string") {
             store = this.plugin.getStore(
-                this.plugin.data.calendars.find((c) => c.name == calendar)
+                SettingsService.getCalendars().find((c) => c.name == calendar)
                     ?.id ?? ""
             );
         } else {
@@ -33,7 +34,7 @@ export class API {
      * Get a list of calendar names.
      */
     getCalendars(): string[] {
-        return this.plugin.data.calendars.map((c) => c.name);
+        return SettingsService.getCalendars().map((c) => c.name);
     }
 
     /**
@@ -44,10 +45,10 @@ export class API {
      * @returns An instance of the Calendar API.
      */
     getAPI(calendarName?: string): CalendarAPI {
-        const calendar = this.plugin.data.calendars.find((c) =>
+        const calendar = SettingsService.getCalendars().find((c) =>
             calendarName
                 ? c.name == calendarName
-                : c.id == this.plugin.data.defaultCalendar
+                : c.id == SettingsService.getData().defaultCalendar
         );
 
         if (!calendar)

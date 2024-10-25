@@ -14,6 +14,7 @@ import Calendarium from "src/main";
 import EventCreator from "./EventCreator.svelte";
 import { EventType } from "src/events/event.types";
 import { ConfirmModal } from "../confirm";
+import { SettingsService } from "src/settings/settings.service";
 
 export class CreateEventModal extends CalendariumModal {
     saved = true;
@@ -80,7 +81,7 @@ export class CreateEventModal extends CalendariumModal {
     }
     async checkCanExit() {
         if (this.isValidEvent()) return true;
-        if (this.plugin.data.exit.savingEvent) return true;
+        if (SettingsService.getData().exit.savingEvent) return true;
         return new Promise((resolve) => {
             const modal = new ConfirmModal(
                 this.plugin.app,
@@ -93,8 +94,8 @@ export class CreateEventModal extends CalendariumModal {
             );
             modal.onClose = async () => {
                 if (modal.dontAsk) {
-                    this.plugin.data.exit.savingEvent = true;
-                    await this.plugin.saveSettings();
+                    SettingsService.getData().exit.savingEvent = true;
+                    await SettingsService.save();
                 }
                 resolve(modal.confirmed);
             };
@@ -146,7 +147,7 @@ export async function addEventWithModal(
         calendar.events.push(modal.event);
         store.eventStore.insertEvents(modal.event);
 
-        await plugin.saveCalendars();
+        await SettingsService.saveCalendars();
     };
 
     modal.open();

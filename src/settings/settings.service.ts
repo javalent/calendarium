@@ -34,7 +34,7 @@ import { EventType } from "src/events/event.types";
 
 const SPLITTER = "--- BEGIN DATA ---";
 
-export default class SettingsService {
+class SettingsServiceClass {
     static DataFile = "_data.md";
 
     loaded = false;
@@ -59,10 +59,14 @@ export default class SettingsService {
         return this.#data.calendars;
     }
     get path() {
-        return this.manifest.dir + "/" + SettingsService.DataFile;
+        return this.manifest.dir + "/" + SettingsServiceClass.DataFile;
     }
     private layoutReady = false;
-    constructor(private plugin: Calendarium, public manifest: PluginManifest) {
+    private plugin: Calendarium;
+    public manifest: PluginManifest;
+    initialize(plugin: Calendarium, manifest: PluginManifest) {
+        this.plugin = plugin;
+        this.manifest = manifest;
         this.app.workspace.onLayoutReady(() => (this.layoutReady = true));
         this.onLayoutReadyAndSettingsLoad(async () => {
             setTimeout(() => this.checkFCSettings(), 2000);
@@ -292,6 +296,11 @@ export default class SettingsService {
         await this.saveData(this.#data);
     }
 
+    public async saveCalendars() {
+        console.log("🚀 ~ file: settings.service.ts:300 ~ saveCalendars:");
+
+        await this.saveAndTrigger();
+    }
     /**
      *
      */
@@ -536,7 +545,7 @@ export default class SettingsService {
      * Transition data from the old `_data.md` format.
      */
     get markdownPath() {
-        return this.manifest.dir + "/" + SettingsService.DataFile;
+        return this.manifest.dir + "/" + SettingsServiceClass.DataFile;
     }
     public async markdownFileExists() {
         return await this.adapter.exists(this.markdownPath);
@@ -799,3 +808,5 @@ export default class SettingsService {
         return dirty;
     }
 }
+
+export const SettingsService = new SettingsServiceClass();

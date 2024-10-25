@@ -23,6 +23,7 @@ import { MoonCache } from "./cache/moon-cache";
 import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
 import type { MoonState } from "src/schemas/calendar/moons";
+import { SettingsService } from "src/settings/settings.service";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -112,7 +113,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
                 cal.current = { ...date };
                 return cal;
             });
-            plugin.saveCalendars();
+            SettingsService.saveCalendars();
         },
         updateCalendar: (calendar: Calendar) => update((cal) => calendar),
         eventStore,

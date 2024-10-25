@@ -2,7 +2,7 @@
     import Nav from "./Nav.svelte";
     import Month from "./Month/Month.svelte";
     import { ExtraButtonComponent } from "obsidian";
-   import { getTypedContext } from "../view.utils";
+    import { getTypedContext } from "../view.utils";
 
     import { ViewState } from "src/stores/calendar.store";
     import Year from "./Year/Year.svelte";
@@ -12,6 +12,7 @@
     import { SELECT_MULTIPLE } from "src/utils/icons";
     import CalendariumMenu from "src/utils/menu";
     import { setContext } from "svelte";
+    import { SettingsService } from "src/settings/settings.service";
 
     const global = getTypedContext("store");
     const ephemeral = getTypedContext("ephemeralStore");
@@ -30,14 +31,14 @@
     $: ephemeralStore.subscribe(() => plugin.app.workspace.requestSaveLayout());
 
     const plugin = getTypedContext("plugin");
-    let otherCalendars = writable(plugin.data.calendars);
+    let otherCalendars = writable(SettingsService.getCalendars());
 
     setContext("monthInFrame", writable<number | null>(null));
 
     //don't like this... find a better way
     plugin.app.workspace.on(
         "calendarium-updated",
-        () => ($otherCalendars = plugin.data.calendars),
+        () => ($otherCalendars = SettingsService.getCalendars()),
     );
 
     const drop = (node: HTMLElement) => {
@@ -45,7 +46,7 @@
     };
     const showMenu = (evt: MouseEvent) => {
         const menu = new CalendariumMenu(plugin);
-        for (const calendar of plugin.data.calendars.filter(
+        for (const calendar of SettingsService.getCalendars().filter(
             (c) => c.id != $store.id,
         )) {
             menu.addItem((item) =>

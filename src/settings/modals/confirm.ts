@@ -1,6 +1,7 @@
 import { App, ButtonComponent, ExtraButtonComponent, Modal } from "obsidian";
 import Calendarium from "src/main";
 import { CalendariumModal } from "./modal";
+import { SettingsService } from "../settings.service";
 
 export async function confirmWithModal(
     app: App,
@@ -111,7 +112,7 @@ class ConfirmDeleteCalendarModal extends CalendariumModal {
         }).onclick = async () => {
             this.confirmed = true;
             this.plugin.data.exit.calendar = true;
-            await this.plugin.saveSettings();
+            await SettingsService.save();
             this.close();
         };
 
@@ -158,7 +159,7 @@ export class ConfirmExitModal extends CalendariumModal {
         }).onclick = async () => {
             this.confirmed = true;
             this.plugin.data.exit.saving = true;
-            await this.plugin.saveSettings();
+            await SettingsService.save();
             this.close();
         };
 
@@ -219,7 +220,7 @@ class ConfirmDeleteEventModal extends CalendariumModal {
         }).onclick = async () => {
             this.confirmed = true;
             this.plugin.data.exit.event = true;
-            await this.plugin.saveSettings();
+            await SettingsService.save();
             this.close();
         };
 

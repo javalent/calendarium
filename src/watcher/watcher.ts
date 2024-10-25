@@ -22,6 +22,7 @@ import type {
     DeleteEventMessage,
     NewCategoryMessage,
 } from "./watcher.types";
+import { SettingsService } from "src/settings/settings.service";
 
 declare global {
     interface Worker {
@@ -37,7 +38,7 @@ class CalendarPickerModal extends FuzzySuggestModal<Calendar> {
         super(plugin.app);
     }
     getItems() {
-        return this.plugin.data.calendars;
+        return SettingsService.getCalendars();
     }
     getItemText(item: Calendar) {
         return item.name;
@@ -51,9 +52,7 @@ class CalendarPickerModal extends FuzzySuggestModal<Calendar> {
 export class Watcher extends Component {
     queue: Set<string> = new Set();
     paths: Set<string> = new Set();
-    get calendars() {
-        return this.plugin.data.calendars;
-    }
+
     get metadataCache() {
         return this.plugin.app.metadataCache;
     }
@@ -71,7 +70,7 @@ export class Watcher extends Component {
             id: "rescan-events",
             name: "Rescan events",
             callback: () => {
-                if (this.plugin.data.debug) {
+                if (SettingsService.getData().debug) {
                     console.info("Beginning full rescan for calendar events");
                 }
                 this.start();
@@ -86,7 +85,7 @@ export class Watcher extends Component {
                 const modal = new CalendarPickerModal(this.plugin);
                 modal.onClose = () => {
                     if (modal.chosen) {
-                        if (this.plugin.data.debug) {
+                        if (SettingsService.getData().debug) {
                             console.info(
                                 "Beginning full rescan for calendar events for calendar " +
                                     modal.chosen.name
@@ -104,7 +103,7 @@ export class Watcher extends Component {
             this.plugin.app.workspace.on("calendarium-updated", () => {
                 this.worker.postMessage<CalendarsMessage>({
                     type: "calendars",
-                    calendars: this.calendars,
+                    calendars: SettingsService.getCalendars(),
                 });
             })
         );
@@ -113,14 +112,14 @@ export class Watcher extends Component {
             this.plugin.app.workspace.on("calendarium-settings-change", () => {
                 this.worker.postMessage<OptionsMessage>({
                     type: "options",
-                    parseTitle: this.plugin.data.parseDates,
+                    parseTitle: SettingsService.getData().parseDates,
                     addToDefaultIfMissing:
-                        this.plugin.data.addToDefaultIfMissing,
+                        SettingsService.getData().addToDefaultIfMissing,
                     format: this.plugin.format,
                     defaultCalendar: this.plugin.defaultCalendar?.name,
-                    paths: this.plugin.data.paths,
-                    debug: this.plugin.data.debug,
-                    inlineEventsTag: this.plugin.data.inlineEventsTag,
+                    paths: SettingsService.getData().paths,
+                    debug: SettingsService.getData().debug,
+                    inlineEventsTag: SettingsService.getData().inlineEventsTag,
                 });
             })
         );
@@ -137,16 +136,16 @@ export class Watcher extends Component {
          */
         this.registerEvent(
             this.vault.on("rename", async (abstractFile, oldPath) => {
-                if (!this.calendars.length) return;
+                if (!SettingsService.getCalendars().length) return;
                 if (!(abstractFile instanceof TFile)) return;
-                for (const calendar of this.calendars) {
+                for (const calendar of SettingsService.getCalendars()) {
                     const store = this.plugin.getStoreByCalendar(calendar);
                     if (!store) continue;
                     store.eventStore.removeEventsFromFile(oldPath);
                 }
                 this.worker.postMessage<CalendarsMessage>({
                     type: "calendars",
-                    calendars: this.calendars,
+                    calendars: SettingsService.getCalendars(),
                 });
                 this.parseFile(abstractFile);
             })
@@ -156,13 +155,13 @@ export class Watcher extends Component {
             this.vault.on("delete", async (abstractFile) => {
                 if (!(abstractFile instanceof TFile)) return;
                 let updated = false;
-                for (let calendar of this.calendars) {
+                for (let calendar of SettingsService.getCalendars()) {
                     const store = this.plugin.getStoreByCalendar(calendar);
                     if (!store) continue;
                     store.eventStore.removeEventsFromFile(abstractFile.path);
                     updated = true;
                 }
-                if (updated) await this.plugin.saveCalendars();
+                if (updated) await SettingsService.saveCalendars();
             })
         );
 
@@ -170,19 +169,19 @@ export class Watcher extends Component {
         /** Send the worker the calendars so I don't have to with every message. */
         this.worker.postMessage<CalendarsMessage>({
             type: "calendars",
-            calendars: this.calendars,
+            calendars: SettingsService.getCalendars(),
         });
 
         /** Send the workers the options so I don't have to with every message. */
         this.worker.postMessage<OptionsMessage>({
             type: "options",
-            parseTitle: this.plugin.data.parseDates,
-            addToDefaultIfMissing: this.plugin.data.addToDefaultIfMissing,
+            parseTitle: SettingsService.getData().parseDates,
+            addToDefaultIfMissing: SettingsService.getData().addToDefaultIfMissing,
             format: this.plugin.format,
             defaultCalendar: this.plugin.defaultCalendar?.name,
-            inlineEventsTag: this.plugin.data.inlineEventsTag,
-            paths: this.plugin.data.paths,
-            debug: this.plugin.data.debug,
+            inlineEventsTag: SettingsService.getData().inlineEventsTag,
+            paths: SettingsService.getData().paths,
+            debug: SettingsService.getData().debug,
         });
 
         /** The worker will ask for file information from files in its queue here */
@@ -228,13 +227,15 @@ export class Watcher extends Component {
             async (evt: MessageEvent<UpdateEventMessage>) => {
                 if (evt.data.type == "update") {
                     const { id, index, event, original } = evt.data;
-                    const calendar = this.calendars.find((c) => c.id == id);
+                    const calendar = SettingsService.getCalendars().find(
+                        (c) => c.id == id
+                    );
 
                     if (!calendar) return;
                     const store = this.plugin.getStore(calendar.id);
                     if (!store) return;
 
-                    if (this.plugin.data.debug) {
+                    if (SettingsService.getData().debug) {
                         if (index == -1) {
                             console.debug(
                                 `Adding '${event.name}' to ${calendar.name}`
@@ -256,13 +257,15 @@ export class Watcher extends Component {
             async (evt: MessageEvent<NewCategoryMessage>) => {
                 if (evt.data.type == "category") {
                     const { id, category } = evt.data;
-                    const calendar = this.calendars.find((c) => c.id == id);
+                    const calendar = SettingsService.getCalendars().find(
+                        (c) => c.id == id
+                    );
                     if (!calendar) return;
                     const store = this.plugin.getStore(calendar.id);
                     if (!store) return;
                     if (store.hasCategory(category.id)) return;
                     store.addCategory(category);
-                    await this.plugin.saveCalendars();
+                    await SettingsService.saveCalendars();
                 }
             }
         );
@@ -274,9 +277,11 @@ export class Watcher extends Component {
                 if (evt.data.type == "delete") {
                     const { id, path } = evt.data;
                     if (!path) return;
-                    const calendar = this.calendars.find((c) => c.id == id);
+                    const calendar = SettingsService.getCalendars().find(
+                        (c) => c.id == id
+                    );
                     if (!calendar) return;
-                    if (this.plugin.data.debug)
+                    if (SettingsService.getData().debug)
                         console.debug(
                             `Removing events for ${path} from ${calendar.name}`
                         );
@@ -292,7 +297,7 @@ export class Watcher extends Component {
             "message",
             async (evt: MessageEvent<SaveMessage>) => {
                 if (evt.data.type == "save") {
-                    if (this.plugin.data.debug) {
+                    if (SettingsService.getData().debug) {
                         console.debug("Received save event from file watcher");
                     }
                 }
@@ -304,13 +309,15 @@ export class Watcher extends Component {
         });
     }
     start(calendar?: Calendar) {
-        const calendars = calendar ? [calendar] : this.calendars;
+        const calendars = calendar
+            ? [calendar]
+            : SettingsService.getCalendars();
         if (!calendars.length) return;
 
         const folder = this.vault.getRoot();
         if (!folder || !(folder instanceof TFolder)) return;
 
-        if (this.plugin.data.debug) {
+        if (SettingsService.getData().debug) {
             if (calendar) {
                 console.info(`Starting rescan for ${calendar.name}`);
             } else {

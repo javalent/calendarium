@@ -9,12 +9,16 @@
     import type { CalendarStore } from "src/stores/calendar.store";
     import { nanoid } from "src/utils/functions";
     import type { Writable } from "svelte/store";
+    import { SettingsService } from "src/settings/settings.service";
 
     export let event: Writable<CalEvent>;
     export let plugin: Calendarium;
     export let store: CalendarStore;
 
-    const helper = new CalEventHelper($store, plugin.data.parseDates);
+    const helper = new CalEventHelper(
+        $store,
+        SettingsService.getData().parseDates,
+    );
 
     const suggest = (node: HTMLElement) => {
         const text = new TextComponent(node).setValue($event.note ?? "");

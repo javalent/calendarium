@@ -34,7 +34,7 @@ import createCreatorStore, {
 } from "./creator/stores/calendar";
 import { DEFAULT_CALENDAR } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
-import SettingsService from "./settings.service";
+import { SettingsService } from "./settings.service";
 import { RestoreCalendarModal } from "./modals/restore";
 import { FolderInputSuggest } from "@javalent/utilities";
 import { getPresetCalendar } from "./preset";
@@ -88,10 +88,11 @@ export default class CalendariumSettings extends PluginSettingTab {
         advanced: false,
     };
     eventsEl: HTMLDetailsElement;
+    settings$ = SettingsService;
     get data() {
         return this.settings$.getData();
     }
-    constructor(public plugin: Calendarium, public settings$: SettingsService) {
+    constructor(public plugin: Calendarium) {
         super(plugin.app, plugin);
         this.plugin.registerEvent(
             this.app.workspace.on("calendarium-settings-external-load", () =>
@@ -399,7 +400,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                                 const calendar = JSON.parse(await file.text());
                                 this.settings$.updateCalendarsToNewSchema(
                                     [calendar],
-                                    this.plugin.data
+                                    SettingsService.getData()
                                 );
                                 const validator = createCreatorStore(
                                     this.plugin,
@@ -967,7 +968,7 @@ class CreatorModal extends CalendariumModal {
     }
     async checkCanExit() {
         if (get(this.store.valid)) return true;
-        if (this.plugin.data.exit.saving) return true;
+        if (SettingsService.getData().exit.saving) return true;
         return new Promise((resolve) => {
             const modal = new ConfirmExitModal(this.plugin);
             modal.onClose = () => {

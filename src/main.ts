@@ -5,9 +5,9 @@ import CalendariumSettings from "./settings/settings.view";
 import type { Calendar, CalendariumData } from "./@types";
 import CalendariumView from "./calendar/view";
 
-import { type CalendarEventTree, Watcher } from "./watcher/watcher";
+import { Watcher } from "./watcher/watcher";
 import { API } from "./api/api";
-import SettingsService from "./settings/settings.service";
+import { SettingsService } from "./settings/settings.service";
 import {
     type CalendarStore,
     createCalendarStore,
@@ -15,7 +15,7 @@ import {
 import { CodeBlockService } from "./calendar/codeblock";
 import { DEFAULT_FORMAT } from "./utils/constants";
 import { CalendariumNotice } from "./utils/notice";
-import { CreateEventModal } from "./settings/modals/event/event";
+
 import { ViewType } from "./calendar/view.types";
 import { AgendaView } from "./calendar/view.agenda";
 
@@ -47,7 +47,7 @@ export default class Calendarium extends Plugin {
             this.app.vault.configDir + "/plugins/calendarium"
         );
     }
-    private settings$: SettingsService;
+    private settings$ = SettingsService;
     get data() {
         return this.settings$.getData();
     }
@@ -65,9 +65,6 @@ export default class Calendarium extends Plugin {
     }
     public onLayoutReadyAndSettingsLoad(callback: () => any) {
         this.settings$.onLayoutReadyAndSettingsLoad(callback);
-    }
-    public async saveCalendars() {
-        await this.settings$.saveAndTrigger();
     }
     public async saveSettings() {
         await this.settings$.save();
@@ -130,7 +127,7 @@ export default class Calendarium extends Plugin {
     }
     async onload() {
         console.log("Loading Calendarium v" + this.manifest.version);
-        this.settings$ = new SettingsService(this, this.manifest);
+        SettingsService.initialize(this, this.manifest);
         await this.settings$.loadData();
 
         /** Add Icons */
@@ -172,7 +169,7 @@ export default class Calendarium extends Plugin {
         });
         this.settings$.onLayoutReadyAndSettingsLoad(() => {
             this.watcher.load();
-            this.addSettingTab(new CalendariumSettings(this, this.settings$));
+            this.addSettingTab(new CalendariumSettings(this));
             /* this.addCalendarView({ startup: true }); */
         });
 
