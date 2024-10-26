@@ -37,11 +37,12 @@ export class CreateEventModal extends CalendariumModal {
         type: EventType.Date,
     };
     $UI: EventCreator;
+
     constructor(
         public calendar: Calendar,
         public plugin: Calendarium,
         event?: CalEvent,
-        date?: CalDate | CalEventDate | UndatedCalDate
+        date?: CalDate | CalEventDate | UndatedCalDate,
     ) {
         super(plugin.app);
         if (event) {
@@ -76,9 +77,11 @@ export class CreateEventModal extends CalendariumModal {
     async onOpen() {
         await this.display();
     }
+
     onClose(): void {
         this.$UI?.$destroy();
     }
+
     async checkCanExit() {
         if (this.isValidEvent()) return true;
         if (SettingsService.getData().exit.savingEvent) return true;
@@ -90,7 +93,7 @@ export class CreateEventModal extends CalendariumModal {
                     cta: "Exit",
                     secondary: "Cancel",
                     dontAsk: "Exit and don't ask again",
-                }
+                },
             );
             modal.onClose = async () => {
                 if (modal.dontAsk) {
@@ -102,6 +105,7 @@ export class CreateEventModal extends CalendariumModal {
             modal.open();
         });
     }
+
     isValidEvent() {
         if (!this.event.name) return false;
         if (
@@ -136,7 +140,7 @@ export async function addEventWithModal(
     plugin: Calendarium,
     calendar: Calendar,
     date: CalDate | CalEventDate | UndatedCalDate,
-    event?: CalEvent
+    event?: CalEvent,
 ) {
     const modal = new CreateEventModal(calendar, plugin, event, date);
 
@@ -144,7 +148,12 @@ export async function addEventWithModal(
         if (!modal.saved) return;
         const store = plugin.getStoreByCalendar(calendar);
         if (!store) return;
-        calendar.events.push(modal.event);
+        if (event) {
+            const index = calendar.events.findIndex(event => event.id === modal.event.id);
+            calendar.events.splice(index, 1, modal.event);
+        } else {
+            calendar.events.push(modal.event);
+        }
         store.eventStore.insertEvents(modal.event);
 
         await SettingsService.saveCalendars();
