@@ -1,8 +1,10 @@
 import type { CalDate, OneTimeCalEventDate } from "src/@types";
-import { type Readable, derived, get, writable } from "svelte/store";
+import { derived, get, type Readable, writable } from "svelte/store";
 
 abstract class CacheItem<T> {
-    constructor(public toConsider: Readable<T[]>) {}
+    constructor(public toConsider: Readable<T[]>) {
+    }
+
     dirty = writable(true);
     entities: Readable<T[]> = derived(
         [this.toConsider, this.dirty],
@@ -11,17 +13,22 @@ abstract class CacheItem<T> {
             return this.update(entities);
         }
     );
+
     abstract update(entities: T[]): T[];
 }
+
 abstract class Cache<T> extends CacheItem<T> {
     cache: Map<number, CacheItem<T>>;
 }
+
 export abstract class YearCache<T> extends Cache<T> {
     constructor(public year: number, toConsider: Readable<T[]>) {
         super(toConsider);
     }
+
     cache: Map<number, MonthCache<T>> = new Map();
 }
+
 export abstract class MonthCache<T> extends Cache<T> {
     constructor(
         public month: number,
@@ -30,8 +37,10 @@ export abstract class MonthCache<T> extends Cache<T> {
     ) {
         super(toConsider);
     }
+
     cache: Map<number, DayCache<T>> = new Map();
 }
+
 export abstract class DayCache<T> extends CacheItem<T> {
     constructor(
         public day: number,
@@ -45,10 +54,14 @@ export abstract class DayCache<T> extends CacheItem<T> {
 
 export abstract class EntityCache<T> {
     cache: Map<number, YearCache<T>> = new Map();
-    constructor(public entities: Readable<T[]>) {}
+
+    constructor(public entities: Readable<T[]>) {
+    }
 
     abstract getYearCache(year: number): YearCache<T>;
+
     abstract getMonthCache(month: number, year: number): MonthCache<T>;
+
     abstract getDayCache(day: number, month: number, year: number): DayCache<T>;
 
     public invalidate(date: OneTimeCalEventDate, entity?: T) {
@@ -67,6 +80,7 @@ export abstract class EntityCache<T> {
         const day = month.cache.get(date.day)!;
         day.dirty.set(true);
     }
+
     public getItemsOrRecalculate(date: CalDate): Readable<T[]> {
         const { day, month, year } = date;
         if (!this.cache.has(year)) {

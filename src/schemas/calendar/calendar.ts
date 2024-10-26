@@ -1,6 +1,7 @@
-import type { CalEventDate, CalEvent, CalEventCategory } from "../events";
+import type { CalEvent, CalEventCategory } from "../events";
 import type { Moon } from "./moons";
 import type { Week, Month, LeapDay, Era, Year } from "./timespans";
+import type { CalWeatherCondition, WeatherState } from "./weathers";
 
 /**
  * This is a fully defined date.
@@ -50,6 +51,8 @@ type BaseCalendar = {
     static: StaticCalendarData;
     events: CalEvent[];
     categories: CalEventCategory[];
+    weatherStates: WeatherState[];
+    weatherConditions: CalWeatherCondition[];
     date?: number;
     displayWeeks?: boolean;
     hideEra?: boolean;

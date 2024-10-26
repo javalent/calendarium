@@ -13,6 +13,8 @@
                 return "badge-info";
             case "Dates":
                 return "calendar";
+            case "Weather":
+                return "cloud";
             case "Celestial bodies":
                 return "moon";
             case "Eras":

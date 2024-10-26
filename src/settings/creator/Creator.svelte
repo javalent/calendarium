@@ -12,6 +12,7 @@
     import { SettingsSections, type CreatorSection } from "./creator.types";
     import { writable } from "svelte/store";
     import Sidebar from "./Containers/sidebar/Sidebar.svelte";
+    import WeatherConditions from "./Containers/weather/WeatherConditions.svelte";
 
     const mobile = Platform.isMobile;
 
@@ -32,23 +33,22 @@
     <div class="vertical-tab-content-container {$selected.toLowerCase()}">
         <History></History>
         <div class="vertical-tab-content">
-            {#if $selected == "General"}
+            {#if $selected === "General"}
                 <General />
             {/if}
-            {#if $selected == "Dates"}
+            {#if $selected === "Dates"}
                 <Dates />
             {/if}
             {#if $selected === "Eras"}
                 <Eras />
             {/if}
-            <!--  -->
-            <!-- {#if $selected === "Weather"}
-                <Weather {plugin} {calendar} />
-            {/if} -->
-            {#if $selected == "Events"}
+            {#if $selected === "Weather"}
+                <WeatherConditions />
+            {/if}
+            {#if $selected === "Events"}
                 <Events />
             {/if}
-            {#if $selected == "Celestial bodies"}
+            {#if $selected === "Celestial bodies"}
                 <Celestials />
             {/if}
         </div>
@@ -64,6 +64,7 @@
                 <div class="calendarium-creator-app">
                     <General />
                     <Dates />
+                    <WeatherConditions />
                     <Celestials />
                     <Events />
                 </div>

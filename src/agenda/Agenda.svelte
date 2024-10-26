@@ -2,6 +2,7 @@
     import { getTypedContext } from "src/calendar/view.utils";
     import Flags from "../calendar/ui/Events/Flags.svelte";
     import MoonUI from "../calendar/ui/Moon.svelte";
+    import WeatherUI from "../calendar/ui/Weather.svelte";
     import { dateString } from "src/utils/functions";
     import {
         CALENDAR_SEARCH,
@@ -9,7 +10,7 @@
         RIGHT,
         setClickableIcon,
     } from "src/utils/icons";
-    import { derived, get } from "svelte/store";
+    import { derived, get, writable } from "svelte/store";
 
     const store = getTypedContext("store");
     const parent = getTypedContext("parent");
@@ -32,9 +33,9 @@
     $: daysBeforeDay = $daysBeforeMonth + $viewing!.day;
     $: events = $store.getEventsForDate($viewing!);
     $: moons = $store.moonCache.getItemsOrRecalculate($viewing!);
+    $: weatherStates = $store.weatherStateStore.getWeatherStatesForDate($viewing!);
     $: displayDayNumber = ephemeral.displayDayNumber;
     $: displayMoons = ephemeral.displayMoons;
-
     /* onDestroy(() => {
         ephemeral.viewing.set(null);
     }); */
@@ -93,6 +94,15 @@
                 {/each}
             </div>
         {/if}
+        {#key $weatherStates}
+            {#if $viewing}
+                <div class="weather-container">
+                    {#each $weatherStates as weatherState}
+                        <WeatherUI {weatherState} />
+                    {/each}
+                </div>
+            {/if}
+        {/key}
     </div>
     {#key $events}
         {#if $viewing}
@@ -115,6 +125,7 @@
         gap: 0.5rem;
         min-height: 300px;
     }
+
     .nav {
         display: flex;
         justify-content: space-between;
@@ -139,15 +150,25 @@
         align-items: center;
         justify-content: center;
     }
+
     .title {
         margin: 0;
     }
+
     .day-number {
         font-size: x-small;
     }
+
     .moon-container {
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    .weather-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5em;
     }
 </style>

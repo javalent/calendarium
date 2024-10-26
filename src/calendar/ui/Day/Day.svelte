@@ -1,21 +1,21 @@
 <script lang="ts">
     import { MonthStore } from "src/stores/month.store";
-    import { ViewType } from "../../view.types";
     import Dots from "../Events/Dots.svelte";
     import { TFile } from "obsidian";
-    import type { CalEvent } from "src/@types";
+    import type { CalDate, Calendar, CalEvent } from "src/@types";
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Flags from "../Events/Flags.svelte";
     import { addEventWithModal } from "src/settings/modals/event/event";
-    import {
-        TimeSpanType,
-        type DayOrLeapDay,
-    } from "src/schemas/calendar/timespans";
+    import { type DayOrLeapDay, TimeSpanType } from "src/schemas/calendar/timespans";
     import CalendariumMenu from "src/utils/menu";
     import { isCalEvent } from "src/events/event.types";
     import { openAgendaView } from "src/agenda/view.agenda";
     import { getTypedContext } from "src/calendar/view.utils";
+    import type { CalWeatherCondition } from "../../../schemas/calendar/weathers";
+    import { nanoid } from "../../../utils/functions";
+    import Calendarium from "../../../main";
+    import { SettingsService } from "../../../settings/settings.service";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -36,14 +36,23 @@
     $: events = $store.getEventsForDate({
         day: day.number,
         month: $index,
-        year: year.year,
+        year: year.year
     });
+    $: weatherStates = $store.weatherStateStore.getWeatherStatesForDate({
+        day: day.number,
+        month: $index,
+        year: year.year
+    });
+    $: weatherConditions = $store.weatherConditions;
+    $: weatherColor =
+        $weatherConditions?.find((c) => c.id == $weatherStates.first()?.conditionId)?.color;
+
     $: displayMoons = $ephemeral.displayMoons;
 
     $: moons = $store.moonCache.getItemsOrRecalculate({
         day: day.number,
         month: $index,
-        year: year.year,
+        year: year.year
     });
 
     $: today =
@@ -67,7 +76,7 @@
                 const func = new funct(
                     "day",
                     "calendar",
-                    $config.dayDisplayCallback,
+                    $config.dayDisplayCallback
                 );
                 number = func.call(undefined, day, $calendar) ?? number;
                 document.body.removeChild(frame);
@@ -93,7 +102,7 @@
                     $viewing = {
                         day: day.number,
                         month: $index,
-                        year: year.year,
+                        year: year.year
                     };
                 });
             });
@@ -103,7 +112,7 @@
                 $store.setCurrentDate({
                     day: day.number,
                     month: $index,
-                    year: year.year,
+                    year: year.year
                 });
             });
         });
@@ -112,9 +121,14 @@
                 addEventWithModal(plugin, $calendar, {
                     day: day.number,
                     month: $index,
-                    year: year.year,
+                    year: year.year
                 });
-            }),
+            })
+        );
+        menu.addItem((item) =>
+            item.setTitle("Add weather").onClick((nEvt) => {
+                openWeatherConditions(evt);
+            })
         );
         let notes: { event: CalEvent; file: TFile }[] = [];
         for (const event of $events) {
@@ -132,7 +146,7 @@
                 menu.addItem((item) =>
                     item.setTitle(`Open ${event.name}`).onClick(() => {
                         plugin.app.workspace.getLeaf().openFile(file);
-                    }),
+                    })
                 );
             }
         }
@@ -143,6 +157,44 @@
         $viewing = { day: day.number, month: $index, year: year.year };
         openAgendaView(view);
     };
+
+    const openWeatherConditions = (evt: MouseEvent) => {
+        const menu = new CalendariumMenu(plugin);
+
+        menu.setNoIcon();
+
+        $weatherConditions.forEach((condition) => {
+            menu.addItem((item) => {
+                item.setTitle(condition.name).onClick(() => {
+                    addWeatherState(plugin, $calendar, {
+                        day: day.number,
+                        month: $index,
+                        year: year.year
+                    }, condition);
+                });
+            });
+        });
+
+        menu.showAtMouseEvent(evt);
+    };
+
+    async function addWeatherState(
+        plugin: Calendarium,
+        calendar: Calendar,
+        date: CalDate,
+        condition: CalWeatherCondition
+    ) {
+        const store = plugin.getStoreByCalendar(calendar);
+        if (!store) return;
+
+        const weatherState = {
+            id: nanoid(6),
+            date,
+            conditionId: condition.id
+        };
+
+        await store.weatherStateStore.insertWeatherState(weatherState);
+    }
 </script>
 
 {#if $viewState == ViewState.Year && adjacent}
@@ -162,30 +214,35 @@
         }}
         aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
     >
-        {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
-            {day.name}
-        {/if}
-        {#if day.type === TimeSpanType.Day || day.numbered}
+        <div
+            class="day-weather"
+            style={weatherColor ? `background-color: ${weatherColor}30; border-radius: 4px;` : ""}
+        >
+            {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
+                {day.name}
+            {/if}
+            {#if day.type === TimeSpanType.Day || day.numbered}
             <span class="day-number">
                 {number}
             </span>
-        {/if}
-        {#key $events}
-            {#if $full && $viewState != ViewState.Year}
-                {#if $displayMoons}
-                    <div class="moon-container">
-                        {#each $moons as moon}
-                            <Moon {moon} />
-                        {/each}
-                    </div>
-                {/if}
-                {#key $events}
-                    <Flags events={$events} />
-                {/key}
-            {:else}
-                <Dots events={$events} />
             {/if}
-        {/key}
+            {#key $events}
+                {#if $full && $viewState != ViewState.Year}
+                    {#if $displayMoons}
+                        <div class="moon-container">
+                            {#each $moons as moon}
+                                <Moon {moon} />
+                            {/each}
+                        </div>
+                    {/if}
+                    {#key $events}
+                        <Flags events={$events} />
+                    {/key}
+                {:else}
+                    <Dots events={$events} />
+                {/if}
+            {/key}
+        </div>
     </div>
 {/if}
 
@@ -201,14 +258,14 @@
         padding: 4px;
         position: relative;
         text-align: center;
-        transition:
-            background-color 0.1s ease-in,
-            color 0.1s ease-in;
+        transition: background-color 0.1s ease-in,
+        color 0.1s ease-in;
         vertical-align: baseline;
         display: flex;
         flex-flow: column nowrap;
         /* max-height: var(--max-day-height); */
     }
+
     .intercalary {
         grid-column: span var(--calendar-columns);
         display: flex;
@@ -218,12 +275,15 @@
         border-bottom: 1px solid var(--background-modifier-border);
         color: var(--text-accent);
     }
+
     .day:hover {
         background-color: var(--interactive-hover);
     }
+
     .adjacent-month {
         opacity: 0.25;
     }
+
     .today .day-number {
         color: var(--interactive-accent);
     }
@@ -232,6 +292,9 @@
         border: 2px solid var(--background-modifier-border);
     }
 
+    .day-weather {
+        padding: 1px;
+    }
     /* .moon-container {
         display: flex;
         flex-flow: row;

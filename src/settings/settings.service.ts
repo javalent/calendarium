@@ -801,6 +801,14 @@ class SettingsServiceClass {
                     dirty = true;
                 }
             }
+            if (calendar.weatherStates == null) {
+                calendar.weatherStates = [];
+                dirty = true;
+            }
+            if (calendar.weatherConditions == null) {
+                calendar.weatherConditions = [];
+                dirty = true;
+            }
         }
         return dirty;
     }

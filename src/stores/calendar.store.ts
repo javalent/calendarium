@@ -19,6 +19,8 @@ import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
 import type { MoonState } from "src/schemas/calendar/moons";
 import { SettingsService } from "src/settings/settings.service";
+import type { WeatherState } from "../schemas/calendar/weathers";
+import { WeatherStateStore } from "./weather-state.store";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -51,6 +53,9 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             })
     );
     const moonCache = new MoonCache(moonStates, yearCalculator);
+
+    const weatherStateStore = new WeatherStateStore(calendar);
+    const weatherConditions = derived(store, (c) => c.weatherConditions)
 
     const EPHEMERAL_STORE_CACHE: Map<string, EphemeralStore> = new Map();
 
@@ -140,7 +145,14 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         }, */
 
         moonCache,
+
+        weatherStateStore,
+        getWeatherStatesForDate: (date: CalDate): Readable<WeatherState[]> => {
+            return weatherStateStore.getWeatherStatesForDate(date);
+        },
+
         categories,
+        weatherConditions,
         //Readable store containing static calendar data
         staticStore,
 

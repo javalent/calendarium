@@ -3,7 +3,7 @@ import type {
     CalDate,
     CalEvent,
     CalEventCategory,
-    StaticCalendarData,
+    StaticCalendarData
 } from "src/@types";
 import type Calendarium from "src/main";
 import {
@@ -24,6 +24,7 @@ import type {
     Day,
     Era,
 } from "src/schemas/calendar/timespans";
+import type { CalWeatherCondition } from "../../../schemas/calendar/weathers";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -115,6 +116,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const eraStore = derived(staticStore, (data) => data.eras);
     const eventStore = derived(store, (data) => data.events);
     const categoryStore = derived(store, (data) => data.categories);
+    const weatherConditionStore = derived(store, (data) => data.weatherConditions);
     const validMonths = derived(staticStore, (data) => {
         return (
             data.months?.length > 0 &&
@@ -387,6 +389,36 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     data.categories = data.categories.filter(
                         (c) => c.id !== id
                     );
+                    return data;
+                }),
+        },
+        weatherConditionStore: {
+            subscribe: weatherConditionStore.subscribe,
+            set: (weatherConditions: CalWeatherCondition[]) =>
+                update((data) => {
+                    data.weatherConditions = [...weatherConditions];
+                    return data;
+                }),
+            add: (weatherCondition: CalWeatherCondition) =>
+                update((data) => {
+                    data.weatherConditions.push({ ...weatherCondition });
+                    return data;
+                }),
+            update: (id: string, weatherCondition: CalWeatherCondition) =>
+                update((data) => {
+                    const index = data.weatherConditions.findIndex((e) => e.id === id);
+
+                    data.weatherConditions.splice(index, 1, { ...weatherCondition });
+                    return data;
+                }),
+            delete: (id: string) =>
+                update((data) => {
+                    data.weatherConditions = data.weatherConditions.filter(
+                        (c) => c.id !== id
+                    );
+                    data.weatherStates = data.weatherStates.filter(
+                        (c) => c.conditionId !== id
+                    )
                     return data;
                 }),
         },

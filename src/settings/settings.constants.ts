@@ -26,6 +26,8 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
     },
     events: [],
     categories: [],
+    weatherStates: [],
+    weatherConditions: [],
     autoParse: false,
     path: ["/"],
     supportInlineEvents: false,
