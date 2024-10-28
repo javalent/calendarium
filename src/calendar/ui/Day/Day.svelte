@@ -12,7 +12,7 @@
     import { isCalEvent } from "src/events/event.types";
     import { openAgendaView } from "src/agenda/view.agenda";
     import { getTypedContext } from "src/calendar/view.utils";
-    import type { CalWeatherCondition } from "../../../schemas/calendar/weathers";
+    import type { CalWeatherCondition } from "../../../schemas/calendar/weather";
     import { nanoid } from "../../../utils/functions";
     import Calendarium from "../../../main";
 

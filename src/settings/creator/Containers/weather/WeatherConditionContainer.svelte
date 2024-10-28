@@ -8,7 +8,8 @@
     import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
     import Details from "../../Utilities/Details.svelte";
     import { TRASH } from "src/utils/icons";
-    import type { CalWeatherCondition } from "../../../../schemas/calendar/weathers";
+    import type { CalWeatherCondition } from "../../../../schemas/calendar/weather";
+    import ToggleComponent from "../../Settings/ToggleComponent.svelte";
 
     const calendar = getContext("store");
     const { weatherConditionStore, displayWeather } = calendar;
@@ -44,6 +45,13 @@
         $weatherConditionStore?.length !== 1 ? "s" : ""
     }`}
 >
+    <ToggleComponent
+        name={"Display weather"}
+        desc={"Display weather by default when viewing this calendar."}
+        value={$displayWeather}
+        on:click={() => ($displayWeather = !$displayWeather)}
+    />
+
     {#if !weatherConditions?.length}
         <NoExistingItems
             message={"Create a new weather condition to see it here."}

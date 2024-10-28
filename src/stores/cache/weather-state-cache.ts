@@ -1,6 +1,6 @@
 import { DayCache, EntityCache, MonthCache, YearCache } from "./entity-cache";
 import { type Readable } from "svelte/store";
-import type { WeatherState } from "../../schemas/calendar/weathers";
+import type { WeatherState } from "../../schemas/calendar/weather";
 import type { CalDate, OneTimeCalEventDate } from "../../schemas";
 
 class YearWeatherCache extends YearCache<WeatherState> {

@@ -1,9 +1,8 @@
 import type { CalDate, Calendar } from "src/@types";
 import { type Writable, derived, get, writable } from "svelte/store";
-import type { WeatherState } from "../schemas/calendar/weathers";
+import type { WeatherState } from "../schemas/calendar/weather";
 import { WeatherStateCache } from "./cache/weather-state-cache";
 import { SettingsService } from "../settings/settings.service";
-import { getTypedContext } from "../calendar/view.utils";
 
 export class WeatherStateStore {
     readonly #weatherStates: Writable<Map<string, WeatherState>>;

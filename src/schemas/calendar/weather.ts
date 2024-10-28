@@ -1,9 +1,9 @@
 import type { CalDate } from "./calendar";
 
 export type CalWeatherCondition = {
+    id: string;
     name: string;
     color: string;
-    id: string;
 }
 
 export type WeatherState = {

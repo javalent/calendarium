@@ -1,7 +1,7 @@
 import type { CalEvent, CalEventCategory } from "../events";
 import type { Moon } from "./moons";
 import type { Week, Month, LeapDay, Era, Year } from "./timespans";
-import type { CalWeatherCondition, WeatherState } from "./weathers";
+import type { CalWeatherCondition, WeatherState } from "./weather";
 
 /**
  * This is a fully defined date.

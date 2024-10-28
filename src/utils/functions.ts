@@ -440,6 +440,10 @@ export function sortEventList<T extends EventLike>(list: T[]): T[] {
     return list.sort((a, b) => compareEvents(a, b));
 }
 
+export function sortByDate<T extends {date: CalEventDate | UndatedCalDate}>(list: T[]): T[] {
+    return list.sort((a, b) => compareDates(a.date, b.date));
+}
+
 export function getAbbreviation(day: Day) {
     return day.abbreviation ? day.abbreviation : (day.name ?? "").slice(0, 3);
 }

@@ -19,7 +19,7 @@ import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
 import type { MoonState } from "src/schemas/calendar/moons";
 import { SettingsService } from "src/settings/settings.service";
-import type { WeatherState } from "../schemas/calendar/weathers";
+import type { WeatherState } from "../schemas/calendar/weather";
 import { WeatherStateStore } from "./weather-state.store";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;

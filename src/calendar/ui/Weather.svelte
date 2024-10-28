@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CalWeatherCondition, WeatherState } from "../../schemas/calendar/weathers";
+    import type { CalWeatherCondition, WeatherState } from "../../schemas/calendar/weather";
     import CalendariumMenu from "../../utils/menu";
     import { getTypedContext } from "../view.utils";
 

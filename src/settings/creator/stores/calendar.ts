@@ -10,7 +10,7 @@ import {
     isValidDay,
     isValidMonth,
     isValidYear,
-    nanoid,
+    nanoid, sortByDate,
     sortEventList,
 } from "src/utils/functions";
 import { derived, writable } from "svelte/store";
@@ -24,7 +24,7 @@ import type {
     Day,
     Era,
 } from "src/schemas/calendar/timespans";
-import type { CalWeatherCondition } from "../../../schemas/calendar/weathers";
+import type { CalWeatherCondition, WeatherState } from "../../../schemas/calendar/weather";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -117,6 +117,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const eraStore = derived(staticStore, (data) => data.eras);
     const eventStore = derived(store, (data) => data.events);
     const categoryStore = derived(store, (data) => data.categories);
+    const weatherStateStore = derived(store, (data) => data.weatherStates);
     const weatherConditionStore = derived(store, (data) => data.weatherConditions);
     const validMonths = derived(staticStore, (data) => {
         return (
@@ -390,6 +391,32 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     data.categories = data.categories.filter(
                         (c) => c.id !== id
                     );
+                    return data;
+                }),
+        },
+        weatherStateStore: {
+            subscribe: weatherStateStore.subscribe,
+            sortedStore: derived(weatherStateStore, (states) => sortByDate(states)),
+            set: (states: WeatherState[]) =>
+                update((data) => {
+                    data.weatherStates = [...states];
+                    return data;
+                }),
+            add: (state: WeatherState) =>
+                update((data) => {
+                    data.weatherStates.push({ ...state });
+                    return data;
+                }),
+            update: (id: string, state: WeatherState) =>
+                update((data) => {
+                    const index = data.weatherStates.findIndex((e) => e.id === id);
+
+                    data.weatherStates.splice(index, 1, { ...state });
+                    return data;
+                }),
+            delete: (id: string) =>
+                update((data) => {
+                    data.weatherStates = data.weatherStates.filter((e) => e.id !== id);
                     return data;
                 }),
         },
