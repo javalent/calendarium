@@ -46,7 +46,7 @@
     $: weatherColor =
         $weatherConditions?.find((c) => c.id == $weatherStates.first()?.conditionId)?.color;
 
-    $: displayWeahter = $ephemeral.displayWeather;
+    $: displayWeather = $ephemeral.displayWeather;
     $: displayMoons = $ephemeral.displayMoons;
 
     $: moons = $store.moonCache.getItemsOrRecalculate({
@@ -216,7 +216,7 @@
     >
         <div
             class="day-weather"
-            style={weatherColor && $displayWeahter ? `background-color: ${weatherColor}30; border-radius: 4px;` : ""}
+            style={weatherColor && $displayWeather ? `background-color: ${weatherColor}30; border-radius: 4px;` : ""}
         >
             {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
                 {day.name}
