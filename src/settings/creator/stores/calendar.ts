@@ -111,6 +111,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const yearStore = derived(staticStore, (data) => data.years);
     const customYears = derived(staticStore, (data) => data.useCustomYears);
     const moonStore = derived(staticStore, (data) => data.moons);
+    const displayWeather = derived(staticStore, (data) => data.displayWeather);
     const displayMoons = derived(staticStore, (data) => data.displayMoons);
     const leapDayStore = derived(staticStore, (data) => data.leapDays);
     const eraStore = derived(staticStore, (data) => data.eras);
@@ -421,6 +422,15 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     )
                     return data;
                 }),
+        },
+        displayWeather: {
+            subscribe: displayWeather.subscribe,
+            set: (val: boolean) => {
+                update((data) => {
+                    data.static.displayWeather = val;
+                    return data;
+                });
+            },
         },
         displayMoons: {
             subscribe: displayMoons.subscribe,

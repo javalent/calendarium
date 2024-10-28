@@ -15,7 +15,6 @@
     import type { CalWeatherCondition } from "../../../schemas/calendar/weathers";
     import { nanoid } from "../../../utils/functions";
     import Calendarium from "../../../main";
-    import { SettingsService } from "../../../settings/settings.service";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -47,6 +46,7 @@
     $: weatherColor =
         $weatherConditions?.find((c) => c.id == $weatherStates.first()?.conditionId)?.color;
 
+    $: displayWeahter = $ephemeral.displayWeather;
     $: displayMoons = $ephemeral.displayMoons;
 
     $: moons = $store.moonCache.getItemsOrRecalculate({
@@ -216,7 +216,7 @@
     >
         <div
             class="day-weather"
-            style={weatherColor ? `background-color: ${weatherColor}30; border-radius: 4px;` : ""}
+            style={weatherColor && $displayWeahter ? `background-color: ${weatherColor}30; border-radius: 4px;` : ""}
         >
             {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
                 {day.name}

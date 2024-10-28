@@ -4,13 +4,8 @@
     import MoonUI from "../calendar/ui/Moon.svelte";
     import WeatherUI from "../calendar/ui/Weather.svelte";
     import { dateString } from "src/utils/functions";
-    import {
-        CALENDAR_SEARCH,
-        LEFT,
-        RIGHT,
-        setClickableIcon,
-    } from "src/utils/icons";
-    import { derived, get, writable } from "svelte/store";
+    import { CALENDAR_SEARCH, LEFT, RIGHT, setClickableIcon } from "src/utils/icons";
+    import { derived, get } from "svelte/store";
 
     const store = getTypedContext("store");
     const parent = getTypedContext("parent");
@@ -36,6 +31,7 @@
     $: weatherStates = $store.weatherStateStore.getWeatherStatesForDate($viewing!);
     $: displayDayNumber = ephemeral.displayDayNumber;
     $: displayMoons = ephemeral.displayMoons;
+    $: displayWeather = ephemeral.displayWeather;
     /* onDestroy(() => {
         ephemeral.viewing.set(null);
     }); */
@@ -94,15 +90,15 @@
                 {/each}
             </div>
         {/if}
-        {#key $weatherStates}
-            {#if $viewing}
+        {#if $displayWeather}
+            {#key $weatherStates}
                 <div class="weather-container">
                     {#each $weatherStates as weatherState}
                         <WeatherUI {weatherState} />
                     {/each}
                 </div>
-            {/if}
-        {/key}
+            {/key}
+        {/if}
     </div>
     {#key $events}
         {#if $viewing}

@@ -809,6 +809,10 @@ class SettingsServiceClass {
                 calendar.weatherConditions = [];
                 dirty = true;
             }
+            if (calendar.static.displayWeather == null) {
+                calendar.static.displayWeather = true;
+                dirty = true;
+            }
         }
         return dirty;
     }

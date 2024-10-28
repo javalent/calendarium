@@ -179,6 +179,7 @@ export enum ViewState {
 export interface EphemeralState {
     viewState: ViewState;
     displayMoons: boolean;
+    displayWeather: boolean;
     displayWeeks: boolean;
     displayDayNumber: boolean;
     hideEra: boolean;
@@ -197,6 +198,7 @@ export function getEphemeralStore(
     const viewing = writable<CalDate | null>();
 
     const displayMoons = writable(base.static.displayMoons);
+    const displayWeather = writable(base.static.displayWeather);
     const displayDayNumber = writable(base.static.displayDayNumber);
     const displayWeeks = writable(base.displayWeeks);
     const hideEra = writable(base.hideEra);
@@ -210,6 +212,7 @@ export function getEphemeralStore(
             viewState,
             displayDayNumber,
             displayMoons,
+            displayWeather,
             displayWeeks,
             hideEra,
             displayAbsoluteYear,
@@ -220,6 +223,7 @@ export function getEphemeralStore(
             viewState,
             displayDayNumber,
             displayMoons,
+            displayWeather,
             displayWeeks,
             hideEra,
             displayAbsoluteYear,
@@ -230,6 +234,7 @@ export function getEphemeralStore(
                 viewState,
                 displayDayNumber,
                 displayMoons,
+                displayWeather,
                 displayWeeks,
                 hideEra,
                 displayAbsoluteYear,
@@ -245,6 +250,7 @@ export function getEphemeralStore(
             viewState.set(state.viewState);
             displayDayNumber.set(state.displayDayNumber);
             displayMoons.set(state.displayMoons);
+            displayWeather.set(state.displayWeather)
             displayWeeks.set(state.displayWeeks);
             hideEra.set(state.hideEra);
             displayAbsoluteYear.set(state.displayAbsoluteYear);
@@ -270,10 +276,12 @@ export function getEphemeralStore(
                 hideEra: get(hideEra),
                 displayAbsoluteYear: get(displayAbsoluteYear),
                 displayMoons: get(displayMoons),
+                displayWeather: get(displayWeather),
                 displayWeeks: get(displayWeeks),
             };
         },
         displayMoons,
+        displayWeather,
         displayDayNumber,
         displayWeeks,
         hideEra,

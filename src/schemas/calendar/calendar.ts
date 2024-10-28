@@ -30,6 +30,7 @@ export type StaticCalendarData = {
     leapDays: LeapDay[];
     moons: Moon[];
     displayMoons: boolean;
+    displayWeather: boolean;
     displayDayNumber: boolean;
     eras: Era[];
     offset?: number;

@@ -11,7 +11,7 @@
     import type { CalWeatherCondition } from "../../../../schemas/calendar/weathers";
 
     const calendar = getContext("store");
-    const { weatherConditionStore } = calendar;
+    const { weatherConditionStore, displayWeather } = calendar;
 
     $: weatherConditions = $calendar.weatherConditions;
 
