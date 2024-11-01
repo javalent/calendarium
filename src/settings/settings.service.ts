@@ -32,7 +32,7 @@ import { CHECK, LOADING } from "src/utils/icons";
 import { EventType } from "src/events/event.types";
 
 const SPLITTER = "--- BEGIN DATA ---";
-
+type CalendarID = string;
 class SettingsServiceClass {
     static DataFile = "_data.md";
 
@@ -56,6 +56,13 @@ class SettingsServiceClass {
     }
     public getCalendars() {
         return this.#data.calendars;
+    }
+    public getDefaultCalendar(): Calendar | undefined {
+        return this.#calendars.get(this.#data.defaultCalendar ?? "");
+    }
+    #calendars: Map<CalendarID, Calendar>;
+    public getCalendar(id: string): Calendar | undefined {
+        return this.#calendars.get(id);
     }
     get path() {
         return this.manifest.dir + "/" + SettingsServiceClass.DataFile;
@@ -102,7 +109,6 @@ class SettingsServiceClass {
     get syncPlugin() {
         return this.app.internalPlugins.getPluginById("sync");
     }
-    #waitingOnSync = false;
     /**
      * This method is called whenever Obsidian detects that my data.json file has been modified.
      */
@@ -391,6 +397,7 @@ class SettingsServiceClass {
         } else {
             this.#data = data;
         }
+        this.#calendars = new Map(this.#data.calendars.map((c) => [c.id, c]));
     }
 
     /** These methods are used to manage calendars in settings. */
@@ -408,11 +415,14 @@ class SettingsServiceClass {
                 1,
                 calendar
             );
+            this.#calendars.delete(existing.id);
         }
         if (!this.#data.defaultCalendar) {
             this.#data.defaultCalendar = calendar.id;
         }
         if (shouldParse) this.plugin.watcher.start(calendar);
+
+        this.#calendars.set(calendar.id, calendar);
         await this.saveData(this.#data, true);
     }
     /**
@@ -428,6 +438,7 @@ class SettingsServiceClass {
             this.plugin.watcher.start();
         }
         this.deletedCalendars.push(calendar);
+        this.#calendars.delete(calendar.id);
         await this.saveData(this.#data, true);
     }
 
@@ -436,8 +447,7 @@ class SettingsServiceClass {
      * @returns {boolean}
      */
     hasCalendar(calendar: string): boolean {
-        const cal = this.#data.calendars.find((c) => c.id == calendar);
-        return !!cal;
+        return this.#calendars.has(calendar);
     }
 
     /**

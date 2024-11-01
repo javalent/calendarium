@@ -1,5 +1,4 @@
 import {
-    addIcon,
     ButtonComponent,
     Notice,
     Platform,
@@ -11,7 +10,6 @@ import {
     DropdownComponent,
     TFolder,
     normalizePath,
-    Menu,
 } from "obsidian";
 
 import copy from "fast-copy";
@@ -32,7 +30,7 @@ import { get } from "svelte/store";
 import createCreatorStore, {
     type CreatorStore,
 } from "./creator/stores/calendar";
-import { DEFAULT_CALENDAR } from "./settings.constants";
+import { DEFAULT_CALENDAR, PathSelections } from "./settings.constants";
 import { nanoid } from "src/utils/functions";
 import { SettingsService } from "./settings.service";
 import { RestoreCalendarModal } from "./modals/restore";
@@ -211,6 +209,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                     this.data.defaultCalendar = v;
                     await this.settings$.saveAndTrigger();
                     this.plugin.watcher.start();
+                    this.buildPaths();
                 });
             });
         new Setting(this.calendarsEl)
@@ -632,7 +631,13 @@ export default class CalendariumSettings extends PluginSettingTab {
                     this.plugin.watcher.start();
                 };
             });
+        new Setting(containerEl).setName("Event paths").setDesc(
+            `Calendarium can be restricted to look at certain paths in your vault for events. You can add specific paths here and associate default calendars to those paths.
+                
+                If no calendar is selected, Calendarium will add the event to your default calendar, if any.`
+        );
         this.pathsEl = containerEl.createDiv("calendarium-event-paths");
+
         this.buildPaths();
     }
     showPaths() {
@@ -669,7 +674,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         const pathsEl = this.pathsEl.createDiv("existing-calendars has-table");
         //build table
         const tableEl = pathsEl.createDiv("paths-table");
-        for (const text of ["", "Path", "Calendar", ""]) {
+        for (const text of ["", "Path", "Default Calendar", ""]) {
             tableEl.createEl("th", { text, cls: "paths-table-header" });
         }
         for (let i = 0; i < this.data.paths.length; i++) {
@@ -681,7 +686,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         const addEl = tableEl.createDiv("paths-table-row add-new");
         const toAdd: { path: string | null; calendar: string | null } = {
             path: null,
-            calendar: null,
+            calendar: PathSelections.DEFAULT,
         };
         const addIconEl = addEl.createDiv("icon");
         const pathEl = addEl.createDiv("path");
@@ -700,16 +705,18 @@ export default class CalendariumSettings extends PluginSettingTab {
         this.buildPathInput(pathEl, addButton, addIconEl, (path) => {
             toAdd.path = path;
         });
-        const drop = new DropdownComponent(dropEl);
-        for (const calendar of this.data.calendars) {
-            drop.addOption(calendar.id, calendar.name);
-        }
-        toAdd.calendar = drop.getValue();
+
+        this.buildPathDropdown(dropEl, PathSelections.DEFAULT, (c) => {
+            toAdd.calendar = c;
+        });
     }
     buildStaticPath(rowEl: HTMLElement, index: number) {
         rowEl.empty();
         const [path, calendar] = this.data.paths[index];
-        const maybeCal = this.data.calendars.find((c) => c.id == calendar);
+        const maybeCal =
+            calendar === PathSelections.DEFAULT
+                ? this.settings$.getDefaultCalendar()
+                : this.settings$.getCalendar(calendar);
 
         const exists =
             index > 0 &&
@@ -733,7 +740,17 @@ export default class CalendariumSettings extends PluginSettingTab {
         }
         rowEl.createDiv({ text: path, cls: "path" });
         const calendarEl = rowEl.createDiv({ cls: "calendar" });
-        if (!maybeCal) {
+        if (calendar === PathSelections.DEFAULT) {
+            calendarEl.addClass("default-calendar");
+            calendarEl.createDiv({ text: "Default calendar" });
+            calendarEl.createSpan({
+                cls: "default-display",
+                attr: {
+                    style: "font-size: var(--font-smallest);",
+                },
+                text: `${this.settings$.getDefaultCalendar()?.name}`,
+            });
+        } else if (!maybeCal) {
             calendarEl.addClass("mod-warning");
             calendarEl.setText("Calendar could not be found");
         } else {
@@ -784,16 +801,24 @@ export default class CalendariumSettings extends PluginSettingTab {
             },
             path
         );
-        const drop = new DropdownComponent(dropEl);
-        for (const calendar of this.data.calendars) {
-            drop.addOption(calendar.id, calendar.name);
-        }
-        drop.setValue(calendar).onChange((v) => {
-            calendar = v;
+        this.buildPathDropdown(dropEl, calendar, (c) => {
+            calendar = c;
         });
         new ExtraButtonComponent(actionsEl).setIcon(CLOSE).onClick(() => {
             this.buildStaticPath(rowEl, index);
         });
+    }
+    buildPathDropdown(
+        dropEl: HTMLElement,
+        originalValue: string,
+        callback: (calendar: string) => void
+    ) {
+        const drop = new DropdownComponent(dropEl);
+        drop.addOption(PathSelections.DEFAULT, "Default calendar");
+        for (const calendar of this.data.calendars) {
+            drop.addOption(calendar.id, calendar.name);
+        }
+        drop.setValue(originalValue).onChange((v) => callback(v));
     }
     buildPathInput(
         inputEl: HTMLElement,

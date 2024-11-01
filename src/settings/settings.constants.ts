@@ -1,6 +1,11 @@
 import type { CalendariumData, PresetCalendar } from "src/@types";
 import { SyncBehavior } from "../schemas";
 
+export const PathSelections = {
+    DEFAULT: "DEFAULT",
+} as const;
+export type PathSelections =
+    (typeof PathSelections)[keyof typeof PathSelections];
 export const DEFAULT_CALENDAR: PresetCalendar = {
     name: null,
     description: "",
