@@ -77,27 +77,6 @@ export class Watcher extends Component {
             },
         });
 
-        /** Rescan for events for a specific calendar. */
-        this.plugin.addCommand({
-            id: "rescan-events-for-calendar",
-            name: "Rescan events for calendar",
-            callback: () => {
-                const modal = new CalendarPickerModal(this.plugin);
-                modal.onClose = () => {
-                    if (modal.chosen) {
-                        if (SettingsService.getData().debug) {
-                            console.info(
-                                "Beginning full rescan for calendar events for calendar " +
-                                    modal.chosen.name
-                            );
-                        }
-                        this.start({ ...modal.chosen });
-                    }
-                };
-                modal.open();
-            },
-        });
-
         /** Plugin's saveCalendars method was called (calendar settings updated). */
         this.registerEvent(
             this.plugin.app.workspace.on("calendarium-updated", () => {
