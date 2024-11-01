@@ -64,5 +64,5 @@ export const DEFAULT_DATA: CalendariumData = {
     askedAboutSync: false,
     syncBehavior: SyncBehavior.Ask,
     inlineEventsTag: null,
-    paths: [],
+    paths: [["/", PathSelections.DEFAULT]],
 };
