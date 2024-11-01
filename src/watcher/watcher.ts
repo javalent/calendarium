@@ -136,16 +136,18 @@ export class Watcher extends Component {
             this.vault.on("rename", async (abstractFile, oldPath) => {
                 if (!SettingsService.getCalendars().length) return;
                 if (!(abstractFile instanceof TFile)) return;
-                for (const calendar of SettingsService.getCalendars()) {
-                    const store = this.plugin.getStoreByCalendar(calendar);
-                    if (!store) continue;
-                    store.eventStore.removeEventsFromFile(oldPath);
+                if (this.pathContainsFile(oldPath)) {
+                    for (const calendar of SettingsService.getCalendars()) {
+                        const store = this.plugin.getStoreByCalendar(calendar);
+                        if (!store) continue;
+                        store.eventStore.removeEventsFromFile(oldPath);
+                    }
+                    this.worker.postMessage<CalendarsMessage>({
+                        type: "calendars",
+                        calendars: SettingsService.getCalendars(),
+                    });
+                    this.parseFiles(abstractFile);
                 }
-                this.worker.postMessage<CalendarsMessage>({
-                    type: "calendars",
-                    calendars: SettingsService.getCalendars(),
-                });
-                this.parseFiles(abstractFile);
             })
         );
         /** A file has been deleted and should be checked for events to unlink. */
@@ -305,6 +307,15 @@ export class Watcher extends Component {
             this.start();
         });
     }
+    pathContainsFile(filePath: string) {
+        const paths = SettingsService.getData().paths;
+        if (!paths.length || paths.some((path) => path[0] === "/")) return true;
+
+        for (const path of paths) {
+            if (filePath.startsWith(path[0])) return true;
+        }
+        return false;
+    }
     start(calendar?: Calendar) {
         if (!SettingsService.getData().autoParse) return;
 
@@ -314,10 +325,6 @@ export class Watcher extends Component {
         if (!calendars.length) return;
 
         const folders = [];
-        console.log(
-            "🚀 ~ file: watcher.ts:320 ~ SettingsService.getData().paths:",
-            SettingsService.getData().paths
-        );
         for (const [path] of SettingsService.getData().paths) {
             const folder = this.vault.getAbstractFileByPath(path);
             if (!folder || !(folder instanceof TFolder)) return;
