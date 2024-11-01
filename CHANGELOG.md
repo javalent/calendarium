@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.5.0](https://github.com/javalent/calendarium/compare/1.4.2...1.5.0) (2024-11-01)
+
+
+### Features
+
+* Adds ability to link paths to the global default calendar, if any. ([6f944b8](https://github.com/javalent/calendarium/commit/6f944b88e8eeecc40f054501c06dbdc84c874753))
+* The plugin now only watches files explicitly defined in settings for events. ([18378e0](https://github.com/javalent/calendarium/commit/18378e0207d6c27fcae9022f8c1c28753af33aae))
+
+
+### Bug Fixes
+
+* Disabling auto parsing now removes file-based events ([e83f639](https://github.com/javalent/calendarium/commit/e83f639e6fdf8a8dab944ceedd71286ad1a63eeb))
+* Improves appearance of the "no calendars" dialog in settings ([d101c0e](https://github.com/javalent/calendarium/commit/d101c0ed5c594ff886b31f4025127c27eefba730))
+* Move legacy `autoParse` calendar setting to a global setting ([d7ed936](https://github.com/javalent/calendarium/commit/d7ed936bc7de4913043e09afc4c6dd6f572722d5))
+* Moving a file outside of the watched paths no longer triggers a scan event for that file ([96dfc6c](https://github.com/javalent/calendarium/commit/96dfc6c4ee448f55f298b443f5f17af6316c4ee6))
+* Plugin now includes the vault root as the default path to parse ([a4aa1f6](https://github.com/javalent/calendarium/commit/a4aa1f6a249bc104ead124571df20a67134b8c4d))
+* Remove legacy calendar path data ([3d32e32](https://github.com/javalent/calendarium/commit/3d32e32d3552261c14ff146f41783842395ce59e))
+* Remove logs ([13d63de](https://github.com/javalent/calendarium/commit/13d63de390f47e48a5551e882c1d65f22adf522c))
+* Removes `Rescan events for calendar` command (it didn't actually do anything different) ([3b59230](https://github.com/javalent/calendarium/commit/3b59230f88f848ad95659985b5382b02136149e7))
+* Removes unneeded calendar management methods from the Plugin class ([1d79553](https://github.com/javalent/calendarium/commit/1d795531be09840bbb9559d58363837fee1c9def))
+* Saving edited events via modal no longer duplicates events (close [#151](https://github.com/javalent/calendarium/issues/151)). Thanks [@LexMonster](https://github.com/LexMonster). ([1c5b8cd](https://github.com/javalent/calendarium/commit/1c5b8cdcd275b93c967f90278848d762a3d4998e))
+
 ## [1.4.2](https://github.com/javalent/calendarium/compare/1.4.1...1.4.2) (2024-10-25)
 
 
