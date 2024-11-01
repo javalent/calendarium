@@ -252,7 +252,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                         }
                         const calendars = Importer.import(data);
                         for (const calendar of calendars) {
-                            await this.plugin.addNewCalendar(calendar);
+                            await this.settings$.addCalendar(calendar);
                         }
                         this.display();
                     } catch (e) {
@@ -326,7 +326,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                         true
                     );
                     if (calendar) {
-                        await this.plugin.addNewCalendar(calendar);
+                        await this.settings$.addCalendar(calendar);
                         this.display();
                     }
                 });
@@ -338,7 +338,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                 button.onClick(async () => {
                     const calendar = await this.launchCalendarCreator();
                     if (calendar) {
-                        await this.plugin.addNewCalendar(calendar);
+                        await this.settings$.addCalendar(calendar);
                         this.display();
                     }
                 });
@@ -471,7 +471,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                                 true
                             );
                             if (edited) {
-                                await this.plugin.addNewCalendar(
+                                await this.settings$.addCalendar(
                                     edited,
                                     calendar
                                 );
@@ -487,7 +487,7 @@ export default class CalendariumSettings extends PluginSettingTab {
                                 calendar
                             );
                             if (edited) {
-                                await this.plugin.addNewCalendar(
+                                await this.settings$.addCalendar(
                                     edited,
                                     calendar
                                 );

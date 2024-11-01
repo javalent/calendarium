@@ -54,12 +54,6 @@ export default class Calendarium extends Plugin {
     get calendars() {
         return this.settings$.getCalendars();
     }
-    async addNewCalendar(calendar: Calendar, existing?: Calendar) {
-        this.settings$.addCalendar(calendar, existing);
-    }
-    public async removeCalendar(calendar: Calendar) {
-        this.settings$.removeCalendar(calendar);
-    }
     public onSettingsLoaded(callback: () => any) {
         this.settings$.onSettingsLoaded(callback);
     }
