@@ -397,10 +397,7 @@ class SettingsServiceClass {
 
     /** These methods are used to manage calendars in settings. */
     async addCalendar(calendar: Calendar, existing?: Calendar) {
-        let shouldParse =
-            !existing ||
-            calendar.name != existing?.name ||
-            (calendar.autoParse && !existing?.autoParse);
+        let shouldParse = !existing || calendar.name != existing?.name;
         if (existing == null) {
             this.#data.calendars.push(calendar);
         } else {
@@ -583,8 +580,12 @@ class SettingsServiceClass {
     private updateDataToNewSchema(
         data: MarkdownCalendariumData | CalendariumData
     ) {
-        const version = this.getDataVersion(data);
         let dirty = this.updateCalendarsToNewSchema(data.calendars, data);
+
+        if (!(("autoParse" in data) as any)) {
+            data.autoParse = true;
+            dirty = true;
+        }
         if (!data.defaultCalendar && data.calendars.length) {
             data.defaultCalendar = data.calendars[0].id;
             dirty = true;

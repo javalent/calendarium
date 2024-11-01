@@ -14,7 +14,7 @@ export type Version = {
     /* patch?: z.union([number, string]), */
 };
 export type CalendariumData = {
-    addToDefaultIfMissing: boolean;
+    autoParse: boolean;
     askedToMoveFC: boolean;
     askedAboutSync: boolean;
     calendars: Calendar[];

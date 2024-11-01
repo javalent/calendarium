@@ -8,7 +8,6 @@ export interface QueueMessage {
 export interface OptionsMessage {
     type: "options";
     defaultCalendar: string;
-    addToDefaultIfMissing: boolean;
     format: string;
     parseTitle: boolean;
     paths: (readonly [string, string])[];

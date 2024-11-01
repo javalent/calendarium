@@ -5,7 +5,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
     {
         name: "Gregorian Calendar",
         description: "A calendar for the real world.",
-        autoParse: false,
+
         path: [],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
@@ -516,7 +516,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
     {
         name: "Calendar of Greyhawk",
         description: "Create the calendar of Oerth",
-        autoParse: false,
+
         path: [],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
@@ -1042,7 +1042,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
     {
         name: "Calendar of Golarion",
         description: "Calendar for the world of Pathfinder.",
-        autoParse: false,
+
         path: [],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
@@ -2814,7 +2814,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
     {
         name: "Calendar of Galifar",
         description: "Calendar of the world of Eberron.",
-        autoParse: false,
+
         path: [],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
@@ -3633,7 +3633,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
     {
         name: "Barovian Calendar",
         description: "Calendar of the realm of Barovia, home of Strahd.",
-        autoParse: false,
+
         path: [],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
@@ -3979,7 +3979,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
     {
         name: "Exandrian Calendar",
         description: "Calendar of the world of Wildemount.",
-        autoParse: false,
+
         path: [],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",
@@ -4677,7 +4677,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
     {
         name: "Calendar of Harptos",
         description: "Calendar of Faerûn of the Forgotten Realms.",
-        autoParse: false,
         path: [],
         supportInlineEvents: false,
         inlineEventTag: "inline-events",

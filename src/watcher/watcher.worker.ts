@@ -30,7 +30,6 @@ class Parser {
     calendars: Calendar[];
     format: string;
     parseTitle: boolean = false;
-    addToDefaultIfMissing: boolean;
     debug: boolean;
     eventHelpers: Map<string, CalEventHelper> = new Map();
     paths: (readonly [string, string])[];
@@ -44,14 +43,12 @@ class Parser {
                 if (event.data.type == "options") {
                     const {
                         defaultCalendar,
-                        addToDefaultIfMissing,
                         format,
                         parseTitle,
                         debug,
                         inlineEventsTag,
                         paths,
                     } = event.data;
-                    this.addToDefaultIfMissing = addToDefaultIfMissing;
                     this.defaultCalendar = defaultCalendar;
                     this.format = format;
                     this.parseTitle = parseTitle;
@@ -68,7 +65,6 @@ class Parser {
                         console.debug(
                             "Received options message",
                             this.defaultCalendar,
-                            this.addToDefaultIfMissing,
                             this.inlineEventsTag,
                             this.paths
                         );
@@ -306,7 +302,7 @@ class Parser {
                     name = match[1];
                 }
             }
-            if (this.addToDefaultIfMissing && (!name || !name.length)) {
+            if (!name || !name.length) {
                 name = this.defaultCalendar;
             }
 

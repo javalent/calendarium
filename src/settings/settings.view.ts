@@ -85,7 +85,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         event: false,
         advanced: false,
     };
-    eventsEl: HTMLDetailsElement;
+    parsingEl: HTMLDetailsElement;
     settings$ = SettingsService;
     get data() {
         return this.settings$.getData();
@@ -115,13 +115,23 @@ export default class CalendariumSettings extends PluginSettingTab {
             },
         });
         this.buildCalendars();
-        this.eventsEl = this.contentEl.createEl("details", {
+
+        this.buildEventsManagement(
+            this.contentEl.createEl("details", {
+                cls: "calendarium-nested-settings",
+                attr: {
+                    /* ...(this.toggleState.calendar ? { open: `open` } : {}), */
+                    open: "open",
+                },
+            })
+        );
+        this.parsingEl = this.contentEl.createEl("details", {
             cls: "calendarium-nested-settings",
             attr: {
                 ...(this.toggleState.event ? { open: `open` } : {}),
             },
         });
-        this.buildEvents(this.eventsEl);
+        this.buildEventsParsing(this.parsingEl);
         this.buildAdvanced(
             this.contentEl.createEl("details", {
                 cls: "calendarium-nested-settings",
@@ -527,7 +537,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         }
     }
 
-    buildEvents(containerEl: HTMLDetailsElement) {
+    buildEventsManagement(containerEl: HTMLDetailsElement) {
         containerEl.empty();
         const summary = containerEl.createEl("summary");
         containerEl.ontoggle = async () => {
@@ -575,8 +585,17 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
                 });
             });
+    }
+    buildEventsParsing(containerEl: HTMLDetailsElement) {
+        containerEl.empty();
+        const summary = containerEl.createEl("summary");
+        containerEl.ontoggle = async () => {
+            this.toggleState.event = containerEl.open;
+        };
+        new Setting(summary).setHeading().setName("Events parsing");
 
-        new Setting(containerEl).setName("Event parsing").setDesc(
+        setIcon(summary.createDiv("collapser").createDiv("handle"), COLLAPSE);
+        new Setting(containerEl).setDesc(
             createFragment((e) => {
                 const explanation = e.createDiv("explanation");
                 explanation.createDiv().createSpan({
@@ -590,28 +609,22 @@ export default class CalendariumSettings extends PluginSettingTab {
         );
 
         new Setting(containerEl)
-            .setName("Add events to default calendar")
+            .setName("Enable event parsing")
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Add events found in notes to the default calendar if the ",
-                    });
-                    e.createEl("code", { text: "fc-calendar" });
-                    e.createSpan({
-                        text: " frontmatter tag is not present and the note is not in a defined path.",
+                        text: "Parse the vault for Calendarium events.",
                     });
                 })
             )
             .addToggle((t) => {
-                t.setValue(this.data.addToDefaultIfMissing).onChange(
-                    async (v) => {
-                        this.data.addToDefaultIfMissing = v;
-                        await this.settings$.save({
-                            calendar: true,
-                            watcher: true,
-                        });
-                    }
-                );
+                t.setValue(this.data.autoParse).onChange(async (v) => {
+                    this.data.autoParse = v;
+                    await this.settings$.save({
+                        calendar: true,
+                        watcher: true,
+                    });
+                });
             });
         new Setting(containerEl)
             .setName("Inline events tag")
@@ -643,17 +656,17 @@ export default class CalendariumSettings extends PluginSettingTab {
                     });
                 };
             });
-        new Setting(containerEl).setName("Event paths").setDesc(
-            `Calendarium can be restricted to look at certain paths in your vault for events. You can add specific paths here and associate default calendars to those paths.
-                
-                If no calendar is selected, Calendarium will add the event to your default calendar, if any.`
-        );
+        new Setting(containerEl)
+            .setName("Event paths")
+            .setDesc(
+                `Calendarium can be restricted to look at certain paths in your vault for events. You can add specific paths here and associate default calendars to those paths. If no calendar is selected, Calendarium will add the event to your default calendar, if any.`
+            );
         this.pathsEl = containerEl.createDiv("calendarium-event-paths");
 
         this.buildPaths();
     }
     showPaths() {
-        this.eventsEl.setAttr("open", "open");
+        this.parsingEl.setAttr("open", "open");
         this.pathsEl.scrollIntoView();
     }
     #needsSort = true;

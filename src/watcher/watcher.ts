@@ -91,7 +91,7 @@ export class Watcher extends Component {
                                     modal.chosen.name
                             );
                         }
-                        this.start({ ...modal.chosen, autoParse: true });
+                        this.start({ ...modal.chosen });
                     }
                 };
                 modal.open();
@@ -113,8 +113,6 @@ export class Watcher extends Component {
                 this.worker.postMessage<OptionsMessage>({
                     type: "options",
                     parseTitle: SettingsService.getData().parseDates,
-                    addToDefaultIfMissing:
-                        SettingsService.getData().addToDefaultIfMissing,
                     format: this.plugin.format,
                     defaultCalendar: this.plugin.defaultCalendar?.name,
                     paths: SettingsService.getData().paths,
@@ -176,8 +174,6 @@ export class Watcher extends Component {
         this.worker.postMessage<OptionsMessage>({
             type: "options",
             parseTitle: SettingsService.getData().parseDates,
-            addToDefaultIfMissing:
-                SettingsService.getData().addToDefaultIfMissing,
             format: this.plugin.format,
             defaultCalendar: this.plugin.defaultCalendar?.name,
             inlineEventsTag: SettingsService.getData().inlineEventsTag,
@@ -310,6 +306,8 @@ export class Watcher extends Component {
         });
     }
     start(calendar?: Calendar) {
+        if (!SettingsService.getData().autoParse) return;
+
         const calendars = calendar
             ? [calendar]
             : SettingsService.getCalendars();

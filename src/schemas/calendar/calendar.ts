@@ -54,7 +54,6 @@ type BaseCalendar = {
     displayWeeks?: boolean;
     hideEra?: boolean;
     displayAbsoluteYear?: boolean;
-    autoParse: boolean;
     path: string[];
     supportInlineEvents: boolean;
     inlineEventTag?: string | null;
