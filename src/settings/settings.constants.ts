@@ -32,7 +32,7 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
     events: [],
     categories: [],
     autoParse: false,
-    path: ["/"],
+    path: [],
     supportInlineEvents: false,
     inlineEventTag: "#inline-events",
 };

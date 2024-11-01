@@ -400,8 +400,7 @@ class SettingsServiceClass {
         let shouldParse =
             !existing ||
             calendar.name != existing?.name ||
-            (calendar.autoParse && !existing?.autoParse) ||
-            calendar.path != existing?.path;
+            (calendar.autoParse && !existing?.autoParse);
         if (existing == null) {
             this.#data.calendars.push(calendar);
         } else {
@@ -812,3 +811,5 @@ class SettingsServiceClass {
 }
 
 export const SettingsService = new SettingsServiceClass();
+//@ts-ignore
+window.SettingsService = SettingsService;
