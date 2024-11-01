@@ -103,8 +103,6 @@ export class EventStore {
     }
     public removeAllFileEvents() {
         this.#events.update((SAVED_EVENTS) => {
-            console.log("🚀 ~ file: events.store.ts:106 ~ SAVED_EVENTS:", SAVED_EVENTS);
-
             for (const id of this.#fileEventSet) {
                 if (!SAVED_EVENTS.has(id)) continue;
                 const event = { ...SAVED_EVENTS.get(id)! };

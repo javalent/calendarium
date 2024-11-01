@@ -115,16 +115,16 @@ export class Watcher extends Component {
             this.vault.on("rename", async (abstractFile, oldPath) => {
                 if (!SettingsService.getCalendars().length) return;
                 if (!(abstractFile instanceof TFile)) return;
-                if (this.pathContainsFile(oldPath)) {
-                    for (const calendar of SettingsService.getCalendars()) {
-                        const store = this.plugin.getStoreByCalendar(calendar);
-                        if (!store) continue;
-                        store.eventStore.removeEventsFromFile(oldPath);
-                    }
-                    this.worker.postMessage<CalendarsMessage>({
-                        type: "calendars",
-                        calendars: SettingsService.getCalendars(),
-                    });
+                for (const calendar of SettingsService.getCalendars()) {
+                    const store = this.plugin.getStoreByCalendar(calendar);
+                    if (!store) continue;
+                    store.eventStore.removeEventsFromFile(oldPath);
+                }
+                this.worker.postMessage<CalendarsMessage>({
+                    type: "calendars",
+                    calendars: SettingsService.getCalendars(),
+                });
+                if (this.pathContainsFile(abstractFile.path)) {
                     this.parseFiles(abstractFile);
                 }
             })
