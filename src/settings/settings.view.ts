@@ -453,6 +453,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         this.existingEl.empty();
         if (!this.data.calendars.length) {
             this.existingEl.createSpan({
+                cls: "no-calendars",
                 text: "No calendars created! Create a calendar to see it here.",
             });
             return;
@@ -677,7 +678,7 @@ export default class CalendariumSettings extends PluginSettingTab {
         if (!this.data.calendars.length) {
             this.pathsEl.createSpan({
                 cls: "no-calendars",
-                text: "No calendars created! Create a calendar to use this functionality.",
+                text: "No calendars created! Create a calendar to use this feature.",
             });
             return;
         }

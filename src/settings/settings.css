@@ -4,13 +4,13 @@
 
 /** Event Paths */
 .calendarium-settings .existing-calendars {
-    padding: 18px;
+    margin: 18px;
 }
-.calendarium-settings .existing-calendars > span {
+/* .calendarium-settings .existing-calendars > span {
     display: block;
     text-align: center;
     color: var(--text-muted);
-}
+} */
 
 .calendarium-settings .existing-calendars.has-table {
     padding-left: 0px;
@@ -333,4 +333,11 @@ details.calendarium-nested-settings[open] > summary > .collapser > .handle {
 }
 .has-node-icon.x-large {
     --icon-size: var(--icon-xl);
+}
+
+span.no-calendars {
+    display: block;
+    text-align: center;
+    color: var(--text-muted);
+    margin: 18px;
 }
