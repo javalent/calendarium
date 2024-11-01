@@ -147,7 +147,7 @@ export async function addEventWithModal(
         calendar.events.push(modal.event);
         store.eventStore.insertEvents(modal.event);
 
-        await SettingsService.saveCalendars();
+        await SettingsService.save({ calendar: true });
     };
 
     modal.open();

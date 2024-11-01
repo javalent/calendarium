@@ -297,25 +297,28 @@ class SettingsServiceClass {
     /**
      *
      */
-    public async save() {
+    public async save(triggers?: { calendar?: boolean; watcher?: boolean }) {
         await this.saveData(this.#data);
+
+        /** If necessary, tell things that one or more calendars have been updated. */
+        if (triggers?.calendar) {
+            console.debug(
+                "Calendarium: Triggering calendar updates due to a save event effecting calendar display."
+            );
+            this.app.workspace.trigger("calendarium-updated");
+        }
+
+        if (triggers?.watcher) {
+            this.plugin.watcher.start();
+        }
     }
 
-    public async saveCalendars() {
-        await this.saveAndTrigger();
-    }
-    /**
-     *
-     */
-    public async saveAndTrigger() {
-        await this.saveData(this.#data, true);
-    }
     /**
      *
      * @param {CalendariumData} data Calendar data to be saved.
      * @param {boolean} triggerCalendar Trigger a calendar update event.
      */
-    public async saveData(data: CalendariumData, triggerCalendar = false) {
+    public async saveData(data: CalendariumData) {
         console.debug("Calendarium: Saving data.");
         /** This flag is used to know that an internal event caused my settings to change. */
         this.#saving = true;
@@ -331,14 +334,6 @@ class SettingsServiceClass {
 
         /** Tell things that Calendarium settings have changed. */
         this.plugin.app.workspace.trigger("calendarium-settings-change");
-
-        /** If necessary, tell things that one or more calendars have been updated. */
-        if (triggerCalendar) {
-            console.debug(
-                "Calendarium: Triggering calendar updates due to a save event effecting calendar display."
-            );
-            this.app.workspace.trigger("calendarium-updated");
-        }
 
         this.#saving = false;
     }
@@ -423,7 +418,7 @@ class SettingsServiceClass {
         if (shouldParse) this.plugin.watcher.start(calendar);
 
         this.#calendars.set(calendar.id, calendar);
-        await this.saveData(this.#data, true);
+        await this.saveData(this.#data);
     }
     /**
      * Remove a calendar from settings.
@@ -439,7 +434,7 @@ class SettingsServiceClass {
         }
         this.deletedCalendars.push(calendar);
         this.#calendars.delete(calendar.id);
-        await this.saveData(this.#data, true);
+        await this.saveData(this.#data);
     }
 
     /**
@@ -546,7 +541,7 @@ class SettingsServiceClass {
         }
 
         await this.updateDataToNewSchema(data);
-        await this.saveData(data, true);
+        await this.saveData(data);
     }
     /**
      * Transition data from the old `_data.md` format.

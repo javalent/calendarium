@@ -108,7 +108,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
                 cal.current = { ...date };
                 return cal;
             });
-            SettingsService.saveCalendars();
+            SettingsService.save({ calendar: true });
         },
         updateCalendar: (calendar: Calendar) => update((cal) => calendar),
         eventStore,

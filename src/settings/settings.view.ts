@@ -202,13 +202,18 @@ export default class CalendariumSettings extends PluginSettingTab {
                 d.onChange(async (v) => {
                     if (v === "none") {
                         this.data.defaultCalendar = null;
-                        await this.settings$.saveAndTrigger();
+                        await this.settings$.save({
+                            calendar: true,
+                            watcher: true,
+                        });
                         return;
                     }
 
                     this.data.defaultCalendar = v;
-                    await this.settings$.saveAndTrigger();
-                    this.plugin.watcher.start();
+                    await this.settings$.save({
+                        calendar: true,
+                        watcher: true,
+                    });
                     this.buildPaths();
                 });
             });
@@ -563,8 +568,10 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.parseDates).onChange(async (v) => {
                     this.data.parseDates = v;
-                    await this.settings$.saveAndTrigger();
-                    this.plugin.watcher.start();
+                    await this.settings$.save({
+                        calendar: true,
+                        watcher: true,
+                    });
                 });
             });
 
@@ -598,8 +605,10 @@ export default class CalendariumSettings extends PluginSettingTab {
                 t.setValue(this.data.addToDefaultIfMissing).onChange(
                     async (v) => {
                         this.data.addToDefaultIfMissing = v;
-                        await this.settings$.saveAndTrigger();
-                        this.plugin.watcher.start();
+                        await this.settings$.save({
+                            calendar: true,
+                            watcher: true,
+                        });
                     }
                 );
             });
@@ -627,8 +636,10 @@ export default class CalendariumSettings extends PluginSettingTab {
                     }
                 );
                 t.inputEl.onblur = async () => {
-                    await this.settings$.saveAndTrigger();
-                    this.plugin.watcher.start();
+                    await this.settings$.save({
+                        calendar: true,
+                        watcher: true,
+                    });
                 };
             });
         new Setting(containerEl).setName("Event paths").setDesc(
@@ -700,7 +711,10 @@ export default class CalendariumSettings extends PluginSettingTab {
                 this.data.paths.push([toAdd.path, toAdd.calendar]);
                 this.#needsSort = true;
                 this.buildPaths();
-                await this.settings$.saveAndTrigger();
+                await this.settings$.save({
+                    calendar: true,
+                    watcher: true,
+                });
             });
         this.buildPathInput(pathEl, addButton, addIconEl, (path) => {
             toAdd.path = path;
@@ -762,7 +776,10 @@ export default class CalendariumSettings extends PluginSettingTab {
         });
         new ExtraButtonComponent(actions).setIcon(TRASH).onClick(async () => {
             this.data.paths.splice(index, 1);
-            await this.settings$.saveAndTrigger();
+            await this.settings$.save({
+                calendar: true,
+                watcher: true,
+            });
             this.#needsSort = true;
             this.buildPaths();
         });
@@ -783,7 +800,10 @@ export default class CalendariumSettings extends PluginSettingTab {
             .setIcon(CHECK)
             .onClick(async () => {
                 this.data.paths.splice(index, 1, [path, calendar]);
-                await this.settings$.saveAndTrigger();
+                await this.settings$.save({
+                    calendar: true,
+                    watcher: true,
+                });
                 if (path !== originalPath) {
                     this.#needsSort = true;
                     this.buildPaths();

@@ -85,7 +85,7 @@
                     $calendar.events = $calendar.events.filter(
                         (e) => e.id != event.id,
                     );
-                    await SettingsService.saveCalendars();
+                    await SettingsService.save({ calendar: true });
                 }),
             );
         }
