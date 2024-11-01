@@ -620,6 +620,7 @@ export default class CalendariumSettings extends PluginSettingTab {
             .addToggle((t) => {
                 t.setValue(this.data.autoParse).onChange(async (v) => {
                     this.data.autoParse = v;
+                    if (!v) this.plugin.flushFileEvents();
                     await this.settings$.save({
                         calendar: true,
                         watcher: true,

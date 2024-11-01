@@ -112,7 +112,9 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         },
         updateCalendar: (calendar: Calendar) => update((cal) => calendar),
         eventStore,
-
+        flushFileEvents() {
+            this.eventStore.removeAllFileEvents();
+        },
         getEventsForDate: (date: CalDate): Readable<EventLike[]> => {
             const events = eventStore.getEventsForDate(date);
             const eras = yearCalculator

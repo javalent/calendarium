@@ -103,6 +103,12 @@ export default class Calendarium extends Plugin {
         return this.getStoreByCalendar(cal);
     }
 
+    public flushFileEvents() {
+        for (const calendar of this.calendars) {
+            this.stores.get(calendar)?.flushFileEvents();
+        }
+    }
+
     /**
      * Integrations
      */
