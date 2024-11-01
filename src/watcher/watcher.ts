@@ -129,7 +129,7 @@ export class Watcher extends Component {
             this.metadataCache.on("changed", (file) => {
                 /** Already being parsed. */
                 if (this.queue.has(file.path)) return;
-                this.parseFile(file);
+                this.parseFiles(file);
             })
         );
         /** A file has been renamed and should be checked for events.
@@ -147,7 +147,7 @@ export class Watcher extends Component {
                     type: "calendars",
                     calendars: SettingsService.getCalendars(),
                 });
-                this.parseFile(abstractFile);
+                this.parseFiles(abstractFile);
             })
         );
         /** A file has been deleted and should be checked for events to unlink. */
@@ -161,7 +161,7 @@ export class Watcher extends Component {
                     store.eventStore.removeEventsFromFile(abstractFile.path);
                     updated = true;
                 }
-                if (updated) await SettingsService.saveCalendars();
+                if (updated) await SettingsService.save({ calendar: true });
             })
         );
 
@@ -176,7 +176,8 @@ export class Watcher extends Component {
         this.worker.postMessage<OptionsMessage>({
             type: "options",
             parseTitle: SettingsService.getData().parseDates,
-            addToDefaultIfMissing: SettingsService.getData().addToDefaultIfMissing,
+            addToDefaultIfMissing:
+                SettingsService.getData().addToDefaultIfMissing,
             format: this.plugin.format,
             defaultCalendar: this.plugin.defaultCalendar?.name,
             inlineEventsTag: SettingsService.getData().inlineEventsTag,
@@ -214,7 +215,7 @@ export class Watcher extends Component {
                             path,
                         });
                         for (const child of file.children) {
-                            this.parseFile(child);
+                            this.parseFiles(child);
                         }
                     }
                 }
@@ -265,7 +266,7 @@ export class Watcher extends Component {
                     if (!store) return;
                     if (store.hasCategory(category.id)) return;
                     store.addCategory(category);
-                    await SettingsService.saveCalendars();
+                    await SettingsService.save({ calendar: true });
                 }
             }
         );
@@ -314,8 +315,17 @@ export class Watcher extends Component {
             : SettingsService.getCalendars();
         if (!calendars.length) return;
 
-        const folder = this.vault.getRoot();
-        if (!folder || !(folder instanceof TFolder)) return;
+        const folders = [];
+        console.log(
+            "🚀 ~ file: watcher.ts:320 ~ SettingsService.getData().paths:",
+            SettingsService.getData().paths
+        );
+        for (const [path] of SettingsService.getData().paths) {
+            const folder = this.vault.getAbstractFileByPath(path);
+            if (!folder || !(folder instanceof TFolder)) return;
+            folders.push(folder);
+        }
+        if (!folders.length) return;
 
         if (SettingsService.getData().debug) {
             if (calendar) {
@@ -324,26 +334,29 @@ export class Watcher extends Component {
                 console.info(
                     `Starting rescan for ${calendars.length} calendars`
                 );
+                console.info(`Looking at ${folders.length} paths`);
             }
         }
 
-        this.parseFile(folder);
+        this.parseFiles(...folders);
     }
-    getFiles(folder: TAbstractFile): string[] {
+    getFiles(abstract: TAbstractFile): string[] {
         let files = [];
         if (
-            folder instanceof TFolder ||
-            (folder instanceof TFile && folder.extension === "md")
+            abstract instanceof TFolder ||
+            (abstract instanceof TFile && abstract.extension === "md")
         ) {
-            files.push(folder.path);
+            files.push(abstract.path);
         }
         return files;
     }
 
-    parseFile(folder: TAbstractFile) {
+    parseFiles(...folders: TAbstractFile[]) {
         const parsing: Set<string> = new Set();
-        for (const path of this.getFiles(folder)) {
-            parsing.add(path);
+        for (const folder of folders) {
+            for (const path of this.getFiles(folder)) {
+                parsing.add(path);
+            }
         }
 
         this.startParsing([...parsing]);
