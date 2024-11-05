@@ -1,7 +1,7 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import type { Day } from "src/schemas/calendar/timespans";
-    import { WeekdayModal } from "src/settings/modals/weekday/weekday";
+    import { WeekdayModal } from "src/settings/creator/Containers/dates/weekday/weekday";
     import copy from "fast-copy";
     import WeekdayInstance from "./WeekdayInstance.svelte";
     import Details from "src/settings/creator/Utilities/Details.svelte";
