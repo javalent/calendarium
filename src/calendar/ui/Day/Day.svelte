@@ -7,7 +7,7 @@
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Flags from "../Events/Flags.svelte";
-    import { addEventWithModal } from "src/settings/modals/event/event";
+    import { addEventWithModal } from "src/events/modal/event";
     import {
         TimeSpanType,
         type DayOrLeapDay,

@@ -4,16 +4,16 @@ import type {
     CalEvent,
     CalEventDate,
     UndatedCalDate,
-} from "../../../@types";
+} from "../../@types";
 
-import { nanoid } from "../../../utils/functions";
+import { nanoid } from "../../utils/functions";
 
 import copy from "fast-copy";
-import { CalendariumModal } from "../modal";
+import { CalendariumModal } from "../../settings/modals/modal";
 import Calendarium from "src/main";
 import EventCreator from "./EventCreator.svelte";
 import { EventType } from "src/events/event.types";
-import { ConfirmModal } from "../confirm";
+import { ConfirmModal } from "../../settings/modals/confirm";
 import { SettingsService } from "src/settings/settings.service";
 
 export class CreateEventModal extends CalendariumModal {
