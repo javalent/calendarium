@@ -1,4 +1,4 @@
-import { CanceableCalendariumModal } from "../modal";
+import { CanceableCalendariumModal } from "../../../../modals/modal";
 import { Setting } from "obsidian";
 import type { Month } from "src/schemas/calendar/timespans";
 import { nanoid } from "src/utils/functions";
@@ -39,21 +39,21 @@ export class MonthModal extends CanceableCalendariumModal<Month> {
             });
         });
         new Setting(this.contentEl).setName("Length").addText((t) => {
-            t.setValue(`${this.item.length}` ?? "").onChange(
+            t.setValue(this.item.length ? `${this.item.length}` : "").onChange(
                 (v) => (this.item.length = Number(v))
             );
             t.inputEl.type = "number";
             t.inputEl.min = "0";
         });
         new Setting(this.contentEl).setName("Interval").addText((t) => {
-            t.setValue(`${this.item.interval}` ?? "").onChange(
-                (v) => (this.item.interval = Number(v))
-            );
+            t.setValue(
+                this.item.interval ? `${this.item.interval}` : ""
+            ).onChange((v) => (this.item.interval = Number(v)));
             t.inputEl.type = "number";
             t.inputEl.min = "0";
         });
         new Setting(this.contentEl).setName("Offset").addText((t) => {
-            t.setValue(`${this.item.offset}` ?? "").onChange(
+            t.setValue(this.item.offset ? `${this.item.offset}` : "").onChange(
                 (v) => (this.item.offset = Number(v))
             );
             t.inputEl.type = "number";
