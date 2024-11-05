@@ -1,18 +1,18 @@
 <script lang="ts">
     import { App, ButtonComponent, ExtraButtonComponent } from "obsidian";
     import type { Calendar } from "src/@types";
-    import { IntervalModal } from "src/settings/modals/leapday/leapday";
     import { getIntervalDescription } from "src/utils/functions";
     import { createEventDispatcher } from "svelte";
-    import TextComponent from "../../creator/Settings/TextComponent.svelte";
-    import ToggleComponent from "../../creator/Settings/ToggleComponent.svelte";
-    import AddNew from "../../creator/Utilities/AddNew.svelte";
-    import Details from "../../creator/Utilities/Details.svelte";
+    import TextComponent from "../../../../Settings/TextComponent.svelte";
+    import ToggleComponent from "../../../../Settings/ToggleComponent.svelte";
+    import AddNew from "../../../../Utilities/AddNew.svelte";
+    import Details from "../../../../Utilities/Details.svelte";
     import type {
         LeapDay,
         LeapDayCondition,
     } from "src/schemas/calendar/timespans";
     import { EDIT, TRASH } from "src/utils/icons";
+    import { IntervalModal } from "./leapday";
 
     const dispatch = createEventDispatcher();
 
@@ -146,7 +146,7 @@
         name="Offset"
         desc="Offset the year the leap day is applied to."
         value={`${leapDay.offset}`}
-        on:blur={(evt) => (leapDay.offset = evt.detail)}
+        on:blur={(evt) => (leapDay.offset = Number(evt.detail))}
     />
     <div class="setting-item">
         <div class="setting-item-description">

@@ -1,13 +1,12 @@
 import copy from "fast-copy";
 import { App, Setting, ButtonComponent } from "obsidian";
-import type { Calendar } from "../../../@types";
-
-import { nanoid } from "../../../utils/functions";
 
 import LeapDayNew from "./LeapDayNew.svelte";
 import LeapDayInterval from "./LeapDayInterval.svelte";
-import { CalendariumModal } from "../modal";
 import type { LeapDay, LeapDayCondition } from "src/schemas/calendar/timespans";
+import { CalendariumModal } from "src/settings/modals/modal";
+import { nanoid } from "src/utils/functions";
+import type { Calendar } from "src/schemas";
 
 export class CreateLeapDayModal extends CalendariumModal {
     saved = true;

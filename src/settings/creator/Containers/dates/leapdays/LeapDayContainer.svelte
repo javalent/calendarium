@@ -3,11 +3,10 @@
     import LeapDayUI from "./LeapDayInstance.svelte";
     import AddNew from "../../../Utilities/AddNew.svelte";
     import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
-    import { CreateLeapDayModal } from "src/settings/modals/leapday/leapday";
-
-    import Details from "../../../Utilities/Details.svelte";
     import type { LeapDay } from "src/schemas/calendar/timespans";
     import { derived } from "svelte/store";
+    import { CreateLeapDayModal } from "./modal/leapday";
+    import Details from "src/settings/creator/Utilities/Details.svelte";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
