@@ -1,14 +1,11 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { ExtraButtonComponent, setIcon } from "obsidian";
-    import { dateString, getIntervalDescription } from "src/utils/functions";
-    import type { Era, LeapDay } from "src/schemas/calendar/timespans";
+    import { ExtraButtonComponent } from "obsidian";
+    import { dateString } from "src/utils/functions";
+    import type { Era } from "src/schemas/calendar/timespans";
     import {
         EDIT,
-        INTERCALARY,
-        MONTH,
         TRASH,
-        setNodeIcon,
     } from "src/utils/icons";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import { getContext } from "svelte";
