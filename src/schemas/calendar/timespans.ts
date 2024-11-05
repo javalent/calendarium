@@ -93,13 +93,6 @@ export type Year = TimeSpan & {
 /**
  * Misc
  */
-export type Season = {
-    name: string;
-    start: {
-        month: Month;
-        day: Day;
-    };
-};
 export type Era = EventLike & {
     type: typeof TimeSpanType.Era;
     name: string;

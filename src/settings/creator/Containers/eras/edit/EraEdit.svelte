@@ -1,8 +1,8 @@
 <script lang="ts">
     import { ExtraButtonComponent } from "obsidian";
-    import type Calendarium from "src/main";
+    
     import type { Era } from "src/schemas/calendar/timespans";
-    import DropdownComponent from "src/settings/creator/Settings/DropdownComponent.svelte";
+    
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import TextAreaComponent from "src/settings/creator/Settings/TextAreaComponent.svelte";
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";

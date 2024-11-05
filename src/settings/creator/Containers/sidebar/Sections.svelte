@@ -19,6 +19,8 @@
                 return "calendar-range";
             case "Events":
                 return "calendar-clock";
+            case "Seasonal":
+                return "sun-snow";
         }
     };
 

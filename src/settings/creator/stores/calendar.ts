@@ -7,6 +7,7 @@ import type {
 } from "src/@types";
 import type Calendarium from "src/main";
 import {
+    getEffectiveYearLength,
     isValidDay,
     isValidMonth,
     isValidYear,
@@ -24,6 +25,7 @@ import type {
     Day,
     Era,
 } from "src/schemas/calendar/timespans";
+import { SeasonType, type Season } from "src/schemas/calendar/seasonal";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -113,6 +115,13 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const displayMoons = derived(staticStore, (data) => data.displayMoons);
     const leapDayStore = derived(staticStore, (data) => data.leapDays);
     const eraStore = derived(staticStore, (data) => data.eras);
+    const seasonStore = derived(staticStore, (data) => data.seasonal.seasons);
+    const seasonOffset = derived(staticStore, (data) => data.seasonal.offset);
+    const displaySeasonColors = derived(
+        staticStore,
+        (data) => data.seasonal.displayColors
+    );
+    const seasonType = derived(staticStore, (data) => data.seasonal.type);
     const eventStore = derived(store, (data) => data.events);
     const categoryStore = derived(store, (data) => data.categories);
     const validMonths = derived(staticStore, (data) => {
@@ -387,6 +396,80 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     data.categories = data.categories.filter(
                         (c) => c.id !== id
                     );
+                    return data;
+                }),
+        },
+        displaySeasonColors: {
+            subscribe: displaySeasonColors.subscribe,
+            set: (val: boolean) => {
+                update((data) => {
+                    data.static.seasonal.displayColors = val;
+                    return data;
+                });
+            },
+        },
+        seasonOffset: {
+            subscribe: seasonOffset.subscribe,
+            set: (val: number) => {
+                update((data) => {
+                    data.static.seasonal.offset = val;
+                    return data;
+                });
+            },
+        },
+        seasonType: {
+            subscribe: seasonType.subscribe,
+            set: (val: SeasonType) => {
+                update((data) => {
+                    data.static.seasonal.type = val;
+                    for (const season of data.static.seasonal.seasons) {
+                        season.type = val;
+                        if (season.type === SeasonType.DATED) {
+                            season.day = 1;
+                            season.month = 0;
+                        } else {
+                            season.duration =
+                                getEffectiveYearLength(data) /
+                                data.static.seasonal.seasons.length;
+                            season.peak = 0;
+                        }
+                    }
+                    return data;
+                });
+            },
+        },
+        seasonStore: {
+            subscribe: seasonStore.subscribe,
+            set: (seasons: Season[]) =>
+                update((data) => {
+                    data.static.seasonal.seasons = [...seasons];
+                    return data;
+                }),
+            add: (season: Season) =>
+                update((data) => {
+                    data.static.seasonal.seasons.push({ ...season });
+                    return data;
+                }),
+            update: (id: string, season: Season) =>
+                update((data) => {
+                    const index = data.static.seasonal.seasons.findIndex(
+                        (e) => e.id === id
+                    );
+
+                    if (index < 0) {
+                        data.static.seasonal.seasons.push({ ...season });
+                    } else {
+                        data.static.seasonal.seasons.splice(index, 1, {
+                            ...season,
+                        });
+                    }
+
+                    return data;
+                }),
+            delete: (id: string) =>
+                update((data) => {
+                    data.static.seasonal.seasons =
+                        data.static.seasonal.seasons.filter((c) => c.id !== id);
                     return data;
                 }),
         },

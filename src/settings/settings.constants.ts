@@ -1,5 +1,7 @@
 import type { CalendariumData, PresetCalendar } from "src/@types";
 import { SyncBehavior } from "../schemas";
+import { DEFAULT_SEASONAL_DATA } from "../schemas/calendar/seasonal";
+import copy from "fast-copy";
 
 export const PathSelections = {
     DEFAULT: "DEFAULT",
@@ -23,6 +25,8 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
         displayDayNumber: false,
         leapDays: [],
         eras: [],
+
+        seasonal: copy(DEFAULT_SEASONAL_DATA),
     },
     current: {
         year: null,
@@ -35,7 +39,6 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
     supportInlineEvents: false,
     inlineEventTag: "#inline-events",
 };
-
 export const DEFAULT_DATA: CalendariumData = {
     autoParse: false,
     calendars: [],
