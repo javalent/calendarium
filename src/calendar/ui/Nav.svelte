@@ -21,6 +21,7 @@
     $: displayWeeks = $ephemeral.displayWeeks;
     $: displayDayNumber = $ephemeral.displayDayNumber;
     $: displayAbsoluteYear = $ephemeral.displayAbsoluteYear;
+    $: displaySeasonColors = $ephemeral.displaySeasonColors;
 
     $: eraMonth = derived(
         [monthInFrame, viewState, displaying],
@@ -74,26 +75,25 @@
         });
         menu.addSeparator();
         menu.addItem((item) => {
-            item.setTitle(
-                `${$displayWeeks ? "Hide" : "Display"} week numbers`,
-            ).onClick(async () => {
+            item.setTitle(`Show week numbers`).onClick(async () => {
                 $displayWeeks = !$displayWeeks;
             });
+            item.setChecked($displayWeeks);
         });
         menu.addItem((item) => {
-            item.setTitle(
-                $displayDayNumber ? "Hide day number" : "Display day number",
-            ).onClick(async () => {
-                $displayDayNumber = !$displayDayNumber;
-            });
+            item.setTitle("Show day number")
+                .onClick(async () => {
+                    $displayDayNumber = !$displayDayNumber;
+                })
+                .setChecked($displayDayNumber);
         });
         menu.addSeparator();
         menu.addItem((item) => {
-            item.setTitle(`${$hideEra ? "Show" : "Hide"} era`).onClick(
-                async () => {
+            item.setTitle(`Show era`)
+                .onClick(async () => {
                     $hideEra = !$hideEra;
-                },
-            );
+                })
+                .setChecked(!$hideEra);
         });
         menu.addItem((item) => {
             item.setTitle(
@@ -104,11 +104,19 @@
         });
         menu.addSeparator();
         menu.addItem((item) => {
-            item.setTitle(
-                $displayMoons ? "Hide moons" : "Display moons",
-            ).onClick(() => {
-                $displayMoons = !$displayMoons;
-            });
+            item.setTitle("Show moons")
+                .onClick(() => {
+                    $displayMoons = !$displayMoons;
+                })
+                .setChecked($displayMoons);
+        });
+        menu.addSeparator();
+        menu.addItem((item) => {
+            item.setTitle("Show season colors")
+                .onClick(() => {
+                    $displaySeasonColors = !$displaySeasonColors;
+                })
+                .setChecked($displaySeasonColors);
         });
 
         menu.showAtMouseEvent(evt);

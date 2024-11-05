@@ -171,6 +171,7 @@ export interface EphemeralState {
     displayMoons: boolean;
     displayWeeks: boolean;
     displayDayNumber: boolean;
+    displaySeasonColors: boolean;
     hideEra: boolean;
     displayAbsoluteYear: boolean;
     displaying: CalDate;
@@ -192,6 +193,7 @@ export function getEphemeralStore(
     const hideEra = writable(base.hideEra);
     const displayAbsoluteYear = writable(base.displayAbsoluteYear);
     const viewState = writable<ViewState>(ViewState.Month);
+    const displaySeasonColors = writable(base.static.seasonal.displayColors);
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
 
@@ -205,6 +207,7 @@ export function getEphemeralStore(
             displayAbsoluteYear,
             displaying,
             viewing,
+            displaySeasonColors,
         ],
         ([
             viewState,
@@ -215,6 +218,7 @@ export function getEphemeralStore(
             displayAbsoluteYear,
             displaying,
             viewing,
+            displaySeasonColors,
         ]) => {
             return {
                 viewState,
@@ -223,6 +227,7 @@ export function getEphemeralStore(
                 displayWeeks,
                 hideEra,
                 displayAbsoluteYear,
+                displaySeasonColors,
                 displaying,
                 viewing,
             };
@@ -257,6 +262,7 @@ export function getEphemeralStore(
                 viewState: get(viewState),
                 displaying: get(displaying),
                 displayDayNumber: get(displayDayNumber),
+                displaySeasonColors: get(displaySeasonColors),
                 hideEra: get(hideEra),
                 displayAbsoluteYear: get(displayAbsoluteYear),
                 displayMoons: get(displayMoons),
@@ -268,6 +274,7 @@ export function getEphemeralStore(
         displayWeeks,
         hideEra,
         displayAbsoluteYear,
+        displaySeasonColors,
         viewState,
 
         //Displayed Date
