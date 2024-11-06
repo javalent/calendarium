@@ -2,7 +2,7 @@ export const SettingsSections = [
     "General",
     "Dates",
     "Eras",
-    "Seasonal",
+    "Seasons & weather",
     "Celestial bodies",
     "Events",
 ] as const;

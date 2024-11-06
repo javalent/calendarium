@@ -19,7 +19,7 @@
                 return "calendar-range";
             case "Events":
                 return "calendar-clock";
-            case "Seasonal":
+            case "Seasons & weather":
                 return "sun-snow";
         }
     };

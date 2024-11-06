@@ -42,7 +42,7 @@
             {#if $selected === "Eras"}
                 <Eras />
             {/if}
-            {#if $selected === "Seasonal"}
+            {#if $selected === "Seasons & weather"}
                 <Seasonal />
             {/if}
             <!--  -->

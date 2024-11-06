@@ -32,7 +32,7 @@ export function getDefaultSeason(type: SeasonType, name?: string): Season {
 
 export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
     creating: boolean;
-
+    valid = true;
     constructor(
         public calendar: Calendar,
         public store: CreatorStore,
@@ -74,7 +74,8 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                     enableYear: false,
                     store: this.store,
                 },
-            }).$on("date", (evt) => {
+            });
+            date.$on("date", (evt) => {
                 console.log("🚀 ~ file: seasons.ts:78 ~ evt:", evt);
 
                 if (this.item.type === SeasonType.DATED) {
@@ -82,6 +83,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                     this.item.day = evt.detail.day;
                 }
             });
+            date.$on("valid", (evt) => (this.valid = evt.detail));
         }
         if (this.item.type === SeasonType.PERIODIC) {
             let periodic = this.item;

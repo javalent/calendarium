@@ -16,6 +16,7 @@
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
     import ButtonComponent from "src/settings/creator/Settings/ButtonComponent.svelte";
     import { getEffectiveYearLength } from "src/utils/functions";
+    import { setNodeIcon, WARNING } from "src/utils/icons";
 
     const calendar = getContext("store");
     const {
@@ -38,6 +39,7 @@
             name,
         );
         modal.onClose = () => {
+            if (!modal.valid) return;
             seasonStore.add({ ...modal.item });
         };
         modal.open();
@@ -51,10 +53,18 @@
             item,
         );
         modal.onClose = () => {
+            if (!modal.valid) return;
             seasonStore.update(item.id, { ...modal.item });
         };
         modal.open();
     };
+
+    $: effectiveLength = getEffectiveYearLength($calendar);
+    $: seasonalLength = ($seasonStore as PeriodicSeason[]).reduce(
+        (a, b) => a + (b.duration ?? 0),
+        0,
+    );
+    $: couldDrift = Math.abs(effectiveLength - seasonalLength) > 0.001;
 
     function distribute(): void {
         const period = Number(
@@ -73,12 +83,29 @@
 <Details
     name={"Seasons"}
     desc={`${$seasonStore.length} season${$seasonStore.length != 1 ? "s" : ""}`}
+    warn={$seasonType === SeasonType.PERIODIC && couldDrift}
+    label={"Your seasons are not fully distributed and could drift over time."}
 >
+    <ToggleComponent
+        name={"Display seasonal colors"}
+        desc={"Show seasonal colors on the calendar. Can be changed using the calendar settings menu."}
+        value={$displaySeasonalColors}
+        on:click={(evt) => ($displaySeasonalColors = !$displaySeasonalColors)}
+    ></ToggleComponent>
+    {#if $displaySeasonalColors}
+        <ToggleComponent
+            name={"Gradient seasonal colors"}
+            desc={"When seasonal colors are displayed, show a gradient between one color and the next."}
+            value={$interpolateColors}
+            on:click={(evt) => ($interpolateColors = !$interpolateColors)}
+        ></ToggleComponent>
+    {/if}
+
     <div class="setting-item">
         <SettingItem>
             <div slot="name">Season type</div>
             <div slot="desc">
-                Change how the start and end date for seasons are calculated
+                Change how the start and end dates for seasons are calculated
             </div>
             <select slot="control" class="dropdown" bind:value={$seasonType}>
                 <option
@@ -94,20 +121,6 @@
             </select>
         </SettingItem>
     </div>
-    <ToggleComponent
-        name={"Display seasonal colors"}
-        desc={"Show seasonal colors on the calendar. Can be changed using the calendar settings menu."}
-        value={$displaySeasonalColors}
-        on:click={(evt) => ($displaySeasonalColors = !$displaySeasonalColors)}
-    ></ToggleComponent>
-    {#if $displaySeasonalColors}
-        <ToggleComponent
-            name={"Interpolate seasonal colors"}
-            desc={"When seasonal colors are displayed, show a gradient between one color and the next."}
-            value={$interpolateColors}
-            on:click={(evt) => ($interpolateColors = !$interpolateColors)}
-        ></ToggleComponent>
-    {/if}
     {#if $seasonType == SeasonType.PERIODIC}
         <TextComponent
             name={"Seasonal offset"}
