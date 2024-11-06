@@ -11,7 +11,7 @@ import Color from "colorjs.io";
 import { wrap } from "src/utils/functions";
 
 type DefinedSeason = Season & {
-    percent?: number;
+    lerp?: string;
 };
 
 class YearSeasonCache extends YearCache<DefinedSeason> {
@@ -87,7 +87,7 @@ class DaySeasonCache extends DayCache<DefinedSeason> {
                             return [
                                 {
                                     ...season,
-                                    color: lerp(
+                                    lerp: lerp(
                                         remainingDays / season.duration
                                     ).toString({ format: "hex" }),
                                 },

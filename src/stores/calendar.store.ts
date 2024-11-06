@@ -175,6 +175,7 @@ export interface EphemeralState {
     displayWeeks: boolean;
     displayDayNumber: boolean;
     displaySeasonColors: boolean;
+    interpolateColors: boolean;
     hideEra: boolean;
     displayAbsoluteYear: boolean;
     displaying: CalDate;
@@ -197,6 +198,7 @@ export function getEphemeralStore(
     const displayAbsoluteYear = writable(base.displayAbsoluteYear);
     const viewState = writable<ViewState>(ViewState.Month);
     const displaySeasonColors = writable(base.static.seasonal.displayColors);
+    const interpolateColors = writable(base.static.seasonal.interpolateColors);
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
 
@@ -211,6 +213,7 @@ export function getEphemeralStore(
             displaying,
             viewing,
             displaySeasonColors,
+            interpolateColors,
         ],
         ([
             viewState,
@@ -222,6 +225,7 @@ export function getEphemeralStore(
             displaying,
             viewing,
             displaySeasonColors,
+            interpolateColors,
         ]) => {
             return {
                 viewState,
@@ -231,6 +235,7 @@ export function getEphemeralStore(
                 hideEra,
                 displayAbsoluteYear,
                 displaySeasonColors,
+                interpolateColors,
                 displaying,
                 viewing,
             };
@@ -266,6 +271,7 @@ export function getEphemeralStore(
                 displaying: get(displaying),
                 displayDayNumber: get(displayDayNumber),
                 displaySeasonColors: get(displaySeasonColors),
+                interpolateColors: get(interpolateColors),
                 hideEra: get(hideEra),
                 displayAbsoluteYear: get(displayAbsoluteYear),
                 displayMoons: get(displayMoons),
@@ -278,6 +284,7 @@ export function getEphemeralStore(
         hideEra,
         displayAbsoluteYear,
         displaySeasonColors,
+        interpolateColors,
         viewState,
 
         //Displayed Date

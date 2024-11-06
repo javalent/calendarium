@@ -22,6 +22,7 @@
     $: displayDayNumber = $ephemeral.displayDayNumber;
     $: displayAbsoluteYear = $ephemeral.displayAbsoluteYear;
     $: displaySeasonColors = $ephemeral.displaySeasonColors;
+    $: interpolateColors = $ephemeral.interpolateColors;
 
     $: eraMonth = derived(
         [monthInFrame, viewState, displaying],
@@ -118,6 +119,14 @@
                 })
                 .setChecked($displaySeasonColors);
         });
+        if ($displaySeasonColors)
+            menu.addItem((item) => {
+                item.setTitle("Gradient season colors")
+                    .onClick(() => {
+                        $interpolateColors = !$interpolateColors;
+                    })
+                    .setChecked($interpolateColors);
+            });
 
         menu.showAtMouseEvent(evt);
     };

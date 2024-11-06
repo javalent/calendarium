@@ -51,6 +51,7 @@
         year: year.year,
     });
     $: displaySeasonColors = $ephemeral.displaySeasonColors;
+    $: interpolateColors = $ephemeral.interpolateColors;
 
     $: today =
         !adjacent &&
@@ -170,7 +171,7 @@
             ? `${$events.length} event${$events.length == 1 ? "" : "s"}`
             : ""}
         style={$displaySeasonColors && $seasons.length
-            ? `border-top: 2px solid ${$seasons[0].color}`
+            ? `border-top: 2px solid ${$interpolateColors ? $seasons[0].lerp : $seasons[0].color}`
             : ""}
     >
         {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
