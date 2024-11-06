@@ -61,7 +61,7 @@ class DaySeasonCache extends DayCache<DefinedSeason> {
                 //Remove the full cycles
                 const periodicSeasons = seasons as PeriodicSeason[];
                 const totalSeasonalPeriod = periodicSeasons.reduce(
-                    (a, b) => a + b.duration,
+                    (a, b) => a + b.duration + (b.peak ?? 0),
                     0
                 );
 
@@ -72,32 +72,34 @@ class DaySeasonCache extends DayCache<DefinedSeason> {
                 const seasonalArr = [...periodicSeasons, periodicSeasons[0]];
                 for (let i = 0; i < seasonalArr.length; i++) {
                     const season = seasonalArr[i];
-                    if (remainingDays - season.duration <= 0) {
-                        if (seasonalData.interpolateColors) {
-                            const color = new Color(season.color);
+                    if (
+                        remainingDays -
+                            (season.duration + (season.peak ?? 0)) <=
+                        0
+                    ) {
+                        const color = new Color(season.color);
 
-                            let lerp = color.range(
-                                seasonalArr[wrap(i + 1, seasonalArr.length)]
-                                    .color,
-                                {
-                                    space: "lch", // interpolation space
-                                    outputSpace: "srgb",
-                                }
-                            );
-                            return [
-                                {
-                                    ...season,
-                                    lerp: lerp(
-                                        remainingDays / season.duration
-                                    ).toString({ format: "hex" }),
-                                },
-                            ];
-                        } else {
-                            return [season];
-                        }
+                        let lerp = color.range(
+                            seasonalArr[wrap(i + 1, seasonalArr.length)].color,
+                            {
+                                space: "lch", // interpolation space
+                                outputSpace: "srgb",
+                            }
+                        );
+                        if (remainingDays <= (season.peak ?? 0))
+                            return [{ ...season, lerp: season.color }];
+                        return [
+                            {
+                                ...season,
+                                lerp: lerp(
+                                    (remainingDays - (season.peak ?? 0)) /
+                                        season.duration
+                                ).toString({ format: "hex" }),
+                            },
+                        ];
                     }
 
-                    remainingDays -= season.duration;
+                    remainingDays -= season.duration + (season.peak ?? 0);
                 }
             }
         }
