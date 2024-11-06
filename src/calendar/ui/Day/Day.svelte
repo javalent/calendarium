@@ -1,6 +1,5 @@
 <script lang="ts">
     import { MonthStore } from "src/stores/month.store";
-    import { ViewType } from "../../view.types";
     import Dots from "../Events/Dots.svelte";
     import { TFile } from "obsidian";
     import type { CalEvent } from "src/@types";
@@ -19,6 +18,7 @@
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
+
     export let adjacent: boolean;
 
     const plugin = getTypedContext("plugin");
@@ -45,6 +45,12 @@
         month: $index,
         year: year.year,
     });
+    $: seasons = $store.seasonCache.getItemsOrRecalculate({
+        day: day.number,
+        month: $index,
+        year: year.year,
+    });
+    $: displaySeasonColors = $ephemeral.displaySeasonColors;
 
     $: today =
         !adjacent &&
@@ -160,7 +166,12 @@
         on:contextmenu={(evt) => {
             openMenu(evt);
         }}
-        aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
+        aria-label={$events.length > 0
+            ? `${$events.length} event${$events.length == 1 ? "" : "s"}`
+            : ""}
+        style={$displaySeasonColors && $seasons.length
+            ? `border-top: 2px solid ${$seasons[0].color}`
+            : ""}
     >
         {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
             {day.name}

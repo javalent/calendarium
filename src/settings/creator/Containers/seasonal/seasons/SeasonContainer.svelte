@@ -3,7 +3,11 @@
     import AddNew from "../../../Utilities/AddNew.svelte";
     import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
     import Details from "../../../Utilities/Details.svelte";
-    import { SeasonType, type Season } from "src/schemas/calendar/seasonal";
+    import {
+        SeasonType,
+        type PeriodicSeason,
+        type Season,
+    } from "src/schemas/calendar/seasonal";
     import { CreateSeasonModal } from "./seasons";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
@@ -14,12 +18,15 @@
     import { getEffectiveYearLength } from "src/utils/functions";
 
     const calendar = getContext("store");
-    const { seasonStore, seasonOffset, seasonType, displaySeasonColors } =
-        calendar;
+    const {
+        seasonStore,
+        seasonOffset,
+        seasonType,
+        displaySeasonalColors,
+        interpolateColors,
+    } = calendar;
 
     const deleteSeason = (item: Season) => {
-        console.log("🚀 ~ file: SeasonContainer.svelte:17 ~ item:", item);
-
         seasonStore.delete(item.id);
     };
 
@@ -49,13 +56,12 @@
                 getEffectiveYearLength($calendar) / $seasonStore.length
             ).toPrecision(10),
         );
-        for (const season of $seasonStore) {
-            if (season.type === SeasonType.PERIODIC) {
-                season.duration = period;
-            }
+        for (const season of $seasonStore as PeriodicSeason[]) {
+            season.duration = period;
         }
         $seasonStore = $seasonStore;
     }
+    $: typedSeason = $seasonStore as PeriodicSeason[];
 </script>
 
 <Details
@@ -84,10 +90,18 @@
     </div>
     <ToggleComponent
         name={"Display seasonal colors"}
-        desc={"Show seasonal colors on the calendar"}
-        value={$displaySeasonColors}
-        on:click={(evt) => ($displaySeasonColors = !$displaySeasonColors)}
+        desc={"Show seasonal colors on the calendar. Can be changed using the calendar settings menu."}
+        value={$displaySeasonalColors}
+        on:click={(evt) => ($displaySeasonalColors = !$displaySeasonalColors)}
     ></ToggleComponent>
+    {#if $displaySeasonalColors}
+        <ToggleComponent
+            name={"Interpolate seasonal colors"}
+            desc={"When seasonal colors are displayed, show a gradient between one color and the next."}
+            value={$interpolateColors}
+            on:click={(evt) => ($interpolateColors = !$interpolateColors)}
+        ></ToggleComponent>
+    {/if}
     <TextComponent
         name={"Seasonal offset"}
         desc={"Offset the first season from the start of the year. An offset of 0 means the seasons start on 1/1/0001."}
@@ -109,20 +123,13 @@
             {#key $seasonStore}
                 <DropZone
                     type="season"
-                    items={$seasonStore}
+                    items={typedSeason}
                     onDrop={(items) => seasonStore.set(items)}
                     component={SeasonItem}
                     on:delete={(e) => deleteSeason(e.detail)}
                     on:advanced={(e) => edit(e.detail)}
                 />
             {/key}
-            <!--             {#each $seasonStore as season}
-                <SeasonItem
-                    {season}
-                    on:delete={() => deleteSeason(season)}
-                    on:edit={() => edit(season)}
-                />
-            {/each} -->
         </div>
     {/if}
 

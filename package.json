@@ -28,6 +28,7 @@
         "@types/randomcolor": "^0.5.7",
         "@types/xmldom": "^0.1.32",
         "builtin-modules": "^3.3.0",
+        "colorjs.io": "^0.5.2",
         "deepmerge": "^4.3.1",
         "distinct-colors": "^3.0.0",
         "dotenv": "^16.3.1",

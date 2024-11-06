@@ -19,6 +19,7 @@ import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
 import type { MoonState } from "src/schemas/calendar/moons";
 import { SettingsService } from "src/settings/settings.service";
+import { SeasonCache } from "./cache/season-cache";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -51,6 +52,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             })
     );
     const moonCache = new MoonCache(moonStates, yearCalculator);
+    const seasonCache = new SeasonCache(staticStore.seasons, yearCalculator);
 
     const EPHEMERAL_STORE_CACHE: Map<string, EphemeralStore> = new Map();
 
@@ -142,6 +144,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         }, */
 
         moonCache,
+        seasonCache,
         categories,
         //Readable store containing static calendar data
         staticStore,
@@ -392,7 +395,7 @@ export function getEphemeralStore(
             if (month == months.length - 1) {
                 const config = get(staticStore.staticData);
                 if (
-                    config.useCustomYears &&
+                    !config.useCustomYears ||
                     year < (config.years?.length ?? 0)
                 ) {
                     yearStore = yearCalculator.getYearFromCache(year + 1 || 1);
@@ -523,6 +526,8 @@ function createStaticStore(store: Writable<Calendar>) {
             return compareDates(a.date, b.date);
         })
     );
+    const seasonal = derived(staticData, (data) => data.seasonal);
+    const seasons = derived(staticData, (data) => data.seasonal.seasons);
 
     function getDaysInAYear() {
         return get(months).reduce((a, b) => a + b.length, 0);
@@ -549,6 +554,8 @@ function createStaticStore(store: Writable<Calendar>) {
         weekdays,
         years,
         eras,
+        seasonal,
+        seasons,
     };
 }
 

@@ -25,7 +25,12 @@ import type {
     Day,
     Era,
 } from "src/schemas/calendar/timespans";
-import { SeasonType, type Season } from "src/schemas/calendar/seasonal";
+import {
+    SeasonType,
+    type DatedSeason,
+    type PeriodicSeason,
+    type Season,
+} from "src/schemas/calendar/seasonal";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -117,9 +122,13 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const eraStore = derived(staticStore, (data) => data.eras);
     const seasonStore = derived(staticStore, (data) => data.seasonal.seasons);
     const seasonOffset = derived(staticStore, (data) => data.seasonal.offset);
-    const displaySeasonColors = derived(
+    const displaySeasonalColors = derived(
         staticStore,
         (data) => data.seasonal.displayColors
+    );
+    const interpolateColors = derived(
+        staticStore,
+        (data) => data.seasonal.interpolateColors
     );
     const seasonType = derived(staticStore, (data) => data.seasonal.type);
     const eventStore = derived(store, (data) => data.events);
@@ -399,11 +408,20 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     return data;
                 }),
         },
-        displaySeasonColors: {
-            subscribe: displaySeasonColors.subscribe,
+        displaySeasonalColors: {
+            subscribe: displaySeasonalColors.subscribe,
             set: (val: boolean) => {
                 update((data) => {
                     data.static.seasonal.displayColors = val;
+                    return data;
+                });
+            },
+        },
+        interpolateColors: {
+            subscribe: interpolateColors.subscribe,
+            set: (val: boolean) => {
+                update((data) => {
+                    data.static.seasonal.interpolateColors = val;
                     return data;
                 });
             },
@@ -422,12 +440,13 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
             set: (val: SeasonType) => {
                 update((data) => {
                     data.static.seasonal.type = val;
-                    for (const season of data.static.seasonal.seasons) {
-                        season.type = val;
-                        if (season.type === SeasonType.DATED) {
+                    if (data.static.seasonal.type === SeasonType.DATED) {
+                        for (const season of data.static.seasonal.seasons) {
                             season.day = 1;
                             season.month = 0;
-                        } else {
+                        }
+                    } else {
+                        for (const season of data.static.seasonal.seasons) {
                             season.duration =
                                 getEffectiveYearLength(data) /
                                 data.static.seasonal.seasons.length;
@@ -442,12 +461,14 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
             subscribe: seasonStore.subscribe,
             set: (seasons: Season[]) =>
                 update((data) => {
-                    data.static.seasonal.seasons = [...seasons];
+                    (data.static.seasonal.seasons as Season[]) = [...seasons];
                     return data;
                 }),
             add: (season: Season) =>
                 update((data) => {
-                    data.static.seasonal.seasons.push({ ...season });
+                    (data.static.seasonal.seasons as Season[]).push({
+                        ...season,
+                    });
                     return data;
                 }),
             update: (id: string, season: Season) =>
@@ -457,18 +478,24 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     );
 
                     if (index < 0) {
-                        data.static.seasonal.seasons.push({ ...season });
-                    } else {
-                        data.static.seasonal.seasons.splice(index, 1, {
+                        (data.static.seasonal.seasons as Season[]).push({
                             ...season,
                         });
+                    } else {
+                        (data.static.seasonal.seasons as Season[]).splice(
+                            index,
+                            1,
+                            {
+                                ...season,
+                            }
+                        );
                     }
 
                     return data;
                 }),
             delete: (id: string) =>
                 update((data) => {
-                    data.static.seasonal.seasons =
+                    (data.static.seasonal.seasons as Season[]) =
                         data.static.seasonal.seasons.filter((c) => c.id !== id);
                     return data;
                 }),

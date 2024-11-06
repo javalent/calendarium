@@ -7,32 +7,40 @@ export const SeasonType = {
 export type SeasonType = (typeof SeasonType)[keyof typeof SeasonType];
 
 type BaseSeason = TimeSpan & {
-    type: SeasonType;
     id: string;
     name: string;
     color: string;
     icon?: string;
 };
-type DatedSeason = {
-    type: typeof SeasonType.DATED;
+export type DatedSeason = BaseSeason & {
     month: number;
     day: number;
 };
-type PeriodicSeason = {
-    type: typeof SeasonType.PERIODIC;
+export type PeriodicSeason = BaseSeason & {
     duration: number;
     peak?: number;
 };
 
-export type Season = BaseSeason & (DatedSeason | PeriodicSeason);
+export type Season = DatedSeason | PeriodicSeason;
 
-export interface SeasonalData {
-    seasons: Season[];
+type BaseSeasonalData = {
+    /* seasons: Season[]; */
     offset: number;
     type: SeasonType;
     displayColors: boolean;
     interpolateColors: boolean;
-}
+};
+export type SeasonalData = BaseSeasonalData &
+    (
+        | {
+              type: typeof SeasonType.DATED;
+              seasons: DatedSeason[];
+          }
+        | {
+              type: typeof SeasonType.PERIODIC;
+              seasons: PeriodicSeason[];
+          }
+    );
 export const DEFAULT_SEASONAL_DATA: SeasonalData = {
     seasons: [],
     offset: 0,
@@ -47,7 +55,6 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
             name: "Winter",
             color: "lightblue",
             icon: "snowflake",
-            type: SeasonType.PERIODIC,
             duration: 91.310625,
         },
         {
@@ -55,7 +62,6 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
             name: "Spring",
             color: "lightgreen",
             icon: "flower",
-            type: SeasonType.PERIODIC,
             duration: 91.310625,
         },
         {
@@ -63,7 +69,6 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
             name: "Summer",
             color: "yellow",
             icon: "sun",
-            type: SeasonType.PERIODIC,
             duration: 91.310625,
         },
         {
@@ -71,7 +76,6 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
             name: "Autumn",
             color: "goldenrod",
             icon: "leaf",
-            type: SeasonType.PERIODIC,
             duration: 91.310625,
         },
     ],
