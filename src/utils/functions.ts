@@ -412,7 +412,10 @@ function resolve(number: FullCalEventDateBit | null): number {
     if (Array.isArray(number)) return Number.MIN_VALUE;
     return number ?? Number.MIN_VALUE;
 }
-function compare(a: FullCalEventDateBit | null, b: FullCalEventDateBit | null) {
+export function compare(
+    a: FullCalEventDateBit | null,
+    b: FullCalEventDateBit | null
+) {
     return resolve(a) != resolve(b);
 }
 

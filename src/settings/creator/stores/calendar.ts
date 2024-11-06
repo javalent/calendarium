@@ -7,6 +7,7 @@ import type {
 } from "src/@types";
 import type Calendarium from "src/main";
 import {
+    compare,
     getEffectiveYearLength,
     isValidDay,
     isValidMonth,
@@ -441,17 +442,31 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 update((data) => {
                     data.static.seasonal.type = val;
                     if (data.static.seasonal.type === SeasonType.DATED) {
-                        for (const season of data.static.seasonal.seasons) {
-                            season.day = 1;
-                            season.month = 0;
-                        }
+                        data.static.seasonal.seasons =
+                            data.static.seasonal.seasons.map((season, i) => {
+                                return {
+                                    id: season.id,
+                                    name: season.name,
+                                    color: season.color,
+                                    type: SeasonType.DATED,
+                                    month: 0,
+                                    day: 1 + i,
+                                };
+                            });
                     } else {
-                        for (const season of data.static.seasonal.seasons) {
-                            season.duration =
-                                getEffectiveYearLength(data) /
-                                data.static.seasonal.seasons.length;
-                            season.peak = 0;
-                        }
+                        data.static.seasonal.seasons =
+                            data.static.seasonal.seasons.map((season) => {
+                                return {
+                                    id: season.id,
+                                    name: season.name,
+                                    color: season.color,
+                                    type: SeasonType.PERIODIC,
+                                    duration:
+                                        getEffectiveYearLength(data) /
+                                        data.static.seasonal.seasons.length,
+                                    peak: 0,
+                                };
+                            });
                     }
                     return data;
                 });
@@ -469,6 +484,14 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     (data.static.seasonal.seasons as Season[]).push({
                         ...season,
                     });
+                    if (data.static.seasonal.type === SeasonType.DATED) {
+                        data.static.seasonal.seasons.sort((a, b) => {
+                            if (compare(a.month, b.month)) {
+                                return a.month - b.month;
+                            }
+                            return a.day - b.day;
+                        });
+                    }
                     return data;
                 }),
             update: (id: string, season: Season) =>
@@ -490,6 +513,14 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                             }
                         );
                     }
+                    if (data.static.seasonal.type === SeasonType.DATED) {
+                        data.static.seasonal.seasons.sort((a, b) => {
+                            if (compare(a.month, b.month)) {
+                                return a.month - b.month;
+                            }
+                            return a.day - b.day;
+                        });
+                    }
 
                     return data;
                 }),
@@ -497,6 +528,14 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 update((data) => {
                     (data.static.seasonal.seasons as Season[]) =
                         data.static.seasonal.seasons.filter((c) => c.id !== id);
+                    if (data.static.seasonal.type === SeasonType.DATED) {
+                        data.static.seasonal.seasons.sort((a, b) => {
+                            if (compare(a.month, b.month)) {
+                                return a.month - b.month;
+                            }
+                            return a.day - b.day;
+                        });
+                    }
                     return data;
                 }),
         },

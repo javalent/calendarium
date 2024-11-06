@@ -31,7 +31,12 @@
     };
 
     const add = (name: string) => {
-        const modal = new CreateSeasonModal($calendar, $seasonType, name);
+        const modal = new CreateSeasonModal(
+            $calendar,
+            calendar,
+            $seasonType,
+            name,
+        );
         modal.onClose = () => {
             seasonStore.add({ ...modal.item });
         };
@@ -40,6 +45,7 @@
     const edit = (item: Season) => {
         const modal = new CreateSeasonModal(
             $calendar,
+            calendar,
             $seasonType,
             item.name,
             item,
@@ -102,13 +108,14 @@
             on:click={(evt) => ($interpolateColors = !$interpolateColors)}
         ></ToggleComponent>
     {/if}
-    <TextComponent
-        name={"Seasonal offset"}
-        desc={"Offset the first season from the start of the year. An offset of 0 means the seasons start on 1/1/0001."}
-        value={$seasonOffset}
-        on:change={(evt) => ($seasonOffset = evt.detail)}
-    ></TextComponent>
     {#if $seasonType == SeasonType.PERIODIC}
+        <TextComponent
+            name={"Seasonal offset"}
+            desc={"Offset the first season from the start of the year. An offset of 0 means the seasons start on 1/1/0001."}
+            value={$seasonOffset}
+            type={"number"}
+            on:change={(evt) => ($seasonOffset = evt.detail)}
+        ></TextComponent>
         <ButtonComponent
             name="Distribute seasonal periods"
             desc="Evenly distribute the year between your seasons, taking into account month length and leap days."

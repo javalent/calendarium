@@ -5,6 +5,9 @@ import { CanceableCalendariumModal } from "../../../../modals/modal";
 import { SeasonType, type Season } from "src/schemas/calendar/seasonal";
 import randomColor from "randomcolor";
 import type { Calendar } from "src/schemas";
+import DateWithValidation from "src/settings/creator/Utilities/DateWithValidation.svelte";
+import { readable, writable } from "svelte/store";
+import type { CreatorStore } from "src/settings/creator/stores/calendar";
 
 export function getDefaultSeason(type: SeasonType, name?: string): Season {
     if (type === SeasonType.DATED) {
@@ -32,6 +35,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
 
     constructor(
         public calendar: Calendar,
+        public store: CreatorStore,
         type: SeasonType,
         name: string,
         item?: Season
@@ -59,6 +63,25 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
         });
 
         if (this.item.type === SeasonType.DATED) {
+            const date = new DateWithValidation({
+                target: this.contentEl.createDiv(),
+                props: {
+                    date: writable({
+                        month: this.item.month,
+                        day: this.item.day,
+                        year: 0,
+                    }),
+                    enableYear: false,
+                    store: this.store,
+                },
+            }).$on("date", (evt) => {
+                console.log("🚀 ~ file: seasons.ts:78 ~ evt:", evt);
+
+                if (this.item.type === SeasonType.DATED) {
+                    this.item.month = evt.detail.month;
+                    this.item.day = evt.detail.day;
+                }
+            });
         }
         if (this.item.type === SeasonType.PERIODIC) {
             let periodic = this.item;

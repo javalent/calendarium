@@ -15,16 +15,17 @@ type BaseSeason = TimeSpan & {
 export type DatedSeason = BaseSeason & {
     month: number;
     day: number;
+    type: typeof SeasonType.DATED;
 };
 export type PeriodicSeason = BaseSeason & {
     duration: number;
     peak?: number;
+    type: typeof SeasonType.PERIODIC;
 };
 
 export type Season = DatedSeason | PeriodicSeason;
 
 type BaseSeasonalData = {
-    /* seasons: Season[]; */
     offset: number;
     type: SeasonType;
     displayColors: boolean;
@@ -56,6 +57,7 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
             color: "lightblue",
             icon: "snowflake",
             duration: 91.310625,
+            type: SeasonType.PERIODIC,
         },
         {
             id: "STANDARD_SPRING",
@@ -63,6 +65,7 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
             color: "lightgreen",
             icon: "flower",
             duration: 91.310625,
+            type: SeasonType.PERIODIC,
         },
         {
             id: "STANDARD_SUMMER",
@@ -70,6 +73,7 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
             color: "yellow",
             icon: "sun",
             duration: 91.310625,
+            type: SeasonType.PERIODIC,
         },
         {
             id: "STANDARD_AUTUMN",
@@ -77,6 +81,7 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
             color: "goldenrod",
             icon: "leaf",
             duration: 91.310625,
+            type: SeasonType.PERIODIC,
         },
     ],
     offset: -12.5,

@@ -42,10 +42,7 @@ class DaySeasonCache extends DayCache<DefinedSeason> {
 
         switch (seasonalData.type) {
             case SeasonType.DATED: {
-                for (const season of [
-                    ...seasons,
-                    seasons[0],
-                ] as DatedSeason[]) {
+                for (const season of [...seasons].reverse() as DatedSeason[]) {
                     if (this.month > season.month) return [season];
                     if (this.month === season.month && this.day >= season.day) {
                         return [
