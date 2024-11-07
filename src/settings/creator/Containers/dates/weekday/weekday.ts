@@ -1,6 +1,6 @@
-import { CanceableCalendariumModal } from "../modal";
 import { Setting } from "obsidian";
 import type { Day } from "src/schemas/calendar/timespans";
+import { CanceableCalendariumModal } from "src/settings/modals/modal";
 import { nanoid } from "src/utils/functions";
 
 export class WeekdayModal extends CanceableCalendariumModal<Day> {

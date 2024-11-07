@@ -366,6 +366,18 @@ export function isValidYear(year: number | null, calendar: Calendar) {
     return true;
 }
 
+export function getEffectiveYearLength(calendar: Calendar): number {
+    let length = 0;
+    for (const month of calendar.static.months) {
+        if (month.interval > 0) length += month.length / month.interval;
+    }
+    for (const leapday of calendar.static.leapDays) {
+        for (const condition of leapday.interval) {
+            length += (condition.exclusive ? -1 : 1) / condition.interval;
+        }
+    }
+    return length;
+}
 /**
  * Test if a leap day occurs in a given year.
  */
@@ -400,7 +412,10 @@ function resolve(number: FullCalEventDateBit | null): number {
     if (Array.isArray(number)) return Number.MIN_VALUE;
     return number ?? Number.MIN_VALUE;
 }
-function compare(a: FullCalEventDateBit | null, b: FullCalEventDateBit | null) {
+export function compare(
+    a: FullCalEventDateBit | null,
+    b: FullCalEventDateBit | null
+) {
     return resolve(a) != resolve(b);
 }
 

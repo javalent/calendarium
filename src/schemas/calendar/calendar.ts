@@ -1,5 +1,6 @@
 import type { CalEventDate, CalEvent, CalEventCategory } from "../events";
 import type { Moon } from "./moons";
+import type { Season, SeasonalData } from "./seasonal";
 import type { Week, Month, LeapDay, Era, Year } from "./timespans";
 
 /**
@@ -31,6 +32,7 @@ export type StaticCalendarData = {
     displayMoons: boolean;
     displayDayNumber: boolean;
     eras: Era[];
+    seasonal: SeasonalData;
     offset?: number;
     incrementDay: boolean;
     useCustomYears?: boolean;

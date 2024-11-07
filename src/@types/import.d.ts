@@ -10,7 +10,7 @@ export interface ImportedCalendar {
         };
         moons: ImportedMoon[];
         clock: Record<any, any>;
-        seasons: Record<any, any>;
+        seasons: Seasons;
         eras: any[];
     };
     dynamic_data: {
@@ -108,4 +108,51 @@ interface ImportedCategory {
     created_at: string;
     updated_at: string;
     sort_by: number;
+}
+
+interface Seasons {
+    data: SeasonData[];
+    locations: any[]; // Adjust this based on the specific structure of "locations" if needed
+    global_settings: GlobalSettings;
+}
+
+interface SeasonData {
+    name: string;
+    time: {
+        sunrise: Time;
+        sunset: Time;
+    };
+    transition_length: number;
+    duration: number;
+    color: [string, string];
+    gradient: Gradient;
+    length: number;
+    duration?: number;
+    start: number;
+    end: number;
+    timespan: number;
+    day: number;
+}
+
+interface Time {
+    hour: number;
+    minute: number;
+}
+
+interface Gradient {
+    start: [number, number, number];
+    end: [number, number, number];
+}
+
+interface GlobalSettings {
+    season_offset: number;
+    weather_offset: number;
+    seed: number;
+    temp_sys: "metric" | "imperial";
+    wind_sys: "metric" | "imperial";
+    cinematic: boolean;
+    enable_weather: boolean;
+    periodic_seasons: boolean;
+    color_enabled: boolean;
+    preset_order?: number[];
 }

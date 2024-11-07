@@ -5,7 +5,7 @@
     import AddNew from "../../../Utilities/AddNew.svelte";
     import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
     import ToggleComponent from "../../../Settings/ToggleComponent.svelte";
-    import { CreateMoonModal, getDefaultMoon } from "src/settings/modals/moons";
+    import { CreateMoonModal, getDefaultMoon } from "src/settings/creator/Containers/celestials/moons/moons";
     import type Calendarium from "src/main";
     import Details from "../../../Utilities/Details.svelte";
     import type { Moon } from "src/schemas/calendar/moons";

@@ -1,70 +1,29 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-    import { ExtraButtonComponent, setIcon } from "obsidian";
-    import { dateString, getIntervalDescription } from "src/utils/functions";
-    import type { Era, LeapDay } from "src/schemas/calendar/timespans";
-    import {
-        EDIT,
-        INTERCALARY,
-        MONTH,
-        TRASH,
-        setNodeIcon,
-    } from "src/utils/icons";
-    import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
+    import { dateString } from "src/utils/functions";
+    import type { Era } from "src/schemas/calendar/timespans";
     import { getContext } from "svelte";
+    import EditableItem from "../../Utilities/EditableItem.svelte";
 
-    const dispatch = createEventDispatcher();
-
-    const trash = (node: HTMLElement) => {
-        let b = new ExtraButtonComponent(node)
-            .setIcon(TRASH)
-            .setTooltip("Delete");
-        b.extraSettingsEl.setAttr("style", "margin-left: 0;");
-    };
-    const edit = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon(EDIT).setTooltip("Edit");
-    };
     export let era: Era;
 
     const store = getContext("store");
 </script>
 
-<div class="era setting-item">
-    <SettingItem>
-        <div slot="name">{era.name}</div>
-        <div slot="desc" class="desc">
-            <span
-                >{#if "isStartingEra" in era && era.isStartingEra}Starting era{:else if "date" in era}{dateString(
-                        era.date,
-                        $store,
-                        era.end,
-                    )}{/if}</span
-            >
-            <span class="clamp">{era.description ?? ""}</span>
-        </div>
-        <div class="icons" slot="control">
-            <div class="icon" use:edit on:click={() => dispatch("edit")} />
-            <div class="icon" use:trash on:click={() => dispatch("delete")} />
-        </div>
-    </SettingItem>
-</div>
+<EditableItem on:delete on:edit>
+    <div slot="name">{era.name}</div>
+    <div slot="desc" class="desc">
+        <span
+            >{#if "isStartingEra" in era && era.isStartingEra}Starting era{:else if "date" in era}{dateString(
+                    era.date,
+                    $store,
+                    era.end,
+                )}{/if}</span
+        >
+        <span class="clamp">{era.description ?? ""}</span>
+    </div>
+</EditableItem>
 
 <style>
-    .era {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-top: 0.5rem;
-    }
-
-    .icons {
-        display: flex;
-        align-self: center;
-        justify-self: flex-end;
-        align-items: flex-start;
-    }
     .desc {
         display: flex;
         align-items: flex-start;

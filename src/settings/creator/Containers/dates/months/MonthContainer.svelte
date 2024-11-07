@@ -3,7 +3,7 @@
     import MonthInstance from "./MonthInstance.svelte";
     import copy from "fast-copy";
     import type { Month } from "src/schemas/calendar/timespans";
-    import { MonthModal } from "src/settings/modals/month/month";
+    import { MonthModal } from "src/settings/creator/Containers/dates/months/month";
     import AddNew from "src/settings/creator/Utilities/AddNew.svelte";
     import Details from "src/settings/creator/Utilities/Details.svelte";
     import DropZone from "src/settings/creator/Utilities/DropZone.svelte";

@@ -69,6 +69,7 @@ export abstract class EntityCache<T> {
     }
     public getItemsOrRecalculate(date: CalDate): Readable<T[]> {
         const { day, month, year } = date;
+
         if (!this.cache.has(year)) {
             this.cache.set(year, this.getYearCache(year));
         }

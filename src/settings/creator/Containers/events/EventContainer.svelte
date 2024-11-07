@@ -2,7 +2,6 @@
     import type { CalEvent } from "src/@types";
     import EventInstance from "./EventInstance.svelte";
     import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
-    import { CreateEventModal } from "src/settings/modals/event/event";
     import Details from "../../Utilities/Details.svelte";
     import { ExtraButtonComponent, prepareSimpleSearch } from "obsidian";
     import { getContext } from "svelte";
@@ -11,6 +10,7 @@
     import { eventDateString, sortEventList } from "src/utils/functions";
     import Pagination from "./Pagination.svelte";
     import Search from "./filters/Search.svelte";
+    import { CreateEventModal } from "src/events/modal/event";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");

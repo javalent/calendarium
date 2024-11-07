@@ -1,8 +1,8 @@
 import { App, Setting, Notice } from "obsidian";
-import type { Calendar } from "../../@types";
+import type { Calendar } from "../../../../../@types";
 
-import { nanoid } from "../../utils/functions";
-import { CalendariumModal } from "./modal";
+import { nanoid } from "../../../../../utils/functions";
+import { CalendariumModal } from "../../../../modals/modal";
 import type { Moon } from "src/schemas/calendar/moons";
 import { CLOSE } from "src/utils/icons";
 

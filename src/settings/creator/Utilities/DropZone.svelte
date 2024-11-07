@@ -79,7 +79,7 @@
             />
             {#key item}
                 <div class="drop-item" class:type>
-                    <svelte:component this={component} {item} />
+                    <svelte:component this={component} {item} ...args />
                 </div>
             {/key}
             <div class="icons">

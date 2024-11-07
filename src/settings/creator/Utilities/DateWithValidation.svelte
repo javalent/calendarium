@@ -6,13 +6,17 @@
         invalidYearLabel,
     } from "../Utilities/utils";
     import type { CalDate } from "src/schemas";
-    import { derived, type Readable } from "svelte/store";
+    import { derived, type Readable, type Writable } from "svelte/store";
     import { isValidDay, isValidMonth, isValidYear } from "src/utils/functions";
     import { createEventDispatcher } from "svelte";
+    import type { CreatorStore } from "../stores/calendar";
 
-    export let date: Readable<CalDate>;
+    export let date: Writable<CalDate>;
 
-    const calendar = getContext("store");
+    export let enableYear = true;
+    export let store: CreatorStore | null = null;
+
+    const calendar = store ?? getContext("store");
     const { monthStore, yearStore } = calendar;
     const validDay = derived([calendar, date], ([calendar, date]) => {
         return isValidDay(date, calendar);
@@ -24,7 +28,7 @@
         return isValidYear(date.year, calendar);
     });
 
-    const dispatch = createEventDispatcher<{ valid: boolean }>();
+    const dispatch = createEventDispatcher<{ valid: boolean; date: CalDate }>();
 
     const isValid = derived(
         [validDay, validMonth, validYear],
@@ -35,6 +39,7 @@
     isValid.subscribe((v) => {
         dispatch("valid", v);
     });
+    date.subscribe((date) => dispatch("date", date));
 </script>
 
 <div class="setting-item calendarium-date-field-container">
@@ -78,37 +83,39 @@
             {/if}
         </div>
     </div>
-    <div class="calendarium-date-field">
-        <label for="">Year</label>
-        <div class="warning-container">
-            {#if $calendar.static.useCustomYears}
-                <select
-                    class="dropdown"
-                    bind:value={$date.year}
-                    class:invalid={!$validYear}
-                >
-                    {#each $yearStore?.filter((m) => m && m.name) ?? [] as year, index (year.id)}
-                        <option value={index + 1}>{year.name}</option>
-                    {/each}
-                </select>
-            {:else}
-                <input
-                    type="number"
-                    spellcheck="false"
-                    placeholder="Year"
-                    class:invalid={!$validYear}
-                    bind:value={$date.year}
-                />
-            {/if}
-            {#if !$validYear}
-                <div class="setting-item-description">
-                    {#if !$validYear}
-                        {invalidYearLabel($date.year, $calendar)}
-                    {/if}
-                </div>
-            {/if}
+    {#if enableYear}
+        <div class="calendarium-date-field">
+            <label for="">Year</label>
+            <div class="warning-container">
+                {#if $calendar.static.useCustomYears}
+                    <select
+                        class="dropdown"
+                        bind:value={$date.year}
+                        class:invalid={!$validYear}
+                    >
+                        {#each $yearStore?.filter((m) => m && m.name) ?? [] as year, index (year.id)}
+                            <option value={index + 1}>{year.name}</option>
+                        {/each}
+                    </select>
+                {:else}
+                    <input
+                        type="number"
+                        spellcheck="false"
+                        placeholder="Year"
+                        class:invalid={!$validYear}
+                        bind:value={$date.year}
+                    />
+                {/if}
+                {#if !$validYear}
+                    <div class="setting-item-description">
+                        {#if !$validYear}
+                            {invalidYearLabel($date.year, $calendar)}
+                        {/if}
+                    </div>
+                {/if}
+            </div>
         </div>
-    </div>
+    {/if}
 </div>
 
 <style>

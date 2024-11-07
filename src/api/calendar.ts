@@ -1,6 +1,7 @@
 import copy from "fast-copy";
 import type { Calendar, CalDate, CalEvent } from "src/@types";
 import { CalEventHelper } from "src/events/event.helper";
+import type { Season } from "src/schemas/calendar/seasonal";
 import type { CalendarStore } from "src/stores/calendar.store";
 import { compareEvents, dateString, sortEventList } from "src/utils/functions";
 import { get } from "svelte/store";
@@ -37,7 +38,10 @@ export class CalendarAPI {
      * @returns {CalDate}
      */
     parseDate(dateString: string): CalDate {
-        const date = this.#helper.parseCalDateString(dateString, {path: "", basename: "api-call"});
+        const date = this.#helper.parseCalDateString(dateString, {
+            path: "",
+            basename: "api-call",
+        });
         return date as CalDate;
     }
 
@@ -122,4 +126,25 @@ export class CalendarAPI {
             this.#helper = new CalEventHelper(this.#object, false);
         }
     } */
+
+    /** Seasonal APIs */
+
+    /**
+     *
+     * @returns A list of all seasons on the calendar.
+     */
+    getSeasons(): Season[] {
+        return copy(this.#object.static.seasonal.seasons);
+    }
+
+    /**
+     *
+     * @param date The date for which to calculate the current season.
+     * @returns The applicable season for that date, if any.
+     */
+    getSeasonForDate(date: CalDate): Season | undefined {
+        return copy(
+            get(this.#store.seasonCache.getItemsOrRecalculate(date)).shift()
+        );
+    }
 }

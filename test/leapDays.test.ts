@@ -1,5 +1,8 @@
 import type { Calendar } from "../src/schemas/calendar";
-import { leapDaysBeforeYear } from "../src/utils/functions";
+import {
+    getEffectiveYearLength,
+    leapDaysBeforeYear,
+} from "../src/utils/functions";
 import { PRESET_CALENDARS } from "../src/utils/presets";
 import { vi, test, expect } from "vitest";
 
@@ -36,4 +39,9 @@ test("Leap Days (Harptos)", () => {
     expect(leapDaysBeforeYear(100, HARPTOS.static.leapDays)).toBe(24);
     expect(leapDaysBeforeYear(401, HARPTOS.static.leapDays)).toBe(100);
     expect(leapDaysBeforeYear(2022, HARPTOS.static.leapDays)).toBe(505);
+});
+test("Effective days in year", () => {
+    expect(getEffectiveYearLength(GREGORIAN)).toBe(365.2425);
+    expect(getEffectiveYearLength(HARPTOS)).toBe(365.25);
+    expect(getEffectiveYearLength(GOLARION)).toBe(365.125);
 });

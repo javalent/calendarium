@@ -1,13 +1,12 @@
 <script lang="ts">
     import { MonthStore } from "src/stores/month.store";
-    import { ViewType } from "../../view.types";
     import Dots from "../Events/Dots.svelte";
     import { TFile } from "obsidian";
     import type { CalEvent } from "src/@types";
     import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Flags from "../Events/Flags.svelte";
-    import { addEventWithModal } from "src/settings/modals/event/event";
+    import { addEventWithModal } from "src/events/modal/event";
     import {
         TimeSpanType,
         type DayOrLeapDay,
@@ -19,6 +18,7 @@
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
+
     export let adjacent: boolean;
 
     const plugin = getTypedContext("plugin");
@@ -45,6 +45,13 @@
         month: $index,
         year: year.year,
     });
+    $: seasons = $store.seasonCache.getItemsOrRecalculate({
+        day: day.number,
+        month: $index,
+        year: year.year,
+    });
+    $: displaySeasonColors = $ephemeral.displaySeasonColors;
+    $: interpolateColors = $ephemeral.interpolateColors;
 
     $: today =
         !adjacent &&
@@ -160,7 +167,12 @@
         on:contextmenu={(evt) => {
             openMenu(evt);
         }}
-        aria-label={$events.length > 0 ? `${$events.length} Events` : ""}
+        aria-label={$events.length > 0
+            ? `${$events.length} event${$events.length == 1 ? "" : "s"}`
+            : ""}
+        style={$displaySeasonColors && $seasons.length
+            ? `border-top: 2px solid ${$interpolateColors ? $seasons[0].lerp : $seasons[0].color}`
+            : ""}
     >
         {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
             {day.name}

@@ -14,12 +14,12 @@
     import { getTypedContext } from "../../view.utils";
     import { ViewEventModal } from "../../event-modal";
     import { DEFAULT_CATEGORY_COLOR } from "src/utils/constants";
-    import { addEventWithModal } from "src/settings/modals/event/event";
     import CalendariumMenu from "src/utils/menu";
     import { isCalEvent } from "src/events/event.types";
     import { isEra } from "src/schemas/enums";
     import { formatEra } from "src/utils/functions";
     import { SettingsService } from "src/settings/settings.service";
+    import { addEventWithModal } from "src/events/modal/event";
     const dispatch = createEventDispatcher();
 
     export let event: EventLike;

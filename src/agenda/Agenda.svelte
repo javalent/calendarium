@@ -66,7 +66,7 @@
                 <h5 class="calendarium-title title">
                     <span class="current">{date}</span>
                 </h5>
-                {#if displayDayNumber}
+                {#if $displayDayNumber}
                     <div class="day-number">
                         <em> Day {daysBeforeDay} </em>
                     </div>

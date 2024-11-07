@@ -30,6 +30,7 @@ import {
 } from "./settings.utils";
 import { CHECK, LOADING } from "src/utils/icons";
 import { EventType } from "src/events/event.types";
+import { DEFAULT_SEASONAL_DATA } from "src/schemas/calendar/seasonal";
 
 const SPLITTER = "--- BEGIN DATA ---";
 type CalendarID = string;
@@ -414,7 +415,7 @@ class SettingsServiceClass {
         if (shouldParse) this.plugin.watcher.start(calendar);
 
         this.#calendars.set(calendar.id, calendar);
-        await this.saveData(this.#data);
+        await this.save({ calendar: true });
     }
     /**
      * Remove a calendar from settings.
@@ -430,7 +431,8 @@ class SettingsServiceClass {
         }
         this.deletedCalendars.push(calendar);
         this.#calendars.delete(calendar.id);
-        await this.saveData(this.#data);
+        
+        await this.save({ calendar: true });
     }
 
     /**
@@ -805,6 +807,10 @@ class SettingsServiceClass {
                     delete era.restart;
                     dirty = true;
                 }
+            }
+            if (!("seasonal" in calendar.static)) {
+                (calendar.static as any).seasonal = copy(DEFAULT_SEASONAL_DATA);
+                dirty = true;
             }
         }
         return dirty;

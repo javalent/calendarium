@@ -19,6 +19,7 @@ import type Calendarium from "src/main";
 import { EventStore } from "./events.store";
 import type { MoonState } from "src/schemas/calendar/moons";
 import { SettingsService } from "src/settings/settings.service";
+import { SeasonCache } from "./cache/season-cache";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -51,6 +52,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             })
     );
     const moonCache = new MoonCache(moonStates, yearCalculator);
+    const seasonCache = new SeasonCache(staticStore.seasons, yearCalculator);
 
     const EPHEMERAL_STORE_CACHE: Map<string, EphemeralStore> = new Map();
 
@@ -142,6 +144,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         }, */
 
         moonCache,
+        seasonCache,
         categories,
         //Readable store containing static calendar data
         staticStore,
@@ -171,6 +174,8 @@ export interface EphemeralState {
     displayMoons: boolean;
     displayWeeks: boolean;
     displayDayNumber: boolean;
+    displaySeasonColors: boolean;
+    interpolateColors: boolean;
     hideEra: boolean;
     displayAbsoluteYear: boolean;
     displaying: CalDate;
@@ -192,6 +197,8 @@ export function getEphemeralStore(
     const hideEra = writable(base.hideEra);
     const displayAbsoluteYear = writable(base.displayAbsoluteYear);
     const viewState = writable<ViewState>(ViewState.Month);
+    const displaySeasonColors = writable(base.static.seasonal.displayColors);
+    const interpolateColors = writable(base.static.seasonal.interpolateColors);
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
 
@@ -205,6 +212,8 @@ export function getEphemeralStore(
             displayAbsoluteYear,
             displaying,
             viewing,
+            displaySeasonColors,
+            interpolateColors,
         ],
         ([
             viewState,
@@ -215,6 +224,8 @@ export function getEphemeralStore(
             displayAbsoluteYear,
             displaying,
             viewing,
+            displaySeasonColors,
+            interpolateColors,
         ]) => {
             return {
                 viewState,
@@ -223,6 +234,8 @@ export function getEphemeralStore(
                 displayWeeks,
                 hideEra,
                 displayAbsoluteYear,
+                displaySeasonColors,
+                interpolateColors,
                 displaying,
                 viewing,
             };
@@ -257,6 +270,8 @@ export function getEphemeralStore(
                 viewState: get(viewState),
                 displaying: get(displaying),
                 displayDayNumber: get(displayDayNumber),
+                displaySeasonColors: get(displaySeasonColors),
+                interpolateColors: get(interpolateColors),
                 hideEra: get(hideEra),
                 displayAbsoluteYear: get(displayAbsoluteYear),
                 displayMoons: get(displayMoons),
@@ -268,6 +283,8 @@ export function getEphemeralStore(
         displayWeeks,
         hideEra,
         displayAbsoluteYear,
+        displaySeasonColors,
+        interpolateColors,
         viewState,
 
         //Displayed Date
@@ -385,7 +402,7 @@ export function getEphemeralStore(
             if (month == months.length - 1) {
                 const config = get(staticStore.staticData);
                 if (
-                    config.useCustomYears &&
+                    !config.useCustomYears ||
                     year < (config.years?.length ?? 0)
                 ) {
                     yearStore = yearCalculator.getYearFromCache(year + 1 || 1);
@@ -516,6 +533,8 @@ function createStaticStore(store: Writable<Calendar>) {
             return compareDates(a.date, b.date);
         })
     );
+    const seasonal = derived(staticData, (data) => data.seasonal);
+    const seasons = derived(staticData, (data) => data.seasonal.seasons);
 
     function getDaysInAYear() {
         return get(months).reduce((a, b) => a + b.length, 0);
@@ -542,6 +561,8 @@ function createStaticStore(store: Writable<Calendar>) {
         weekdays,
         years,
         eras,
+        seasonal,
+        seasons,
     };
 }
 

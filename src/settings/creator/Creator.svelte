@@ -12,6 +12,7 @@
     import { SettingsSections, type CreatorSection } from "./creator.types";
     import { writable } from "svelte/store";
     import Sidebar from "./Containers/sidebar/Sidebar.svelte";
+    import Seasonal from "./Containers/seasonal/Seasonal.svelte";
 
     const mobile = Platform.isMobile;
 
@@ -28,7 +29,7 @@
 </script>
 
 {#if Platform.isTablet || Platform.isDesktop}
-    <Sidebar {selected} sections={[...SettingsSections]} on:cancel/>
+    <Sidebar {selected} sections={[...SettingsSections]} on:cancel />
     <div class="vertical-tab-content-container {$selected.toLowerCase()}">
         <History></History>
         <div class="vertical-tab-content">
@@ -40,6 +41,9 @@
             {/if}
             {#if $selected === "Eras"}
                 <Eras />
+            {/if}
+            {#if $selected === "Seasons & weather"}
+                <Seasonal />
             {/if}
             <!--  -->
             <!-- {#if $selected === "Weather"}
