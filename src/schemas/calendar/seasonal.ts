@@ -5,11 +5,31 @@ export const SeasonType = {
     PERIODIC: "Periodic",
 } as const;
 export type SeasonType = (typeof SeasonType)[keyof typeof SeasonType];
+export const SeasonKind = {
+    WINTER: "Winter",
+    SPRING: "Spring",
+    SUMMER: "Summer",
+    AUTUMN: "Autumn",
+} as const;
+export type SeasonKind = (typeof SeasonKind)[keyof typeof SeasonKind];
+export function seasonalIcon(kind: SeasonKind): string {
+    switch (kind) {
+        case "Winter":
+            return "snowflake";
+        case "Spring":
+            return "flower-2";
+        case "Summer":
+            return "sun";
+        case "Autumn":
+            return "leaf";
+    }
+}
 
 type BaseSeason = TimeSpan & {
     id: string;
     name: string;
     color: string;
+    kind?: SeasonKind;
 };
 export type DatedSeason = BaseSeason & {
     month: number;
@@ -53,6 +73,7 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
         {
             id: "STANDARD_WINTER",
             name: "Winter",
+            kind: SeasonKind.WINTER,
             color: "lightblue",
             duration: 91.310625,
             type: SeasonType.PERIODIC,
@@ -60,6 +81,7 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
         {
             id: "STANDARD_SPRING",
             name: "Spring",
+            kind: SeasonKind.SPRING,
             color: "lightgreen",
             duration: 91.310625,
             type: SeasonType.PERIODIC,
@@ -67,6 +89,7 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
         {
             id: "STANDARD_SUMMER",
             name: "Summer",
+            kind: SeasonKind.SUMMER,
             color: "yellow",
             duration: 91.310625,
             type: SeasonType.PERIODIC,
@@ -74,6 +97,7 @@ export const STANDARD_SEASONAL_DATA: SeasonalData = {
         {
             id: "STANDARD_AUTUMN",
             name: "Autumn",
+            kind: SeasonKind.AUTUMN,
             color: "goldenrod",
             duration: 91.310625,
             type: SeasonType.PERIODIC,

@@ -14,6 +14,11 @@ import { nanoid } from "../../utils/functions";
 import type { Moon } from "src/schemas/calendar/moons";
 import type { Week, Month, LeapDay, Era } from "src/schemas/calendar/timespans";
 import { EventType } from "../../events/event.types";
+import {
+    SeasonKind,
+    SeasonType,
+    type SeasonalData,
+} from "../../schemas/calendar/seasonal";
 
 export default class Import {
     static import(objects: ImportedCalendar[]) {
@@ -137,6 +142,85 @@ export default class Import {
                     });
                 }
             }
+            let seasonal: SeasonalData = {
+                seasons: [],
+                type: SeasonType.PERIODIC,
+                interpolateColors: true,
+                displayColors: true,
+                offset: 0,
+            };
+            if ("seasons" in static_data) {
+                const seasonalData = static_data.seasons;
+                if (!seasonalData.global_settings.periodic_seasons) {
+                    seasonal = {
+                        seasons: [],
+                        type: SeasonType.DATED,
+                        interpolateColors: true,
+                        displayColors: true,
+                        offset: 0,
+                    };
+                }
+                seasonal.displayColors =
+                    seasonalData.global_settings.color_enabled;
+                for (const season of seasonalData.data) {
+                    switch (seasonal.type) {
+                        case SeasonType.DATED: {
+                            seasonal.seasons.push({
+                                id: nanoid(6),
+                                name: season.name,
+                                type: SeasonType.DATED,
+                                month: season.timespan,
+                                day: season.day,
+                                color: season.color[0],
+                            });
+                            break;
+                        }
+                        case SeasonType.PERIODIC: {
+                            seasonal.seasons.push({
+                                id: nanoid(6),
+                                name: season.name,
+                                type: SeasonType.PERIODIC,
+                                duration:
+                                    season.length - (season.duration ?? 0),
+                                peak: season.duration ?? 0,
+                                color: season.color[0],
+                            });
+                            break;
+                        }
+                    }
+                }
+
+                if ("preset_order" in seasonalData.global_settings) {
+                    for (
+                        let i = 0;
+                        i <
+                        (seasonalData.global_settings.preset_order ?? [])
+                            .length;
+                        i++
+                    ) {
+                        const order =
+                            seasonalData.global_settings.preset_order?.[i];
+                        switch (order) {
+                            case 0: {
+                                seasonal.seasons[i].kind = SeasonKind.WINTER;
+                                break;
+                            }
+                            case 1: {
+                                seasonal.seasons[i].kind = SeasonKind.SPRING;
+                                break;
+                            }
+                            case 2: {
+                                seasonal.seasons[i].kind = SeasonKind.SUMMER;
+                                break;
+                            }
+                            case 3: {
+                                seasonal.seasons[i].kind = SeasonKind.AUTUMN;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             const staticData: StaticCalendarData = {
                 firstWeekDay,
                 overflow,
@@ -148,6 +232,7 @@ export default class Import {
                 displayMoons: true,
                 incrementDay: false,
                 displayDayNumber: false,
+                seasonal,
             };
 
             const dynamicData = {
