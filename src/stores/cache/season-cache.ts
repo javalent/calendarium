@@ -9,9 +9,12 @@ import {
 } from "src/schemas/calendar/seasonal";
 import Color from "colorjs.io";
 import { wrap } from "src/utils/functions";
+import type { CalDate } from "src/schemas";
 
 type DefinedSeason = Season & {
     lerp?: string;
+    start?: CalDate;
+    end?: CalDate;
 };
 
 class YearSeasonCache extends YearCache<DefinedSeason> {
@@ -45,9 +48,7 @@ class DaySeasonCache extends DayCache<DefinedSeason> {
                 for (const season of [...seasons].reverse() as DatedSeason[]) {
                     if (this.month > season.month) return [season];
                     if (this.month === season.month && this.day >= season.day) {
-                        return [
-                            { ...season, is_start: this.day === season.day },
-                        ];
+                        return [{ ...season }];
                     }
                 }
             }
