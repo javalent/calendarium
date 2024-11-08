@@ -21,3 +21,6 @@ main.js.LICENSE.txt
 
 .env
 build
+
+events.js
+events.json
