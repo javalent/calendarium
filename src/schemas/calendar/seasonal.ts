@@ -1,3 +1,4 @@
+import copy from "fast-copy";
 import type { TimeSpan } from "./timespans";
 
 export const SeasonType = {
@@ -49,6 +50,7 @@ type BaseSeasonalData = {
     type: SeasonType;
     displayColors: boolean;
     interpolateColors: boolean;
+    weather: WeatherData;
 };
 export type SeasonalData = BaseSeasonalData &
     (
@@ -61,50 +63,11 @@ export type SeasonalData = BaseSeasonalData &
               seasons: PeriodicSeason[];
           }
     );
-export const DEFAULT_SEASONAL_DATA: SeasonalData = {
-    seasons: [],
-    offset: 0,
-    type: SeasonType.DATED,
-    displayColors: true,
-    interpolateColors: true,
-};
-export const STANDARD_SEASONAL_DATA: SeasonalData = {
-    seasons: [
-        {
-            id: "STANDARD_WINTER",
-            name: "Winter",
-            kind: SeasonKind.WINTER,
-            color: "lightblue",
-            duration: 91.310625,
-            type: SeasonType.PERIODIC,
-        },
-        {
-            id: "STANDARD_SPRING",
-            name: "Spring",
-            kind: SeasonKind.SPRING,
-            color: "lightgreen",
-            duration: 91.310625,
-            type: SeasonType.PERIODIC,
-        },
-        {
-            id: "STANDARD_SUMMER",
-            name: "Summer",
-            kind: SeasonKind.SUMMER,
-            color: "yellow",
-            duration: 91.310625,
-            type: SeasonType.PERIODIC,
-        },
-        {
-            id: "STANDARD_AUTUMN",
-            name: "Autumn",
-            kind: SeasonKind.AUTUMN,
-            color: "goldenrod",
-            duration: 91.310625,
-            type: SeasonType.PERIODIC,
-        },
-    ],
-    offset: -12.5,
-    type: SeasonType.PERIODIC,
-    displayColors: true,
-    interpolateColors: true,
-};
+
+/**
+ * Weather
+ */
+interface WeatherData {
+    enabled: boolean;
+    seed: number;
+}
