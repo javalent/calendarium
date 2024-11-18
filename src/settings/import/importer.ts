@@ -12,7 +12,12 @@ import deepmerge from "deepmerge";
 import { DEFAULT_CALENDAR } from "../settings.constants";
 import { nanoid } from "../../utils/functions";
 import type { Moon } from "../../schemas/calendar/moons";
-import type { Week, Month, LeapDay, Era } from "../../schemas/calendar/timespans";
+import type {
+    Week,
+    Month,
+    LeapDay,
+    Era,
+} from "../../schemas/calendar/timespans";
 import { EventType } from "../../events/event.types";
 import {
     SeasonKind,
@@ -154,6 +159,7 @@ export default class Import {
                     seed: 1,
                     tempUnits: UnitSystem.IMPERIAL,
                     windUnits: UnitSystem.METRIC,
+                    primaryWindDirection: "E"
                 },
             };
             if ("seasons" in static_data) {
@@ -170,6 +176,7 @@ export default class Import {
                             seed: 1,
                             tempUnits: UnitSystem.IMPERIAL,
                             windUnits: UnitSystem.METRIC,
+                            primaryWindDirection: "E"
                         },
                     };
                 }
@@ -182,10 +189,12 @@ export default class Import {
                                 id: nanoid(6),
                                 name: season.name,
                                 type: SeasonType.DATED,
+                                kind: SeasonKind.NONE,
                                 month: season.timespan,
                                 day: season.day,
                                 color: season.color[0],
-                                weatherOffset: 56
+                                weatherOffset: 56,
+                                weatherPeak: 5,
                             });
                             break;
                         }
@@ -194,11 +203,13 @@ export default class Import {
                                 id: nanoid(6),
                                 name: season.name,
                                 type: SeasonType.PERIODIC,
+                                kind: SeasonKind.NONE,
                                 duration:
                                     season.length - (season.duration ?? 0),
                                 peak: season.duration ?? 0,
                                 color: season.color[0],
                                 weatherOffset: 56,
+                                weatherPeak: 5,
                             });
                             break;
                         }

@@ -236,6 +236,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     type: "Periodic",
                     duration: 91.310625,
                     weatherOffset: 56,
+                    weatherPeak: 5,
                 },
                 {
                     id: "STANDARD_SPRING",
@@ -245,6 +246,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     type: "Periodic",
                     duration: 91.310625,
                     weatherOffset: 56,
+                    weatherPeak: 5,
                 },
                 {
                     id: "STANDARD_SUMMER",
@@ -254,6 +256,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     type: "Periodic",
                     duration: 91.310625,
                     weatherOffset: 56,
+                    weatherPeak: 5,
                 },
                 {
                     id: "STANDARD_AUTUMN",
@@ -263,6 +266,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     type: "Periodic",
                     duration: 91.310625,
                     weatherOffset: 56,
+                    weatherPeak: 5,
                 },
             ],
             offset: -12.5,
@@ -274,6 +278,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 seed: 1,
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
+                primaryWindDirection: "E",
             },
         },
         current: {
@@ -795,6 +800,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 seed: 1,
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
+                primaryWindDirection: "E",
             },
         },
         current: {
@@ -1393,6 +1399,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 seed: 1,
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
+                primaryWindDirection: "E",
             },
         },
         current: {
@@ -3151,6 +3158,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 seed: 1,
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
+                primaryWindDirection: "E",
             },
         },
         current: {
@@ -3955,6 +3963,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 seed: 1,
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
+                primaryWindDirection: "E",
             },
         },
         current: {
@@ -4318,6 +4327,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 seed: 1,
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
+                primaryWindDirection: "E",
             },
         },
         current: {
@@ -5067,6 +5077,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 seed: 1,
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
+                primaryWindDirection: "E",
             },
         },
         current: {

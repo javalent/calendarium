@@ -37,6 +37,7 @@ type BaseSeason = TimeSpan & {
     name: string;
     color: string;
     weatherOffset: number;
+    weatherPeak: number;
 };
 export type SeasonalWeatherData = {
     tempRange: [number, number];

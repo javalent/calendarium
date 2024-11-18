@@ -23,6 +23,7 @@ export function getDefaultSeason(type: SeasonType, name?: string): Season {
             month: 0,
             day: 1,
             weatherOffset: 56,
+            weatherPeak: 5,
             kind: SeasonKind.NONE,
         };
     }
@@ -34,6 +35,7 @@ export function getDefaultSeason(type: SeasonType, name?: string): Season {
         duration: 0,
         peak: 0,
         weatherOffset: 56,
+        weatherPeak: 5,
         kind: SeasonKind.NONE,
     };
 }

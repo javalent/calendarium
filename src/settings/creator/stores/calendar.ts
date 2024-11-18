@@ -27,6 +27,7 @@ import type {
     Era,
 } from "src/schemas/calendar/timespans";
 import {
+    SeasonKind,
     SeasonType,
     UnitSystem,
     type DatedSeason,
@@ -454,33 +455,39 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 update((data) => {
                     data.seasonal.type = val;
                     if (data.seasonal.type === SeasonType.DATED) {
-                        data.seasonal.seasons =
-                            data.seasonal.seasons.map((season, i) => {
+                        data.seasonal.seasons = data.seasonal.seasons.map(
+                            (season, i) => {
                                 return {
                                     id: season.id,
                                     name: season.name,
                                     color: season.color,
                                     type: SeasonType.DATED,
+                                    kind: SeasonKind.NONE,
                                     month: 0,
                                     day: 1 + i,
                                     weatherOffset: season.weatherOffset,
+                                    weatherPeak: season.weatherOffset * 0.1,
                                 };
-                            });
+                            }
+                        );
                     } else {
-                        data.seasonal.seasons =
-                            data.seasonal.seasons.map((season) => {
+                        data.seasonal.seasons = data.seasonal.seasons.map(
+                            (season) => {
                                 return {
                                     id: season.id,
                                     name: season.name,
                                     color: season.color,
                                     type: SeasonType.PERIODIC,
+                                    kind: SeasonKind.NONE,
                                     duration:
                                         getEffectiveYearLength(data) /
                                         data.seasonal.seasons.length,
                                     peak: 0,
                                     weatherOffset: season.weatherOffset,
+                                    weatherPeak: season.weatherOffset * 0.1,
                                 };
-                            });
+                            }
+                        );
                     }
                     return data;
                 });
@@ -519,13 +526,9 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                             ...season,
                         });
                     } else {
-                        (data.seasonal.seasons as Season[]).splice(
-                            index,
-                            1,
-                            {
-                                ...season,
-                            }
-                        );
+                        (data.seasonal.seasons as Season[]).splice(index, 1, {
+                            ...season,
+                        });
                     }
                     if (data.seasonal.type === SeasonType.DATED) {
                         data.seasonal.seasons.sort((a, b) => {
