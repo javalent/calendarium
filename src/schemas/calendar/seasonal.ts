@@ -1,5 +1,5 @@
-import copy from "fast-copy";
 import type { TimeSpan } from "./timespans";
+import type { WindDirection } from "./weather";
 
 export const SeasonType = {
     DATED: "Dated",
@@ -11,6 +11,8 @@ export const SeasonKind = {
     SPRING: "Spring",
     SUMMER: "Summer",
     AUTUMN: "Autumn",
+    CUSTOM: "Custom",
+    NONE: "None",
 } as const;
 export type SeasonKind = (typeof SeasonKind)[keyof typeof SeasonKind];
 export function seasonalIcon(kind: SeasonKind): string {
@@ -23,6 +25,10 @@ export function seasonalIcon(kind: SeasonKind): string {
             return "sun";
         case "Autumn":
             return "leaf";
+        case "Custom":
+            return "user-pen";
+        case "None":
+            return "";
     }
 }
 
@@ -30,14 +36,79 @@ type BaseSeason = TimeSpan & {
     id: string;
     name: string;
     color: string;
-    kind?: SeasonKind;
+    weatherOffset: number;
 };
-export type DatedSeason = BaseSeason & {
+export type SeasonalWeatherData = {
+    tempRange: [number, number];
+    percipitationChance: number;
+    percipitationIntensity: number;
+    cloudy: number;
+    windy: number;
+};
+
+export function getWeatherData(
+    season: Season
+): SeasonalWeatherData | undefined {
+    if (season.kind === SeasonKind.NONE) return undefined;
+    if (season.kind === SeasonKind.CUSTOM) {
+        return season.weather;
+    }
+    switch (season.kind) {
+        case SeasonKind.WINTER:
+            return {
+                tempRange: [-6, 2],
+                percipitationChance: 0.5,
+                percipitationIntensity: 0.375,
+                cloudy: 0.75,
+                windy: 0.25,
+            };
+        case SeasonKind.SPRING:
+            return {
+                tempRange: [9.5, 21],
+                percipitationChance: 0.75,
+                percipitationIntensity: 0.25,
+                cloudy: 0.55,
+                windy: 0.25,
+            };
+        case SeasonKind.SUMMER:
+            return {
+                tempRange: [19, 30],
+                percipitationChance: 0.55,
+                percipitationIntensity: 0.65,
+                cloudy: 0.15,
+                windy: 0.25,
+            };
+        case SeasonKind.AUTUMN:
+            return {
+                tempRange: [1, 11],
+                percipitationChance: 0.5,
+                percipitationIntensity: 0.25,
+                cloudy: 0.65,
+                windy: 0.35,
+            };
+    }
+}
+
+type WeatheredSeason = BaseSeason &
+    (
+        | {
+              kind: typeof SeasonKind.CUSTOM;
+              weather: SeasonalWeatherData;
+          }
+        | {
+              kind: (typeof SeasonKind)[Exclude<
+                  keyof typeof SeasonKind,
+                  "CUSTOM"
+              >];
+          }
+    );
+
+export type DatedSeason = WeatheredSeason & {
     month: number;
     day: number;
     type: typeof SeasonType.DATED;
 };
-export type PeriodicSeason = BaseSeason & {
+export type PeriodicSeason = WeatheredSeason & {
     duration: number;
     peak?: number;
     type: typeof SeasonType.PERIODIC;
@@ -67,7 +138,15 @@ export type SeasonalData = BaseSeasonalData &
 /**
  * Weather
  */
-interface WeatherData {
+export const UnitSystem = {
+    IMPERIAL: "Imperial",
+    METRIC: "Metric",
+} as const;
+export type UnitSystem = (typeof UnitSystem)[keyof typeof UnitSystem];
+export interface WeatherData {
     enabled: boolean;
     seed: number;
+    primaryWindDirection: WindDirection;
+    tempUnits: UnitSystem;
+    windUnits: UnitSystem;
 }

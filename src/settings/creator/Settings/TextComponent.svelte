@@ -58,6 +58,7 @@
                     />
                 {/if}
             </slot>
+            <slot name="additional"></slot>
         </div>
     </div>
 </div>

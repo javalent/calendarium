@@ -4,7 +4,7 @@ import type {
     Month,
     Era,
     Week,
-} from "src/schemas/calendar/timespans";
+} from "../schemas/calendar/timespans";
 import type {
     Calendar,
     CalDate,
@@ -583,4 +583,8 @@ export function daysFromYearOne(
                 .reduce((a, b) => a + b.length, 0) +
         leapDaysBeforeYear(original, leapDays)
     );
+}
+
+export function getWeatherSeed() {
+    return Date.now() ^ (Math.random() * 0x100000000);
 }

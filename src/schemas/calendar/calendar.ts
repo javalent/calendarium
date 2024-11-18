@@ -32,7 +32,6 @@ export type StaticCalendarData = {
     displayMoons: boolean;
     displayDayNumber: boolean;
     eras: Era[];
-    seasonal: SeasonalData;
     offset?: number;
     incrementDay: boolean;
     useCustomYears?: boolean;
@@ -50,6 +49,7 @@ type BaseCalendar = {
     name: string | null;
     description: string;
     static: StaticCalendarData;
+    seasonal: SeasonalData;
     events: CalEvent[];
     categories: CalEventCategory[];
     date?: number;

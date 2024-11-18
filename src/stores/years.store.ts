@@ -17,6 +17,19 @@ export class YearStoreCache {
         }
         return this.cache.get(year)!;
     }
+    daysBefore(date: CalDate): number {
+        const year = this.getYearFromCache(date.year);
+        const yearDaysBefore = get(year.daysBefore);
+        const month = year.getMonthFromCache(date.month);
+        return yearDaysBefore + get(month.daysBefore) + date.day - 1;
+    }
+    daysBetween(start: CalDate, end: CalDate): number {
+        //start
+        let startDB = this.daysBefore(start);
+        let endDB = this.daysBefore(end);
+
+        return Math.max(startDB, endDB) - Math.min(startDB, endDB);
+    }
 }
 
 export class YearStore {

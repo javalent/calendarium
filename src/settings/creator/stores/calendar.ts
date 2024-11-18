@@ -28,6 +28,7 @@ import type {
 } from "src/schemas/calendar/timespans";
 import {
     SeasonType,
+    UnitSystem,
     type DatedSeason,
     type PeriodicSeason,
     type Season,
@@ -113,6 +114,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
             return calendar;
         });
 
+    //TODO: Organize this better.
     const monthStore = derived(staticStore, (data) => data.months);
     const weekStore = derived(staticStore, (data) => data.weekdays);
     const yearStore = derived(staticStore, (data) => data.years);
@@ -121,17 +123,27 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const displayMoons = derived(staticStore, (data) => data.displayMoons);
     const leapDayStore = derived(staticStore, (data) => data.leapDays);
     const eraStore = derived(staticStore, (data) => data.eras);
-    const seasonStore = derived(staticStore, (data) => data.seasonal.seasons);
-    const seasonOffset = derived(staticStore, (data) => data.seasonal.offset);
+
+    /** Seasons */
+    const seasonStore = derived(store, (data) => data.seasonal.seasons);
+    const seasonOffset = derived(store, (data) => data.seasonal.offset);
     const displaySeasonalColors = derived(
-        staticStore,
+        store,
         (data) => data.seasonal.displayColors
     );
     const interpolateColors = derived(
-        staticStore,
+        store,
         (data) => data.seasonal.interpolateColors
     );
-    const seasonType = derived(staticStore, (data) => data.seasonal.type);
+    const seasonType = derived(store, (data) => data.seasonal.type);
+
+    /** Weather */
+    const weatherStore = derived(store, (data) => data.seasonal.weather);
+    const weatherEnabledStore = derived(weatherStore, (data) => data.enabled);
+    const weatherSeedStore = derived(weatherStore, (data) => data.seed);
+    const tempUnitsStore = derived(weatherStore, (data) => data.tempUnits);
+    const windUnitsStore = derived(weatherStore, (data) => data.windUnits);
+
     const eventStore = derived(store, (data) => data.events);
     const categoryStore = derived(store, (data) => data.categories);
     const validMonths = derived(staticStore, (data) => {
@@ -413,7 +425,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
             subscribe: displaySeasonalColors.subscribe,
             set: (val: boolean) => {
                 update((data) => {
-                    data.static.seasonal.displayColors = val;
+                    data.seasonal.displayColors = val;
                     return data;
                 });
             },
@@ -422,7 +434,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
             subscribe: interpolateColors.subscribe,
             set: (val: boolean) => {
                 update((data) => {
-                    data.static.seasonal.interpolateColors = val;
+                    data.seasonal.interpolateColors = val;
                     return data;
                 });
             },
@@ -431,7 +443,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
             subscribe: seasonOffset.subscribe,
             set: (val: number) => {
                 update((data) => {
-                    data.static.seasonal.offset = val;
+                    data.seasonal.offset = val;
                     return data;
                 });
             },
@@ -440,10 +452,10 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
             subscribe: seasonType.subscribe,
             set: (val: SeasonType) => {
                 update((data) => {
-                    data.static.seasonal.type = val;
-                    if (data.static.seasonal.type === SeasonType.DATED) {
-                        data.static.seasonal.seasons =
-                            data.static.seasonal.seasons.map((season, i) => {
+                    data.seasonal.type = val;
+                    if (data.seasonal.type === SeasonType.DATED) {
+                        data.seasonal.seasons =
+                            data.seasonal.seasons.map((season, i) => {
                                 return {
                                     id: season.id,
                                     name: season.name,
@@ -451,11 +463,12 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                                     type: SeasonType.DATED,
                                     month: 0,
                                     day: 1 + i,
+                                    weatherOffset: season.weatherOffset,
                                 };
                             });
                     } else {
-                        data.static.seasonal.seasons =
-                            data.static.seasonal.seasons.map((season) => {
+                        data.seasonal.seasons =
+                            data.seasonal.seasons.map((season) => {
                                 return {
                                     id: season.id,
                                     name: season.name,
@@ -463,8 +476,9 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                                     type: SeasonType.PERIODIC,
                                     duration:
                                         getEffectiveYearLength(data) /
-                                        data.static.seasonal.seasons.length,
+                                        data.seasonal.seasons.length,
                                     peak: 0,
+                                    weatherOffset: season.weatherOffset,
                                 };
                             });
                     }
@@ -476,16 +490,16 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
             subscribe: seasonStore.subscribe,
             set: (seasons: Season[]) =>
                 update((data) => {
-                    (data.static.seasonal.seasons as Season[]) = [...seasons];
+                    (data.seasonal.seasons as Season[]) = [...seasons];
                     return data;
                 }),
             add: (season: Season) =>
                 update((data) => {
-                    (data.static.seasonal.seasons as Season[]).push({
+                    (data.seasonal.seasons as Season[]).push({
                         ...season,
                     });
-                    if (data.static.seasonal.type === SeasonType.DATED) {
-                        data.static.seasonal.seasons.sort((a, b) => {
+                    if (data.seasonal.type === SeasonType.DATED) {
+                        data.seasonal.seasons.sort((a, b) => {
                             if (compare(a.month, b.month)) {
                                 return a.month - b.month;
                             }
@@ -496,16 +510,16 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 }),
             update: (id: string, season: Season) =>
                 update((data) => {
-                    const index = data.static.seasonal.seasons.findIndex(
+                    const index = data.seasonal.seasons.findIndex(
                         (e) => e.id === id
                     );
 
                     if (index < 0) {
-                        (data.static.seasonal.seasons as Season[]).push({
+                        (data.seasonal.seasons as Season[]).push({
                             ...season,
                         });
                     } else {
-                        (data.static.seasonal.seasons as Season[]).splice(
+                        (data.seasonal.seasons as Season[]).splice(
                             index,
                             1,
                             {
@@ -513,8 +527,8 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                             }
                         );
                     }
-                    if (data.static.seasonal.type === SeasonType.DATED) {
-                        data.static.seasonal.seasons.sort((a, b) => {
+                    if (data.seasonal.type === SeasonType.DATED) {
+                        data.seasonal.seasons.sort((a, b) => {
                             if (compare(a.month, b.month)) {
                                 return a.month - b.month;
                             }
@@ -526,10 +540,10 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 }),
             delete: (id: string) =>
                 update((data) => {
-                    (data.static.seasonal.seasons as Season[]) =
-                        data.static.seasonal.seasons.filter((c) => c.id !== id);
-                    if (data.static.seasonal.type === SeasonType.DATED) {
-                        data.static.seasonal.seasons.sort((a, b) => {
+                    (data.seasonal.seasons as Season[]) =
+                        data.seasonal.seasons.filter((c) => c.id !== id);
+                    if (data.seasonal.type === SeasonType.DATED) {
+                        data.seasonal.seasons.sort((a, b) => {
                             if (compare(a.month, b.month)) {
                                 return a.month - b.month;
                             }
@@ -538,6 +552,41 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                     }
                     return data;
                 }),
+        },
+        weatherStore: {
+            subscribe: weatherStore.subscribe,
+            enabled: {
+                subscribe: weatherEnabledStore.subscribe,
+                set: (val: boolean) =>
+                    update((data) => {
+                        data.seasonal.weather.enabled = val;
+                        return data;
+                    }),
+            },
+            seed: {
+                subscribe: weatherSeedStore.subscribe,
+                set: (val: number) =>
+                    update((data) => {
+                        data.seasonal.weather.seed = val;
+                        return data;
+                    }),
+            },
+            tempUnitsStore: {
+                subscribe: tempUnitsStore.subscribe,
+                set: (val: UnitSystem) =>
+                    update((data) => {
+                        data.seasonal.weather.tempUnits = val;
+                        return data;
+                    }),
+            },
+            windUnitsStore: {
+                subscribe: windUnitsStore.subscribe,
+                set: (val: UnitSystem) =>
+                    update((data) => {
+                        data.seasonal.weather.windUnits = val;
+                        return data;
+                    }),
+            },
         },
         displayMoons: {
             subscribe: displayMoons.subscribe,

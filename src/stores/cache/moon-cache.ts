@@ -29,10 +29,7 @@ class DayMoonCache extends DayCache<MoonState> {
     }
     update(moons: MoonState[]) {
         const derived: MoonState[] = [];
-        const year = this.yearCalculator.getYearFromCache(this.year);
-        const month = year.getMonthFromCache(this.month);
-        const daysBefore =
-            get(year.daysBefore) + get(month.daysBefore) + this.day - 1;
+        const daysBefore = this.yearCalculator.daysBefore(this.getDate());
         for (let moon of moons ?? []) {
             const { offset, cycle } = moon;
             const granularity = 24;

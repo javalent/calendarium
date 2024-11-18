@@ -31,7 +31,7 @@
         dragDisabled = false;
     }
     const flipDurationMs = 300;
-    let dragDisabled = false;
+    export let dragDisabled = false;
 
     function handleConsider(e: CustomEvent<GenericDndEvent<T>>) {
         items = e.detail.items;

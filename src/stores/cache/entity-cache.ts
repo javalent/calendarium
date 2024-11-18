@@ -33,6 +33,13 @@ export abstract class MonthCache<T> extends Cache<T> {
     cache: Map<number, DayCache<T>> = new Map();
 }
 export abstract class DayCache<T> extends CacheItem<T> {
+    getDate(): CalDate {
+        return {
+            day: this.day,
+            month: this.month,
+            year: this.year,
+        };
+    }
     constructor(
         public day: number,
         public month: number,
@@ -51,7 +58,7 @@ export abstract class EntityCache<T> {
     abstract getMonthCache(month: number, year: number): MonthCache<T>;
     abstract getDayCache(day: number, month: number, year: number): DayCache<T>;
 
-    public invalidate(date: OneTimeCalEventDate, entity?: T) {
+    public invalidate(date: OneTimeCalEventDate) {
         if (date.year == null) return;
         if (!this.cache.has(date.year)) return;
         const year = this.cache.get(date.year)!;

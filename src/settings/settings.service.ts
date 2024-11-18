@@ -811,13 +811,12 @@ class SettingsServiceClass {
                     dirty = true;
                 }
             }
-            if (!("seasonal" in calendar.static)) {
-                (calendar.static as any).seasonal = copy(DEFAULT_SEASONAL_DATA);
+            if (!("seasonal" in calendar)) {
+                (calendar as any).seasonal = copy(DEFAULT_SEASONAL_DATA);
                 dirty = true;
             }
-            if (!("weather" in calendar.static.seasonal)) {
-                (calendar.static as any).seasonal.weather =
-                    copy(DEFAULT_WEATHER_DATA);
+            if (!("weather" in calendar.seasonal)) {
+                (calendar as any).seasonal.weather = copy(DEFAULT_WEATHER_DATA);
                 dirty = true;
             }
         }

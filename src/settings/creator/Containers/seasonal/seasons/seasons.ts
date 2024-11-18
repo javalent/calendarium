@@ -2,11 +2,15 @@ import { Setting } from "obsidian";
 
 import { getEffectiveYearLength, nanoid } from "../../../../../utils/functions";
 import { CanceableCalendariumModal } from "../../../../modals/modal";
-import { SeasonType, type Season } from "src/schemas/calendar/seasonal";
+import {
+    SeasonKind,
+    SeasonType,
+    type Season,
+} from "src/schemas/calendar/seasonal";
 import randomColor from "randomcolor";
 import type { Calendar } from "src/schemas";
 import DateWithValidation from "src/settings/creator/Utilities/DateWithValidation.svelte";
-import { readable, writable } from "svelte/store";
+import { writable } from "svelte/store";
 import type { CreatorStore } from "src/settings/creator/stores/calendar";
 
 export function getDefaultSeason(type: SeasonType, name?: string): Season {
@@ -18,6 +22,8 @@ export function getDefaultSeason(type: SeasonType, name?: string): Season {
             color: randomColor(),
             month: 0,
             day: 1,
+            weatherOffset: 56,
+            kind: SeasonKind.NONE,
         };
     }
     return {
@@ -27,6 +33,8 @@ export function getDefaultSeason(type: SeasonType, name?: string): Season {
         color: randomColor(),
         duration: 0,
         peak: 0,
+        weatherOffset: 56,
+        kind: SeasonKind.NONE,
     };
 }
 
@@ -76,8 +84,6 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                 },
             });
             date.$on("date", (evt) => {
-                console.log("🚀 ~ file: seasons.ts:78 ~ evt:", evt);
-
                 if (this.item.type === SeasonType.DATED) {
                     this.item.month = evt.detail.month;
                     this.item.day = evt.detail.day;
@@ -102,8 +108,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                 .addExtraButton((b) =>
                     b.setIcon("calculator").onClick(() => {
                         let period = getEffectiveYearLength(this.calendar);
-                        for (const season of this.calendar.static.seasonal
-                            .seasons) {
+                        for (const season of this.calendar.seasonal.seasons) {
                             if (season.type !== SeasonType.PERIODIC) continue;
                             if (season.id === this.item.id) continue;
                             period -= season.duration;
@@ -124,6 +129,9 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                         periodic.peak = Number(v);
                     });
                 });
+        }
+
+        if (this.calendar.seasonal.weather.enabled) {
         }
     }
 }

@@ -1,5 +1,6 @@
 import type { PresetCalendar } from "src/@types";
 import { EventType } from "../events/event.types";
+import { UnitSystem } from "../schemas/calendar/seasonal";
 
 export const PRESET_CALENDARS: PresetCalendar[] = [
     {
@@ -224,45 +225,55 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             offset: 0,
             padDays: 2,
             padMonths: 2,
-            seasonal: {
-                seasons: [
-                    {
-                        id: "STANDARD_WINTER",
-                        name: "Winter",
-                        color: "#ADD8E6",
-                        kind: "Winter",
-                        type: "Periodic",
-                        duration: 91.310625,
-                    },
-                    {
-                        id: "STANDARD_SPRING",
-                        name: "Spring",
-                        kind: "Spring",
-                        color: "#90EE90",
-                        type: "Periodic",
-                        duration: 91.310625,
-                    },
-                    {
-                        id: "STANDARD_SUMMER",
-                        name: "Summer",
-                        kind: "Summer",
-                        color: "#FFFF00",
-                        type: "Periodic",
-                        duration: 91.310625,
-                    },
-                    {
-                        id: "STANDARD_AUTUMN",
-                        name: "Autumn",
-                        kind: "Autumn",
-                        color: "#DAA520",
-                        type: "Periodic",
-                        duration: 91.310625,
-                    },
-                ],
-                offset: -12.5,
-                type: "Periodic",
-                displayColors: true,
-                interpolateColors: true,
+        },
+        seasonal: {
+            seasons: [
+                {
+                    id: "STANDARD_WINTER",
+                    name: "Winter",
+                    color: "#ADD8E6",
+                    kind: "Winter",
+                    type: "Periodic",
+                    duration: 91.310625,
+                    weatherOffset: 56,
+                },
+                {
+                    id: "STANDARD_SPRING",
+                    name: "Spring",
+                    kind: "Spring",
+                    color: "#90EE90",
+                    type: "Periodic",
+                    duration: 91.310625,
+                    weatherOffset: 56,
+                },
+                {
+                    id: "STANDARD_SUMMER",
+                    name: "Summer",
+                    kind: "Summer",
+                    color: "#FFFF00",
+                    type: "Periodic",
+                    duration: 91.310625,
+                    weatherOffset: 56,
+                },
+                {
+                    id: "STANDARD_AUTUMN",
+                    name: "Autumn",
+                    kind: "Autumn",
+                    color: "#DAA520",
+                    type: "Periodic",
+                    duration: 91.310625,
+                    weatherOffset: 56,
+                },
+            ],
+            offset: -12.5,
+            type: "Periodic",
+            displayColors: true,
+            interpolateColors: true,
+            weather: {
+                enabled: false,
+                seed: 1,
+                tempUnits: UnitSystem.IMPERIAL,
+                windUnits: UnitSystem.METRIC,
             },
         },
         current: {
@@ -562,13 +573,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         inlineEventTag: "inline-events",
         showIntercalarySeparately: true,
         static: {
-            seasonal: {
-                seasons: [],
-                offset: 0,
-                type: "Periodic",
-                displayColors: true,
-                interpolateColors: true,
-            },
             displayDayNumber: false,
             incrementDay: false,
             displayMoons: true,
@@ -779,6 +783,19 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     isStartingEra: false,
                 },
             ],
+        },
+        seasonal: {
+            seasons: [],
+            offset: 0,
+            type: "Periodic",
+            displayColors: true,
+            interpolateColors: true,
+            weather: {
+                enabled: false,
+                seed: 1,
+                tempUnits: UnitSystem.IMPERIAL,
+                windUnits: UnitSystem.METRIC,
+            },
         },
         current: {
             year: 591,
@@ -1095,13 +1112,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         inlineEventTag: "inline-events",
         showIntercalarySeparately: true,
         static: {
-            seasonal: {
-                seasons: [],
-                offset: 0,
-                type: "Periodic",
-                displayColors: true,
-                interpolateColors: true,
-            },
             displayDayNumber: false,
             firstWeekDay: 0,
             incrementDay: false,
@@ -1371,6 +1381,19 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     isStartingEra: false,
                 },
             ],
+        },
+        seasonal: {
+            seasons: [],
+            offset: 0,
+            type: "Periodic",
+            displayColors: true,
+            interpolateColors: true,
+            weather: {
+                enabled: false,
+                seed: 1,
+                tempUnits: UnitSystem.IMPERIAL,
+                windUnits: UnitSystem.METRIC,
+            },
         },
         current: {
             year: 4720,
@@ -2874,13 +2897,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         inlineEventTag: "inline-events",
         showIntercalarySeparately: true,
         static: {
-            seasonal: {
-                seasons: [],
-                offset: 0,
-                type: "Periodic",
-                displayColors: true,
-                interpolateColors: true,
-            },
             displayDayNumber: false,
             firstWeekDay: 0,
             incrementDay: false,
@@ -3123,6 +3139,19 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             ],
             leapDays: [],
             eras: [],
+        },
+        seasonal: {
+            seasons: [],
+            offset: 0,
+            type: "Periodic",
+            displayColors: true,
+            interpolateColors: true,
+            weather: {
+                enabled: false,
+                seed: 1,
+                tempUnits: UnitSystem.IMPERIAL,
+                windUnits: UnitSystem.METRIC,
+            },
         },
         current: {
             year: 998,
@@ -3700,13 +3729,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         inlineEventTag: "inline-events",
         showIntercalarySeparately: true,
         static: {
-            seasonal: {
-                seasons: [],
-                offset: 0,
-                type: "Periodic",
-                displayColors: true,
-                interpolateColors: true,
-            },
             displayDayNumber: false,
             firstWeekDay: 0,
             incrementDay: false,
@@ -3921,6 +3943,20 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
             ],
         },
+
+        seasonal: {
+            seasons: [],
+            offset: 0,
+            type: "Periodic",
+            displayColors: true,
+            interpolateColors: true,
+            weather: {
+                enabled: false,
+                seed: 1,
+                tempUnits: UnitSystem.IMPERIAL,
+                windUnits: UnitSystem.METRIC,
+            },
+        },
         current: {
             year: 735,
             day: 1,
@@ -4053,13 +4089,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         inlineEventTag: "inline-events",
         showIntercalarySeparately: true,
         static: {
-            seasonal: {
-                seasons: [],
-                offset: 0,
-                type: "Periodic",
-                displayColors: true,
-                interpolateColors: true,
-            },
             displayDayNumber: false,
             firstWeekDay: 2,
             incrementDay: false,
@@ -4277,6 +4306,19 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     isStartingEra: false,
                 },
             ],
+        },
+        seasonal: {
+            seasons: [],
+            offset: 0,
+            type: "Periodic",
+            displayColors: true,
+            interpolateColors: true,
+            weather: {
+                enabled: false,
+                seed: 1,
+                tempUnits: UnitSystem.IMPERIAL,
+                windUnits: UnitSystem.METRIC,
+            },
         },
         current: {
             day: 1,
@@ -4758,13 +4800,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
         showIntercalarySeparately: true,
         dateFormat: "YYYY-MMM-DD",
         static: {
-            seasonal: {
-                seasons: [],
-                offset: 0,
-                type: "Periodic",
-                displayColors: true,
-                interpolateColors: true,
-            },
             displayDayNumber: false,
             firstWeekDay: 0,
             incrementDay: false,
@@ -5020,6 +5055,19 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 },
             ],
             eras: [],
+        },
+        seasonal: {
+            seasons: [],
+            offset: 0,
+            type: "Periodic",
+            displayColors: true,
+            interpolateColors: true,
+            weather: {
+                enabled: false,
+                seed: 1,
+                tempUnits: UnitSystem.IMPERIAL,
+                windUnits: UnitSystem.METRIC,
+            },
         },
         current: {
             year: 1491,

@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
 
     export let name: string;
-    export let desc: string | DocumentFragment;
+    export let desc: string | DocumentFragment = "";
 
     export let value: boolean;
     export let disabled = false;
