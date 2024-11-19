@@ -92,8 +92,8 @@ export class WeatherStore {
         const epoch = this.yearCalculator.daysBefore(date) + date.day;
         const random = new Randomizer(epoch * seed);
 
-        let low = random.normal(weatherData.tempRange[0], 2);
-        let high = random.normal(weatherData.tempRange[1], 2);
+        let low = random.normal(weatherData.tempRange[0], 4);
+        let high = random.normal(weatherData.tempRange[1], 4);
 
         if (low > high) {
             const temp = low;
@@ -101,7 +101,7 @@ export class WeatherStore {
             high = temp;
         }
 
-        const actual = random.normal((low + high) / 2, 2);
+        const actual = random.normal((low + high) / 2, 4);
 
         let precipitation = Precipitation.NONE;
         let clouds = Cloudiness.pick(0);
@@ -206,7 +206,10 @@ export class WeatherStore {
          * The interpolating season has (1 - effect) effect
          */
         let effect = 1;
-        if (season.daysPassed === season.weatherOffset) {
+        if (
+            season.daysPassed! >= season.weatherOffset &&
+            season.daysPassed! <= season.weatherOffset + season.weatherPeak
+        ) {
             from = to = season;
         } else if (season.daysPassed! < season.weatherOffset) {
             const previous$ = this.seasonCache.getPreviousSeason(season$);
@@ -249,6 +252,7 @@ export class WeatherStore {
             from = next;
             to = season;
         }
+        console.log("🚀 ~ file: weather.store.ts:246 ~ effect:", effect);
 
         return { from, to, effect };
     }

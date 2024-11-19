@@ -57,7 +57,7 @@ export function getWeatherData(
     switch (season.kind) {
         case SeasonKind.WINTER:
             return {
-                tempRange: [-6, 2],
+                tempRange: [-7, 2],
                 percipitationChance: 0.5,
                 percipitationIntensity: 0.375,
                 cloudy: 0.75,
@@ -73,7 +73,7 @@ export function getWeatherData(
             };
         case SeasonKind.SUMMER:
             return {
-                tempRange: [19, 30],
+                tempRange: [22, 30],
                 percipitationChance: 0.55,
                 percipitationIntensity: 0.65,
                 cloudy: 0.15,

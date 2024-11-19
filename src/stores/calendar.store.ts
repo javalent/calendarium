@@ -158,6 +158,27 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
                 return store;
             });
         },
+        getNextDay(date: CalDate): CalDate {
+            return incrementDay(
+                date,
+                yearCalculator,
+                get(staticStore.staticData)
+            );
+        },
+        getOffsetDate(date: CalDate, offset: number) {
+            const _static = get(staticStore.staticData);
+            for (let i = 0; i < offset; i++) {
+                date = incrementDay(date, yearCalculator, _static);
+            }
+            return date;
+        },
+        getPreviousDay(date: CalDate): CalDate {
+            return decrementDay(
+                date,
+                yearCalculator,
+                get(staticStore.staticData)
+            );
+        },
     };
 }
 
