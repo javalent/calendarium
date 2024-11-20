@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/javalent/calendarium/compare/1.0.0...1.0.1) (2024-11-20)
+
+
+### Bug Fixes
+
+* Fix beta SHA ([b89675a](https://github.com/javalent/calendarium/commit/b89675a6c42e43f40adde9b57b0fb25aef14f401))
+
 ## [1.5.0](https://github.com/javalent/calendarium/compare/1.4.2...1.5.0) (2024-11-01)
 
 
