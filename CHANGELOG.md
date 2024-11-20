@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.0.0](https://github.com/javalent/calendarium/compare/1.5.0...2.0.0) (2024-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* Adds weather
+* Adds Seasons ([#155](https://github.com/javalent/calendarium/issues/155))
+
+### Features
+
+* Adds Seasons ([#155](https://github.com/javalent/calendarium/issues/155)) ([fe2994e](https://github.com/javalent/calendarium/commit/fe2994e96def4c0a9350986821a63b86dc98c8e0))
+* Adds weather ([a86ced8](https://github.com/javalent/calendarium/commit/a86ced83e55360a1b272017a4892f459dd35fa16))
+
+
+### Bug Fixes
+
+* Fix beta SHA ([b89675a](https://github.com/javalent/calendarium/commit/b89675a6c42e43f40adde9b57b0fb25aef14f401))
+* Re-adds beta manifest file ([5789361](https://github.com/javalent/calendarium/commit/5789361d259d156423000c77bdba057b3371bddc))
+
 ## [1.5.0](https://github.com/javalent/calendarium/compare/1.4.2...1.5.0) (2024-11-01)
 
 
