@@ -21,13 +21,12 @@ jobs:
             upload_url: ${{ steps.release.outputs.upload_url }}
             tag_name: ${{ steps.release.outputs.tag_name }}
         steps:
-            - uses: google-github-actions/release-please-action@v3
+            - uses: googleapis/release-please-action@v4
               id: release
               with:
-                  command: manifest
                   config-file: release-please-config-beta.json
                   manifest-file: .release-please-manifest-beta.json
-                  default-branch: beta
+                  target-branch: beta
 
     upload-build:
         runs-on: ubuntu-latest
