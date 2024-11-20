@@ -341,3 +341,17 @@ span.no-calendars {
     color: var(--text-muted);
     margin: 18px;
 }
+
+.calendarium-modal .setting-container {
+    padding: 0 0.5rem;
+}
+.calendarium-modal .setting-item-description .weather-data {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.calendarium-modal .weather-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+}

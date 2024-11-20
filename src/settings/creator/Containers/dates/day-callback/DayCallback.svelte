@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getContext, onDestroy } from "svelte";
-    import { TextAreaComponent } from "obsidian";
+    import { Platform, TextAreaComponent } from "obsidian";
     import { EditorView } from "@codemirror/view";
     import Details from "../../../Utilities/Details.svelte";
     import { editorFromTextArea } from "src/utils/editor/editor";
@@ -28,7 +28,7 @@
     });
 </script>
 
-<Details name={"Day Callback"}>
+<Details name={"Day Callback"} open={Platform.isDesktop}>
     <p>Use this to override what is displayed for a given day.</p>
     <p>
         Your callback will receive the <code>day</code> and

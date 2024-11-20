@@ -41,8 +41,8 @@ type BaseSeason = TimeSpan & {
 };
 export type SeasonalWeatherData = {
     tempRange: [number, number];
-    percipitationChance: number;
-    percipitationIntensity: number;
+    precipitationChance: number;
+    precipitationIntensity: number;
     cloudy: number;
     windy: number;
 };
@@ -58,32 +58,32 @@ export function getWeatherData(
         case SeasonKind.WINTER:
             return {
                 tempRange: [-7, 2],
-                percipitationChance: 0.5,
-                percipitationIntensity: 0.375,
+                precipitationChance: 0.5,
+                precipitationIntensity: 0.375,
                 cloudy: 0.75,
                 windy: 0.25,
             };
         case SeasonKind.SPRING:
             return {
                 tempRange: [9.5, 21],
-                percipitationChance: 0.75,
-                percipitationIntensity: 0.25,
+                precipitationChance: 0.75,
+                precipitationIntensity: 0.25,
                 cloudy: 0.55,
                 windy: 0.25,
             };
         case SeasonKind.SUMMER:
             return {
                 tempRange: [22, 30],
-                percipitationChance: 0.55,
-                percipitationIntensity: 0.65,
+                precipitationChance: 0.55,
+                precipitationIntensity: 0.65,
                 cloudy: 0.15,
                 windy: 0.25,
             };
         case SeasonKind.AUTUMN:
             return {
                 tempRange: [1, 11],
-                percipitationChance: 0.5,
-                percipitationIntensity: 0.25,
+                precipitationChance: 0.5,
+                precipitationIntensity: 0.25,
                 cloudy: 0.65,
                 windy: 0.35,
             };

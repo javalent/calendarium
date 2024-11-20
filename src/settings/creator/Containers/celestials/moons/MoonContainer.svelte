@@ -1,7 +1,7 @@
 <script lang="ts">
     import { getContext } from "svelte";
 
-    import { ExtraButtonComponent } from "obsidian";
+    import { ExtraButtonComponent, Platform } from "obsidian";
     import AddNew from "../../../Utilities/AddNew.svelte";
     import NoExistingItems from "../../../Utilities/NoExistingItems.svelte";
     import ToggleComponent from "../../../Settings/ToggleComponent.svelte";
@@ -35,6 +35,7 @@
 
 <Details
     name={"Moons"}
+    open={Platform.isDesktop}
     desc={`${$moonStore.length} moon${$moonStore.length != 1 ? "s" : ""}`}
 >
     <ToggleComponent

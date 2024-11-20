@@ -8,7 +8,7 @@
         type PeriodicSeason,
         type Season,
     } from "src/schemas/calendar/seasonal";
-    import { CreateSeasonModal } from "./seasons";
+    import { CreateSeasonModal } from "./modal/seasons";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
     import SeasonItem from "./SeasonItem.svelte";
@@ -16,6 +16,7 @@
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
     import ButtonComponent from "src/settings/creator/Settings/ButtonComponent.svelte";
     import { getEffectiveYearLength } from "src/utils/functions";
+    import { Platform } from "obsidian";
 
     const calendar = getContext("store");
     const {
@@ -81,7 +82,7 @@
 
 <Details
     name={"Seasons"}
-    open={false}
+    open={Platform.isDesktop}
     desc={`${$seasonStore.length} season${$seasonStore.length != 1 ? "s" : ""}`}
     warn={$seasonType === SeasonType.PERIODIC && couldDrift}
     label={"Your seasons are not fully distributed and could drift over time."}

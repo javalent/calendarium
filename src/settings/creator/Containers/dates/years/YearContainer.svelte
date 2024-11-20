@@ -5,6 +5,7 @@
     import {
         App,
         ExtraButtonComponent,
+        Platform,
         setIcon,
         TextComponent,
     } from "obsidian";
@@ -112,6 +113,7 @@
 
 <Details
     name={"Years"}
+    open={Platform.isDesktop}
     warn={$customYears && !$yearStore?.length}
     label={"At least one year is required when using custom years"}
 >

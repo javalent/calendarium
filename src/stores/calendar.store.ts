@@ -276,6 +276,9 @@ export function getEphemeralStore(
             displayWeeks.set(state.displayWeeks);
             hideEra.set(state.hideEra);
             displayAbsoluteYear.set(state.displayAbsoluteYear);
+            interpolateColors.set(state.interpolateColors);
+            displaySeasonColors.set(state.displaySeasonColors);
+            displayWeather.set(state.displayWeather);
             const config = get(staticStore.staticData);
 
             if (

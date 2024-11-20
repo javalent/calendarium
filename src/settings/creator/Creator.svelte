@@ -69,6 +69,7 @@
                     <General />
                     <Dates />
                     <Celestials />
+                    <Seasonal />
                     <Events />
                 </div>
             </div>

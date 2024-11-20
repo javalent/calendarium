@@ -10,6 +10,7 @@
     import DropZone from "src/settings/creator/Utilities/DropZone.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
     import { nanoid } from "src/utils/functions";
+    import { Platform } from "obsidian";
 
     const calendar = getContext("store");
 
@@ -48,6 +49,7 @@
 
 <Details
     name={"Weekdays"}
+    open={Platform.isDesktop}
     warn={!$weekdayStore?.length}
     label={"At least one weekday is required"}
     desc={`${$weekdayStore.length} weekday${

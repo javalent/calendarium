@@ -9,6 +9,7 @@
     import DropZone from "src/settings/creator/Utilities/DropZone.svelte";
     import NoExistingItems from "src/settings/creator/Utilities/NoExistingItems.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
+    import { Platform } from "obsidian";
 
     const store = getContext("store");
     const { monthStore } = store;
@@ -34,6 +35,7 @@
 
 <Details
     name={"Months"}
+    open={Platform.isDesktop}
     warn={!$monthStore?.length}
     label={"At least one month is required"}
     desc={`${$monthStore.length} month${$monthStore.length != 1 ? "s" : ""}`}

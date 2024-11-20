@@ -105,9 +105,9 @@ export class WeatherStore {
 
         let precipitation = Precipitation.NONE;
         let clouds = Cloudiness.pick(0);
-        if (random.chance(weatherData.percipitationChance, 1)) {
+        if (random.chance(weatherData.precipitationChance, 1)) {
             precipitation = Precipitation.pick(
-                random.normal(weatherData.percipitationIntensity * 100, 25) /
+                random.normal(weatherData.precipitationIntensity * 100, 25) /
                     100,
                 actual
             );
@@ -170,14 +170,14 @@ export class WeatherStore {
             Randomizer.cerp(fromData.tempRange[0], toData.tempRange[0], effect),
             Randomizer.cerp(fromData.tempRange[1], toData.tempRange[1], effect),
         ] as [number, number];
-        const percipitationChance = Randomizer.cerp(
-            fromData.percipitationChance,
-            toData.percipitationChance,
+        const precipitationChance = Randomizer.cerp(
+            fromData.precipitationChance,
+            toData.precipitationChance,
             effect
         );
-        const percipitationIntensity = Randomizer.cerp(
-            fromData.percipitationIntensity,
-            toData.percipitationIntensity,
+        const precipitationIntensity = Randomizer.cerp(
+            fromData.precipitationIntensity,
+            toData.precipitationIntensity,
             effect
         );
         const cloudy = Randomizer.cerp(fromData.cloudy, toData.cloudy, effect);
@@ -185,8 +185,8 @@ export class WeatherStore {
 
         return {
             tempRange,
-            percipitationChance,
-            percipitationIntensity,
+            precipitationChance,
+            precipitationIntensity,
             cloudy,
             windy,
         };
@@ -200,6 +200,7 @@ export class WeatherStore {
         to: Season;
     } {
         let season = get(season$);
+
         let from: Season, to: Season;
         /**
          * Effect the current season has on the weather.
@@ -217,7 +218,9 @@ export class WeatherStore {
 
             let deltaPreviousPeak = 0;
             if (previous.type === SeasonType.PERIODIC) {
-                deltaPreviousPeak = previous.duration - previous.weatherOffset;
+                deltaPreviousPeak =
+                    previous.duration -
+                    (previous.weatherOffset + previous.weatherPeak);
             } else {
                 const year =
                     previous.month > date.month ? date.year - 1 : date.year;
@@ -227,16 +230,15 @@ export class WeatherStore {
                     day: previous.day,
                 };
                 const duration = this.yearCalculator.daysBefore(pDate);
-                deltaPreviousPeak = duration - previous.weatherOffset;
+                deltaPreviousPeak =
+                    duration - (previous.weatherOffset + previous.weatherPeak);
             }
 
             from = previous;
             to = season;
             effect =
                 1 -
-                (season.weatherOffset +
-                    deltaPreviousPeak -
-                    (season.daysPassed! + deltaPreviousPeak)) /
+                (season.weatherOffset - season.daysPassed!) /
                     (season.weatherOffset + deltaPreviousPeak);
         } else {
             const next$ = this.seasonCache.getNextSeason(season$);
@@ -244,7 +246,8 @@ export class WeatherStore {
 
             effect =
                 1 -
-                (season.daysPassed! - season.weatherOffset) /
+                (season.daysPassed! -
+                    (season.weatherOffset + season.weatherPeak)) /
                     (season.daysPassed! +
                         season.daysRemaining! -
                         season.weatherOffset +
@@ -252,11 +255,21 @@ export class WeatherStore {
             from = next;
             to = season;
         }
-        console.log("🚀 ~ file: weather.store.ts:246 ~ effect:", effect);
+/*         console.log(
+            "FROM",
+            from.name,
+            "TO",
+            to.name,
+            `(current: ${season.name})`,
+            season.daysPassed!,
+            effect,
+            `(${1 - effect})`
+        ); */
 
         return { from, to, effect };
     }
 }
+
 
 class Randomizer {
     lcg: () => number;

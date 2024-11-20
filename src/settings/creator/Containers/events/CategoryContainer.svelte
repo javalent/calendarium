@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ExtraButtonComponent, TextComponent } from "obsidian";
+    import { ExtraButtonComponent, Platform, TextComponent } from "obsidian";
     import { createEventDispatcher, getContext } from "svelte";
     import randomColor from "randomcolor";
 
@@ -40,6 +40,7 @@
 
 <Details
     name={"Categories"}
+    open={Platform.isDesktop}
     desc={`${$categoryStore.length} categor${
         $categoryStore.length != 1 ? "ies" : "y"
     }`}

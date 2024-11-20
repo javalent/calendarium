@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ExtraButtonComponent } from "obsidian";
+    import { ExtraButtonComponent, Platform } from "obsidian";
     import { UnitSystem } from "src/schemas/calendar/seasonal";
     import DropdownComponent from "src/settings/creator/Settings/DropdownComponent.svelte";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
@@ -17,7 +17,11 @@
     };
 </script>
 
-<Details name={"Weather"} open={true} desc={$enabled ? "Enabled" : "Disabled"}>
+<Details
+    name={"Weather"}
+    open={Platform.isDesktop}
+    desc={$enabled ? "Enabled" : "Disabled"}
+>
     <ToggleComponent
         name="Enable weather"
         value={$enabled}

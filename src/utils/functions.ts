@@ -18,6 +18,7 @@ import type {
 import { DEFAULT_FORMAT } from "./constants";
 import type { DateBit } from "src/events/event.helper";
 import { EventType } from "../events/event.types";
+import { UnitSystem } from "../schemas/calendar/seasonal";
 
 export function wrap(value: number, size: number): number {
     return ((value % size) + size) % size;
@@ -587,4 +588,27 @@ export function daysFromYearOne(
 
 export function getWeatherSeed() {
     return Date.now() ^ (Math.random() * 0x100000000);
+}
+
+export function translateTemperature(
+    temp: number,
+    to: UnitSystem,
+    from: UnitSystem = UnitSystem.METRIC
+) {
+    if (from === UnitSystem.IMPERIAL && to === UnitSystem.METRIC) {
+        return Number((((temp - 32) * 5) / 9).toPrecision(2));
+    }
+    if (from === UnitSystem.METRIC && to === UnitSystem.IMPERIAL) {
+        return Number(((temp * 9) / 5 + 32).toPrecision(2));
+    }
+    return Number(temp.toPrecision(2));
+}
+
+export function stringifyTemperature(
+    temp: number,
+    to: UnitSystem,
+    from: UnitSystem = UnitSystem.METRIC
+) {
+    const temperature = translateTemperature(temp, to, from);
+    return `${temperature}°`;
 }

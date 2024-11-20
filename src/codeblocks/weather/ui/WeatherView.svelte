@@ -3,6 +3,7 @@
     import { derived, get, writable } from "svelte/store";
     import { onMount } from "svelte";
     import { scaleLinear } from "d3-scale";
+    import { stringifyTemperature } from "src/utils/functions";
 
     const store = getTypedContext("store");
     $: ({ weatherStore, yearCalculator, current, staticStore } = $store);
@@ -62,27 +63,18 @@
         });
         return ticks;
     });
-
-    const translateTemperature = (temp: number) => {
-        switch ($units) {
-            case "Imperial":
-                return Math.round((temp * 9) / 5 + 32);
-            case "Metric":
-                return Math.round(temp);
-        }
-    };
     $: yTicks = derived([max, min], ([max, min]) => {
         //3 high, 3 low?
         const ticks: { name: string; pos: number }[] = [];
         let range = max - min;
         for (let i = 0; i < 7; i++) {
             ticks.push({
-                name: `${translateTemperature(max - i * (range / 7))}°`,
+                name: `${stringifyTemperature(max - i * (range / 7), $units)}`,
                 pos: max - (i * range) / 7,
             });
         }
         ticks.push({
-            name: `${translateTemperature(min)}°`,
+            name: `${stringifyTemperature(min, $units)}`,
             pos: min,
         });
 
@@ -110,7 +102,7 @@
                 stroke="#ddd"
             >
                 <line x1={padding.left} x2={$width - padding.right} />
-                <text x="0" y="+4">{tick.name}</text>
+                <text x={padding.left - 2} y="+4">{tick.name}</text>
             </g>
         {/each}
     </g>

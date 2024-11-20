@@ -46,7 +46,7 @@ export class Precipitation {
         SNOW: "Snow",
     } as const;
     static Strength = [
-        "NONE",
+        "None",
         "LIGHT",
         "MODERATE",
         "STEADY",
@@ -55,7 +55,7 @@ export class Precipitation {
         "EXTREME",
     ] as const;
     static Rain = [
-        "NONE",
+        "None",
         "Light mist",
         "Drizzle",
         "Steady rainfall",
@@ -64,7 +64,7 @@ export class Precipitation {
         "Downpour",
     ] as const;
     static Snow = [
-        "NONE",
+        "None",
         "A few flakes",
         "A dusting of snow",
         "Flurries",

@@ -151,4 +151,7 @@
     select {
         width: 100%;
     }
+    input[type="number"] {
+        width: 100%;
+    }
 </style>
