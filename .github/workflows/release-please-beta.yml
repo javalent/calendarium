@@ -89,6 +89,14 @@ jobs:
                   asset_path: ./styles.css
                   asset_name: styles.css
                   asset_content_type: text/css
+            - name: Update Beta Manifest
+              uses: fjogeleit/yaml-update-action@main
+              with:
+                  valueFile: "manifest-beta.json"
+                  propertyPath: "version"
+                  value: ${{ env.tag_name }}
+                  branch: main
+                  message: "🛠️ beta version update"
 
     notify-obsidian:
         runs-on: ubuntu-latest
