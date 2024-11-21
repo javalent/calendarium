@@ -98,7 +98,6 @@ jobs:
                   message: "🛠️ beta version update"
                   branch: main
                   masterBranchName: main
-                  targetBranchName: main
     notify-obsidian:
         runs-on: ubuntu-latest
         needs: upload-build
