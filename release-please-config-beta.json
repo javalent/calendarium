@@ -15,7 +15,6 @@
         }
     ],
 
-    "prerelease": true,
     "prerelease-type": "beta",
     "versioning": "prerelease",
 
