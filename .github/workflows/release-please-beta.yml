@@ -94,7 +94,6 @@ jobs:
     notify:
         runs-on: ubuntu-latest
         needs: build
-        if: false
         steps:
             - name: Obsidian
               uses: javalent/workflows/actions/discord-embed@main
