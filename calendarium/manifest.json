@@ -1,0 +1,11 @@
+{
+    "id": "calendarium",
+    "name": "Calendarium",
+    "author": "Jeremy Valentine",
+    "description": "Craft mind-bending fantasy and sci-fi calendars.",
+    "version": "1.5.0",
+    "minAppVersion": "1.5.7",
+    "authorUrl": "https://plugins.javalent.com",
+    "fundingUrl": "https://www.buymeacoffee.com/valentine195",
+    "isDesktopOnly": false
+}
