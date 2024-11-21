@@ -40,7 +40,7 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v1
               with:
-                  node-version: "18.x" # You might need to adjust this value to your own version
+                  node-version: "18.x"  # You might need to adjust this value to your own version
             - name: Build
               id: build
               run: |
@@ -109,29 +109,17 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   name: Calendarium
-                  webhook-urls: https://discord.com/api/webhooks/1087082443133161533/lFC1g_L1NqWfsYQub3wE4FQY-HTyESZAAlVz8fXFbT9LVPxCX4AbC8fLtF1l5HBo1g5L
+                  webhook-urls: ${{ secrets.OBSIDIAN_WEBHOOK }}
                   beta: true
-#    notify-obsidian:
-#        runs-on: ubuntu-latest
-#        needs: upload-build
-#        steps:
-#            - name: Webhook
-#              uses: javalent/workflows/actions/discord-embed@main
-#              env:
-#                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#              with:
-#                  name: Calendarium
-#                  webhook-urls: ${{ secrets.OBSIDIAN_WEBHOOK }}
-#                  beta: true
-#    notify-ttrpg:
-#        runs-on: ubuntu-latest
-#        needs: upload-build
-#        steps:
-#            - name: Webhook
-#              uses: javalent/workflows/actions/discord-embed@main
-#              env:
-#                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#              with:
-#                  name: Calendarium
-#                  webhook-urls: ${{ secrets.TTRPG_WEBHOOK }}
-#                  beta: true
+    notify-ttrpg:
+        runs-on: ubuntu-latest
+        needs: upload-build
+        steps:
+            - name: Webhook
+              uses: javalent/workflows/actions/discord-embed@main
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  name: Calendarium
+                  webhook-urls: ${{ secrets.TTRPG_WEBHOOK }}
+                  beta: true
