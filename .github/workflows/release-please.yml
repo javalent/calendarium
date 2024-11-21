@@ -14,7 +14,7 @@ permissions:
 name: Release
 
 jobs:
-    release-please:
+    release:
         runs-on: ubuntu-latest
         outputs:
             release_created: ${{ steps.release.outputs.release_created }}
@@ -24,20 +24,23 @@ jobs:
             - uses: googleapis/release-please-action@v4
               id: release
               with:
-                  token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-    upload-build:
+                  config-file: release-please-config-beta.json
+                  manifest-file: .release-please-manifest-beta.json
+                  target-branch: beta
+
+    build:
         runs-on: ubuntu-latest
-        needs: release-please
-        if: ${{ needs.release-please.outputs.release_created }}
+        needs: release
+        if: ${{ needs.release.outputs.release_created }}
         env:
-            upload_url: ${{ needs.release-please.outputs.upload_url }}
-            tag_name: ${{ needs.release-please.outputs.tag_name }}
+            upload_url: ${{ needs.release.outputs.upload_url }}
+            tag_name: ${{ needs.release.outputs.tag_name }}
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - name: Use Node.js
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v4
               with:
-                  node-version: "18.x" # You might need to adjust this value to your own version
+                  node-version: "latest"
             - name: Build
               id: build
               run: |
@@ -46,63 +49,29 @@ jobs:
                   mkdir ${{ env.PLUGIN_NAME }}
                   cp main.js manifest.json styles.css ${{ env.PLUGIN_NAME }}
                   zip -r ${{ env.PLUGIN_NAME }}.zip ${{ env.PLUGIN_NAME }}
-            - name: Upload zip file
-              id: upload-zip
-              uses: actions/upload-release-asset@v1
+            - name: Upload Release Artifact
+              if: ${{ needs.release.outputs.release_created }}
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ env.upload_url }}
-                  asset_path: ./${{ env.PLUGIN_NAME }}.zip
-                  asset_name: ${{ env.PLUGIN_NAME }}-${{ env.tag_name }}.zip
-                  asset_content_type: application/zip
-            - name: Upload main.js
-              id: upload-main
-              uses: actions/upload-release-asset@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ env.upload_url }}
-                  asset_path: ./main.js
-                  asset_name: main.js
-                  asset_content_type: text/javascript
-            - name: Upload manifest.json
-              id: upload-manifest
-              uses: actions/upload-release-asset@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ env.upload_url }}
-                  asset_path: ./manifest.json
-                  asset_name: manifest.json
-                  asset_content_type: application/json
-            - name: Upload styles.css
-              id: upload-css
-              uses: actions/upload-release-asset@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ env.upload_url }}
-                  asset_path: ./styles.css
-                  asset_name: styles.css
-                  asset_content_type: text/css
-
-    notify-obsidian:
+              run: |
+                  gh release upload ${{ needs.release.outputs.tag_name }} \
+                      './${{ env.PLUGIN_NAME }}.zip' \
+                      './main.js' \
+                      './styles.css' \
+                      './manifest.json'
+    notify:
         runs-on: ubuntu-latest
-        needs: upload-build
+        needs: build
         steps:
-            - name: Webhook
+            - name: Obsidian
               uses: javalent/workflows/actions/discord-embed@main
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   name: Calendarium
                   webhook-urls: ${{ secrets.OBSIDIAN_WEBHOOK }}
-    notify-ttrpg:
-        runs-on: ubuntu-latest
-        needs: upload-build
-        steps:
-            - name: Webhook
+
+            - name: TTRPG
               uses: javalent/workflows/actions/discord-embed@main
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
