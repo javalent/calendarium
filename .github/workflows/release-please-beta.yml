@@ -6,8 +6,8 @@ on:
             - "beta"
 env:
     PLUGIN_NAME: calendarium
-    GH_BOT_EMAIL: "valentine.195@gmail.com"
-    GH_BOT_NAME: "valentine195"
+    GH_BOT_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
+    GH_BOT_NAME: "GitHub Action"
 
 permissions:
     contents: write
@@ -66,6 +66,8 @@ jobs:
         needs: [build, release]
         steps:
             - uses: actions/checkout@v4
+              with:
+                  ref: main
             - name: Update Beta Manifest
               continue-on-error: true
               env:
