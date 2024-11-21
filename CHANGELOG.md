@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-beta.1](https://github.com/javalent/calendarium/compare/2.0.0-beta...2.0.0-beta.1) (2024-11-21)
+
+
+### Bug Fixes
+
+* removes prerelease setting from release-please config ([e3e1a92](https://github.com/javalent/calendarium/commit/e3e1a92d25cda58cd38938f6c9cbe0b10a527f5a))
+
 ## [2.0.0-beta](https://github.com/javalent/calendarium/compare/1.5.0...2.0.0-beta) (2024-11-21)
 
 
