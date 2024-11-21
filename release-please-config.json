@@ -12,6 +12,11 @@
             "type": "json",
             "path": "manifest.json",
             "jsonpath": "$.version"
+        },
+        {
+            "type": "json",
+            "path": "manifest-beta.json",
+            "jsonpath": "$.version"
         }
     ],
     "last-release-sha": "ad3de1ae47e3b2e72f7428fe2195d28df42f9af0",
