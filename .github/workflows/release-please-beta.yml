@@ -6,8 +6,8 @@ on:
             - "beta"
 env:
     PLUGIN_NAME: calendarium
-    GH_BOT_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
-    GH_BOT_NAME: "GitHub Action"
+    GH_BOT_EMAIL: "valentine.195@gmail.com"
+    GH_BOT_NAME: "valentine195"
 
 permissions:
     contents: write
