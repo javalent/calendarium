@@ -11,7 +11,7 @@ permissions:
     contents: write
     pull-requests: write
 
-name: release-please
+name: Beta
 
 jobs:
     release-please:
@@ -89,7 +89,14 @@ jobs:
                   asset_path: ./styles.css
                   asset_name: styles.css
                   asset_content_type: text/css
-
+            - name: Update Beta Manifest
+              uses: fjogeleit/yaml-update-action@main
+              with:
+                  valueFile: "manifest-beta.json"
+                  propertyPath: "version"
+                  value: ${{ env.tag_name }}
+                  branch: main
+                  message: "🛠️ beta version update"
     notify-obsidian:
         runs-on: ubuntu-latest
         needs: upload-build
@@ -100,17 +107,29 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   name: Calendarium
-                  webhook-urls: ${{ secrets.OBSIDIAN_WEBHOOK }}
+                  webhook-urls: https://discord.com/api/webhooks/1087082443133161533/lFC1g_L1NqWfsYQub3wE4FQY-HTyESZAAlVz8fXFbT9LVPxCX4AbC8fLtF1l5HBo1g5L
                   beta: true
-    notify-ttrpg:
-        runs-on: ubuntu-latest
-        needs: upload-build
-        steps:
-            - name: Webhook
-              uses: javalent/workflows/actions/discord-embed@main
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  name: Calendarium
-                  webhook-urls: ${{ secrets.TTRPG_WEBHOOK }}
-                  beta: true
+#    notify-obsidian:
+#        runs-on: ubuntu-latest
+#        needs: upload-build
+#        steps:
+#            - name: Webhook
+#              uses: javalent/workflows/actions/discord-embed@main
+#              env:
+#                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#              with:
+#                  name: Calendarium
+#                  webhook-urls: ${{ secrets.OBSIDIAN_WEBHOOK }}
+#                  beta: true
+#    notify-ttrpg:
+#        runs-on: ubuntu-latest
+#        needs: upload-build
+#        steps:
+#            - name: Webhook
+#              uses: javalent/workflows/actions/discord-embed@main
+#              env:
+#                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#              with:
+#                  name: Calendarium
+#                  webhook-urls: ${{ secrets.TTRPG_WEBHOOK }}
+#                  beta: true
