@@ -72,9 +72,10 @@ jobs:
 
                   cat manifest-beta.json
 
-                  git add .
+                  git checkout main --depth=1
+                  git add manifest-beta.json
                   git status
-                  git commit -m "🔖 $VERSION"
+                  git commit -m "🔖 ${{ needs.release.outputs.tag_name }}"
                   git push
     notify:
         runs-on: ubuntu-latest
