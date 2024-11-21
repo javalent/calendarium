@@ -101,6 +101,7 @@ jobs:
               with:
                   name: Calendarium
                   webhook-urls: ${{ secrets.OBSIDIAN_WEBHOOK }}
+                  beta: true
     notify-ttrpg:
         runs-on: ubuntu-latest
         needs: upload-build
@@ -112,3 +113,4 @@ jobs:
               with:
                   name: Calendarium
                   webhook-urls: ${{ secrets.TTRPG_WEBHOOK }}
+                  beta: true
