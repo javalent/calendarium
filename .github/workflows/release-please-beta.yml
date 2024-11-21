@@ -61,6 +61,14 @@ jobs:
                       './main.js' \
                       './styles.css' \
                       './manifest.json'
+    beta:
+        runs-on: ubuntu-latest
+        needs: release
+        if: ${{ needs.release.outputs.release_created }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: main
             - name: Update Beta Manifest
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,7 +80,6 @@ jobs:
 
                   cat manifest-beta.json
 
-                  git checkout main --depth=1
                   git add manifest-beta.json
                   git status
                   git commit -m "🔖 ${{ needs.release.outputs.tag_name }}"
