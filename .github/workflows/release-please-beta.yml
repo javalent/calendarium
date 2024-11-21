@@ -69,6 +69,7 @@ jobs:
               with:
                   ref: main
             - name: Update Beta Manifest
+              continue-on-error: true
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
@@ -77,10 +78,11 @@ jobs:
 
                   sed 's|\(version":\) ".*"|\1 "'${{ needs.release.outputs.tag_name }}'"|' manifest.json > manifest-beta.json
 
-                  cat manifest-beta.json
-
                   git add manifest-beta.json
-                  git status
+                  if [ -z "$(git status --porcelain)" ]; then 
+                    echo "🛑 Beta manifest already up-to-date"
+                    exit 1
+                  fi
                   git commit -m "🔖 ${{ needs.release.outputs.tag_name }}"
                   git push --force
     notify:
