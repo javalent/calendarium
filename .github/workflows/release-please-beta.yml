@@ -76,7 +76,13 @@ jobs:
 
                   sed 's|\(version":\) ".*"|\1 "'${{ needs.release.outputs.tag_name }}'"|' manifest.json > manifest-beta.json
 
+                  cat manifest-beta.json
+
                   git add manifest-beta.json
+
+                  git status
+                  git status --porcelain
+
                   if [ -z "$(git status --porcelain)" ]; then 
                     echo "🛑 Beta manifest already up-to-date"
                     exit 1
