@@ -72,6 +72,30 @@
 * removes prerelease setting from release-please config ([e3e1a92](https://github.com/javalent/calendarium/commit/e3e1a92d25cda58cd38938f6c9cbe0b10a527f5a))
 * switch to beta versioning strategy ([04a709a](https://github.com/javalent/calendarium/commit/04a709a9042d4c0aa7dde6ea1df48d1c3cd5e26e))
 
+## [2.0.0-beta](https://github.com/javalent/calendarium/compare/1.5.0...2.0.0-beta) (2024-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* Adds weather
+* Adds Seasons ([#155](https://github.com/javalent/calendarium/issues/155))
+
+### Features
+
+* Adds Seasons ([#155](https://github.com/javalent/calendarium/issues/155)) ([fe2994e](https://github.com/javalent/calendarium/commit/fe2994e96def4c0a9350986821a63b86dc98c8e0))
+* Adds weather ([a86ced8](https://github.com/javalent/calendarium/commit/a86ced83e55360a1b272017a4892f459dd35fa16))
+
+
+### Bug Fixes
+
+* bump ([8d4f6d4](https://github.com/javalent/calendarium/commit/8d4f6d45dc0f573117f978951b38dbafa8b733be))
+* bump ([a2daf3e](https://github.com/javalent/calendarium/commit/a2daf3eb6f586651223f322dad2ad6d94eb92c08))
+* bump 2 ([c804afa](https://github.com/javalent/calendarium/commit/c804afacdd0a6ec54e14cf67515da06821507c99))
+* Fix beta SHA ([b89675a](https://github.com/javalent/calendarium/commit/b89675a6c42e43f40adde9b57b0fb25aef14f401))
+* Re-adds beta manifest file ([5789361](https://github.com/javalent/calendarium/commit/5789361d259d156423000c77bdba057b3371bddc))
+* removes prerelease setting from release-please config ([e3e1a92](https://github.com/javalent/calendarium/commit/e3e1a92d25cda58cd38938f6c9cbe0b10a527f5a))
+* switch to beta versioning strategy ([04a709a](https://github.com/javalent/calendarium/commit/04a709a9042d4c0aa7dde6ea1df48d1c3cd5e26e))
+
 ## [2.0.0-beta.1](https://github.com/javalent/calendarium/compare/2.0.0-beta...2.0.0-beta.1) (2024-11-21)
 
 
