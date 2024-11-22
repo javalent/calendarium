@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-beta.2](https://github.com/javalent/calendarium/compare/2.0.0-beta.1...2.0.0-beta.2) (2024-11-22)
+
+
+### Bug Fixes
+
+* Fixes issue where custom weather data for locations couldn't be set ([798d022](https://github.com/javalent/calendarium/commit/798d02262681c4bad96c131def9b412436adb15a))
+
 ## [2.0.0-beta.1](https://github.com/javalent/calendarium/compare/2.0.0-beta...2.0.0-beta.1) (2024-11-22)
 
 
