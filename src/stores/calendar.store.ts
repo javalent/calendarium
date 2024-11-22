@@ -35,6 +35,8 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     const { set, update, subscribe } = store;
 
     const staticStore = createStaticStore(store);
+    const locationDataStore = derived(store, (c) => c.locations);
+    const locationStore = derived(locationDataStore, (l) => l.locations);
 
     const current = derived(store, (cal) => cal.current);
 
@@ -144,6 +146,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
         moonCache,
         seasonCache,
         weatherStore,
+        locationStore,
         categories,
         //Readable store containing static calendar data
         staticStore,
@@ -201,6 +204,7 @@ export interface EphemeralState {
     displayAbsoluteYear: boolean;
     displaying: CalDate;
     viewing: CalDate | null;
+    location: string;
 }
 export function getEphemeralStore(
     store: Writable<Calendar>,
@@ -221,6 +225,16 @@ export function getEphemeralStore(
     const displaySeasonColors = writable(base.seasonal.displayColors);
     const interpolateColors = writable(base.seasonal.interpolateColors);
     const displayWeather = writable(true);
+    const location = writable(base.locations.defaultLocation);
+    const currentLocation = derived(
+        [location, store],
+        ([location, calendar]) => {
+            return (
+                calendar.locations.locations.find((l) => l.id === location)
+                    ?.name ?? "No location"
+            );
+        }
+    );
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
 
@@ -237,6 +251,7 @@ export function getEphemeralStore(
             displaySeasonColors,
             interpolateColors,
             displayWeather,
+            location,
         ],
         ([
             viewState,
@@ -250,6 +265,7 @@ export function getEphemeralStore(
             displaySeasonColors,
             interpolateColors,
             displayWeather,
+            location,
         ]) => {
             return {
                 viewState,
@@ -263,6 +279,7 @@ export function getEphemeralStore(
                 displaying,
                 viewing,
                 displayWeather,
+                location,
             };
         }
     );
@@ -291,6 +308,7 @@ export function getEphemeralStore(
 
             displaying.set(state.displaying);
             viewing.set(state.viewing);
+            if (state.location) location.set(state.location);
         },
         getEphemeralState: (): EphemeralState => {
             return {
@@ -305,6 +323,7 @@ export function getEphemeralStore(
                 displayMoons: get(displayMoons),
                 displayWeeks: get(displayWeeks),
                 displayWeather: get(displayWeather),
+                location: get(location),
             };
         },
         displayMoons,
@@ -316,6 +335,9 @@ export function getEphemeralStore(
         interpolateColors,
         displayWeather,
         viewState,
+
+        location,
+        currentLocation,
 
         //Displayed Date
         displaying,

@@ -257,7 +257,6 @@
         color: var(--text-on-accent);
     }
     .calendarium-nav.nav.nav {
-        padding: 10px 0px;
         margin: 0;
         display: flex;
         flex-flow: row nowrap;

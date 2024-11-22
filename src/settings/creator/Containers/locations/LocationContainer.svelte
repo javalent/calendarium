@@ -10,7 +10,7 @@
     import DropZone from "../../Utilities/DropZone.svelte";
     import LocationInstance from "./LocationInstance.svelte";
     import { SeasonKind, type Weathered } from "src/schemas/calendar/seasonal";
-    import type { Location } from "src/schemas/calendar/locations";
+    import { NO_LOCATION, type Location } from "src/schemas/calendar/locations";
     import copy from "fast-copy";
 
     const calendar = getContext("store");
@@ -88,8 +88,8 @@
                 <div slot="control">
                     <select class="dropdown" bind:value={$defaultLocationStore}>
                         <option
-                            value="NONE"
-                            selected={$defaultLocationStore == "NONE"}
+                            value={NO_LOCATION}
+                            selected={$defaultLocationStore == NO_LOCATION}
                             >None</option
                         >
                         {#each $locationStore as location}

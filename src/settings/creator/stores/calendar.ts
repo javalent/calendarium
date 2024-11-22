@@ -34,7 +34,7 @@ import {
     type PeriodicSeason,
     type Season,
 } from "src/schemas/calendar/seasonal";
-import type { Location } from "src/schemas/calendar/locations";
+import { NO_LOCATION, type Location } from "src/schemas/calendar/locations";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -638,7 +638,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                         (c) => c.id !== id
                     );
                     if (data.locations.defaultLocation == id) {
-                        data.locations.defaultLocation = "NONE";
+                        data.locations.defaultLocation = NO_LOCATION;
                     }
                     return data;
                 }),
