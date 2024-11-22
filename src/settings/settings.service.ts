@@ -819,6 +819,9 @@ class SettingsServiceClass {
                 (calendar as any).seasonal.weather = copy(DEFAULT_WEATHER_DATA);
                 dirty = true;
             }
+            if (!("locations" in calendar)) {
+                (calendar as any).locations = { locations: [] };
+            }
         }
         return dirty;
     }

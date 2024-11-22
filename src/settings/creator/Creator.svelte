@@ -13,6 +13,7 @@
     import { writable } from "svelte/store";
     import Sidebar from "./Containers/sidebar/Sidebar.svelte";
     import Seasonal from "./Containers/seasonal/Seasonal.svelte";
+    import Locations from "./Containers/locations/Locations.svelte";
 
     const mobile = Platform.isMobile;
 
@@ -46,9 +47,9 @@
                 <Seasonal />
             {/if}
             <!--  -->
-            <!-- {#if $selected === "Weather"}
-                <Weather {plugin} {calendar} />
-            {/if} -->
+            {#if $selected === "Locations"}
+                <Locations />
+            {/if}
             {#if $selected == "Events"}
                 <Events />
             {/if}
@@ -70,6 +71,7 @@
                     <Dates />
                     <Celestials />
                     <Seasonal />
+                    <Locations />
                     <Events />
                 </div>
             </div>

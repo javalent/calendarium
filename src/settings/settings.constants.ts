@@ -49,6 +49,9 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
         eras: [],
     },
     seasonal: copy(DEFAULT_SEASONAL_DATA),
+    locations: {
+        locations: [],
+    },
     current: {
         year: null,
         month: null,

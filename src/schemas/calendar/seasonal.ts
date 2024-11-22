@@ -36,8 +36,6 @@ type BaseSeason = TimeSpan & {
     id: string;
     name: string;
     color: string;
-    weatherOffset: number;
-    weatherPeak: number;
 };
 export type SeasonalWeatherData = {
     tempRange: [number, number];
@@ -48,7 +46,7 @@ export type SeasonalWeatherData = {
 };
 
 export function getWeatherData(
-    season: Season
+    season: Weathered
 ): SeasonalWeatherData | undefined {
     if (season.kind === SeasonKind.NONE) return undefined;
     if (season.kind === SeasonKind.CUSTOM) {
@@ -90,19 +88,19 @@ export function getWeatherData(
     }
 }
 
-type WeatheredSeason = BaseSeason &
-    (
-        | {
-              kind: typeof SeasonKind.CUSTOM;
-              weather: SeasonalWeatherData;
-          }
-        | {
-              kind: (typeof SeasonKind)[Exclude<
-                  keyof typeof SeasonKind,
-                  "CUSTOM"
-              >];
-          }
-    );
+export type Weathered = {
+    weatherOffset: number;
+    weatherPeak: number;
+} & (
+    | {
+          kind: typeof SeasonKind.CUSTOM;
+          weather: SeasonalWeatherData;
+      }
+    | {
+          kind: (typeof SeasonKind)[Exclude<keyof typeof SeasonKind, "CUSTOM">];
+      }
+);
+type WeatheredSeason = BaseSeason & Weathered;
 
 export type DatedSeason = WeatheredSeason & {
     month: number;
