@@ -96,13 +96,14 @@ export class LocationModal extends CanceableCalendariumModal<Location> {
                     }
                     d.setValue(seasonData.kind).onChange((v) => {
                         const prior = getWeatherData(seasonData);
+
                         seasonData.kind = v as SeasonKind;
                         if (
                             seasonData.kind === SeasonKind.CUSTOM &&
                             prior &&
-                            !("weather" in this.item)
+                            !("weather" in seasonData)
                         ) {
-                            (this.item as any).weather = copy(prior);
+                            (seasonData as any).weather = copy(prior);
                         }
                         this.display();
                     });
