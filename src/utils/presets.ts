@@ -281,6 +281,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 primaryWindDirection: "E",
             },
         },
+        locations: {
+            locations: [],
+        },
         current: {
             year: null,
             day: null,
@@ -802,6 +805,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
             },
+        },
+        locations: {
+            locations: [],
         },
         current: {
             year: 591,
@@ -1401,6 +1407,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
             },
+        },
+        locations: {
+            locations: [],
         },
         current: {
             year: 4720,
@@ -3161,6 +3170,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 primaryWindDirection: "E",
             },
         },
+        locations: {
+            locations: [],
+        },
         current: {
             year: 998,
             day: 1,
@@ -3966,6 +3978,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 primaryWindDirection: "E",
             },
         },
+        locations: {
+            locations: [],
+        },
         current: {
             year: 735,
             day: 1,
@@ -4329,6 +4344,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
             },
+        },
+        locations: {
+            locations: [],
         },
         current: {
             day: 1,
@@ -5079,6 +5097,9 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
             },
+        },
+        locations: {
+            locations: [],
         },
         current: {
             year: 1491,

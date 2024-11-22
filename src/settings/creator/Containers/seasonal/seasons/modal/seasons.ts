@@ -196,7 +196,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                 );
 
             const kind = new Setting(weatherEl)
-                .setName("Season kind")
+                .setName("Kind")
                 .setDesc(
                     createFragment((f) => {
                         const data = getWeatherData(this.item);
@@ -279,7 +279,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
     }
 }
 
-class WeatherDataModal extends CanceableCalendariumModal<SeasonalWeatherData> {
+export class WeatherDataModal extends CanceableCalendariumModal<SeasonalWeatherData> {
     constructor(public item: SeasonalWeatherData, public units: UnitSystem) {
         super();
     }

@@ -34,6 +34,7 @@ import {
     type PeriodicSeason,
     type Season,
 } from "src/schemas/calendar/seasonal";
+import { NO_LOCATION, type Location } from "src/schemas/calendar/locations";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -144,6 +145,13 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const weatherSeedStore = derived(weatherStore, (data) => data.seed);
     const tempUnitsStore = derived(weatherStore, (data) => data.tempUnits);
     const windUnitsStore = derived(weatherStore, (data) => data.windUnits);
+
+    /** Locations */
+    const locationStore = derived(store, (data) => data.locations.locations);
+    const defaultLocationStore = derived(
+        store,
+        (data) => data.locations.defaultLocation
+    );
 
     const eventStore = derived(store, (data) => data.events);
     const categoryStore = derived(store, (data) => data.categories);
@@ -587,6 +595,58 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 set: (val: UnitSystem) =>
                     update((data) => {
                         data.seasonal.weather.windUnits = val;
+                        return data;
+                    }),
+            },
+        },
+        locationStore: {
+            subscribe: locationStore.subscribe,
+            set: (locations: Location[]) =>
+                update((data) => {
+                    data.locations.locations = [...locations];
+                    return data;
+                }),
+            add: (location: Location) =>
+                update((data) => {
+                    (data.locations.locations as Location[]).push({
+                        ...copy(location),
+                    });
+
+                    return data;
+                }),
+            update: (id: string, location: Location) =>
+                update((data) => {
+                    const index = data.locations.locations.findIndex(
+                        (e) => e.id === id
+                    );
+
+                    if (index < 0) {
+                        data.locations.locations.push({
+                            ...copy(location),
+                        });
+                    } else {
+                        data.locations.locations.splice(index, 1, {
+                            ...copy(location),
+                        });
+                    }
+
+                    return data;
+                }),
+            delete: (id: string) =>
+                update((data) => {
+                    data.locations.locations = data.locations.locations.filter(
+                        (c) => c.id !== id
+                    );
+                    if (data.locations.defaultLocation == id) {
+                        data.locations.defaultLocation = NO_LOCATION;
+                    }
+                    return data;
+                }),
+            defaultLocationStore: {
+                subscribe: defaultLocationStore.subscribe,
+                set: (location: string) =>
+                    update((data) => {
+                        data.locations.defaultLocation = location;
                         return data;
                     }),
             },

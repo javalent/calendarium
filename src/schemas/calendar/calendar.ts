@@ -1,4 +1,5 @@
 import type { CalEventDate, CalEvent, CalEventCategory } from "../events";
+import type { LocationData } from "./locations";
 import type { Moon } from "./moons";
 import type { Season, SeasonalData } from "./seasonal";
 import type { Week, Month, LeapDay, Era, Year } from "./timespans";
@@ -50,6 +51,7 @@ type BaseCalendar = {
     description: string;
     static: StaticCalendarData;
     seasonal: SeasonalData;
+    locations: LocationData;
     events: CalEvent[];
     categories: CalEventCategory[];
     date?: number;
