@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-beta.1](https://github.com/javalent/calendarium/compare/2.0.0-beta...2.0.0-beta.1) (2024-11-22)
+
+
+### Features
+
+* Adds locations ([#180](https://github.com/javalent/calendarium/issues/180)) ([3088766](https://github.com/javalent/calendarium/commit/3088766d6d25100dcb15eb7761ceae57e6d7f90d))
+
 ## [2.0.0-beta](https://github.com/javalent/calendarium/compare/1.5.0...2.0.0-beta) (2024-11-21)
 
 
