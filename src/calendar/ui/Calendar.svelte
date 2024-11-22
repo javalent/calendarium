@@ -23,7 +23,7 @@
     $: displaying = $ephemeral.displaying;
     $: displayWeeks = $ephemeral.displayWeeks;
     $: displayedMonth = $ephemeral.displayingMonth;
-    $: currentLocation = $ephemeral.currentLocation;
+    $: currentLocationName = $ephemeral.currentLocationName;
     $: location = $ephemeral.location;
     $: locations = store.locationStore;
     $: daysAsWeeks = $displayedMonth.daysAsWeeks;
@@ -110,7 +110,7 @@
             </div>
             {#if $locations.length}
                 <div class="location-container">
-                    <small class="location-name">{$currentLocation}</small>
+                    <small class="location-name">{$currentLocationName}</small>
                     <div use:drop on:click={(evt) => showLocationMenu(evt)} />
                 </div>
             {/if}

@@ -226,15 +226,19 @@ export function getEphemeralStore(
     const interpolateColors = writable(base.seasonal.interpolateColors);
     const displayWeather = writable(true);
     const location = writable(base.locations.defaultLocation);
+
     const currentLocation = derived(
         [location, store],
         ([location, calendar]) => {
             return (
-                calendar.locations.locations.find((l) => l.id === location)
-                    ?.name ?? "No location"
+                calendar.locations.locations.find((l) => l.id === location) ??
+                null
             );
         }
     );
+    const currentLocationName = derived([currentLocation], ([location]) => {
+        return location?.name ?? "No location";
+    });
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
 
@@ -338,6 +342,7 @@ export function getEphemeralStore(
 
         location,
         currentLocation,
+        currentLocationName,
 
         //Displayed Date
         displaying,

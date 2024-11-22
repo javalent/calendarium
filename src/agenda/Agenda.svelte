@@ -36,8 +36,12 @@
     $: displayDayNumber = ephemeral.displayDayNumber;
     $: displayMoons = ephemeral.displayMoons;
     $: displayWeather = ephemeral.displayWeather;
+    $: currentLocation = ephemeral.currentLocation;
 
-    $: weather = $store.weatherStore.getWeatherForDate($viewing);
+    $: weather = $store.weatherStore.getWeatherForDate(
+        $viewing,
+        currentLocation,
+    );
 </script>
 
 <div class="day-view">

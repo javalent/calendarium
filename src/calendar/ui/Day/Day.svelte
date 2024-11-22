@@ -16,6 +16,7 @@
     import { openAgendaView } from "src/agenda/view.agenda";
     import { getTypedContext } from "src/calendar/view.utils";
     import Weather from "../Weather/Weather.svelte";
+    import { readable } from "svelte/store";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -56,11 +57,18 @@
     $: interpolateColors = $ephemeral.interpolateColors;
     $: displayWeather = $ephemeral.displayWeather;
 
-    $: weather = $store.weatherStore.getWeatherForDate({
-        day: day.number,
-        month: $index,
-        year: year.year,
-    });
+    $: currentLocation = $ephemeral.currentLocation;
+
+    $: weather = $full
+        ? $store.weatherStore.getWeatherForDate(
+              {
+                  day: day.number,
+                  month: $index,
+                  year: year.year,
+              },
+              currentLocation,
+          )
+        : readable(null);
 
     $: today =
         !adjacent &&

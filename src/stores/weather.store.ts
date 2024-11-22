@@ -5,6 +5,7 @@ import {
     type SeasonalData,
     type SeasonalWeatherData,
     type WeatherData,
+    type Weathered,
 } from "src/schemas/calendar/seasonal";
 import { derived, get, readable, type Readable } from "svelte/store";
 import {
@@ -25,6 +26,7 @@ import {
 } from "src/schemas/calendar/weather";
 import { wrap } from "src/utils/functions";
 import { randomInt, randomLcg, randomNormal, randomUniform } from "d3-random";
+import { type Location } from "src/schemas/calendar/locations";
 
 export class WeatherStore {
     #weather: Readable<WeatherData>;
@@ -50,19 +52,27 @@ export class WeatherStore {
         );
     }
 
-    public getWeatherForDate(date: CalDate): Readable<Weather | null> {
+    public getWeatherForDate(
+        date: CalDate,
+        location?: Readable<Location | null>
+    ): Readable<Weather | null> {
         return derived(
             [
                 this.#enabled,
                 this.#weatherCache.getItemsOrRecalculate(date),
                 this.#weather,
-                /* this.#rng, */
                 this.#seed,
+                location ?? readable(null),
             ],
-            ([enabled, cached, data, seed]) => {
+            ([enabled, cached, data, seed, location]) => {
                 if (!enabled) return null;
                 if (cached.length) return cached[0];
-                const weather = this.generateWeather(date, data, seed);
+                const weather = this.generateWeather(
+                    date,
+                    data,
+                    seed,
+                    location
+                );
                 if (!weather) return null;
                 return weather;
             }
@@ -72,14 +82,15 @@ export class WeatherStore {
     private generateWeather(
         date: CalDate,
         data: WeatherData,
-        /* generator: RandomGenerator */
-        seed: number
+        seed: number,
+        location: Location | null
     ): Weather | null {
         const season$ = this.seasonCache.getSeasonForDate(date);
 
         const { from, to, effect } = this.getSeasonalWeatherEffect(
             date,
-            season$
+            season$,
+            location
         );
 
         const weatherData = this.getInterpolatedWeatherData(from, to, effect);
@@ -156,8 +167,8 @@ export class WeatherStore {
     }
 
     private getInterpolatedWeatherData(
-        from: Season,
-        to: Season,
+        from: Weathered,
+        to: Weathered,
         effect: number
     ): SeasonalWeatherData | null {
         const fromData = getWeatherData(from);
@@ -193,11 +204,12 @@ export class WeatherStore {
     }
     private getSeasonalWeatherEffect(
         date: CalDate,
-        season$: Readable<DefinedSeason>
+        season$: Readable<DefinedSeason>,
+        location: Location | null
     ): {
         effect: number;
-        from: Season;
-        to: Season;
+        from: Weathered;
+        to: Weathered;
     } {
         let season = get(season$);
 
@@ -255,21 +267,18 @@ export class WeatherStore {
             from = next;
             to = season;
         }
-/*         console.log(
-            "FROM",
-            from.name,
-            "TO",
-            to.name,
-            `(current: ${season.name})`,
-            season.daysPassed!,
-            effect,
-            `(${1 - effect})`
-        ); */
+        if (location) {
+            if (from.id in location.seasons) {
+                (from as Weathered) = location.seasons[from.id];
+            }
+            if (to.id in location.seasons) {
+                (to as Weathered) = location.seasons[to.id];
+            }
+        }
 
         return { from, to, effect };
     }
 }
-
 
 class Randomizer {
     lcg: () => number;
