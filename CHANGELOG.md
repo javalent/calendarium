@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/javalent/calendarium/compare/1.5.0...2.0.0) (2024-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* Adds Seasons ([#155](https://github.com/javalent/calendarium/issues/155))
+
+### Features
+
+* Adds Seasons ([#155](https://github.com/javalent/calendarium/issues/155)) ([fe2994e](https://github.com/javalent/calendarium/commit/fe2994e96def4c0a9350986821a63b86dc98c8e0))
+
 ## [1.5.0](https://github.com/javalent/calendarium/compare/1.4.2...1.5.0) (2024-11-01)
 
 
