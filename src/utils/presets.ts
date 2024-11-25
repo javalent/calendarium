@@ -1,6 +1,7 @@
 import type { PresetCalendar } from "src/@types";
 import { EventType } from "../events/event.types";
-import { UnitSystem } from "../schemas/calendar/seasonal";
+import { UnitSystem } from "../schemas/calendar/weather";
+import { NO_LOCATION } from "../schemas/calendar/locations";
 
 export const PRESET_CALENDARS: PresetCalendar[] = [
     {
@@ -273,16 +274,18 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             type: "Periodic",
             displayColors: true,
             interpolateColors: true,
-            weather: {
-                enabled: false,
-                seed: 1,
-                tempUnits: UnitSystem.IMPERIAL,
-                windUnits: UnitSystem.METRIC,
-                primaryWindDirection: "E",
-            },
+        },
+        weather: {
+            enabled: false,
+            seed: 1,
+            tempUnits: UnitSystem.IMPERIAL,
+            windUnits: UnitSystem.METRIC,
+            primaryWindDirection: "E",
+            weather: [],
         },
         locations: {
             locations: [],
+            defaultLocation: NO_LOCATION,
         },
         current: {
             year: null,
@@ -798,16 +801,18 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             type: "Periodic",
             displayColors: true,
             interpolateColors: true,
-            weather: {
-                enabled: false,
-                seed: 1,
-                tempUnits: UnitSystem.IMPERIAL,
-                windUnits: UnitSystem.METRIC,
-                primaryWindDirection: "E",
-            },
+        },
+        weather: {
+            enabled: false,
+            seed: 1,
+            tempUnits: UnitSystem.IMPERIAL,
+            windUnits: UnitSystem.METRIC,
+            primaryWindDirection: "E",
+            weather: [],
         },
         locations: {
             locations: [],
+            defaultLocation: NO_LOCATION,
         },
         current: {
             year: 591,
@@ -1400,16 +1405,18 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             type: "Periodic",
             displayColors: true,
             interpolateColors: true,
-            weather: {
-                enabled: false,
-                seed: 1,
-                tempUnits: UnitSystem.IMPERIAL,
-                windUnits: UnitSystem.METRIC,
-                primaryWindDirection: "E",
-            },
+        },
+        weather: {
+            enabled: false,
+            seed: 1,
+            tempUnits: UnitSystem.IMPERIAL,
+            windUnits: UnitSystem.METRIC,
+            primaryWindDirection: "E",
+            weather: [],
         },
         locations: {
             locations: [],
+            defaultLocation: NO_LOCATION,
         },
         current: {
             year: 4720,
@@ -3162,16 +3169,18 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             type: "Periodic",
             displayColors: true,
             interpolateColors: true,
-            weather: {
-                enabled: false,
-                seed: 1,
-                tempUnits: UnitSystem.IMPERIAL,
-                windUnits: UnitSystem.METRIC,
-                primaryWindDirection: "E",
-            },
+        },
+        weather: {
+            enabled: false,
+            seed: 1,
+            tempUnits: UnitSystem.IMPERIAL,
+            windUnits: UnitSystem.METRIC,
+            primaryWindDirection: "E",
+            weather: [],
         },
         locations: {
             locations: [],
+            defaultLocation: NO_LOCATION,
         },
         current: {
             year: 998,
@@ -3970,16 +3979,18 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             type: "Periodic",
             displayColors: true,
             interpolateColors: true,
-            weather: {
-                enabled: false,
-                seed: 1,
-                tempUnits: UnitSystem.IMPERIAL,
-                windUnits: UnitSystem.METRIC,
-                primaryWindDirection: "E",
-            },
+        },
+        weather: {
+            enabled: false,
+            seed: 1,
+            tempUnits: UnitSystem.IMPERIAL,
+            windUnits: UnitSystem.METRIC,
+            primaryWindDirection: "E",
+            weather: [],
         },
         locations: {
             locations: [],
+            defaultLocation: NO_LOCATION,
         },
         current: {
             year: 735,
@@ -4337,16 +4348,18 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             type: "Periodic",
             displayColors: true,
             interpolateColors: true,
-            weather: {
-                enabled: false,
-                seed: 1,
-                tempUnits: UnitSystem.IMPERIAL,
-                windUnits: UnitSystem.METRIC,
-                primaryWindDirection: "E",
-            },
+        },
+        weather: {
+            enabled: false,
+            seed: 1,
+            tempUnits: UnitSystem.IMPERIAL,
+            windUnits: UnitSystem.METRIC,
+            primaryWindDirection: "E",
+            weather: [],
         },
         locations: {
             locations: [],
+            defaultLocation: NO_LOCATION,
         },
         current: {
             day: 1,
@@ -5090,16 +5103,18 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             type: "Periodic",
             displayColors: true,
             interpolateColors: true,
-            weather: {
-                enabled: false,
-                seed: 1,
-                tempUnits: UnitSystem.IMPERIAL,
-                windUnits: UnitSystem.METRIC,
-                primaryWindDirection: "E",
-            },
+        },
+        weather: {
+            enabled: false,
+            seed: 1,
+            tempUnits: UnitSystem.IMPERIAL,
+            windUnits: UnitSystem.METRIC,
+            primaryWindDirection: "E",
+            weather: [],
         },
         locations: {
             locations: [],
+            defaultLocation: NO_LOCATION,
         },
         current: {
             year: 1491,

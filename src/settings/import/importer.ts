@@ -22,7 +22,6 @@ import { EventType } from "../../events/event.types";
 import {
     SeasonKind,
     SeasonType,
-    UnitSystem,
     type SeasonalData,
 } from "../../schemas/calendar/seasonal";
 
@@ -154,13 +153,6 @@ export default class Import {
                 interpolateColors: true,
                 displayColors: true,
                 offset: 0,
-                weather: {
-                    enabled: false,
-                    seed: 1,
-                    tempUnits: UnitSystem.IMPERIAL,
-                    windUnits: UnitSystem.METRIC,
-                    primaryWindDirection: "E"
-                },
             };
             if ("seasons" in static_data) {
                 const seasonalData = static_data.seasons;
@@ -171,13 +163,6 @@ export default class Import {
                         interpolateColors: true,
                         displayColors: true,
                         offset: 0,
-                        weather: {
-                            enabled: false,
-                            seed: 1,
-                            tempUnits: UnitSystem.IMPERIAL,
-                            windUnits: UnitSystem.METRIC,
-                            primaryWindDirection: "E"
-                        },
                     };
                 }
                 seasonal.displayColors =

@@ -5,12 +5,12 @@ import {
     getWeatherData,
     SeasonKind,
     type Season,
-    type UnitSystem,
 } from "src/schemas/calendar/seasonal";
 import { CanceableCalendariumModal } from "src/settings/modals/modal";
 import { nanoid, stringifyTemperature } from "src/utils/functions";
 import { EDIT } from "src/utils/icons";
 import { WeatherDataModal } from "../../seasonal/seasons/modal/seasons";
+import type { UnitSystem } from "src/schemas/calendar/weather";
 
 export class LocationModal extends CanceableCalendariumModal<Location> {
     constructor(

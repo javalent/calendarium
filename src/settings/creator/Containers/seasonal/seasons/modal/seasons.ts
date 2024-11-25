@@ -11,7 +11,6 @@ import {
     getWeatherData,
     SeasonKind,
     SeasonType,
-    UnitSystem,
     type Season,
     type SeasonalWeatherData,
 } from "src/schemas/calendar/seasonal";
@@ -23,6 +22,7 @@ import type { CreatorStore } from "src/settings/creator/stores/calendar";
 import { EDIT } from "src/utils/icons";
 import copy from "fast-copy";
 import WeatherData from "./WeatherData.svelte";
+import type { UnitSystem } from "src/schemas/calendar/weather";
 
 export function getDefaultSeason(type: SeasonType, name?: string): Season {
     if (type === SeasonType.DATED) {
@@ -73,7 +73,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
     async display() {
         this.contentEl.empty();
         let settingEl = this.contentEl;
-        if (this.calendar.seasonal.weather.enabled) {
+        if (this.calendar.weather.enabled) {
             new Setting(this.contentEl)
                 .setName("Seasonal information")
                 .setHeading()
@@ -152,7 +152,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                 });
         }
 
-        if (this.calendar.seasonal.weather.enabled) {
+        if (this.calendar.weather.enabled) {
             new Setting(this.contentEl)
                 .setName("Weather")
                 .setHeading()
@@ -200,7 +200,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                 .setDesc(
                     createFragment((f) => {
                         const data = getWeatherData(this.item);
-                        const units = this.calendar.seasonal.weather.tempUnits;
+                        const units = this.calendar.weather.tempUnits;
                         if (!data) {
                             f.createSpan({ text: "No weather data set" });
                             return;
@@ -262,7 +262,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                         if (this.item.kind === SeasonKind.CUSTOM) {
                             const modal = new WeatherDataModal(
                                 copy(this.item.weather),
-                                this.calendar.seasonal.weather.tempUnits
+                                this.calendar.weather.tempUnits
                             );
                             modal.onClose = () => {
                                 if (this.item.kind === SeasonKind.CUSTOM) {

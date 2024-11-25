@@ -15,7 +15,7 @@
         ...Array(next - daysBefore).keys(),
     ]);
 
-    $: units = derived(staticStore.seasonal, (data) => data.weather.tempUnits);
+    $: units = derived(staticStore.weather, (data) => data.tempUnits);
 
     $: temperatures = derived([store, days], ([store, days]) => {
         const temperatures = [];

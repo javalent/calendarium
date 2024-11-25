@@ -120,7 +120,6 @@ type BaseSeasonalData = {
     type: SeasonType;
     displayColors: boolean;
     interpolateColors: boolean;
-    weather: WeatherData;
 };
 export type SeasonalData = BaseSeasonalData &
     (
@@ -133,19 +132,3 @@ export type SeasonalData = BaseSeasonalData &
               seasons: PeriodicSeason[];
           }
     );
-
-/**
- * Weather
- */
-export const UnitSystem = {
-    IMPERIAL: "Imperial",
-    METRIC: "Metric",
-} as const;
-export type UnitSystem = (typeof UnitSystem)[keyof typeof UnitSystem];
-export interface WeatherData {
-    enabled: boolean;
-    seed: number;
-    primaryWindDirection: WindDirection;
-    tempUnits: UnitSystem;
-    windUnits: UnitSystem;
-}

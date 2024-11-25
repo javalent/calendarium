@@ -58,6 +58,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     const seasonCache = new SeasonCache(staticStore.seasons, yearCalculator);
 
     const weatherStore = new WeatherStore(
+        staticStore.weather,
         staticStore.seasonal,
         seasonCache,
         yearCalculator
@@ -592,7 +593,7 @@ function createStaticStore(store: Writable<Calendar>) {
     );
     const seasonal = derived(store, (data) => data.seasonal);
     const seasons = derived(store, (data) => data.seasonal.seasons);
-    const weather = derived(store, (data) => data.seasonal.weather);
+    const weather = derived(store, (data) => data.weather);
 
     function getDaysInAYear() {
         return get(months).reduce((a, b) => a + b.length, 0);

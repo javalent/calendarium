@@ -1,13 +1,10 @@
 import type { CalendariumData, PresetCalendar } from "src/@types";
 import { SyncBehavior } from "../schemas";
 import copy from "fast-copy";
-import {
-    SeasonType,
-    UnitSystem,
-    type SeasonalData,
-    type WeatherData,
-} from "../schemas/calendar/seasonal";
+import { SeasonType, type SeasonalData } from "../schemas/calendar/seasonal";
 import { getWeatherSeed } from "../utils/functions";
+import { type WeatherData, UnitSystem } from "../schemas/calendar/weather";
+import { NO_LOCATION } from "../schemas/calendar/locations";
 
 export const PathSelections = {
     DEFAULT: "DEFAULT",
@@ -21,6 +18,7 @@ export const DEFAULT_WEATHER_DATA: WeatherData = {
     tempUnits: UnitSystem.IMPERIAL,
     windUnits: UnitSystem.IMPERIAL,
     primaryWindDirection: "E",
+    weather: [],
 };
 export const DEFAULT_SEASONAL_DATA: SeasonalData = {
     seasons: [],
@@ -28,7 +26,6 @@ export const DEFAULT_SEASONAL_DATA: SeasonalData = {
     type: SeasonType.PERIODIC,
     displayColors: true,
     interpolateColors: true,
-    weather: copy(DEFAULT_WEATHER_DATA),
 };
 export const DEFAULT_CALENDAR: PresetCalendar = {
     name: null,
@@ -49,8 +46,10 @@ export const DEFAULT_CALENDAR: PresetCalendar = {
         eras: [],
     },
     seasonal: copy(DEFAULT_SEASONAL_DATA),
+    weather: copy(DEFAULT_WEATHER_DATA),
     locations: {
         locations: [],
+        defaultLocation: NO_LOCATION,
     },
     current: {
         year: null,

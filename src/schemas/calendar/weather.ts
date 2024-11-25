@@ -1,5 +1,18 @@
-import { wrap } from "src/utils/functions";
 import type { CalDate } from "./calendar";
+
+export interface WeatherData {
+    enabled: boolean;
+    seed: number;
+    primaryWindDirection: WindDirection;
+    tempUnits: UnitSystem;
+    windUnits: UnitSystem;
+    weather: [];
+}
+export const UnitSystem = {
+    IMPERIAL: "Imperial",
+    METRIC: "Metric",
+} as const;
+export type UnitSystem = (typeof UnitSystem)[keyof typeof UnitSystem];
 
 export type Weather = {
     temperature: {

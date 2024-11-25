@@ -815,8 +815,17 @@ class SettingsServiceClass {
                 (calendar as any).seasonal = copy(DEFAULT_SEASONAL_DATA);
                 dirty = true;
             }
-            if (!("weather" in calendar.seasonal)) {
-                (calendar as any).seasonal.weather = copy(DEFAULT_WEATHER_DATA);
+            if ("weather" in calendar.seasonal) {
+                (calendar as any).weather = copy(calendar.seasonal.weather);
+                delete calendar.seasonal.weather;
+                dirty = true;
+            }
+            if (!("weather" in calendar)) {
+                (calendar as any).weather = copy(DEFAULT_WEATHER_DATA);
+                dirty = true;
+            }
+            if (!("weather" in calendar.weather)) {
+                (calendar.weather as any).weather = [];
                 dirty = true;
             }
             if (!("locations" in calendar)) {

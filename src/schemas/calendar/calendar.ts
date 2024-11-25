@@ -3,6 +3,7 @@ import type { LocationData } from "./locations";
 import type { Moon } from "./moons";
 import type { Season, SeasonalData } from "./seasonal";
 import type { Week, Month, LeapDay, Era, Year } from "./timespans";
+import type { WeatherData } from "./weather";
 
 /**
  * This is a fully defined date.
@@ -51,6 +52,7 @@ type BaseCalendar = {
     description: string;
     static: StaticCalendarData;
     seasonal: SeasonalData;
+    weather: WeatherData;
     locations: LocationData;
     events: CalEvent[];
     categories: CalEventCategory[];

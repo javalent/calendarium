@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ExtraButtonComponent, Platform } from "obsidian";
-    import { UnitSystem } from "src/schemas/calendar/seasonal";
+    import { UnitSystem } from "src/schemas/calendar/weather";
     import DropdownComponent from "src/settings/creator/Settings/DropdownComponent.svelte";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";

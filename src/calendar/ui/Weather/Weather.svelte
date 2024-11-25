@@ -12,7 +12,7 @@
 
     const store = getTypedContext("store");
     $: staticStore = $store.staticStore;
-    $: units = derived(staticStore.seasonal, (data) => data.weather.tempUnits);
+    $: units = derived(staticStore.weather, (data) => data.tempUnits);
 
     export let weather: Readable<Weather | null>;
 

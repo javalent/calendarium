@@ -29,12 +29,10 @@ import type {
 import {
     SeasonKind,
     SeasonType,
-    UnitSystem,
-    type DatedSeason,
-    type PeriodicSeason,
     type Season,
 } from "src/schemas/calendar/seasonal";
 import { NO_LOCATION, type Location } from "src/schemas/calendar/locations";
+import type { UnitSystem } from "src/schemas/calendar/weather";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -140,7 +138,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const seasonType = derived(store, (data) => data.seasonal.type);
 
     /** Weather */
-    const weatherStore = derived(store, (data) => data.seasonal.weather);
+    const weatherStore = derived(store, (data) => data.weather);
     const weatherEnabledStore = derived(weatherStore, (data) => data.enabled);
     const weatherSeedStore = derived(weatherStore, (data) => data.seed);
     const tempUnitsStore = derived(weatherStore, (data) => data.tempUnits);
@@ -570,7 +568,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 subscribe: weatherEnabledStore.subscribe,
                 set: (val: boolean) =>
                     update((data) => {
-                        data.seasonal.weather.enabled = val;
+                        data.weather.enabled = val;
                         return data;
                     }),
             },
@@ -578,7 +576,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 subscribe: weatherSeedStore.subscribe,
                 set: (val: number) =>
                     update((data) => {
-                        data.seasonal.weather.seed = val;
+                        data.weather.seed = val;
                         return data;
                     }),
             },
@@ -586,7 +584,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 subscribe: tempUnitsStore.subscribe,
                 set: (val: UnitSystem) =>
                     update((data) => {
-                        data.seasonal.weather.tempUnits = val;
+                        data.weather.tempUnits = val;
                         return data;
                     }),
             },
@@ -594,7 +592,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 subscribe: windUnitsStore.subscribe,
                 set: (val: UnitSystem) =>
                     update((data) => {
-                        data.seasonal.weather.windUnits = val;
+                        data.weather.windUnits = val;
                         return data;
                     }),
             },
