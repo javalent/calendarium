@@ -418,7 +418,7 @@ class SettingsServiceClass {
         if (shouldParse) this.plugin.watcher.start(calendar);
 
         this.#calendars.set(calendar.id, calendar);
-        await this.save({ calendar: true });
+        await this.save({ calendar: true, watcher: true });
     }
     /**
      * Remove a calendar from settings.
