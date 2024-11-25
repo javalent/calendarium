@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-beta.3](https://github.com/javalent/calendarium/compare/2.0.0-beta.2...2.0.0-beta.3) (2024-11-25)
+
+
+### Bug Fixes
+
+* Fixes issue where editing a calendar wouldn't re-trigger event parsing ([34da6a5](https://github.com/javalent/calendarium/commit/34da6a51e03f5092eaf5604a99a883cc78469b13))
+
 ## [2.0.0-beta.2](https://github.com/javalent/calendarium/compare/2.0.0-beta.1...2.0.0-beta.2) (2024-11-22)
 
 
