@@ -1,5 +1,5 @@
 import type { TimeSpan } from "./timespans";
-import type { WindDirection } from "./weather";
+import type { WindDirection } from "../weather/weather";
 
 export const SeasonType = {
     DATED: "Dated",

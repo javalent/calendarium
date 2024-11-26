@@ -3,7 +3,7 @@ import { type Readable } from "svelte/store";
 import { YearStoreCache } from "../years.store";
 import type { SeasonCache } from "./season-cache";
 import { compareDates } from "../../utils/functions";
-import type { Weather } from "../../schemas/calendar/weather";
+import type { Weather } from "../../schemas/weather/weather";
 
 class YearWeatherCache extends YearCache<Weather> {
     update(weather: Weather[]) {

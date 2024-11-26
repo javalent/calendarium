@@ -10,7 +10,7 @@ import { CanceableCalendariumModal } from "src/settings/modals/modal";
 import { nanoid, stringifyTemperature } from "src/utils/functions";
 import { EDIT } from "src/utils/icons";
 import { WeatherDataModal } from "../../seasonal/seasons/modal/seasons";
-import type { UnitSystem } from "src/schemas/calendar/weather";
+import type { UnitSystem } from "src/schemas/weather/weather";
 
 export class LocationModal extends CanceableCalendariumModal<Location> {
     constructor(

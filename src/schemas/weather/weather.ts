@@ -1,4 +1,5 @@
-import type { CalDate } from "./calendar";
+import type { CalDate } from "../calendar/calendar";
+import { type WeatherEffect } from "./effects";
 
 export interface WeatherData {
     enabled: boolean;
@@ -6,7 +7,8 @@ export interface WeatherData {
     primaryWindDirection: WindDirection;
     tempUnits: UnitSystem;
     windUnits: UnitSystem;
-    weather: [];
+    weather: Weather[];
+    effects: WeatherEffect[];
 }
 export const UnitSystem = {
     IMPERIAL: "Imperial",

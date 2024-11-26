@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ExtraButtonComponent, Platform } from "obsidian";
-    import { UnitSystem } from "src/schemas/calendar/weather";
+    import { UnitSystem } from "src/schemas/weather/weather";
     import DropdownComponent from "src/settings/creator/Settings/DropdownComponent.svelte";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
@@ -71,7 +71,7 @@
                 </select>
             </SettingItem>
         </div>
-        <div class="setting-item">
+        <!--         <div class="setting-item">
             <SettingItem>
                 <div slot="name">Wind units</div>
                 <select
@@ -91,6 +91,10 @@
                     >
                 </select>
             </SettingItem>
+        </div> -->
+
+        <div class="setting-item">
+            <SettingItem></SettingItem>
         </div>
     {/if}
 </Details>

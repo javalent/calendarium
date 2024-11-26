@@ -18,7 +18,7 @@ import type {
 import { DEFAULT_FORMAT } from "./constants";
 import type { DateBit } from "src/events/event.helper";
 import { EventType } from "../events/event.types";
-import { UnitSystem } from "../schemas/calendar/weather";
+import { UnitSystem } from "../schemas/weather/weather";
 
 export function wrap(value: number, size: number): number {
     return ((value % size) + size) % size;

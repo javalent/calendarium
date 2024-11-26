@@ -17,7 +17,7 @@ import {
     Windiness,
     type Weather,
     type WeatherData,
-} from "src/schemas/calendar/weather";
+} from "src/schemas/weather/weather";
 import { wrap } from "src/utils/functions";
 import { randomInt, randomLcg, randomNormal, randomUniform } from "d3-random";
 import { type Location } from "src/schemas/calendar/locations";

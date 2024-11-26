@@ -3,7 +3,7 @@ import type { LocationData } from "./locations";
 import type { Moon } from "./moons";
 import type { Season, SeasonalData } from "./seasonal";
 import type { Week, Month, LeapDay, Era, Year } from "./timespans";
-import type { WeatherData } from "./weather";
+import type { WeatherData } from "../weather/weather";
 
 /**
  * This is a fully defined date.

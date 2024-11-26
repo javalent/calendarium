@@ -1,5 +1,5 @@
 import { CanceableCalendariumModal } from "src/settings/modals/modal";
-import type { Weather } from "src/schemas/calendar/weather";
+import type { Weather } from "src/schemas/weather/weather";
 import { Setting } from "obsidian";
 
 export default class SetWeatherModal extends CanceableCalendariumModal<Weather> {

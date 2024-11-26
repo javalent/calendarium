@@ -22,7 +22,7 @@ import type { CreatorStore } from "src/settings/creator/stores/calendar";
 import { EDIT } from "src/utils/icons";
 import copy from "fast-copy";
 import WeatherData from "./WeatherData.svelte";
-import type { UnitSystem } from "src/schemas/calendar/weather";
+import type { UnitSystem } from "src/schemas/weather/weather";
 
 export function getDefaultSeason(type: SeasonType, name?: string): Season {
     if (type === SeasonType.DATED) {

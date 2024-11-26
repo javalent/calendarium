@@ -32,7 +32,7 @@ import {
     type Season,
 } from "src/schemas/calendar/seasonal";
 import { NO_LOCATION, type Location } from "src/schemas/calendar/locations";
-import type { UnitSystem } from "src/schemas/calendar/weather";
+import type { UnitSystem } from "src/schemas/weather/weather";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;

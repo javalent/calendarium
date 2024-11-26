@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getTypedContext } from "src/calendar/view.utils";
-    import type { Weather } from "src/schemas/calendar/weather";
+    import type { Weather } from "src/schemas/weather/weather";
     import {
         stringifyTemperature,
         translateTemperature,

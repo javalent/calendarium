@@ -1,6 +1,6 @@
 <script lang="ts">
     import { type SeasonalWeatherData } from "src/schemas/calendar/seasonal";
-    import { UnitSystem } from "src/schemas/calendar/weather";
+    import { UnitSystem } from "src/schemas/weather/weather";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import { transformed } from "src/settings/settings.utils";
     import { translateTemperature } from "src/utils/functions";

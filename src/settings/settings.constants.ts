@@ -3,7 +3,7 @@ import { SyncBehavior } from "../schemas";
 import copy from "fast-copy";
 import { SeasonType, type SeasonalData } from "../schemas/calendar/seasonal";
 import { getWeatherSeed } from "../utils/functions";
-import { type WeatherData, UnitSystem } from "../schemas/calendar/weather";
+import { type WeatherData, UnitSystem } from "../schemas/weather/weather";
 import { NO_LOCATION } from "../schemas/calendar/locations";
 
 export const PathSelections = {
@@ -19,6 +19,7 @@ export const DEFAULT_WEATHER_DATA: WeatherData = {
     windUnits: UnitSystem.IMPERIAL,
     primaryWindDirection: "E",
     weather: [],
+    effects: [],
 };
 export const DEFAULT_SEASONAL_DATA: SeasonalData = {
     seasons: [],
