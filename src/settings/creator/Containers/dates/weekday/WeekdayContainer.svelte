@@ -11,6 +11,7 @@
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
     import { nanoid } from "src/utils/functions";
     import { Platform } from "obsidian";
+    import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
 
     const calendar = getContext("store");
 
@@ -87,14 +88,12 @@
         on:click={() =>
             staticStore.setProperty("overflow", !$staticStore.overflow)}
     />
-    <div class="setting-item">
-        <div class="setting-item-info">
-            <div class="setting-item-name">First day</div>
-            <div class="setting-item-description">
-                The weekday for the very first day on the calendar.
-            </div>
+    <SettingItem>
+        <div slot="name">First day</div>
+        <div slot="desc">
+            The weekday for the very first day on the calendar.
         </div>
-        <div class="setting-item-control">
+        <div slot="control">
             <select
                 class="dropdown"
                 aria-label={$weekdayStore.filter((v) => v.name?.length).length
@@ -113,7 +112,7 @@
                 {/each}
             </select>
         </div>
-    </div>
+    </SettingItem>
 </Details>
 
 <style>

@@ -70,39 +70,35 @@
     open={Platform.isDesktop}
     desc={`${$locationStore.length} location${$locationStore.length != 1 ? "s" : ""}`}
 >
-    <div class="setting-item">
-        <SettingItem>
-            <div slot="desc">
-                Locations are different regions of your world that can have
-                their own weather settings.
-            </div>
-        </SettingItem>
-    </div>
+    <SettingItem>
+        <div slot="desc">
+            Locations are different regions of your world that can have their
+            own weather settings.
+        </div>
+    </SettingItem>
     {#if !$locationStore.length}
         <NoExistingItems message={"Create a new location to see it here."} />
     {:else}
-        <div class="setting-item">
-            <SettingItem>
-                <div slot="name">Default location</div>
-                <div slot="desc">Choose a location to use by default.</div>
-                <div slot="control">
-                    <select class="dropdown" bind:value={$defaultLocationStore}>
+        <SettingItem>
+            <div slot="name">Default location</div>
+            <div slot="desc">Choose a location to use by default.</div>
+            <div slot="control">
+                <select class="dropdown" bind:value={$defaultLocationStore}>
+                    <option
+                        value={NO_LOCATION}
+                        selected={$defaultLocationStore == NO_LOCATION}
+                        >None</option
+                    >
+                    {#each $locationStore as location}
                         <option
-                            value={NO_LOCATION}
-                            selected={$defaultLocationStore == NO_LOCATION}
-                            >None</option
+                            value={location.id}
+                            selected={location.id == $defaultLocationStore}
+                            >{location.name}</option
                         >
-                        {#each $locationStore as location}
-                            <option
-                                value={location.id}
-                                selected={location.id == $defaultLocationStore}
-                                >{location.name}</option
-                            >
-                        {/each}
-                    </select>
-                </div>
-            </SettingItem>
-        </div>
+                    {/each}
+                </select>
+            </div>
+        </SettingItem>
         <DropZone
             component={LocationInstance}
             items={$locationStore}

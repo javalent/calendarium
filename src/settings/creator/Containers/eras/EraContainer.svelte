@@ -55,15 +55,11 @@
 
     <AddNew placeholder={"Add era"} on:add={(evt) => add(evt.detail)} />
 
-    <div class="setting-item">
-        <SettingItem>
-            <div slot="name">Display eras on calendar</div>
-            <div slot="desc">
-                This can always be toggled in the calendar menu.
-            </div>
-            <div slot="control" use:toggleEra />
-        </SettingItem>
-    </div>
+    <SettingItem>
+        <div slot="name">Display eras on calendar</div>
+        <div slot="desc">This can always be toggled in the calendar menu.</div>
+        <div slot="control" use:toggleEra />
+    </SettingItem>
 </Details>
 
 <style>

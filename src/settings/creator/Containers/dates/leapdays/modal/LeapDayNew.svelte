@@ -13,6 +13,7 @@
     } from "src/schemas/calendar/timespans";
     import { EDIT, TRASH } from "src/utils/icons";
     import { IntervalModal } from "./leapday";
+    import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -84,14 +85,10 @@
         warn={!leapDay.name}
         on:blur={(evt) => (leapDay.name = evt.detail)}
     />
-    <div class="setting-item">
-        <div class="setting-item-info">
-            <div class="setting-item-name">Month</div>
-            <div class="setting-item-description">
-                The leap day will be added to this month.
-            </div>
-        </div>
-        <div class="setting-item-control">
+    <SettingItem>
+        <div slot="name">Month</div>
+        <div slot="desc">The leap day will be added to this month.</div>
+        <div slot="control">
             <select class="dropdown" bind:value={leapDay.timespan}>
                 {#each months as month, index}
                     <option value={index} selected={index == leapDay.timespan}>
@@ -100,7 +97,7 @@
                 {/each}
             </select>
         </div>
-    </div>
+    </SettingItem>
 
     <ToggleComponent
         name="Intercalary"
@@ -148,17 +145,16 @@
         value={`${leapDay.offset}`}
         on:blur={(evt) => (leapDay.offset = Number(evt.detail))}
     />
-    <div class="setting-item">
-        <div class="setting-item-description">
+    <SettingItem>
+        <div slot="desc">
             {getIntervalDescription(leapDay)}
         </div>
-    </div>
+    </SettingItem>
     {#each intervals as interval}
-        <div class="setting-item">
-            <div class="setting-item-info">
-                <div class="setting-item-name">{getIntervalName(interval)}</div>
-            </div>
-            <div class="setting-item-control">
+        <SettingItem>
+            <div slot="name">{getIntervalName(interval)}</div>
+
+            <div slot="control" class="setting-item-control">
                 <div use:edit on:click={() => add(interval)} />
                 <div
                     use:trash
@@ -168,7 +164,7 @@
                         ))}
                 />
             </div>
-        </div>
+        </SettingItem>
     {/each}
 
     <AddNew isInput={false} on:add={() => add()} />

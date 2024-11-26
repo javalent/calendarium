@@ -1,8 +1,8 @@
 <script lang="ts">
     import { ExtraButtonComponent } from "obsidian";
-    
+
     import type { Era } from "src/schemas/calendar/timespans";
-    
+
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import TextAreaComponent from "src/settings/creator/Settings/TextAreaComponent.svelte";
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
@@ -146,41 +146,35 @@
             desc={"A new year will begin the date this era starts."}
             on:click={() => (era.endsYear = !era.endsYear)}
         />
-        <div class="setting-item setting-item-heading">
-            <SettingItem>
-                <div slot="name">Start date</div>
-            </SettingItem>
-        </div>
+        <SettingItem heading={true}>
+            <div slot="name">Start date</div>
+        </SettingItem>
         <DateWithValidation date={writable(era.date)} />
         {#if !era.end}
-            <div class="setting-item">
-                <SettingItem>
-                    <div class="ranged-event" slot="name">
-                        <span>Add end date</span>
-                        <div
-                            use:rangedSetting
-                            on:click={() => {
-                                if (!era.isStartingEra) {
-                                    $end = { ...era.date };
-                                }
-                            }}
-                        />
-                    </div>
-                </SettingItem>
-            </div>
-        {:else}
-            <div class="setting-item setting-item-heading">
-                <SettingItem>
-                    <div slot="name">End date</div>
+            <SettingItem>
+                <div class="ranged-event" slot="name">
+                    <span>Add end date</span>
                     <div
-                        slot="control"
-                        use:remove
+                        use:rangedSetting
                         on:click={() => {
-                            $end = null;
+                            if (!era.isStartingEra) {
+                                $end = { ...era.date };
+                            }
                         }}
                     />
-                </SettingItem>
-            </div>
+                </div>
+            </SettingItem>
+        {:else}
+            <SettingItem heading={true}>
+                <div slot="name">End date</div>
+                <div
+                    slot="control"
+                    use:remove
+                    on:click={() => {
+                        $end = null;
+                    }}
+                />
+            </SettingItem>
             <DateWithValidation date={writable(era.end)} />
         {/if}
     {/if}
@@ -195,29 +189,27 @@
             on:click={() => (era.isEvent = !era.isEvent)}
         />
         {#if era.isEvent && $store.categories.length}
-            <div class="setting-item">
-                <SettingItem>
-                    <div slot="name">Event category</div>
-                    <select
-                        slot="control"
-                        class="dropdown"
-                        bind:value={era.category}
+            <SettingItem>
+                <div slot="name">Event category</div>
+                <select
+                    slot="control"
+                    class="dropdown"
+                    bind:value={era.category}
+                >
+                    <option
+                        value=""
+                        selected={!era.category}
+                        on:select={() => (era.category = null)}>None</option
                     >
+                    {#each $store.categories as category}
                         <option
-                            value=""
-                            selected={!era.category}
-                            on:select={() => (era.category = null)}>None</option
+                            value={category.id}
+                            selected={era.category === category.id}
+                            >{category.name}</option
                         >
-                        {#each $store.categories as category}
-                            <option
-                                value={category.id}
-                                selected={era.category === category.id}
-                                >{category.name}</option
-                            >
-                        {/each}
-                    </select>
-                </SettingItem>
-            </div>
+                    {/each}
+                </select>
+            </SettingItem>
         {/if}
     </Details>
 {/if}

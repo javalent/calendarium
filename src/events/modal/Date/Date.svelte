@@ -105,41 +105,37 @@
 </script>
 
 {#if $event.type === EventType.Undated}
-    <div class="setting-item">
-        <SettingItem>
-            <div class="ranged-event" slot="name">
-                <span>Add event date</span>
-                <div
-                    use:rangedSetting
-                    on:click={() => {
-                        $event.date = { ...$store.current };
-                        $event.type = EventType.Date;
-                    }}
-                />
-            </div>
-        </SettingItem>
-    </div>
-{:else}
-    <div class="setting-item setting-item-heading">
-        <SettingItem>
-            <div slot="name">{$isRange ? "Start" : "Event"} date</div>
+    <SettingItem>
+        <div class="ranged-event" slot="name">
+            <span>Add event date</span>
             <div
-                slot="control"
-                use:removeRecurring
+                use:rangedSetting
                 on:click={() => {
-                    $event.date = {
-                        year: null,
-                        month: null,
-                        day: null,
-                    };
-                    if ($end) {
-                        $end = null;
-                    }
-                    $event.type = EventType.Undated;
+                    $event.date = { ...$store.current };
+                    $event.type = EventType.Date;
                 }}
             />
-        </SettingItem>
-    </div>
+        </div>
+    </SettingItem>
+{:else}
+    <SettingItem heading={true}>
+        <div slot="name">{$isRange ? "Start" : "Event"} date</div>
+        <div
+            slot="control"
+            use:removeRecurring
+            on:click={() => {
+                $event.date = {
+                    year: null,
+                    month: null,
+                    day: null,
+                };
+                if ($end) {
+                    $end = null;
+                }
+                $event.type = EventType.Undated;
+            }}
+        />
+    </SettingItem>
     <div class="setting-item calendarium-date-field-container">
         <div class="calendarium-date-field">
             <span>Year</span>
@@ -224,19 +220,17 @@
     </div>
     {#if !$isRecurring}
         {#if $end}
-            <div class="setting-item setting-item-heading">
-                <SettingItem>
-                    <div slot="name">End date</div>
-                    <div
-                        slot="control"
-                        use:removeRecurring
-                        on:click={() => {
-                            $end = null;
-                            $event.type = EventType.Date;
-                        }}
-                    />
-                </SettingItem>
-            </div>
+            <SettingItem heading={true}>
+                <div slot="name">End date</div>
+                <div
+                    slot="control"
+                    use:removeRecurring
+                    on:click={() => {
+                        $end = null;
+                        $event.type = EventType.Date;
+                    }}
+                />
+            </SettingItem>
             <div class="setting-item calendarium-date-field-container">
                 <div class="calendarium-date-field">
                     <span>Year</span>
@@ -269,20 +263,18 @@
                 </div>
             </div>
         {:else}
-            <div class="setting-item">
-                <SettingItem>
-                    <div class="ranged-event" slot="name">
-                        <span>Add end date</span>
-                        <div
-                            use:rangedSetting
-                            on:click={() => {
-                                $end = { ...onetime };
-                                $event.type = EventType.Range;
-                            }}
-                        />
-                    </div>
-                </SettingItem>
-            </div>
+            <SettingItem>
+                <div class="ranged-event" slot="name">
+                    <span>Add end date</span>
+                    <div
+                        use:rangedSetting
+                        on:click={() => {
+                            $end = { ...onetime };
+                            $event.type = EventType.Range;
+                        }}
+                    />
+                </div>
+            </SettingItem>
         {/if}
     {/if}
 {/if}
@@ -296,7 +288,7 @@
         border: 0;
         max-width: 100%;
     }
-    input[type='number'] {
+    input[type="number"] {
         width: 100%;
     }
     .calendarium-date-field {

@@ -50,27 +50,25 @@
             ></div>
         </TextComponent>
 
-        <div class="setting-item">
-            <SettingItem>
-                <div slot="name">Temperature units</div>
-                <select
-                    slot="control"
-                    class="dropdown"
-                    bind:value={$tempUnitsStore}
+        <SettingItem>
+            <div slot="name">Temperature units</div>
+            <select
+                slot="control"
+                class="dropdown"
+                bind:value={$tempUnitsStore}
+            >
+                <option
+                    value={UnitSystem.IMPERIAL}
+                    selected={$tempUnitsStore === UnitSystem.IMPERIAL}
+                    >{UnitSystem.IMPERIAL}</option
                 >
-                    <option
-                        value={UnitSystem.IMPERIAL}
-                        selected={$tempUnitsStore === UnitSystem.IMPERIAL}
-                        >{UnitSystem.IMPERIAL}</option
-                    >
-                    <option
-                        value={UnitSystem.METRIC}
-                        selected={$tempUnitsStore === UnitSystem.METRIC}
-                        >{UnitSystem.METRIC}</option
-                    >
-                </select>
-            </SettingItem>
-        </div>
+                <option
+                    value={UnitSystem.METRIC}
+                    selected={$tempUnitsStore === UnitSystem.METRIC}
+                    >{UnitSystem.METRIC}</option
+                >
+            </select>
+        </SettingItem>
         <!--         <div class="setting-item">
             <SettingItem>
                 <div slot="name">Wind units</div>
@@ -93,8 +91,6 @@
             </SettingItem>
         </div> -->
 
-        <div class="setting-item">
-            <SettingItem></SettingItem>
-        </div>
+        <SettingItem></SettingItem>
     {/if}
 </Details>

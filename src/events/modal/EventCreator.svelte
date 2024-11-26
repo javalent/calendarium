@@ -29,13 +29,11 @@
 
 <Date event={eventStore} {store} />
 
-<div class="setting-item">
-    <SettingItem>
-        <div slot="control">
-            <div use:cancel />
-        </div>
-    </SettingItem>
-</div>
+<SettingItem>
+    <div slot="control">
+        <div use:cancel />
+    </div>
+</SettingItem>
 
 <style scoped>
 </style>

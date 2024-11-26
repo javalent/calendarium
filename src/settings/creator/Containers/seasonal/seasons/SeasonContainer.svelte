@@ -102,26 +102,24 @@
         ></ToggleComponent>
     {/if}
 
-    <div class="setting-item">
-        <SettingItem>
-            <div slot="name">Season type</div>
-            <div slot="desc">
-                Change how the start and end dates for seasons are calculated
-            </div>
-            <select slot="control" class="dropdown" bind:value={$seasonType}>
-                <option
-                    value={SeasonType.DATED}
-                    selected={$seasonType === SeasonType.DATED}
-                    >{SeasonType.DATED}</option
-                >
-                <option
-                    value={SeasonType.PERIODIC}
-                    selected={$seasonType === SeasonType.PERIODIC}
-                    >{SeasonType.PERIODIC}</option
-                >
-            </select>
-        </SettingItem>
-    </div>
+    <SettingItem>
+        <div slot="name">Season type</div>
+        <div slot="desc">
+            Change how the start and end dates for seasons are calculated
+        </div>
+        <select slot="control" class="dropdown" bind:value={$seasonType}>
+            <option
+                value={SeasonType.DATED}
+                selected={$seasonType === SeasonType.DATED}
+                >{SeasonType.DATED}</option
+            >
+            <option
+                value={SeasonType.PERIODIC}
+                selected={$seasonType === SeasonType.PERIODIC}
+                >{SeasonType.PERIODIC}</option
+            >
+        </select>
+    </SettingItem>
     {#if $seasonType == SeasonType.PERIODIC}
         <TextComponent
             name={"Seasonal offset"}

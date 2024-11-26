@@ -92,56 +92,40 @@
     };
 </script>
 
-<div class="setting-item">
-    <SettingItem>
-        <div slot="name">Event name</div>
-        <input
-            type="text"
-            slot="control"
-            bind:value={$event.name}
-            class:warning={!$event.name || $event.name?.length == 0}
-        />
-    </SettingItem>
-</div>
-<div class="setting-item">
-    <SettingItem>
-        <div slot="name">Note</div>
-        <div slot="desc">Link the event to a note</div>
-        <div slot="control" use:suggest />
-    </SettingItem>
-</div>
-<div class="setting-item">
-    <SettingItem>
-        <div slot="name">Event description</div>
-    </SettingItem>
-</div>
+<SettingItem>
+    <div slot="name">Event name</div>
+    <input
+        type="text"
+        slot="control"
+        bind:value={$event.name}
+        class:warning={!$event.name || $event.name?.length == 0}
+    />
+</SettingItem>
+<SettingItem>
+    <div slot="name">Note</div>
+    <div slot="desc">Link the event to a note</div>
+    <div slot="control" use:suggest />
+</SettingItem>
+<SettingItem>
+    <div slot="name">Event description</div>
+</SettingItem>
 <textarea class="desc" bind:value={$event.description} />
 {#if $store.categories.length}
-    <div class="setting-item">
-        <SettingItem>
-            <div slot="name">Event category</div>
-            <select
-                slot="control"
-                class="dropdown"
-                bind:value={$event.category}
-            >
-                {#each $store.categories as category}
-                    <option
-                        value={category.id}
-                        selected={($event.category ??
-                            $store.categories[0].id) === category.id}
-                        >{category.name}</option
-                    >
-                {/each}
-            </select>
-        </SettingItem>
-    </div>
+    <SettingItem>
+        <div slot="name">Event category</div>
+        <select slot="control" class="dropdown" bind:value={$event.category}>
+            {#each $store.categories as category}
+                <option
+                    value={category.id}
+                    selected={($event.category ?? $store.categories[0].id) ===
+                        category.id}>{category.name}</option
+                >
+            {/each}
+        </select>
+    </SettingItem>
 {/if}
 
 <style scoped>
-    .setting-item {
-        border: 0;
-    }
     .desc {
         resize: vertical;
         width: 100%;
