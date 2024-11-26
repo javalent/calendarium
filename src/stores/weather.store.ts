@@ -7,12 +7,6 @@ import {
     type Weathered,
 } from "src/schemas/calendar/seasonal";
 import { derived, get, readable, type Readable } from "svelte/store";
-import {
-    uniformIntDistribution,
-    unsafeUniformIntDistribution,
-    xoroshiro128plus,
-    type RandomGenerator,
-} from "pure-rand";
 import { WeatherCache } from "./cache/weather-cache";
 import type { YearStoreCache } from "./years.store";
 import type { CalDate } from "src/schemas";
@@ -31,8 +25,7 @@ import { type Location } from "src/schemas/calendar/locations";
 export class WeatherStore {
     #seed: Readable<number>;
     #weatherCache: WeatherCache;
-    #rng: Readable<RandomGenerator>;
-    #enabled: Readable<boolean>;
+    enabled: Readable<boolean>;
 
     constructor(
         public weatherData: Readable<WeatherData>,
@@ -40,9 +33,8 @@ export class WeatherStore {
         public seasonCache: SeasonCache,
         public yearCalculator: YearStoreCache
     ) {
-        this.#enabled = derived(this.weatherData, (data) => data.enabled);
+        this.enabled = derived(this.weatherData, (data) => data.enabled);
         this.#seed = derived(this.weatherData, (data) => data.seed);
-        this.#rng = derived(this.#seed, (seed) => xoroshiro128plus(seed));
 
         this.#weatherCache = new WeatherCache(
             readable([]),
@@ -57,7 +49,7 @@ export class WeatherStore {
     ): Readable<Weather | null> {
         return derived(
             [
-                this.#enabled,
+                this.enabled,
                 this.#weatherCache.getItemsOrRecalculate(date),
                 this.weatherData,
                 this.#seed,

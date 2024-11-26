@@ -17,6 +17,7 @@
     import { getTypedContext } from "src/calendar/view.utils";
     import Weather from "../Weather/Weather.svelte";
     import { readable } from "svelte/store";
+    import SetWeatherModal from "../Weather/modal/weather";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -69,6 +70,8 @@
               currentLocation,
           )
         : readable(null);
+
+    $: weatherEnabled = $store.weatherStore.enabled;
 
     $: today =
         !adjacent &&
@@ -140,6 +143,16 @@
                 });
             }),
         );
+        if ($weatherEnabled) {
+            menu.addSeparator();
+            menu.addItem((item) =>
+                item.setTitle("Set weather").onClick(() => {
+                    const modal = new SetWeatherModal();
+
+                    modal.open();
+                }),
+            );
+        }
         let notes: { event: CalEvent; file: TFile }[] = [];
         for (const event of $events) {
             if (!isCalEvent(event)) continue;
