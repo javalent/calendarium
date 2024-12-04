@@ -10,6 +10,8 @@
 
     type T = $$Generic<TimeSpan>;
     export let items: T[];
+    console.log("🚀 ~ file: DropZone.svelte:13 ~ items:", items);
+
     export let type: string;
     export let component: ComponentType;
     export let onDrop: (items: T[]) => void;

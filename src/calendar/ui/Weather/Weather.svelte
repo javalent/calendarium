@@ -1,71 +1,42 @@
 <script lang="ts">
     import { getTypedContext } from "src/calendar/view.utils";
-    import type { Weather } from "src/schemas/weather/weather";
-    import {
-        stringifyTemperature,
-        translateTemperature,
-    } from "src/utils/functions";
+    import { stringifyTemperature } from "src/utils/functions";
     import { setNodeIcon } from "src/utils/icons";
-    import { onMount } from "svelte";
-    import { derived, writable, type Readable } from "svelte/store";
+    import { derived, type Readable } from "svelte/store";
     import { createPopperActions } from "svelte-popperjs";
+    import {
+        WeatherEffectDisplay,
+        WeatherEffectKind,
+        type CalculatedWeatherEffect,
+    } from "src/schemas/weather/effects";
 
     const store = getTypedContext("store");
+
     $: staticStore = $store.staticStore;
     $: units = derived(staticStore.weather, (data) => data.tempUnits);
 
-    export let weather: Readable<Weather | null>;
+    export let weather: Readable<CalculatedWeatherEffect[] | null>;
 
-    enum WeatherIcon {
-        SUNNY = "sun-medium",
-        PARTLY_CLOUDY = "cloud-sun",
-        MOSTLY_CLOUDY = "cloud",
-        CLOUDY = "cloudy",
-        LIGHT_RAIN = "cloud-drizzle",
-        RAIN = "cloud-rain",
-        HEAVY_RAIN = "cloud-rain-wind",
-        SNOW = "cloud-snow",
-        HEAVY_SNOW = "snowflake",
-        STORM = "cloud-lightning",
-        WINDY = "wind",
-        TORNADO = "tornado",
-    }
-
-    $: icon = derived(weather, (weather) => {
-        if (!weather) return WeatherIcon.SUNNY;
-        if (weather.precipitation.index === 0) {
-            //check clouds & wind
-            if (weather.clouds.index > 0) {
-                if (weather.clouds.index === 1) {
-                    return WeatherIcon.PARTLY_CLOUDY;
-                }
-                if (weather.clouds.index === 2) {
-                    return WeatherIcon.MOSTLY_CLOUDY;
-                }
-                return WeatherIcon.CLOUDY;
-            }
-            if (weather.wind.index > 5) {
-                return WeatherIcon.WINDY;
-            }
-
-            return WeatherIcon.SUNNY;
+    $: mainIcon = derived([staticStore.weather, weather], ([data, weather]) => {
+        for (const effect of weather ?? []) {
+            if (effect.icon) return effect.icon;
         }
-
-        if (weather.precipitation.index > 0) {
-            const precip = weather.precipitation.index;
-            if (weather.temperature.actual < 0 && precip <= 3)
-                return WeatherIcon.SNOW;
-            if (weather.temperature.actual < 0) return WeatherIcon.HEAVY_SNOW;
-
-            if (weather.clouds.strength === "Dark storm clouds" && precip >= 5)
-                return WeatherIcon.STORM;
-            if (precip <= 2) return WeatherIcon.LIGHT_RAIN;
-            if (precip <= 4) return WeatherIcon.RAIN;
-            return WeatherIcon.HEAVY_RAIN;
-        }
-
-        return WeatherIcon.SUNNY;
+        return data.defaultIcon;
     });
+
+    $: main =
+        $weather?.filter(
+            (e) =>
+                e.display === WeatherEffectDisplay.MAIN ||
+                e.display === WeatherEffectDisplay.BOTH,
+        ) ?? [];
+    $: tooltips =
+        $weather?.filter(
+            (e) =>
+                e.display === WeatherEffectDisplay.TOOLTIP ||
+                e.display === WeatherEffectDisplay.BOTH,
+        ) ?? [];
+
     const [popperRef, popperContent] = createPopperActions({
         placement: "top",
         strategy: "absolute",
@@ -75,6 +46,19 @@
     };
 
     export let showTooltip = false;
+
+    const translateUnit = (
+        value: number,
+        effect: CalculatedWeatherEffect,
+    ): string => {
+        switch (effect.unit) {
+            case "Temperature":
+                return stringifyTemperature(value, $units);
+            case "None":
+            case "Wind":
+                return value.toPrecision(2);
+        }
+    };
 </script>
 
 {#if $weather}
@@ -84,40 +68,41 @@
         on:mouseenter={() => (showTooltip = true)}
         on:mouseleave={() => (showTooltip = false)}
     >
-        <div class="temperature">
-            <div class="actual">
-                {stringifyTemperature($weather.temperature.actual, $units)}
-            </div>
+        <div class="weather-line">
+            {#each main as effect}
+                {#if effect.kind === WeatherEffectKind.RANGE}
+                    <div>{translateUnit(effect.value, effect)}</div>
+                {/if}
+                {#if effect.kind === WeatherEffectKind.CHANCE}{/if}
+                {#if effect.kind === WeatherEffectKind.CHANCE_TABLE}
+                    {effect.strength}
+                {/if}
+            {/each}
+            <div use:setNodeIcon={$mainIcon} />
         </div>
-        {#key $icon}
-            <div class="icon" use:setNodeIcon={$icon}></div>
-        {/key}
     </div>
 
     {#if showTooltip}
         <div class="tooltip weather-tooltip" use:popperContent={extraOpts}>
-            <div class="weather-line temperature">
-                <div use:setNodeIcon={"thermometer"} />
-                <span class="weather-information">
-                    {stringifyTemperature($weather.temperature.low, $units)} to {stringifyTemperature(
-                        $weather.temperature.high,
-                        $units,
-                    )}
-                </span>
-            </div>
-            <div class="weather-line precipitation">
-                <div use:setNodeIcon={"cloud-drizzle"} />
-                <span>{$weather.precipitation.strength}</span>
-            </div>
-            <div class="weather-line wind">
-                <div use:setNodeIcon={"wind"} />
-                <span>{$weather.wind.strength} ({$weather.wind.direction})</span
-                >
-            </div>
-            <div class="weather-line clouds">
-                <div use:setNodeIcon={"cloudy"} />
-                <span>{$weather.clouds.strength}</span>
-            </div>
+            {#each tooltips as effect}
+                <div class="weather-line">
+                    {#if effect.icon}
+                        <div use:setNodeIcon={effect.icon} />
+                    {/if}
+                    {#if effect.kind === WeatherEffectKind.RANGE}
+                        <div>
+                            {translateUnit(
+                                effect.range[0],
+                                effect,
+                            )}-{translateUnit(effect.range[1], effect)}
+                        </div>
+                    {/if}
+                    {#if effect.kind === WeatherEffectKind.CHANCE}{/if}
+                    {#if effect.kind === WeatherEffectKind.CHANCE_TABLE}
+                        {effect.strength}
+                    {/if}
+                </div>
+            {/each}
         </div>
     {/if}
 {/if}

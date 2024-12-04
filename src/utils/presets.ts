@@ -4,7 +4,9 @@ import { UnitSystem } from "../schemas/weather/weather";
 import { NO_LOCATION } from "../schemas/calendar/locations";
 import {
     WeatherEffectCadence,
+    WeatherEffectDisplay,
     WeatherEffectKind,
+    WeatherUnitKind,
 } from "../schemas/weather/effects";
 import { WeatherEffectConditionType } from "../schemas/weather/conditions";
 
@@ -286,58 +288,46 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             tempUnits: UnitSystem.IMPERIAL,
             windUnits: UnitSystem.METRIC,
             primaryWindDirection: "E",
+            defaultIcon: "sun",
             weather: [],
             effects: [
                 {
                     id: "DEFAULT_TEMPERATURE",
                     name: "Temperature",
-                    icon: "thermometer",
+                    unit: WeatherUnitKind.TEMPERATURE,
                     conditions: [],
                     cadence: WeatherEffectCadence.SEASONAL,
                     kind: WeatherEffectKind.RANGE,
+                    display: WeatherEffectDisplay.BOTH,
                     interpolate: true,
+                    temperature: true,
                     data: {
-                        STANDARD_WINTER: {
-                            range: [-7, 2],
-                        },
-                        STANDARD_SPRING: {
-                            range: [9.5, 21],
-                        },
-                        STANDARD_SUMMER: {
-                            range: [22, 30],
-                        },
-                        STANDARD_AUTUMN: {
-                            range: [1, 11],
-                        },
+                        STANDARD_WINTER: [-7, 2],
+                        STANDARD_SPRING: [9.5, 21],
+                        STANDARD_SUMMER: [22, 30],
+                        STANDARD_AUTUMN: [1, 11],
                     },
                 },
                 {
                     id: "DEFAULT_PRECIPITATION_CHANCE",
                     name: "Precipitation chance",
-                    icon: "droplets",
                     interpolate: true,
                     cadence: WeatherEffectCadence.SEASONAL,
                     kind: WeatherEffectKind.CHANCE,
+                    unit: WeatherUnitKind.NONE,
+                    display: WeatherEffectDisplay.NONE,
                     conditions: [],
                     data: {
-                        STANDARD_WINTER: {
-                            chance: 0.5,
-                        },
-                        STANDARD_SPRING: {
-                            chance: 0.75,
-                        },
-                        STANDARD_SUMMER: {
-                            chance: 0.55,
-                        },
-                        STANDARD_AUTUMN: {
-                            chance: 0.5,
-                        },
+                        STANDARD_WINTER: 0.5,
+                        STANDARD_SPRING: 0.75,
+                        STANDARD_SUMMER: 0.55,
+                        STANDARD_AUTUMN: 0.5,
                     },
                 },
                 {
                     id: "DEFAULT_RAIN",
                     name: "Rain intensity",
-                    icon: "cloud-drizzle",
+                    display: WeatherEffectDisplay.TOOLTIP,
                     interpolate: true,
                     conditions: [
                         {
@@ -345,79 +335,114 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                             comparator: "DEFAULT_TEMPERATURE",
                             value: 0,
                         },
+                        {
+                            type: WeatherEffectConditionType.TRIGGER,
+                            comparator: "DEFAULT_PRECIPITATION_CHANCE",
+                        },
                     ],
                     cadence: WeatherEffectCadence.SEASONAL,
                     kind: WeatherEffectKind.CHANCE_TABLE,
+                    unit: WeatherUnitKind.NONE,
                     table: [
                         { name: "None", chance: 0 },
-                        { name: "Light mist", chance: 0.2 },
-                        { name: "Drizzle", chance: 0.375 },
-                        { name: "Steady rainfall", chance: 0.55 },
-                        { name: "Strong rainfall", chance: 0.7 },
-                        { name: "Pounding rain", chance: 0.85 },
-                        { name: "Downpour", chance: 1 },
+                        {
+                            name: "Light mist",
+                            chance: 0.2,
+                            icon: "cloud-sun-rain",
+                        },
+                        {
+                            name: "Drizzle",
+                            chance: 0.375,
+                            icon: "cloud-drizzle",
+                        },
+                        {
+                            name: "Steady rainfall",
+                            chance: 0.55,
+                            icon: "cloud-rain",
+                        },
+                        {
+                            name: "Strong rainfall",
+                            chance: 0.7,
+                            icon: "cloud-rain",
+                        },
+                        {
+                            name: "Pounding rain",
+                            chance: 0.85,
+                            icon: "cloud-rain-wind",
+                        },
+                        {
+                            name: "Downpour",
+                            chance: 1,
+                            icon: "cloud-rain-wind",
+                        },
                     ],
                     data: {
-                        STANDARD_WINTER: {
-                            chance: 0.5,
-                        },
-                        STANDARD_SPRING: {
-                            chance: 0.75,
-                        },
-                        STANDARD_SUMMER: {
-                            chance: 0.55,
-                        },
-                        STANDARD_AUTUMN: {
-                            chance: 0.5,
-                        },
+                        STANDARD_WINTER: 0.5,
+                        STANDARD_SPRING: 0.75,
+                        STANDARD_SUMMER: 0.55,
+                        STANDARD_AUTUMN: 0.5,
                     },
                 },
                 {
                     id: "DEFAULT_SNOW",
                     name: "Snow intensity",
-                    icon: "cloud-drizzle",
                     interpolate: true,
                     cadence: WeatherEffectCadence.SEASONAL,
                     kind: WeatherEffectKind.CHANCE_TABLE,
+                    unit: WeatherUnitKind.NONE,
+                    display: WeatherEffectDisplay.TOOLTIP,
                     conditions: [
                         {
-                            type: WeatherEffectConditionType.GT,
+                            type: WeatherEffectConditionType.LT,
                             comparator: "DEFAULT_TEMPERATURE",
                             value: 0,
+                        },
+                        {
+                            type: WeatherEffectConditionType.TRIGGER,
+                            comparator: "DEFAULT_PRECIPITATION_CHANCE",
                         },
                     ],
                     table: [
                         { name: "None", chance: 0 },
-                        { name: "A few flakes", chance: 0.2 },
-                        { name: "A dusting of snow", chance: 0.375 },
-                        { name: "Flurries", chance: 0.55 },
-                        { name: "Moderate snowfall", chance: 0.7 },
-                        { name: "Heavy snowfall", chance: 0.85 },
-                        { name: "Blizzard", chance: 1 },
+                        {
+                            name: "A few flakes",
+                            chance: 0.2,
+                            icon: "cloud-snow",
+                        },
+                        {
+                            name: "A dusting of snow",
+                            chance: 0.375,
+                            icon: "cloud-snow",
+                        },
+                        { name: "Flurries", chance: 0.55, icon: "cloud-snow" },
+                        {
+                            name: "Moderate snowfall",
+                            chance: 0.7,
+                            icon: "cloud-snow",
+                        },
+                        {
+                            name: "Heavy snowfall",
+                            chance: 0.85,
+                            icon: "snowflake",
+                        },
+                        { name: "Blizzard", icon: "snowflake", chance: 1 },
                     ],
                     data: {
-                        STANDARD_WINTER: {
-                            chance: 0.5,
-                        },
-                        STANDARD_SPRING: {
-                            chance: 0.75,
-                        },
-                        STANDARD_SUMMER: {
-                            chance: 0.55,
-                        },
-                        STANDARD_AUTUMN: {
-                            chance: 0.5,
-                        },
+                        STANDARD_WINTER: 0.5,
+                        STANDARD_SPRING: 0.75,
+                        STANDARD_SUMMER: 0.55,
+                        STANDARD_AUTUMN: 0.5,
                     },
                 },
                 {
                     id: "DEFAULT_CLOUDINESS",
                     name: "Cloudiness",
-                    icon: "cloudy",
                     interpolate: true,
                     conditions: [],
                     cadence: WeatherEffectCadence.SEASONAL,
                     kind: WeatherEffectKind.CHANCE_TABLE,
+                    unit: WeatherUnitKind.NONE,
+                    display: WeatherEffectDisplay.TOOLTIP,
                     table: [
                         { name: "Clear sky", chance: 0 },
                         { name: "A few clouds", chance: 0.2 },
@@ -427,29 +452,22 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                         { name: "Dark storm clouds", chance: 1 },
                     ],
                     data: {
-                        STANDARD_WINTER: {
-                            chance: 0.75,
-                        },
-                        STANDARD_SPRING: {
-                            chance: 0.55,
-                        },
-                        STANDARD_SUMMER: {
-                            chance: 0.15,
-                        },
-                        STANDARD_AUTUMN: {
-                            chance: 0.5,
-                        },
+                        STANDARD_WINTER: 0.75,
+                        STANDARD_SPRING: 0.55,
+                        STANDARD_SUMMER: 0.15,
+                        STANDARD_AUTUMN: 0.5,
                     },
                 },
                 {
                     id: "DEFAULT_WINDINESS",
                     name: "Wind intensity",
-                    icon: "wind",
                     interpolate: true,
                     cadence: WeatherEffectCadence.SEASONAL,
                     kind: WeatherEffectKind.CHANCE_TABLE,
+                    unit: WeatherUnitKind.WIND,
+                    display: WeatherEffectDisplay.TOOLTIP,
                     conditions: [],
-                    multipler: [
+                    multiplier: [
                         {
                             base: "DEFAULT_SNOW",
                             values: [0, 0.35, 0.5, 0.75, 1, 1.25, 1.5, 2],
@@ -487,46 +505,45 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                         {
                             name: "Strong breeze",
                             chance: 0.4,
+                            icon: "wind",
                         },
                         {
                             name: "Moderate gale",
                             chance: 0.425,
+                            icon: "wind",
                         },
                         {
                             name: "Fresh gale",
                             chance: 0.5,
+                            icon: "wind",
                         },
                         {
                             name: "Strong gale",
                             chance: 0.65,
+                            icon: "wind",
                         },
                         {
                             name: "Storm",
                             chance: 0.75,
+                            icon: "wind",
                         },
                         {
                             name: "Violent storm",
-                            chance: 0.95,
+                            chance: 0.98,
+                            icon: "wind",
                         },
                         {
                             name: "Hurricane",
                             chance: 1,
+                            icon: "wind",
                         },
                     ],
 
                     data: {
-                        STANDARD_WINTER: {
-                            chance: 0.25,
-                        },
-                        STANDARD_SPRING: {
-                            chance: 0.25,
-                        },
-                        STANDARD_SUMMER: {
-                            chance: 0.25,
-                        },
-                        STANDARD_AUTUMN: {
-                            chance: 0.35,
-                        },
+                        STANDARD_WINTER: 0.25,
+                        STANDARD_SPRING: 0.25,
+                        STANDARD_SUMMER: 0.25,
+                        STANDARD_AUTUMN: 0.25,
                     },
                 },
             ],
@@ -1056,6 +1073,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             tempUnits: UnitSystem.IMPERIAL,
             windUnits: UnitSystem.METRIC,
             primaryWindDirection: "E",
+            defaultIcon: "sun",
             weather: [],
             effects: [],
         },
@@ -1661,6 +1679,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             tempUnits: UnitSystem.IMPERIAL,
             windUnits: UnitSystem.METRIC,
             primaryWindDirection: "E",
+            defaultIcon: "sun",
             weather: [],
             effects: [],
         },
@@ -3426,6 +3445,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             tempUnits: UnitSystem.IMPERIAL,
             windUnits: UnitSystem.METRIC,
             primaryWindDirection: "E",
+            defaultIcon: "sun",
             weather: [],
             effects: [],
         },
@@ -4237,6 +4257,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             tempUnits: UnitSystem.IMPERIAL,
             windUnits: UnitSystem.METRIC,
             primaryWindDirection: "E",
+            defaultIcon: "sun",
             weather: [],
             effects: [],
         },
@@ -4607,6 +4628,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             tempUnits: UnitSystem.IMPERIAL,
             windUnits: UnitSystem.METRIC,
             primaryWindDirection: "E",
+            defaultIcon: "sun",
             weather: [],
             effects: [],
         },
@@ -5363,6 +5385,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             tempUnits: UnitSystem.IMPERIAL,
             windUnits: UnitSystem.METRIC,
             primaryWindDirection: "E",
+            defaultIcon: "sun",
             weather: [],
             effects: [],
         },

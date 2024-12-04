@@ -8,6 +8,7 @@ export interface WeatherData {
     tempUnits: UnitSystem;
     windUnits: UnitSystem;
     weather: Weather[];
+    defaultIcon: string;
     effects: WeatherEffect[];
 }
 export const UnitSystem = {

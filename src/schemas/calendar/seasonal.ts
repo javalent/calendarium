@@ -33,7 +33,7 @@ export function seasonalIcon(kind: SeasonKind): string {
 }
 
 type BaseSeason = TimeSpan & {
-    id: string;
+    id: SeasonId;
     name: string;
     color: string;
 };
@@ -114,6 +114,7 @@ export type PeriodicSeason = WeatheredSeason & {
 };
 
 export type Season = DatedSeason | PeriodicSeason;
+export type SeasonId = string;
 
 type BaseSeasonalData = {
     offset: number;

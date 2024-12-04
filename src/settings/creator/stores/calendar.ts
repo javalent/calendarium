@@ -33,6 +33,7 @@ import {
 } from "src/schemas/calendar/seasonal";
 import { NO_LOCATION, type Location } from "src/schemas/calendar/locations";
 import type { UnitSystem } from "src/schemas/weather/weather";
+import type { WeatherEffect } from "src/schemas/weather/effects";
 
 function padMonth(months: Month[]) {
     return (months.length + "").length;
@@ -143,6 +144,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const weatherSeedStore = derived(weatherStore, (data) => data.seed);
     const tempUnitsStore = derived(weatherStore, (data) => data.tempUnits);
     const windUnitsStore = derived(weatherStore, (data) => data.windUnits);
+    const weatherEffectsStore = derived(weatherStore, (data) => data.effects);
 
     /** Locations */
     const locationStore = derived(store, (data) => data.locations.locations);
@@ -593,6 +595,14 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 set: (val: UnitSystem) =>
                     update((data) => {
                         data.weather.windUnits = val;
+                        return data;
+                    }),
+            },
+            effects: {
+                subscribe: weatherEffectsStore.subscribe,
+                set: (effects: WeatherEffect[]) =>
+                    update((data) => {
+                        data.weather.effects = [...effects];
                         return data;
                     }),
             },

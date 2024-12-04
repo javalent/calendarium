@@ -5,6 +5,7 @@ export const WeatherEffectConditionType = {
     LT: "Less than",
     EQUAL: "Equal to",
     LOCATION: "Location",
+    TRIGGER: "Trigger",
 } as const;
 export type WeatherEffectConditionType =
     (typeof WeatherEffectConditionType)[keyof typeof WeatherEffectConditionType];
@@ -30,13 +31,17 @@ interface EqualCondition extends BaseWeatherEffectCondition {
     value: number;
 }
 interface LocationCondition extends BaseWeatherEffectCondition {
-    type: typeof WeatherEffectConditionType.EQUAL;
+    type: typeof WeatherEffectConditionType.LOCATION;
+    comparator: string;
+}
+interface TriggerCondition extends BaseWeatherEffectCondition {
+    type: typeof WeatherEffectConditionType.TRIGGER;
     comparator: EffectID;
-    value: number;
 }
 
 export type WeatherEffectCondition =
     | GreaterThanCondition
     | LessThanCondition
     | EqualCondition
-    | LocationCondition;
+    | LocationCondition
+    | TriggerCondition;

@@ -5,16 +5,22 @@
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
+    import AddNew from "src/settings/creator/Utilities/AddNew.svelte";
     import Details from "src/settings/creator/Utilities/Details.svelte";
     import { getWeatherSeed } from "src/utils/functions";
     import { getContext } from "svelte";
+    import WeatherEffect from "./WeatherEffect.svelte";
+    import DropZone from "src/settings/creator/Utilities/DropZone.svelte";
     const calendar = getContext("store");
     const { weatherStore } = calendar;
-    const { enabled, seed, tempUnitsStore, windUnitsStore } = weatherStore;
+    const { enabled, seed, tempUnitsStore, windUnitsStore, effects } =
+        weatherStore;
 
     const newSeed = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon("rotate-ccw");
     };
+
+    const add = (name: string) => {};
 </script>
 
 <Details
@@ -91,6 +97,27 @@
             </SettingItem>
         </div> -->
 
-        <SettingItem></SettingItem>
+        <SettingItem heading={true}>
+            <div slot="name">Effects</div>
+            <div slot="desc">
+                <span>
+                    The weather generation model will take these effects into
+                    account when determining the weather for a given day.
+                </span>
+                <br />
+                <span
+                    >Each effect will be calculated <strong>in order</strong> and
+                    compared to their conditions (if any).</span
+                >
+            </div>
+        </SettingItem>
+        <DropZone
+            items={$effects}
+            type="weather-effects"
+            component={WeatherEffect}
+            onDrop={(items) => ($effects = [...items])}
+        ></DropZone>
+
+        <AddNew on:add={(evt) => add(evt.detail)} />
     {/if}
 </Details>
