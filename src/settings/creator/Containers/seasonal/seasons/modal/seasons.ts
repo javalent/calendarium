@@ -76,8 +76,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
         if (this.calendar.weather.enabled) {
             new Setting(this.contentEl)
                 .setName("Seasonal information")
-                .setHeading()
-                .setClass("has-children");
+                .setHeading();
             settingEl = this.contentEl.createDiv("setting-container");
         }
         new Setting(settingEl).setName("Name").addText((t) => {
@@ -165,8 +164,7 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                             text: "The surrounding seasons will also affect the weather, but the closer you are to the peak, the stronger the current effect is.",
                         });
                     })
-                )
-                .setClass("has-children");
+                );
 
             const weatherEl = this.contentEl.createDiv("setting-container");
 
@@ -194,87 +192,6 @@ export class CreateSeasonModal extends CanceableCalendariumModal<Season> {
                                 (v) => (this.item.weatherPeak = Number(v))
                             ).inputEl.type = "number")
                 );
-
-            const kind = new Setting(weatherEl)
-                .setName("Kind")
-                .setDesc(
-                    createFragment((f) => {
-                        const data = getWeatherData(this.item);
-                        const units = this.calendar.weather.tempUnits;
-                        if (!data) {
-                            f.createSpan({ text: "No weather data set" });
-                            return;
-                        }
-                        let e = f.createDiv("weather-data");
-                        const temps = e.createDiv("weather-icon");
-                        setIcon(temps, "thermometer");
-                        temps.createSpan({
-                            text: `${stringifyTemperature(
-                                data.tempRange[0],
-                                units
-                            )}–${stringifyTemperature(
-                                data.tempRange[1],
-                                units
-                            )}`,
-                        });
-                        const chance = e.createDiv("weather-icon");
-                        setIcon(chance, "droplets");
-                        chance.createSpan({
-                            text: `${data.precipitationChance * 100}%`,
-                        });
-                        const intensity = e.createDiv("weather-icon");
-                        setIcon(intensity, "cloud-lightning");
-                        intensity.createSpan({
-                            text: `${data.precipitationIntensity * 100}%`,
-                        });
-                        const wind = e.createDiv("weather-icon");
-                        setIcon(wind, "wind");
-                        wind.createSpan({
-                            text: `${data.windy * 100}%`,
-                        });
-                        const clouds = e.createDiv("weather-icon");
-                        setIcon(clouds, "cloudy");
-                        clouds.createSpan({
-                            text: `${data.cloudy * 100}%`,
-                        });
-                    })
-                )
-                .addDropdown((d) => {
-                    for (const value of Object.values(SeasonKind)) {
-                        d.addOption(value, value);
-                    }
-                    d.setValue(this.item.kind).onChange((v) => {
-                        const prior = getWeatherData(this.item);
-                        this.item.kind = v as SeasonKind;
-                        if (
-                            this.item.kind === SeasonKind.CUSTOM &&
-                            prior &&
-                            !("weather" in this.item)
-                        ) {
-                            (this.item as any).weather = copy(prior);
-                        }
-                        this.display();
-                    });
-                });
-            if (this.item.kind === SeasonKind.CUSTOM) {
-                kind.addExtraButton((b) =>
-                    b.setIcon(EDIT).onClick(() => {
-                        if (this.item.kind === SeasonKind.CUSTOM) {
-                            const modal = new WeatherDataModal(
-                                copy(this.item.weather),
-                                this.calendar.weather.tempUnits
-                            );
-                            modal.onClose = () => {
-                                if (this.item.kind === SeasonKind.CUSTOM) {
-                                    this.item.weather = copy(modal.item);
-                                }
-                                this.display();
-                            };
-                            modal.open();
-                        }
-                    })
-                );
-            }
         }
     }
 }

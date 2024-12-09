@@ -40,6 +40,12 @@ export type WeatherEffect =
     | StaticChanceEffect
     | SeasonalChanceEffect;
 
+export type RangeWeatherEffect = StaticRangeEffect | SeasonalRangeEffect;
+export type ChanceWeatherEffect = StaticChanceEffect | SeasonalChanceEffect;
+export type ChanceTableWeatherEffect =
+    | StaticChanceTableEffect
+    | SeasonalChanceTableEffect;
+
 // Base structure for Weather Effects
 interface BaseWeatherEffect {
     id: EffectID;
@@ -59,7 +65,6 @@ interface SeasonalWeatherEffect extends BaseWeatherEffect {
 
 // Specific Effect Types
 interface RangeEffect extends BaseWeatherEffect {
-    temperature: boolean;
     kind: typeof WeatherEffectKind.RANGE;
 }
 interface StaticRangeEffect extends RangeEffect {
@@ -72,11 +77,10 @@ interface SeasonalRangeEffect extends RangeEffect, SeasonalWeatherEffect {
     data: Record<string, RangeWeatherEffectData>;
 }
 
+export type ChanceTableEntry = { name: string; chance: number; icon?: string };
+
 interface ChanceTableEffect extends BaseWeatherEffect {
-    table: [
-        { name: string; chance: number; icon?: string },
-        ...{ name: string; chance: number; icon?: string }[]
-    ];
+    table: [ChanceTableEntry, ...ChanceTableEntry[]];
     multiplier?: { base: EffectID; values: number[] }[];
     kind: typeof WeatherEffectKind.CHANCE_TABLE;
 }

@@ -56,7 +56,7 @@
                 return stringifyTemperature(value, $units);
             case "None":
             case "Wind":
-                return value.toPrecision(2);
+                return `${Math.round(value)}`;
         }
     };
 </script>
@@ -73,7 +73,6 @@
                 {#if effect.kind === WeatherEffectKind.RANGE}
                     <div>{translateUnit(effect.value, effect)}</div>
                 {/if}
-                {#if effect.kind === WeatherEffectKind.CHANCE}{/if}
                 {#if effect.kind === WeatherEffectKind.CHANCE_TABLE}
                     {effect.strength}
                 {/if}
@@ -97,7 +96,6 @@
                             )}-{translateUnit(effect.range[1], effect)}
                         </div>
                     {/if}
-                    {#if effect.kind === WeatherEffectKind.CHANCE}{/if}
                     {#if effect.kind === WeatherEffectKind.CHANCE_TABLE}
                         {effect.strength}
                     {/if}
@@ -112,14 +110,6 @@
         display: flex;
         gap: 0.25rem;
         justify-content: center;
-    }
-    .temperature {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-    .actual {
-        font-size: larger;
     }
     .tooltip {
         left: unset;

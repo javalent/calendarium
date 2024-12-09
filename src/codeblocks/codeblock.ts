@@ -7,11 +7,9 @@ import Calendarium from "src/main";
 
 import { CalendarContainer } from "./calendar/calendar";
 import { CalendariumEditorSuggester } from "./editor-suggest";
-import { WeatherContainer } from "./weather/weather";
 
 export const CodeBlockType = {
     CALENDAR: "calendarium",
-    WEATHER: "calendarium-weather",
 } as const;
 export type CodeBlockType = (typeof CodeBlockType)[keyof typeof CodeBlockType];
 
@@ -25,12 +23,6 @@ export class CodeBlockService extends Component {
             CodeBlockType.CALENDAR,
             (source, el, ctx) => {
                 this.postProcess(CodeBlockType.CALENDAR, source, el, ctx);
-            }
-        );
-        this.plugin.registerMarkdownCodeBlockProcessor(
-            CodeBlockType.WEATHER,
-            (source, el, ctx) => {
-                this.postProcess(CodeBlockType.WEATHER, source, el, ctx);
             }
         );
         this.plugin.registerEditorSuggest(
@@ -47,10 +39,6 @@ export class CodeBlockService extends Component {
         switch (type) {
             case "calendarium": {
                 component = new CalendarContainer(this.plugin, source, el);
-                break;
-            }
-            case "calendarium-weather": {
-                component = new WeatherContainer(this.plugin, source, el);
                 break;
             }
         }

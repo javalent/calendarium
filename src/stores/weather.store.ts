@@ -193,8 +193,7 @@ export class WeatherStore {
                             const base = EFFECT_MAP.get(multiplier.base)!;
                             if (base.kind !== WeatherEffectKind.CHANCE_TABLE)
                                 continue;
-                            value +=
-                                value * (multiplier.values[base.index] ?? 0);
+                            value *= multiplier.values[base.index] ?? 0;
                         }
                     }
                     let strength: string = effect.table[0].name;
@@ -203,7 +202,7 @@ export class WeatherStore {
                     for (const [
                         i,
                         { name, chance, icon: _icon },
-                ] of effect.table.entries()) {
+                    ] of effect.table.entries()) {
                         console.log(
                             "🚀 ~ file: weather.store.ts:207 ~ _icon:",
                             _icon
@@ -230,198 +229,6 @@ export class WeatherStore {
         return [...EFFECT_MAP.values()];
     }
 
-    private _generateWeather(
-        date: CalDate,
-        data: WeatherData,
-        seed: number,
-        effects: WeatherEffect[],
-        location: Location | null
-    ): Weather | null {
-        const season$ = this.seasonCache.getSeasonForDate(date);
-
-        const { from, to, effect } = this._getSeasonalWeatherEffect(
-            date,
-            season$
-        );
-
-        const weatherData = this._getInterpolatedWeatherData(from, to, effect);
-        console.log(
-            "🚀 ~ file: weather.store.ts:143 ~ weatherData:",
-            weatherData
-        );
-
-        if (!weatherData) return null;
-
-        //Temperature
-        const epoch = this.yearCalculator.daysBefore(date) + date.day;
-        const random = new Randomizer(epoch * seed);
-
-        let low = random.normal(weatherData.tempRange[0], 4);
-        let high = random.normal(weatherData.tempRange[1], 4);
-
-        if (low > high) {
-            const temp = low;
-            low = high;
-            high = temp;
-        }
-
-        const actual = random.normal((low + high) / 2, 4);
-
-        let precipitation = Precipitation.NONE;
-        let clouds = Cloudiness.pick(0);
-        if (random.chance(weatherData.precipitationChance, 1)) {
-            precipitation = Precipitation.pick(
-                random.normal(weatherData.precipitationIntensity * 100, 25) /
-                    100,
-                actual
-            );
-
-            clouds = Cloudiness.pick(
-                random.randomInt(
-                    precipitation.index,
-                    Cloudiness.Strength.length - 1
-                )
-            );
-        } else if (random.chance(weatherData.cloudy, 1)) {
-            clouds = Cloudiness.pick(
-                random.randomInt(1, Cloudiness.Strength.length - 2)
-            );
-        }
-
-        const baseWindiness = random.normal(weatherData.windy * 100, 3) / 100;
-        const windiness =
-            baseWindiness +
-            baseWindiness * Windiness.Multiplier[precipitation.index];
-
-        const primaryDirection = Windiness.Directions.indexOf(
-            data.primaryWindDirection ?? "E"
-        );
-
-        const wind = Windiness.pick(
-            windiness,
-            wrap(
-                primaryDirection + random.normalInt(0, 2),
-                Windiness.Directions.length
-            )
-        );
-
-        const weather = {
-            temperature: {
-                actual,
-                low,
-                high,
-            },
-            precipitation,
-            clouds,
-            wind,
-        };
-
-        return weather;
-    }
-
-    private _getInterpolatedWeatherData(
-        from: Weathered,
-        to: Weathered,
-        effect: number
-    ): SeasonalWeatherData | null {
-        const fromData = getWeatherData(from);
-
-        if (!fromData) return null;
-
-        const toData = getWeatherData(to) ?? fromData;
-
-        const tempRange = [
-            cerp(fromData.tempRange[0], toData.tempRange[0], effect),
-            cerp(fromData.tempRange[1], toData.tempRange[1], effect),
-        ] as [number, number];
-        const precipitationChance = cerp(
-            fromData.precipitationChance,
-            toData.precipitationChance,
-            effect
-        );
-        const precipitationIntensity = cerp(
-            fromData.precipitationIntensity,
-            toData.precipitationIntensity,
-            effect
-        );
-        const cloudy = cerp(fromData.cloudy, toData.cloudy, effect);
-        const windy = cerp(fromData.windy, toData.windy, effect);
-
-        return {
-            tempRange,
-            precipitationChance,
-            precipitationIntensity,
-            cloudy,
-            windy,
-        };
-    }
-    private _getSeasonalWeatherEffect(
-        date: CalDate,
-        season$: Readable<DefinedSeason>
-    ): {
-        effect: number;
-        from: Weathered;
-        to: Weathered;
-    } {
-        let season = get(season$);
-
-        let from: Season, current: Season;
-        /**
-         * Effect the current season has on the weather.
-         * The interpolating season has (1 - effect) effect
-         */
-        let effect = 1;
-        if (
-            season.daysPassed! >= season.weatherOffset &&
-            season.daysPassed! <= season.weatherOffset + season.weatherPeak
-        ) {
-            from = current = season;
-        } else if (season.daysPassed! < season.weatherOffset) {
-            const previous$ = this.seasonCache.getPreviousSeason(season$);
-            const previous = get(previous$);
-
-            let deltaPreviousPeak = 0;
-            if (previous.type === SeasonType.PERIODIC) {
-                deltaPreviousPeak =
-                    previous.duration -
-                    (previous.weatherOffset + previous.weatherPeak);
-            } else {
-                const year =
-                    previous.month > date.month ? date.year - 1 : date.year;
-                const pDate = {
-                    year,
-                    month: previous.month,
-                    day: previous.day,
-                };
-                const duration = this.yearCalculator.daysBefore(pDate);
-                deltaPreviousPeak =
-                    duration - (previous.weatherOffset + previous.weatherPeak);
-            }
-
-            from = previous;
-            current = season;
-            effect =
-                1 -
-                (season.weatherOffset - season.daysPassed!) /
-                    (season.weatherOffset + deltaPreviousPeak);
-        } else {
-            const next$ = this.seasonCache.getNextSeason(season$);
-            const next = get(next$);
-
-            effect =
-                1 -
-                (season.daysPassed! -
-                    (season.weatherOffset + season.weatherPeak)) /
-                    (season.daysPassed! +
-                        season.daysRemaining! -
-                        season.weatherOffset +
-                        next.weatherOffset);
-            from = next;
-            current = season;
-        }
-
-        return { from, to: current, effect };
-    }
     private getSeasonalWeatherEffect(
         date: CalDate,
         season$: Readable<DefinedSeason>

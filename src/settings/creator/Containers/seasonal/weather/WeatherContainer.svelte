@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ExtraButtonComponent, Platform } from "obsidian";
     import { UnitSystem } from "src/schemas/weather/weather";
-    import DropdownComponent from "src/settings/creator/Settings/DropdownComponent.svelte";
+
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
@@ -11,6 +11,8 @@
     import { getContext } from "svelte";
     import WeatherEffect from "./WeatherEffect.svelte";
     import DropZone from "src/settings/creator/Utilities/DropZone.svelte";
+    import WeatherEffectModal from "./modals/effects";
+    import { type WeatherEffect as WeatherEffectType } from "src/schemas/weather/effects";
     const calendar = getContext("store");
     const { weatherStore } = calendar;
     const { enabled, seed, tempUnitsStore, windUnitsStore, effects } =
@@ -20,7 +22,15 @@
         new ExtraButtonComponent(node).setIcon("rotate-ccw");
     };
 
-    const add = (name: string) => {};
+    const add = (name: string, edit?: WeatherEffectType) => {
+        const modal = new WeatherEffectModal($calendar, calendar, name, edit);
+
+        modal.onClose = () => {
+            console.log(modal.item);
+        };
+
+        modal.open();
+    };
 </script>
 
 <Details
@@ -116,6 +126,8 @@
             type="weather-effects"
             component={WeatherEffect}
             onDrop={(items) => ($effects = [...items])}
+            on:advanced={(evt) => add(evt.detail.name, evt.detail)}
+            on:trash
         ></DropZone>
 
         <AddNew on:add={(evt) => add(evt.detail)} />

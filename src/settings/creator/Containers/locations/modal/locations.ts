@@ -62,31 +62,25 @@ export class LocationModal extends CanceableCalendariumModal<Location> {
                         setIcon(chance, "droplets");
                         chance.createSpan({
                             text: `${Number(
-                                (data.precipitationChance * 100).toPrecision(2)
+                                Math.round(data.precipitationChance * 100)
                             )}%`,
                         });
                         const intensity = e.createDiv("weather-icon");
                         setIcon(intensity, "cloud-lightning");
                         intensity.createSpan({
                             text: `${Number(
-                                (data.precipitationIntensity * 100).toPrecision(
-                                    2
-                                )
+                                Math.round(data.precipitationIntensity * 100)
                             )}%`,
                         });
                         const wind = e.createDiv("weather-icon");
                         setIcon(wind, "wind");
                         wind.createSpan({
-                            text: `${Number(
-                                (data.windy * 100).toPrecision(2)
-                            )}%`,
+                            text: `${Number(Math.round(data.windy * 100))}%`,
                         });
                         const clouds = e.createDiv("weather-icon");
                         setIcon(clouds, "cloudy");
                         clouds.createSpan({
-                            text: `${Number(
-                                (data.cloudy * 100).toPrecision(2)
-                            )}%`,
+                            text: `${Number(Math.round(data.cloudy * 100))}%`,
                         });
                     })
                 )

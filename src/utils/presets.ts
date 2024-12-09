@@ -300,7 +300,6 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     kind: WeatherEffectKind.RANGE,
                     display: WeatherEffectDisplay.BOTH,
                     interpolate: true,
-                    temperature: true,
                     data: {
                         STANDARD_WINTER: [-7, 2],
                         STANDARD_SPRING: [9.5, 21],
@@ -470,11 +469,11 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                     multiplier: [
                         {
                             base: "DEFAULT_SNOW",
-                            values: [0, 0.35, 0.5, 0.75, 1, 1.25, 1.5, 2],
+                            values: [1, 1.35, 1.5, 1.75, 2, 2.25, 2.5, 3],
                         },
                         {
                             base: "DEFAULT_RAIN",
-                            values: [0, 0.35, 0.5, 0.75, 1, 1.25, 1.5, 2],
+                            values: [1, 1.35, 1.5, 1.75, 2, 2.25, 2.5, 3],
                         },
                     ],
                     table: [
