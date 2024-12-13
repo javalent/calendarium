@@ -85,6 +85,11 @@ class MonthEventCache extends MonthCache<CalEvent> {
                     const date = { ...event.date };
                     const end = { ...event.end };
 
+                    console.log('date');
+                    console.log(date);
+                    console.log('end');
+                    console.log(end);
+
                     //Year and Month match
                     if (date.year == this.year && date.month == this.month)
                         return true;
@@ -109,6 +114,15 @@ class MonthEventCache extends MonthCache<CalEvent> {
                     if (
                         date.year < this.year &&
                         end.year == this.year &&
+                        end.month >= this.month
+                    ) {
+                        return true;
+                    }
+
+                    // Event lies within a range of multiple months in a single year
+                    if(
+                        date.year == this.year && 
+                        date.month <= this.month && 
                         end.month >= this.month
                     ) {
                         return true;
