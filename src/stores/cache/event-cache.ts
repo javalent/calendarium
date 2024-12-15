@@ -106,6 +106,14 @@ class MonthEventCache extends MonthCache<CalEvent> {
                     ) {
                         return true;
                     }
+                    // Event occurs in the date year but lies between the date and end months (inclusive)
+                    if (
+                        date.year == this.year &&
+                        date.month <= this.month &&
+                        end.month >= this.month
+                    ) {
+                        return true;
+                    }
                     if (
                         date.year < this.year &&
                         end.year == this.year &&
