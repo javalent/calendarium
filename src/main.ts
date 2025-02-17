@@ -11,6 +11,8 @@ import { SettingsService } from "./settings/settings.service";
 import {
     type CalendarStore,
     createCalendarStore,
+    incrementDay,
+    decrementDay,
 } from "./stores/calendar.store";
 import { CodeBlockService } from "./calendar/codeblock";
 import { DEFAULT_FORMAT } from "./utils/constants";
@@ -200,6 +202,30 @@ export default class Calendarium extends Plugin {
             /* Insert the current date from the default calendar at the current cursor location. */
             editorCallback: (editor: Editor, view: MarkdownView) => {
                 this.insertCurrentDate(this.settings$.getDefaultCalendar(), editor, this.api);
+            },
+        });
+
+        this.addCommand({
+            id: "advance-calendarium-current-date",
+            name: "Advance Current Date",
+            callback: () => {
+                const defaultCal = this.settings$.getDefaultCalendar();
+                const currentCalDate = defaultCal.current;
+                const store = this.getStoreByCalendar(defaultCal);
+                const nextDay = incrementDay(currentCalDate, store.yearCalculator, store.staticStore.staticData);
+                store.setCurrentDate(nextDay);
+            },
+        });
+
+        this.addCommand({
+            id: "previous-calendarium-current-date",
+            name: "Set Current Date to Previous",
+            callback: () => {
+                const defaultCal = this.settings$.getDefaultCalendar();
+                const currentCalDate = defaultCal.current;
+                const store = this.getStoreByCalendar(defaultCal);
+                const previousDay = decrementDay(currentCalDate, store.yearCalculator, store.staticStore.staticData);
+                store.setCurrentDate(previousDay);
             },
         });
     }
