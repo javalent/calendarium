@@ -230,6 +230,9 @@ export default class Calendarium extends Plugin {
         const currentCalDate = calendar.current;
         const calendarApi = api.getAPI(calendar.name);
         const dateString = calendarApi.toDisplayDate(currentCalDate, calendar.dateFormat);
-        editor.replaceRange(dateString, editor.getCursor());
+        const cursor = editor.getCursor();
+        editor.replaceRange(dateString, cursor);
+        cursor.ch += dateString.length;
+        editor.setCursor(cursor);
     }
 }
