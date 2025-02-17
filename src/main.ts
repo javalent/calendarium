@@ -207,13 +207,11 @@ export default class Calendarium extends Plugin {
 
         this.addCommand({
             id: "advance-calendarium-current-date",
-            name: "Advance Current Date",
+            name: "Set Current Date to Next",
             callback: () => {
                 const defaultCal = this.settings$.getDefaultCalendar();
-                const currentCalDate = defaultCal.current;
                 const store = this.getStoreByCalendar(defaultCal);
-                const nextDay = incrementDay(currentCalDate, store.yearCalculator, store.staticStore.staticData);
-                store.setCurrentDate(nextDay);
+                this.changeDay(defaultCal, store, incrementDay);
             },
         });
 
@@ -222,10 +220,8 @@ export default class Calendarium extends Plugin {
             name: "Set Current Date to Previous",
             callback: () => {
                 const defaultCal = this.settings$.getDefaultCalendar();
-                const currentCalDate = defaultCal.current;
                 const store = this.getStoreByCalendar(defaultCal);
-                const previousDay = decrementDay(currentCalDate, store.yearCalculator, store.staticStore.staticData);
-                store.setCurrentDate(previousDay);
+                this.changeDay(defaultCal, store, decrementDay);
             },
         });
     }
@@ -260,5 +256,14 @@ export default class Calendarium extends Plugin {
         editor.replaceRange(dateString, cursor);
         cursor.ch += dateString.length;
         editor.setCursor(cursor);
+    }
+
+    changeDay(
+        calendar: Calendar,
+        store: CalendarStore,
+        changeFunction: (date: CalDate, yearCalculator: YearStoreCache, config: StaticCalendarData) => CalDate) {
+        const currentCalDate = calendar.current;
+        const newDay = changeFunction(currentCalDate, store.yearCalculator, store.staticStore.staticData);
+        store.setCurrentDate(newDay);
     }
 }
