@@ -197,6 +197,7 @@ export default class Calendarium extends Plugin {
         this.addCommand({
             id: "insert-calendarium-current-date",
             name: "Insert Current Date",
+            /* Insert the current date from the default calendar at the current cursor location. */
             editorCallback: (editor: Editor, view: MarkdownView) => {
                 this.insertCurrentDate(this.settings$.getDefaultCalendar(), editor, this.api);
             },
