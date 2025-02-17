@@ -193,6 +193,14 @@ export default class Calendarium extends Plugin {
                 this.addCalendarView();
             },
         });
+
+        this.addCommand({
+            id: "insert-calendarium-current-date",
+            name: "Insert Current Date",
+            editorCallback: (editor: Editor, view: MarkdownView) => {
+                this.insertCurrentDate(this.settings$.getDefaultCalendar(), editor, this.api);
+            },
+        });
     }
 
     addCalendarView(params: { full?: boolean; startup?: boolean } = {}) {
@@ -215,5 +223,12 @@ export default class Calendarium extends Plugin {
         if (leaf) this.app.workspace.revealLeaf(leaf);
 
         return leaf;
+    }
+
+    insertCurrentDate(calendar: Calendar, editor: Editor, api: API) {
+        const currentCalDate = calendar.current;
+        const calendarApi = api.getAPI(calendar.name);
+        const dateString = calendarApi.toDisplayDate(currentCalDate, calendar.dateFormat);
+        editor.replaceRange(dateString, editor.getCursor());
     }
 }
