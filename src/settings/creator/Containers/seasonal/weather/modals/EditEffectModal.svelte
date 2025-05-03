@@ -21,6 +21,7 @@
     import ChanceEffect from "./chance/ChanceEffect.svelte";
     import { setNodeIcon } from "src/utils/icons";
     import ChanceTableTable from "./chance-table/ChanceTableTable.svelte";
+    import Condition from "./conditions/Condition.svelte";
 
     export let effect: WeatherEffect;
     export let calendar: Calendar;
@@ -220,9 +221,13 @@
     </Details>
 
     <Details open={true} name="Conditions">
-
-         
-
+        {#each effect.conditions as condition}
+            <Condition
+                {condition}
+                effects={calendar.weather.effects}
+                locations={calendar.locations.locations}
+            />
+        {/each}
     </Details>
 {/key}
 

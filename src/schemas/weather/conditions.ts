@@ -6,6 +6,7 @@ export const WeatherEffectConditionType = {
     EQUAL: "Equal to",
     LOCATION: "Location",
     TRIGGER: "Trigger",
+    INV_TRIGGER: "Not triggered",
 } as const;
 export type WeatherEffectConditionType =
     (typeof WeatherEffectConditionType)[keyof typeof WeatherEffectConditionType];
@@ -38,10 +39,15 @@ interface TriggerCondition extends BaseWeatherEffectCondition {
     type: typeof WeatherEffectConditionType.TRIGGER;
     comparator: EffectID;
 }
+interface InvTriggerCondition extends BaseWeatherEffectCondition {
+    type: typeof WeatherEffectConditionType.INV_TRIGGER;
+    comparator: EffectID;
+}
 
 export type WeatherEffectCondition =
     | GreaterThanCondition
     | LessThanCondition
     | EqualCondition
     | LocationCondition
-    | TriggerCondition;
+    | TriggerCondition
+    | InvTriggerCondition;

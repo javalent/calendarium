@@ -203,11 +203,6 @@ export class WeatherStore {
                         i,
                         { name, chance, icon: _icon },
                     ] of effect.table.entries()) {
-                        console.log(
-                            "🚀 ~ file: weather.store.ts:207 ~ _icon:",
-                            _icon
-                        );
-
                         if (value < chance) {
                             index = i;
                             strength = name;
