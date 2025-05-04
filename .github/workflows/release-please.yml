@@ -24,9 +24,9 @@ jobs:
             - uses: googleapis/release-please-action@v4
               id: release
               with:
-                  config-file: release-please-config-beta.json
-                  manifest-file: .release-please-manifest-beta.json
-                  target-branch: beta
+                  config-file: release-please-config.json
+                  manifest-file: .release-please-manifest.json
+                  target-branch: main
 
     build:
         runs-on: ubuntu-latest
