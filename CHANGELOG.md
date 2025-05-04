@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.0-beta.4](https://github.com/javalent/calendarium/compare/2.0.0-beta.3...2.0.0-beta.4) (2025-05-04)
+
+
+### Features
+
+* Adds command for quickly inserting current date from default calendar ([5358211](https://github.com/javalent/calendarium/commit/5358211cf96894ffc1adb0753a464dc81d6e3ac5))
+* Adds commands for incrementing/decrementing current date ([ad00796](https://github.com/javalent/calendarium/commit/ad007967c57d5d9059fa77dab2d0d9dccfc468bc))
+
+
+### Bug Fixes
+
+* Fixes event calculation in cases where the event year is equal to the date year and the event month lies between the date and end months (fix [#138](https://github.com/javalent/calendarium/issues/138)) ([a3a552e](https://github.com/javalent/calendarium/commit/a3a552e4b80910ed17718525ed7ca2015426b25d))
+* Improves display of Moons ([044e5ab](https://github.com/javalent/calendarium/commit/044e5ab3debea6d426b84746a89968ff6d4e9d60))
+* scope date style to leaf content ([a8a8611](https://github.com/javalent/calendarium/commit/a8a86114c643bebed3afe66659fbe4cd3a9a4c4b))
+
 ## [2.0.0-beta.3](https://github.com/javalent/calendarium/compare/2.0.0-beta.2...2.0.0-beta.3) (2024-11-25)
 
 
