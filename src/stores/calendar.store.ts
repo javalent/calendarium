@@ -669,7 +669,7 @@ function decrementMonth(
     return next;
 }
 
-function incrementDay(
+export function incrementDay(
     date: CalDate,
     yearCalculator: YearStoreCache,
     config: StaticCalendarData
@@ -687,7 +687,7 @@ function incrementDay(
     }
     return next;
 }
-function decrementDay(
+export function decrementDay(
     date: CalDate,
     yearCalculator: YearStoreCache,
     config: StaticCalendarData

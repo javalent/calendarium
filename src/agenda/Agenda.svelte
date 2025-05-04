@@ -1,7 +1,6 @@
 <script lang="ts">
     import { getTypedContext } from "src/calendar/view.utils";
     import Flags from "../calendar/ui/Events/Flags.svelte";
-    import MoonUI from "../calendar/ui/Moon.svelte";
     import { dateString } from "src/utils/functions";
     import {
         CALENDAR_SEARCH,
@@ -11,6 +10,8 @@
     } from "src/utils/icons";
     import { derived, get } from "svelte/store";
     import Weather from "src/calendar/ui/Weather/Weather.svelte";
+    import MoonUI from "src/calendar/ui/Moons/Moon.svelte";
+
 
     const store = getTypedContext("store");
     const parent = getTypedContext("parent");

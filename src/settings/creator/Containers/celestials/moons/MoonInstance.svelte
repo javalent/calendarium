@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ExtraButtonComponent } from "obsidian";
-    import MoonSVG from "src/calendar/ui/Moon.svelte";
+    import MoonSVG from "src/calendar/ui/Moons/Moon.svelte";
     import type { Moon } from "src/schemas/calendar/moons";
     import { EDIT, TRASH, setNodeIcon } from "src/utils/icons";
     import { MOON_CYCLE, MOON_OFFSET } from "src/utils/icons";
