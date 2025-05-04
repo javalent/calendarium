@@ -11,12 +11,18 @@ import type { ImportedCalendar } from "../../@types/import";
 import deepmerge from "deepmerge";
 import { DEFAULT_CALENDAR } from "../settings.constants";
 import { nanoid } from "../../utils/functions";
-import type { Moon } from "src/schemas/calendar/moons";
-import type { Week, Month, LeapDay, Era } from "src/schemas/calendar/timespans";
+import type { Moon } from "../../schemas/calendar/moons";
+import type {
+    Week,
+    Month,
+    LeapDay,
+    Era,
+} from "../../schemas/calendar/timespans";
 import { EventType } from "../../events/event.types";
 import {
     SeasonKind,
     SeasonType,
+    UnitSystem,
     type SeasonalData,
 } from "../../schemas/calendar/seasonal";
 
@@ -148,6 +154,13 @@ export default class Import {
                 interpolateColors: true,
                 displayColors: true,
                 offset: 0,
+                weather: {
+                    enabled: false,
+                    seed: 1,
+                    tempUnits: UnitSystem.IMPERIAL,
+                    windUnits: UnitSystem.METRIC,
+                    primaryWindDirection: "E"
+                },
             };
             if ("seasons" in static_data) {
                 const seasonalData = static_data.seasons;
@@ -158,6 +171,13 @@ export default class Import {
                         interpolateColors: true,
                         displayColors: true,
                         offset: 0,
+                        weather: {
+                            enabled: false,
+                            seed: 1,
+                            tempUnits: UnitSystem.IMPERIAL,
+                            windUnits: UnitSystem.METRIC,
+                            primaryWindDirection: "E"
+                        },
                     };
                 }
                 seasonal.displayColors =
@@ -169,9 +189,12 @@ export default class Import {
                                 id: nanoid(6),
                                 name: season.name,
                                 type: SeasonType.DATED,
+                                kind: SeasonKind.NONE,
                                 month: season.timespan,
                                 day: season.day,
                                 color: season.color[0],
+                                weatherOffset: 56,
+                                weatherPeak: 5,
                             });
                             break;
                         }
@@ -180,10 +203,13 @@ export default class Import {
                                 id: nanoid(6),
                                 name: season.name,
                                 type: SeasonType.PERIODIC,
+                                kind: SeasonKind.NONE,
                                 duration:
                                     season.length - (season.duration ?? 0),
                                 peak: season.duration ?? 0,
                                 color: season.color[0],
+                                weatherOffset: 56,
+                                weatherPeak: 5,
                             });
                             break;
                         }
@@ -232,7 +258,6 @@ export default class Import {
                 displayMoons: true,
                 incrementDay: false,
                 displayDayNumber: false,
-                seasonal,
             };
 
             const dynamicData = {
@@ -361,6 +386,7 @@ export default class Import {
                 events,
                 id: nanoid(6),
                 categories: Array.from(existingCategories.values()),
+                seasonal,
             }) as Calendar;
 
             calendars.push(calendarData);

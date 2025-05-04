@@ -20,6 +20,7 @@ import { EventStore } from "./events.store";
 import type { MoonState } from "src/schemas/calendar/moons";
 import { SettingsService } from "src/settings/settings.service";
 import { SeasonCache } from "./cache/season-cache";
+import { WeatherStore } from "./weather.store";
 
 export type CalendarStore = ReturnType<typeof createCalendarStore>;
 
@@ -34,6 +35,8 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     const { set, update, subscribe } = store;
 
     const staticStore = createStaticStore(store);
+    const locationDataStore = derived(store, (c) => c.locations);
+    const locationStore = derived(locationDataStore, (l) => l.locations);
 
     const current = derived(store, (cal) => cal.current);
 
@@ -54,6 +57,11 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
     const moonCache = new MoonCache(moonStates, yearCalculator);
     const seasonCache = new SeasonCache(staticStore.seasons, yearCalculator);
 
+    const weatherStore = new WeatherStore(
+        staticStore.seasonal,
+        seasonCache,
+        yearCalculator
+    );
     const EPHEMERAL_STORE_CACHE: Map<string, EphemeralStore> = new Map();
 
     const _getEphemeralStore = (id: string) => {
@@ -87,15 +95,7 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
             return dateString(current, calendar);
         }),
         getDaysBeforeDate: (date: CalDate) => {
-            return (
-                get(yearCalculator.getYearFromCache(date.year).daysBefore) +
-                get(
-                    yearCalculator
-                        .getYearFromCache(date.year)
-                        .getMonthFromCache(date.month).daysBeforeAll
-                ) +
-                date.day
-            );
+            return yearCalculator.daysBefore(date);
         },
         getYearStoreForDate: (date: CalDate) => {
             return yearCalculator.getYearFromCache(date.year);
@@ -145,6 +145,8 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
 
         moonCache,
         seasonCache,
+        weatherStore,
+        locationStore,
         categories,
         //Readable store containing static calendar data
         staticStore,
@@ -158,6 +160,27 @@ export function createCalendarStore(calendar: Calendar, plugin: Calendarium) {
                 store.categories.push(category);
                 return store;
             });
+        },
+        getNextDay(date: CalDate): CalDate {
+            return incrementDay(
+                date,
+                yearCalculator,
+                get(staticStore.staticData)
+            );
+        },
+        getOffsetDate(date: CalDate, offset: number) {
+            const _static = get(staticStore.staticData);
+            for (let i = 0; i < offset; i++) {
+                date = incrementDay(date, yearCalculator, _static);
+            }
+            return date;
+        },
+        getPreviousDay(date: CalDate): CalDate {
+            return decrementDay(
+                date,
+                yearCalculator,
+                get(staticStore.staticData)
+            );
         },
     };
 }
@@ -175,11 +198,13 @@ export interface EphemeralState {
     displayWeeks: boolean;
     displayDayNumber: boolean;
     displaySeasonColors: boolean;
+    displayWeather: boolean;
     interpolateColors: boolean;
     hideEra: boolean;
     displayAbsoluteYear: boolean;
     displaying: CalDate;
     viewing: CalDate | null;
+    location: string;
 }
 export function getEphemeralStore(
     store: Writable<Calendar>,
@@ -197,8 +222,23 @@ export function getEphemeralStore(
     const hideEra = writable(base.hideEra);
     const displayAbsoluteYear = writable(base.displayAbsoluteYear);
     const viewState = writable<ViewState>(ViewState.Month);
-    const displaySeasonColors = writable(base.static.seasonal.displayColors);
-    const interpolateColors = writable(base.static.seasonal.interpolateColors);
+    const displaySeasonColors = writable(base.seasonal.displayColors);
+    const interpolateColors = writable(base.seasonal.interpolateColors);
+    const displayWeather = writable(true);
+    const location = writable(base.locations.defaultLocation);
+
+    const currentLocation = derived(
+        [location, store],
+        ([location, calendar]) => {
+            return (
+                calendar.locations.locations.find((l) => l.id === location) ??
+                null
+            );
+        }
+    );
+    const currentLocationName = derived([currentLocation], ([location]) => {
+        return location?.name ?? "No location";
+    });
     let currentState = ViewState.Month;
     viewState.subscribe((v) => (currentState = v));
 
@@ -214,6 +254,8 @@ export function getEphemeralStore(
             viewing,
             displaySeasonColors,
             interpolateColors,
+            displayWeather,
+            location,
         ],
         ([
             viewState,
@@ -226,6 +268,8 @@ export function getEphemeralStore(
             viewing,
             displaySeasonColors,
             interpolateColors,
+            displayWeather,
+            location,
         ]) => {
             return {
                 viewState,
@@ -238,6 +282,8 @@ export function getEphemeralStore(
                 interpolateColors,
                 displaying,
                 viewing,
+                displayWeather,
+                location,
             };
         }
     );
@@ -251,6 +297,9 @@ export function getEphemeralStore(
             displayWeeks.set(state.displayWeeks);
             hideEra.set(state.hideEra);
             displayAbsoluteYear.set(state.displayAbsoluteYear);
+            interpolateColors.set(state.interpolateColors);
+            displaySeasonColors.set(state.displaySeasonColors);
+            displayWeather.set(state.displayWeather);
             const config = get(staticStore.staticData);
 
             if (
@@ -263,6 +312,7 @@ export function getEphemeralStore(
 
             displaying.set(state.displaying);
             viewing.set(state.viewing);
+            if (state.location) location.set(state.location);
         },
         getEphemeralState: (): EphemeralState => {
             return {
@@ -276,6 +326,8 @@ export function getEphemeralStore(
                 displayAbsoluteYear: get(displayAbsoluteYear),
                 displayMoons: get(displayMoons),
                 displayWeeks: get(displayWeeks),
+                displayWeather: get(displayWeather),
+                location: get(location),
             };
         },
         displayMoons,
@@ -285,7 +337,12 @@ export function getEphemeralStore(
         displayAbsoluteYear,
         displaySeasonColors,
         interpolateColors,
+        displayWeather,
         viewState,
+
+        location,
+        currentLocation,
+        currentLocationName,
 
         //Displayed Date
         displaying,
@@ -533,8 +590,9 @@ function createStaticStore(store: Writable<Calendar>) {
             return compareDates(a.date, b.date);
         })
     );
-    const seasonal = derived(staticData, (data) => data.seasonal);
-    const seasons = derived(staticData, (data) => data.seasonal.seasons);
+    const seasonal = derived(store, (data) => data.seasonal);
+    const seasons = derived(store, (data) => data.seasonal.seasons);
+    const weather = derived(store, (data) => data.seasonal.weather);
 
     function getDaysInAYear() {
         return get(months).reduce((a, b) => a + b.length, 0);
@@ -563,6 +621,8 @@ function createStaticStore(store: Writable<Calendar>) {
         eras,
         seasonal,
         seasons,
+        store,
+        weather,
     };
 }
 

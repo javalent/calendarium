@@ -12,10 +12,15 @@
     const ephemeral = getTypedContext("ephemeralStore");
     const plugin = getTypedContext("plugin");
     const store = $global;
+
     const { displaying, displayingMonth, displayingYear, hideEra } = $ephemeral;
     const { currentDisplay, yearCalculator } = store;
     const monthInFrame = getTypedContext("monthInFrame");
     const viewState = $ephemeral.viewState;
+
+    $: staticStore = store.staticStore;
+    $: weather = staticStore.weather;
+    $: weatherEnabled = $weather.enabled;
 
     $: displayMoons = $ephemeral.displayMoons;
     $: displayWeeks = $ephemeral.displayWeeks;
@@ -23,6 +28,7 @@
     $: displayAbsoluteYear = $ephemeral.displayAbsoluteYear;
     $: displaySeasonColors = $ephemeral.displaySeasonColors;
     $: interpolateColors = $ephemeral.interpolateColors;
+    $: displayWeather = $ephemeral.displayWeather;
 
     $: eraMonth = derived(
         [monthInFrame, viewState, displaying],
@@ -127,6 +133,16 @@
                     })
                     .setChecked($interpolateColors);
             });
+        if (weatherEnabled) {
+            menu.addSeparator();
+            menu.addItem((item) => {
+                item.setTitle("Display weather")
+                    .onClick(() => {
+                        $displayWeather = !$displayWeather;
+                    })
+                    .setChecked($displayWeather);
+            });
+        }
 
         menu.showAtMouseEvent(evt);
     };
@@ -241,7 +257,6 @@
         color: var(--text-on-accent);
     }
     .calendarium-nav.nav.nav {
-        padding: 10px 0px;
         margin: 0;
         display: flex;
         flex-flow: row nowrap;

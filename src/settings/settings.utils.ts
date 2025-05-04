@@ -1,4 +1,5 @@
 import type { Version } from "src/schemas";
+import { derived, type Readable, type Writable } from "svelte/store";
 
 export function isOlder(older: Version, current: Version) {
     const olderTransformed = {
@@ -73,4 +74,18 @@ export function shouldTransitionMarkdownSettings(pluginData: any) {
     }
 
     return MarkdownReason.NONE;
+}
+
+export function transformed<T>(
+    store: Writable<T>,
+    transforms: { in: (value: T) => any; out: (value: any) => T }
+) {
+    const identity = (x: T) => x;
+    const transformIn = transforms.in ?? identity;
+    const transformOut = transforms.out ?? identity;
+
+    const { subscribe } = derived(store, ($store) => transformIn($store));
+    const set = (value: T) => store.set(transformOut(value));
+
+    return { subscribe, set };
 }

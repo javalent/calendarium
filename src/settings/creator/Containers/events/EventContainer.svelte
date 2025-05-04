@@ -3,7 +3,11 @@
     import EventInstance from "./EventInstance.svelte";
     import NoExistingItems from "../../Utilities/NoExistingItems.svelte";
     import Details from "../../Utilities/Details.svelte";
-    import { ExtraButtonComponent, prepareSimpleSearch } from "obsidian";
+    import {
+        ExtraButtonComponent,
+        Platform,
+        prepareSimpleSearch,
+    } from "obsidian";
     import { getContext } from "svelte";
     import { derived, get, writable } from "svelte/store";
     import { ADD } from "src/utils/icons";
@@ -97,6 +101,7 @@
 
 <Details
     name={"Events"}
+    open={Platform.isDesktop}
     desc={`Displaying ${$filtered.length}/${$sortedStore.length} events.`}
 >
     <div slot="context" class="context">

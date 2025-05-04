@@ -20,10 +20,19 @@
     <div class="setting-item-control">
         <button aria-label={label} on:click>
             {#if icon}
-                <div use:build />
+                <div use:build class="center" />
             {:else if text}
                 {text}
             {/if}
         </button>
     </div>
 </div>
+
+<style scoped>
+    .center {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

@@ -296,6 +296,9 @@
         border: 0;
         max-width: 100%;
     }
+    input[type='number'] {
+        width: 100%;
+    }
     .calendarium-date-field {
         display: flex;
         flex-flow: column;

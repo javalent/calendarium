@@ -134,7 +134,7 @@ export class CalendarAPI {
      * @returns A list of all seasons on the calendar.
      */
     getSeasons(): Season[] {
-        return copy(this.#object.static.seasonal.seasons);
+        return copy(this.#object.seasonal.seasons);
     }
 
     /**

@@ -21,6 +21,8 @@
                 return "calendar-clock";
             case "Seasons & weather":
                 return "sun-snow";
+            case "Locations":
+                return "map";
         }
     };
 

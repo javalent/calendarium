@@ -14,6 +14,8 @@
     import { isCalEvent } from "src/events/event.types";
     import { openAgendaView } from "src/agenda/view.agenda";
     import { getTypedContext } from "src/calendar/view.utils";
+    import Weather from "../Weather/Weather.svelte";
+    import { readable } from "svelte/store";
     import MoonContainer from "../Moons/MoonContainer.svelte";
 
     export let month: MonthStore;
@@ -50,8 +52,23 @@
         month: $index,
         year: year.year,
     });
+
     $: displaySeasonColors = $ephemeral.displaySeasonColors;
     $: interpolateColors = $ephemeral.interpolateColors;
+    $: displayWeather = $ephemeral.displayWeather;
+
+    $: currentLocation = $ephemeral.currentLocation;
+
+    $: weather = $full
+        ? $store.weatherStore.getWeatherForDate(
+              {
+                  day: day.number,
+                  month: $index,
+                  year: year.year,
+              },
+              currentLocation,
+          )
+        : readable(null);
 
     $: today =
         !adjacent &&
@@ -170,36 +187,43 @@
         aria-label={$events.length > 0
             ? `${$events.length} event${$events.length == 1 ? "" : "s"}`
             : ""}
+        class:season={$displaySeasonColors && $seasons.length}
         style={$displaySeasonColors && $seasons.length
-            ? `border-top: 2px solid ${$interpolateColors ? $seasons[0].lerp : $seasons[0].color}`
+            ? `--seasonal-color: ${$interpolateColors ? $seasons[0].lerp : $seasons[0].color}`
             : ""}
     >
-        {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
-            {day.name}
-        {/if}
-        {#if day.type === TimeSpanType.Day || day.numbered}
-            <span class="day-number">
-                {number}
-            </span>
-        {/if}
-        {#key $events}
-            {#if $full && $viewState != ViewState.Year}
-                {#if $displayMoons}
-                    <MoonContainer moons={$moons} />
+        <div class="day-inner">
+            <div class="split">
+                {#if day.type === TimeSpanType.LeapDay && day.intercalary && day.name?.length}
+                    {day.name}
                 {/if}
-                {#key $events}
-                    <Flags events={$events} />
-                {/key}
-            {:else}
-                <Dots events={$events} />
-            {/if}
-        {/key}
+                {#if day.type === TimeSpanType.Day || day.numbered}
+                    <span class="day-number">
+                        {number}
+                    </span>
+                {/if}
+                {#if $full && $weather && $displayWeather}
+                    <Weather {weather} />
+                {/if}
+            </div>
+            {#key $events}
+                {#if $full && $viewState != ViewState.Year}
+                    {#if $displayMoons}
+                        <MoonContainer moons={$moons} />
+                    {/if}
+                    {#key $events}
+                        <Flags events={$events} />
+                    {/key}
+                {:else}
+                    <Dots events={$events} />
+                {/if}
+            {/key}
+        </div>
     </div>
 {/if}
 
 <style scoped>
     .day {
-        border: 2px solid transparent;
         background-color: var(--color-background-day);
         border-radius: 4px;
         color: var(--color-text-day);
@@ -215,7 +239,27 @@
         vertical-align: baseline;
         display: flex;
         flex-flow: column nowrap;
+        margin: 2px;
         /* max-height: var(--max-day-height); */
+    }
+    .opened {
+        border: 2px solid var(--background-modifier-border);
+        padding: 2px;
+    }
+    .season .day-inner {
+        padding-top: 2px;
+        border-top: 1px solid var(--seasonal-color);
+    }
+    .full .day-number {
+        font-size: larger;
+    }
+    .full .split {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.25rem;
+    }
+    .full .day-number:only-child {
+        margin: 0 auto;
     }
     .intercalary {
         grid-column: span var(--calendar-columns);
@@ -233,10 +277,7 @@
         opacity: 0.25;
     }
     .today .day-number {
-        color: var(--interactive-accent);
-    }
-
-    .opened {
-        border: 2px solid var(--background-modifier-border);
+        color: var(--text-accent);
+        font-weight: var(--bold-weight);
     }
 </style>

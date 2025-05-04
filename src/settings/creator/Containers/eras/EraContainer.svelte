@@ -8,7 +8,7 @@
 
     import type { Era } from "src/schemas/calendar/timespans";
     import { EraEditModal } from "./edit/era";
-    import { ToggleComponent } from "obsidian";
+    import { Platform, ToggleComponent } from "obsidian";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
@@ -36,6 +36,7 @@
 
 <Details
     name={"Eras"}
+    open={Platform.isDesktop}
     desc={`${$eraStore.length} era${$eraStore.length != 1 ? "s" : ""}`}
 >
     {#if !$eraStore.length}

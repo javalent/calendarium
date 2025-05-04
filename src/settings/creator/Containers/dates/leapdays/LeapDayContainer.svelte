@@ -7,6 +7,7 @@
     import { derived } from "svelte/store";
     import { CreateLeapDayModal } from "./modal/leapday";
     import Details from "src/settings/creator/Utilities/Details.svelte";
+    import { Platform } from "obsidian";
 
     const calendar = getContext("store");
     const plugin = getContext("plugin");
@@ -34,6 +35,7 @@
 
 <Details
     name={"Leap days"}
+    open={Platform.isDesktop}
     desc={`${$leapDayStore.length} leap day${
         $leapDayStore.length != 1 ? "s" : ""
     }`}

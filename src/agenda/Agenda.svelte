@@ -9,6 +9,7 @@
         setClickableIcon,
     } from "src/utils/icons";
     import { derived, get } from "svelte/store";
+    import Weather from "src/calendar/ui/Weather/Weather.svelte";
     import MoonUI from "src/calendar/ui/Moons/Moon.svelte";
 
 
@@ -35,10 +36,13 @@
     $: moons = $store.moonCache.getItemsOrRecalculate($viewing!);
     $: displayDayNumber = ephemeral.displayDayNumber;
     $: displayMoons = ephemeral.displayMoons;
+    $: displayWeather = ephemeral.displayWeather;
+    $: currentLocation = ephemeral.currentLocation;
 
-    /* onDestroy(() => {
-        ephemeral.viewing.set(null);
-    }); */
+    $: weather = $store.weatherStore.getWeatherForDate(
+        $viewing,
+        currentLocation,
+    );
 </script>
 
 <div class="day-view">
@@ -59,7 +63,7 @@
                 aria-label="Previous"
                 on:click={() => {
                     ephemeral.goToPreviousDay();
-                    ephemeral.displayDate($viewing);
+                    /* ephemeral.displayDate($viewing); */
                 }}
             ></div>
 
@@ -79,11 +83,15 @@
                 aria-label="Next"
                 on:click={() => {
                     ephemeral.goToNextDay();
-                    ephemeral.displayDate($viewing);
+                    /* ephemeral.displayDate($viewing); */
                 }}
             ></div>
         </div>
-        <div style="flex: 1;" />
+        <div style="flex: 1;">
+            {#if $weather && $displayWeather}
+                <Weather {weather} />
+            {/if}
+        </div>
     </div>
 
     <div class="context">

@@ -16,7 +16,11 @@ import type {
     UndatedCalEvent,
     Version,
 } from "src/@types";
-import { DEFAULT_DATA } from "./settings.constants";
+import {
+    DEFAULT_DATA,
+    DEFAULT_SEASONAL_DATA,
+    DEFAULT_WEATHER_DATA,
+} from "./settings.constants";
 import merge from "deepmerge";
 import { nanoid } from "src/utils/functions";
 import Calendarium from "src/main";
@@ -30,7 +34,6 @@ import {
 } from "./settings.utils";
 import { CHECK, LOADING } from "src/utils/icons";
 import { EventType } from "src/events/event.types";
-import { DEFAULT_SEASONAL_DATA } from "src/schemas/calendar/seasonal";
 
 const SPLITTER = "--- BEGIN DATA ---";
 type CalendarID = string;
@@ -415,7 +418,7 @@ class SettingsServiceClass {
         if (shouldParse) this.plugin.watcher.start(calendar);
 
         this.#calendars.set(calendar.id, calendar);
-        await this.save({ calendar: true });
+        await this.save({ calendar: true, watcher: true });
     }
     /**
      * Remove a calendar from settings.
@@ -431,7 +434,7 @@ class SettingsServiceClass {
         }
         this.deletedCalendars.push(calendar);
         this.#calendars.delete(calendar.id);
-        
+
         await this.save({ calendar: true });
     }
 
@@ -808,9 +811,16 @@ class SettingsServiceClass {
                     dirty = true;
                 }
             }
-            if (!("seasonal" in calendar.static)) {
-                (calendar.static as any).seasonal = copy(DEFAULT_SEASONAL_DATA);
+            if (!("seasonal" in calendar)) {
+                (calendar as any).seasonal = copy(DEFAULT_SEASONAL_DATA);
                 dirty = true;
+            }
+            if (!("weather" in calendar.seasonal)) {
+                (calendar as any).seasonal.weather = copy(DEFAULT_WEATHER_DATA);
+                dirty = true;
+            }
+            if (!("locations" in calendar)) {
+                (calendar as any).locations = { locations: [] };
             }
         }
         return dirty;

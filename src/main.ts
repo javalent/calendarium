@@ -25,7 +25,7 @@ import {
     incrementDay,
     decrementDay,
 } from "./stores/calendar.store";
-import { CodeBlockService } from "./calendar/codeblock";
+import { CodeBlockService } from "./codeblocks/codeblock";
 import { DEFAULT_FORMAT } from "./utils/constants";
 import { CalendariumNotice } from "./utils/notice";
 

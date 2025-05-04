@@ -8,7 +8,7 @@
         type PeriodicSeason,
         type Season,
     } from "src/schemas/calendar/seasonal";
-    import { CreateSeasonModal } from "./seasons";
+    import { CreateSeasonModal } from "./modal/seasons";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
     import ToggleComponent from "src/settings/creator/Settings/ToggleComponent.svelte";
     import SeasonItem from "./SeasonItem.svelte";
@@ -16,7 +16,7 @@
     import TextComponent from "src/settings/creator/Settings/TextComponent.svelte";
     import ButtonComponent from "src/settings/creator/Settings/ButtonComponent.svelte";
     import { getEffectiveYearLength } from "src/utils/functions";
-    import { setNodeIcon, WARNING } from "src/utils/icons";
+    import { Platform } from "obsidian";
 
     const calendar = getContext("store");
     const {
@@ -82,6 +82,7 @@
 
 <Details
     name={"Seasons"}
+    open={Platform.isDesktop}
     desc={`${$seasonStore.length} season${$seasonStore.length != 1 ? "s" : ""}`}
     warn={$seasonType === SeasonType.PERIODIC && couldDrift}
     label={"Your seasons are not fully distributed and could drift over time."}
@@ -90,14 +91,14 @@
         name={"Display seasonal colors"}
         desc={"Show seasonal colors on the calendar. Can be changed using the calendar settings menu."}
         value={$displaySeasonalColors}
-        on:click={(evt) => ($displaySeasonalColors = !$displaySeasonalColors)}
+        on:click={() => ($displaySeasonalColors = !$displaySeasonalColors)}
     ></ToggleComponent>
     {#if $displaySeasonalColors}
         <ToggleComponent
             name={"Gradient seasonal colors"}
             desc={"When seasonal colors are displayed, show a gradient between one color and the next."}
             value={$interpolateColors}
-            on:click={(evt) => ($interpolateColors = !$interpolateColors)}
+            on:click={() => ($interpolateColors = !$interpolateColors)}
         ></ToggleComponent>
     {/if}
 
@@ -145,6 +146,7 @@
                     type="season"
                     items={typedSeason}
                     onDrop={(items) => seasonStore.set(items)}
+                    dragDisabled={$seasonType === SeasonType.DATED}
                     component={SeasonItem}
                     on:delete={(e) => deleteSeason(e.detail)}
                     on:advanced={(e) => edit(e.detail)}

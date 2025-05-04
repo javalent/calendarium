@@ -3,6 +3,7 @@
     import {
         type Season,
         seasonalIcon,
+        SeasonKind,
         SeasonType,
     } from "src/schemas/calendar/seasonal";
     import SettingItem from "src/settings/creator/Settings/SettingItem.svelte";
@@ -24,7 +25,7 @@
 
         <div slot="desc">
             <div class="season-desc-container">
-                {#if item.kind}
+                {#if item.kind && item.kind != SeasonKind.NONE}
                     <div use:setNodeIcon={seasonalIcon(item.kind)} />
                 {/if}
                 {#if item.type === SeasonType.PERIODIC}

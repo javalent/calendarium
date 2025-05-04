@@ -7,7 +7,7 @@
     export let name: string;
     export let warn: boolean = false;
     export let type = "text";
-    export let desc: string | DocumentFragment;
+    export let desc: string | DocumentFragment | null = null;
     export let placeholder = name;
 
     const dispatch = createEventDispatcher<{ change: T; blur: T }>();
@@ -58,6 +58,7 @@
                     />
                 {/if}
             </slot>
+            <slot name="additional"></slot>
         </div>
     </div>
 </div>
