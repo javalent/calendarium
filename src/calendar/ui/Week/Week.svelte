@@ -61,7 +61,7 @@
 <style scoped>
     .week {
         display: grid;
-        grid-template-columns: repeat(var(--calendar-columns), 1fr);
+        grid-template-columns: repeat(var(--calendar-columns), minmax(0, 1fr));
         text-align: center;
     }
     .week-number {

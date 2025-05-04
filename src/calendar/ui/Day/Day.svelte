@@ -3,7 +3,6 @@
     import Dots from "../Events/Dots.svelte";
     import { TFile } from "obsidian";
     import type { CalEvent } from "src/@types";
-    import Moon from "../Moon.svelte";
     import { ViewState } from "src/stores/calendar.store";
     import Flags from "../Events/Flags.svelte";
     import { addEventWithModal } from "src/events/modal/event";
@@ -15,6 +14,7 @@
     import { isCalEvent } from "src/events/event.types";
     import { openAgendaView } from "src/agenda/view.agenda";
     import { getTypedContext } from "src/calendar/view.utils";
+    import MoonContainer from "../Moons/MoonContainer.svelte";
 
     export let month: MonthStore;
     export let day: DayOrLeapDay;
@@ -185,11 +185,7 @@
         {#key $events}
             {#if $full && $viewState != ViewState.Year}
                 {#if $displayMoons}
-                    <div class="moon-container">
-                        {#each $moons as moon}
-                            <Moon {moon} />
-                        {/each}
-                    </div>
+                    <MoonContainer moons={$moons} />
                 {/if}
                 {#key $events}
                     <Flags events={$events} />
@@ -243,9 +239,4 @@
     .opened {
         border: 2px solid var(--background-modifier-border);
     }
-
-    /* .moon-container {
-        display: flex;
-        flex-flow: row;
-    } */
 </style>

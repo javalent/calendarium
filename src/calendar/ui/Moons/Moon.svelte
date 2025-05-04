@@ -9,7 +9,10 @@
     $: path = SHADOW_MAP[moon.phase ?? "New moon"];
 </script>
 
-<div aria-label={label ? `${moon.name}\n${moon.phase}` : null}>
+<div
+    class="moon-wrapper"
+    aria-label={label ? `${moon.name}\n${moon.phase}` : null}
+>
     <svg
         class="moon"
         id={moon.id}
@@ -32,4 +35,14 @@
 </div>
 
 <style>
+    .moon-wrapper,
+    .moon {
+        width: min-content;
+        height: min-content;
+        min-width: 0;
+    }
+    .moon {
+        display: flex;
+        align-items: center;
+    }
 </style>
