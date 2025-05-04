@@ -1,8 +1,19 @@
-import { Platform, Plugin, WorkspaceLeaf, addIcon } from "obsidian";
+import {
+    Editor,
+    Platform,
+    Plugin,
+    WorkspaceLeaf,
+    addIcon,
+} from "obsidian";
 
 import CalendariumSettings from "./settings/settings.view";
 
-import type { Calendar, CalendariumData } from "./@types";
+import type {
+    CalDate,
+    Calendar,
+    CalendariumData,
+    StaticCalendarData,
+} from "./@types";
 import CalendariumView from "./calendar/view";
 
 import { Watcher } from "./watcher/watcher";
@@ -11,6 +22,8 @@ import { SettingsService } from "./settings/settings.service";
 import {
     type CalendarStore,
     createCalendarStore,
+    incrementDay,
+    decrementDay,
 } from "./stores/calendar.store";
 import { CodeBlockService } from "./calendar/codeblock";
 import { DEFAULT_FORMAT } from "./utils/constants";
@@ -18,6 +31,8 @@ import { CalendariumNotice } from "./utils/notice";
 
 import { ViewType } from "./calendar/view.types";
 import { AgendaView } from "./agenda/view.agenda";
+import type { YearStoreCache } from "./stores/years.store";
+import { get } from "svelte/store";
 
 declare global {
     interface Window {
@@ -198,8 +213,34 @@ export default class Calendarium extends Plugin {
             id: "insert-calendarium-current-date",
             name: "Insert Current Date",
             /* Insert the current date from the default calendar at the current cursor location. */
-            editorCallback: (editor: Editor, view: MarkdownView) => {
-                this.insertCurrentDate(this.settings$.getDefaultCalendar(), editor, this.api);
+            editorCallback: (editor: Editor) => {
+                this.insertCurrentDate(
+                    this.settings$.getDefaultCalendar(),
+                    editor,
+                    this.api
+                );
+            },
+        });
+
+        this.addCommand({
+            id: "advance-calendarium-current-date",
+            name: "Set Current Date to Next",
+            callback: () => {
+                const defaultCal = this.settings$.getDefaultCalendar();
+                if (!defaultCal) return;
+                const store = this.getStoreByCalendar(defaultCal);
+                this.changeDay(defaultCal, store, incrementDay);
+            },
+        });
+
+        this.addCommand({
+            id: "previous-calendarium-current-date",
+            name: "Set Current Date to Previous",
+            callback: () => {
+                const defaultCal = this.settings$.getDefaultCalendar();
+                if (!defaultCal) return;
+                const store = this.getStoreByCalendar(defaultCal);
+                this.changeDay(defaultCal, store, decrementDay);
             },
         });
     }
@@ -226,13 +267,40 @@ export default class Calendarium extends Plugin {
         return leaf;
     }
 
-    insertCurrentDate(calendar: Calendar, editor: Editor, api: API) {
+    insertCurrentDate(
+        calendar: Calendar | undefined,
+        editor: Editor,
+        api: API
+    ) {
+        if (!calendar) return;
         const currentCalDate = calendar.current;
         const calendarApi = api.getAPI(calendar.name);
-        const dateString = calendarApi.toDisplayDate(currentCalDate, calendar.dateFormat);
+        const dateString = calendarApi.toDisplayDate(
+            currentCalDate,
+            null,
+            calendar.dateFormat
+        );
         const cursor = editor.getCursor();
         editor.replaceRange(dateString, cursor);
         cursor.ch += dateString.length;
         editor.setCursor(cursor);
+    }
+
+    changeDay(
+        calendar: Calendar,
+        store: CalendarStore,
+        changeFunction: (
+            date: CalDate,
+            yearCalculator: YearStoreCache,
+            config: StaticCalendarData
+        ) => CalDate
+    ) {
+        const currentCalDate = calendar.current;
+        const newDay = changeFunction(
+            currentCalDate,
+            store.yearCalculator,
+            get(store.staticStore.staticData)
+        );
+        store.setCurrentDate(newDay);
     }
 }
