@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.0.0](https://github.com/javalent/calendarium/compare/1.5.0...2.0.0) (2025-05-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* Adds Seasons ([#155](https://github.com/javalent/calendarium/issues/155))
+
+### Features
+
+* Adds basic Weather ([#196](https://github.com/javalent/calendarium/issues/196)) ([376fa20](https://github.com/javalent/calendarium/commit/376fa2044a936a68ea3786e54961dd636d337b90))
+* Adds command for quickly inserting current date from default calendar ([5358211](https://github.com/javalent/calendarium/commit/5358211cf96894ffc1adb0753a464dc81d6e3ac5))
+* Adds commands for incrementing/decrementing current date ([ad00796](https://github.com/javalent/calendarium/commit/ad007967c57d5d9059fa77dab2d0d9dccfc468bc))
+* Adds Seasons ([#155](https://github.com/javalent/calendarium/issues/155)) ([fe2994e](https://github.com/javalent/calendarium/commit/fe2994e96def4c0a9350986821a63b86dc98c8e0))
+
+
+### Bug Fixes
+
+* **ci:** wtf ([590ae02](https://github.com/javalent/calendarium/commit/590ae02d0e2b0b7bb3d2f357918831e58337ee30))
+* Fixes event calculation in cases where the event year is equal to the date year and the event month lies between the date and end months (fix [#138](https://github.com/javalent/calendarium/issues/138)) ([a3a552e](https://github.com/javalent/calendarium/commit/a3a552e4b80910ed17718525ed7ca2015426b25d))
+* Improves display of Moons ([044e5ab](https://github.com/javalent/calendarium/commit/044e5ab3debea6d426b84746a89968ff6d4e9d60))
+* scope date style to leaf content ([a8a8611](https://github.com/javalent/calendarium/commit/a8a86114c643bebed3afe66659fbe4cd3a9a4c4b))
+
 ## [2.0.0-beta.3](https://github.com/javalent/calendarium/compare/2.0.0-beta.2...2.0.0-beta.3) (2024-11-25)
 
 
