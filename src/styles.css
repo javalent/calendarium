@@ -31,20 +31,22 @@ settings:
 body {
   --calendarium-span-data-color: var(--text-accent);
 }
-body:not(.calendarium-nix-spans) span[data-date]:not(.hide-data),
-body:not(.calendarium-nix-spans) div[data-date]:not(.hide-data) {
-  font-style: var(--calendarium-span-data-style, italic);
-  font-weight: var(--calendarium-span-data-weight, 500);
-}
-body:not(.calendarium-nix-spans) span[data-date]:not([data-end]):not(.hide-data)::before,
-body:not(.calendarium-nix-spans) div[data-date]:not([data-end]):not(.hide-data)::before {
-  content: "🔖 " attr(data-date) ": " attr(data-name) ". ";
-  color: var(--calendarium-span-data-color, var(--text-accent));
-  font-weight: 500;
-}
-body:not(.calendarium-nix-spans) span[data-date][data-end]:not(.hide-data)::before,
-body:not(.calendarium-nix-spans) div[data-date][data-end]:not(.hide-data)::before {
-  content: "🔖 " attr(data-date) " to " attr(data-end) ": " attr(data-name) ". ";
-  color: var(--calendarium-span-data-color, var(--text-accent));
-  font-weight: 500;
+body:not(.calendarium-nix-spans) .workspace-leaf-content[data-type=markdown] {
+  span[data-date]:not(.hide-data),
+  div[data-date]:not(.hide-data) {
+    font-style: var(--calendarium-span-data-style, italic);
+    font-weight: var(--calendarium-span-data-weight, 500);
+  }
+  span[data-date]:not([data-end]):not(.hide-data)::before,
+  div[data-date]:not([data-end]):not(.hide-data)::before {
+    content: "🔖 " attr(data-date) ": " attr(data-name) ". ";
+    color: var(--calendarium-span-data-color, var(--text-accent));
+    font-weight: 500;
+  }
+  span[data-date][data-end]:not(.hide-data)::before,
+  div[data-date][data-end]:not(.hide-data)::before {
+    content: "🔖 " attr(data-date) " to " attr(data-end) ": " attr(data-name) ". ";
+    color: var(--calendarium-span-data-color, var(--text-accent));
+    font-weight: 500;
+  }
 }
