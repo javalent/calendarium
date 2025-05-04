@@ -116,7 +116,7 @@ export class CalendarAPI {
      * @param {string} dateFormat Optional date format string
      * @returns formatted string
      */
-    toDisplayDate(date: CalDate, end?: CalDate, dateFormat?: string): string {
+    toDisplayDate(date: CalDate, end?: CalDate | null, dateFormat?: string): string {
         return dateString(date, this.#object, end, dateFormat);
     }
 
