@@ -30,7 +30,11 @@
     };
 
     const toggleEra = (node: HTMLElement) => {
-        new ToggleComponent(node).setValue($calendar.hideEra ?? true);
+        new ToggleComponent(node)
+            .setValue(!$calendar.hideEra)
+            .onChange(bool => { 
+                $calendar.hideEra = !bool;
+             });
     };
 </script>
 

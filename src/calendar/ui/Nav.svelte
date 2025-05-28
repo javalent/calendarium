@@ -99,6 +99,7 @@
             item.setTitle(`Show era`)
                 .onClick(async () => {
                     $hideEra = !$hideEra;
+                    $global.eventStore.calendar.hideEra = $hideEra;
                 })
                 .setChecked(!$hideEra);
         });
