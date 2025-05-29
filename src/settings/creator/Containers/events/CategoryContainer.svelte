@@ -51,7 +51,7 @@
         />
     {:else}
         <div class="existing-items">
-            {#each categories as category}
+            {#each categories as category (category.id)}
                 <div class="category">
                     <div use:name={category} />
                     <div class="color">
