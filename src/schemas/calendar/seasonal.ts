@@ -145,6 +145,7 @@ export type UnitSystem = (typeof UnitSystem)[keyof typeof UnitSystem];
 export interface WeatherData {
     enabled: boolean;
     seed: number;
+    freezingPoint: number;
     primaryWindDirection: WindDirection;
     tempUnits: UnitSystem;
     windUnits: UnitSystem;

@@ -10,7 +10,7 @@
     import { getContext } from "svelte";
     const calendar = getContext("store");
     const { weatherStore } = calendar;
-    const { enabled, seed, tempUnitsStore, windUnitsStore } = weatherStore;
+    const { enabled, seed, tempUnitsStore, windUnitsStore, freezingPointStore } = weatherStore;
 
     const newSeed = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon("rotate-ccw");
@@ -50,6 +50,18 @@
             ></div>
         </TextComponent>
 
+        <div class="setting-item">
+            <SettingItem>
+                <div slot="name">Freezing temperature</div>
+                <div slot="desc">Sets the temperature at which rain turns into snow. Default is 0 for Celsius, and 32 for Fahrenheit.</div>
+                <input
+                    slot="control"
+                    class="number"
+                    type="number"
+                    bind:value={$freezingPointStore}
+                />
+            </SettingItem>
+        </div>
         <div class="setting-item">
             <SettingItem>
                 <div slot="name">Temperature units</div>

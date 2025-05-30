@@ -145,6 +145,7 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
     const weatherSeedStore = derived(weatherStore, (data) => data.seed);
     const tempUnitsStore = derived(weatherStore, (data) => data.tempUnits);
     const windUnitsStore = derived(weatherStore, (data) => data.windUnits);
+    const freezingPointStore = derived(weatherStore, (data) => data.freezingPoint);
 
     /** Locations */
     const locationStore = derived(store, (data) => data.locations.locations);
@@ -587,6 +588,14 @@ function createCreatorStore(plugin: Calendarium, existing: Calendar) {
                 set: (val: UnitSystem) =>
                     update((data) => {
                         data.seasonal.weather.tempUnits = val;
+                        return data;
+                    }),
+            },
+            freezingPointStore: {
+                subscribe: freezingPointStore.subscribe,
+                set: (val: number) =>
+                    update((data) => {
+                        data.seasonal.weather.freezingPoint = val;
                         return data;
                     }),
             },

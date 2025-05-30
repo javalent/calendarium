@@ -120,7 +120,8 @@ export class WeatherStore {
             precipitation = Precipitation.pick(
                 random.normal(weatherData.precipitationIntensity * 100, 25) /
                     100,
-                actual
+                actual,
+                data.freezingPoint
             );
 
             clouds = Cloudiness.pick(

@@ -76,8 +76,8 @@ export class Precipitation {
         strength: Precipitation.Strength[0],
         index: 0,
     };
-    static pick(chance: number, temp: number): Precipitation {
-        const options = temp < 0 ? Precipitation.Snow : Precipitation.Rain;
+    static pick(chance: number, temp: number, freezingPoint: number): Precipitation {
+        const options = temp < freezingPoint ? Precipitation.Snow : Precipitation.Rain;
         for (const [index, possibility] of Precipitation.Chance.entries()) {
             if (chance < possibility)
                 return {

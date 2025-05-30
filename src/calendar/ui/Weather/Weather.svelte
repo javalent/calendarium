@@ -13,6 +13,7 @@
     const store = getTypedContext("store");
     $: staticStore = $store.staticStore;
     $: units = derived(staticStore.seasonal, (data) => data.weather.tempUnits);
+    $: freezingPoint = derived(staticStore.weather, (data) => data.freezingPoint);
 
     export let weather: Readable<Weather | null>;
 
@@ -53,9 +54,9 @@
 
         if (weather.precipitation.index > 0) {
             const precip = weather.precipitation.index;
-            if (weather.temperature.actual < 0 && precip <= 3)
+            if (weather.temperature.actual < $freezingPoint && precip <= 3)
                 return WeatherIcon.SNOW;
-            if (weather.temperature.actual < 0) return WeatherIcon.HEAVY_SNOW;
+            if (weather.temperature.actual < $freezingPoint) return WeatherIcon.HEAVY_SNOW;
 
             if (weather.clouds.strength === "Dark storm clouds" && precip >= 5)
                 return WeatherIcon.STORM;
