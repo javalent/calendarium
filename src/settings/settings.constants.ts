@@ -21,6 +21,7 @@ export const DEFAULT_WEATHER_DATA: WeatherData = {
     tempUnits: UnitSystem.IMPERIAL,
     windUnits: UnitSystem.IMPERIAL,
     primaryWindDirection: "E",
+    freezingPoint: 0
 };
 export const DEFAULT_SEASONAL_DATA: SeasonalData = {
     seasons: [],
