@@ -279,6 +279,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
+                freezingPoint: 0,
             },
         },
         locations: {
@@ -804,6 +805,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
+                freezingPoint: 0,
             },
         },
         locations: {
@@ -1406,6 +1408,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
+                freezingPoint: 0,
             },
         },
         locations: {
@@ -3168,6 +3171,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
+                freezingPoint: 0,
             },
         },
         locations: {
@@ -3976,6 +3980,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
+                freezingPoint: 0,
             },
         },
         locations: {
@@ -4343,6 +4348,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
+                freezingPoint: 0,
             },
         },
         locations: {
@@ -5096,6 +5102,7 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
                 tempUnits: UnitSystem.IMPERIAL,
                 windUnits: UnitSystem.METRIC,
                 primaryWindDirection: "E",
+                freezingPoint: 0,
             },
         },
         locations: {

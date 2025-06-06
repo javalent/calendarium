@@ -62,8 +62,8 @@
                     type="number"
                     bind:value={shownFreezingTemperature}
                     on:change={(e) => {
-                            const temp = Number(e?.currentTarget.value ?? 0);
-                            const tempInCelsius = usesFahrenheit ? translateTemperature(temp, "Metric", "Imperial") : temp;
+                            const temperature = Number(e?.currentTarget.value ?? 0);
+                            const tempInCelsius = usesFahrenheit ? translateTemperature(temperature, "Metric", "Imperial") : temperature;
                             $freezingPointStore = tempInCelsius;
                         }
                     }

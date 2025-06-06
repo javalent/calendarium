@@ -159,7 +159,8 @@ export default class Import {
                     seed: 1,
                     tempUnits: UnitSystem.IMPERIAL,
                     windUnits: UnitSystem.METRIC,
-                    primaryWindDirection: "E"
+                    primaryWindDirection: "E",
+                    freezingPoint: 0
                 },
             };
             if ("seasons" in static_data) {
@@ -176,7 +177,8 @@ export default class Import {
                             seed: 1,
                             tempUnits: UnitSystem.IMPERIAL,
                             windUnits: UnitSystem.METRIC,
-                            primaryWindDirection: "E"
+                            primaryWindDirection: "E",
+                            freezingPoint: 0
                         },
                     };
                 }
