@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/javalent/calendarium/compare/2.0.0...2.1.0) (2025-09-27)
+
+
+### Features
+
+* Adds ability to set freezing point of water in weather settings ([ece188f](https://github.com/javalent/calendarium/commit/ece188ffe0f6c36fe6bd18bd9265041291b0f77e))
+
+
+### Bug Fixes
+
+* Fixes issue where deleting an event category would not properly refresh the UI ([e6dc3bd](https://github.com/javalent/calendarium/commit/e6dc3bd483e0db9748c7d1a42c330a788d71a9fa))
+* Fixes issue where eras would not hide properly ([adfe3eb](https://github.com/javalent/calendarium/commit/adfe3eb111f4d5a24b37437a8ed91b6f8b052817))
+
 ## [2.0.0](https://github.com/javalent/calendarium/compare/1.5.0...2.0.0) (2025-05-04)
 
 
