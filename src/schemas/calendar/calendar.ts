@@ -40,6 +40,7 @@ export type StaticCalendarData = {
     padMonths?: number;
     padDays?: number;
     dayDisplayCallback?: string;
+    yearZeroExists: boolean;
 };
 
 /**

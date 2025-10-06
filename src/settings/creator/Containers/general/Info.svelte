@@ -70,6 +70,15 @@
                     !$calendar.static.displayDayNumber;
             }}
         />
+        <!-- TODO: Uncomment when year zero works -->
+        <!-- <ToggleComponent
+            name={"Year zero exists"}
+            desc={"Calendar starts with a year '0'"}
+            value={$calendar.static.yearZeroExists ?? false}
+            on:click={() => {
+                $calendar.static.yearZeroExists = !$calendar.static.yearZeroExists;
+            }}
+        /> -->
         <TextComponent
             name={"Display date format"}
             desc={descFormat()}
