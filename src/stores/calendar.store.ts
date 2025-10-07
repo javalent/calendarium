@@ -395,49 +395,37 @@ export function getEphemeralStore(
                             year: displaying.year - 1 || -1,
                         };
                     case ViewState.Week: {
-                        let next = { ...displaying };
-                        let year = yearCalculator.getYearFromCache(next.year);
-                        let month = year.getMonthFromCache(next.month);
-                        let weekArray = get(month.daysAsWeeks);
-                        let weekIndex = weekArray.findIndex((w) =>
-                            w.find((d) => d && d.number == displaying.day)
+                        const displayedDate = { ...displaying };
+                        const displayYear = yearCalculator.getYearFromCache(
+                            displayedDate.year
                         );
-                        if (weekIndex < 1) {
-                            next = decrementMonth(
-                                next,
+                        const displayMonth = displayYear.getMonthFromCache(
+                            displayedDate.month
+                        );
+                        const displayedWeeks = get(displayMonth.daysAsWeeks);
+                        const displayedWeekIdx = displayedWeeks.findIndex((w) =>
+                            w.find(
+                                (d) => d !== null && d.number === displaying.day
+                            )
+                        );
+
+                        // First week in the month, decrement the month
+                        if (displayedWeekIdx < 1) {
+                            return decrementMonth(
+                                displayedDate,
                                 yearCalculator,
                                 get(staticStore.staticData)
                             );
-                            year = yearCalculator.getYearFromCache(next.year);
-                            month = year.getMonthFromCache(next.month);
-                            weekArray = get(month.daysAsWeeks);
-                            weekIndex = weekArray.length;
-                            let monthLength = get(month.days);
-                            while (
-                                !weekArray[weekIndex - 1].every(
-                                    (d) => d && d.number <= monthLength
-                                )
-                            ) {
-                                weekIndex--;
-                                if (weekIndex < 1) {
-                                    next = decrementMonth(
-                                        next,
-                                        yearCalculator,
-                                        get(staticStore.staticData)
-                                    );
-                                    year = yearCalculator.getYearFromCache(
-                                        next.year
-                                    );
-                                    month = year.getMonthFromCache(next.month);
-                                    weekArray = get(month.daysAsWeeks);
-                                    monthLength = get(month.days);
-                                    weekIndex = weekArray.length;
-                                }
-                            }
-                        }
-                        next.day = weekArray[weekIndex - 1][0]!.number;
+                        } else {
+                            const weekLength = get(
+                                displayMonth.weekdays
+                            ).length;
 
-                        return next;
+                            return {
+                                ...displayedDate,
+                                day: displayedDate.day - weekLength,
+                            };
+                        }
                     }
                     case ViewState.Month:
                         return decrementMonth(
@@ -456,7 +444,7 @@ export function getEphemeralStore(
         getNextMonth: (month: number, year: number) => {
             let yearStore = yearCalculator.getYearFromCache(year);
             const months = get(yearStore.months);
-            if (month == months.length - 1) {
+            if (month === months.length - 1) {
                 const config = get(staticStore.staticData);
                 if (
                     !config.useCustomYears ||
@@ -484,58 +472,38 @@ export function getEphemeralStore(
                             year: displaying.year + 1 || 1,
                         };
                     case ViewState.Week: {
-                        let next = { ...displaying };
-                        let year = yearCalculator.getYearFromCache(next.year);
-                        let month = year.getMonthFromCache(next.month);
-                        let weekArray = get(month.daysAsWeeks);
-                        let weekIndex = weekArray.findIndex((w) =>
-                            w.find((d) => d && d.number == displaying.day)
+                        const displayedDate = { ...displaying };
+                        const displayedYear = yearCalculator.getYearFromCache(
+                            displayedDate.year
                         );
-                        let monthLength = get(month.days);
-                        if (
-                            weekIndex + 1 >= weekArray.length ||
-                            weekArray[weekIndex].some(
-                                (d) => d && d.number >= monthLength
+                        const displayedMonth = displayedYear.getMonthFromCache(
+                            displayedDate.month
+                        );
+                        const displayedWeeks = get(displayedMonth.daysAsWeeks);
+                        const displayedWeekIdx = displayedWeeks.findIndex((w) =>
+                            w.find(
+                                (d) => d !== null && d.number === displaying.day
                             )
-                        ) {
-                            next = incrementMonth(
-                                next,
+                        );
+
+                        // Last week in the month, increment the month
+                        if (displayedWeekIdx >= displayedWeeks.length - 1) {
+                            // Go to the next month
+                            return incrementMonth(
+                                displayedDate,
                                 yearCalculator,
                                 get(staticStore.staticData)
                             );
-                            year = yearCalculator.getYearFromCache(next.year);
-                            month = year.getMonthFromCache(next.month);
-                            weekArray = get(month.daysAsWeeks);
-                            weekIndex =
-                                weekArray.findIndex((w) =>
-                                    w.every((d) => d && d.number > 0)
-                                ) - 1;
-                            monthLength = get(month.days);
+                        } else {
+                            const displayedWeekLength = get(
+                                displayedMonth.weekdays
+                            ).length;
 
-                            while (
-                                weekArray[weekIndex + 1].some(
-                                    (d) => d && d.number > monthLength
-                                )
-                            ) {
-                                weekIndex++;
-                                if (weekIndex + 1 >= weekArray.length) {
-                                    next = incrementMonth(
-                                        next,
-                                        yearCalculator,
-                                        get(staticStore.staticData)
-                                    );
-                                    year = yearCalculator.getYearFromCache(
-                                        next.year
-                                    );
-                                    month = year.getMonthFromCache(next.month);
-                                    weekArray = get(month.daysAsWeeks);
-                                    monthLength = get(month.days);
-                                    weekIndex = 0;
-                                }
-                            }
+                            return {
+                                ...displayedDate,
+                                day: displayedDate.day + displayedWeekLength,
+                            };
                         }
-                        next.day = weekArray[weekIndex + 1][0]!.number;
-                        return next;
                     }
                     case ViewState.Month:
                         return incrementMonth(
@@ -626,83 +594,141 @@ function createStaticStore(store: Writable<Calendar>) {
     };
 }
 
+/**
+ * Increments a date to the next month. If the date's current month is the last in a year,
+ * the new date will be the first day of the new year.
+ * @param date the date to increment
+ * @param yearCalculator the YearStore
+ * @param config the calendar's config
+ * @returns a date with an updated month
+ */
 function incrementMonth(
     date: CalDate,
     yearCalculator: YearStoreCache,
     config: StaticCalendarData
 ) {
-    const next = { ...date };
+    let result = { ...date };
     const year = yearCalculator.getYearFromCache(date.year);
     const months = get(year.months);
-    if (next.month == months.length - 1) {
+
+    // Current month is the last
+    if (date.month === months.length - 1) {
         if (
             !config.useCustomYears ||
-            next.year < (config.years?.length || 0) - 1
+            date.year < (config.years?.length || 0) - 1
         ) {
-            next.month = 0;
-            next.year = next.year + 1 || 1;
+            result.month = 0;
+
+            result.year = date.year + 1;
+
+            if (result.year === 0) {
+                result.year = 1;
+            }
         }
     } else {
-        next.month++;
+        result.month++;
     }
-    return next;
+
+    // Always should go to the first day of the new month
+    result.day = 1;
+
+    return result;
 }
+
+/**
+ * Decrements a date to the next month.
+ * If the date's current month is the first in a year,
+ * the new date will be the last day of the new year.
+ * @param date the date to increment
+ * @param yearCalculator the YearStore
+ * @param config the calendar's config
+ * @returns a date with an updated month
+ */
 function decrementMonth(
-    date: CalDate,
+    date: Readonly<CalDate>,
     yearCalculator: YearStoreCache,
     config: StaticCalendarData
 ) {
-    const next = { ...date };
-    if (next.month == 0) {
-        if (!config.useCustomYears || next.year - 1 > -1) {
-            next.year = config.useCustomYears
-                ? next.year - 1
-                : next.year - 1 || -1;
+    let result = { ...date };
+    const year = yearCalculator.getYearFromCache(date.year);
 
-            const year = yearCalculator.getYearFromCache(next.year);
-            const months = get(year.months);
-            next.month = months.length - 1;
+    // Current month is the first
+    if (date.month === 0) {
+        if (!config.useCustomYears || date.year - 1 > -1) {
+            result.year = date.year - 1;
         }
+
+        if (result.year === 0) {
+            result.year = -1;
+        }
+
+        const pYearStore = yearCalculator.getYearFromCache(result.year);
+        const availMonths = get(pYearStore.months);
+        // Set to the last available month of the new year
+        result.month = availMonths.length - 1;
     } else {
-        next.month--;
+        result.month--;
     }
-    return next;
+
+    // Set the day to the last day of the new month
+    const monthStore = year.getMonthFromCache(result.month);
+    result.day = monthStore.month.length;
+
+    return result;
 }
 
+/**
+ * Increments a day from a given date.
+ * If the date is the last in a given month,
+ * the month will be incremented as wel
+ * @param date
+ * @param yearCalculator
+ * @param config
+ * @returns
+ */
 export function incrementDay(
-    date: CalDate,
+    date: Readonly<CalDate>,
     yearCalculator: YearStoreCache,
     config: StaticCalendarData
 ) {
-    let next = { ...date };
-    const days = get(
-        yearCalculator.getYearFromCache(next.year).getMonthFromCache(next.month)
+    const currMonthDays = get(
+        yearCalculator.getYearFromCache(date.year).getMonthFromCache(date.month)
             .days
     );
-    if (next.day + 1 > days) {
-        next = incrementMonth(date, yearCalculator, config);
-        next.day = 1;
+
+    if (date.day + 1 > currMonthDays) {
+        return incrementMonth(date, yearCalculator, config);
     } else {
-        next.day++;
+        return {
+            ...date,
+            day: date.day + 1,
+        };
     }
-    return next;
 }
+
+/**
+ * Decrements a day from a given date.
+ * If the date is the first in a given month,
+ * the month will be decremented as well.
+ * @param date the date to decrement
+ * @param yearCalculator the year calculator
+ * @param config the calendar's config
+ * @returns the previous day from the provided date
+ */
 export function decrementDay(
-    date: CalDate,
+    date: Readonly<CalDate>,
     yearCalculator: YearStoreCache,
     config: StaticCalendarData
 ) {
-    let next = { ...date };
+    let result = { ...date };
 
-    if (next.day - 1 <= 0) {
-        next = decrementMonth(date, yearCalculator, config);
-        next.day = get(
-            yearCalculator
-                .getYearFromCache(next.year)
-                .getMonthFromCache(next.month).days
-        );
+    if (result.day - 1 <= 0) {
+        // Decrement month
+        return decrementMonth(date, yearCalculator, config);
     } else {
-        next.day--;
+        return {
+            ...date,
+            day: result.day - 1,
+        };
     }
-    return next;
 }
