@@ -59,11 +59,11 @@ export class YearStore {
         }
         return months.filter(
             (m) =>
-                !m.interval || (this.year - (m.offset ?? 0)) % m.interval == 0
+                m.interval == 1 || (this.year - (m.offset ?? 0)) % m.interval == 0
         );
     });
     daysBefore = derived(
-        [this.months, this.staticStore.leapDays],
+        [this.staticStore.months, this.staticStore.leapDays],
         ([months, leapDays]) => {
             return daysFromYearOne(this.year, months, leapDays);
         }
