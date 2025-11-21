@@ -5305,4 +5305,472 @@ export const PRESET_CALENDARS: PresetCalendar[] = [
             },
         ],
     },
+    {
+      name: "Naloren Calendar",
+      description: "Calendar established by the Naloren Empire and wildly known thanks to their world-spanning trade associations",
+
+      path: [],
+      supportInlineEvents: false,
+      inlineEventTag: "#inline-events",
+      showIntercalarySeparately: false,
+      static: {
+        incrementDay: false,
+        firstWeekDay: 0,
+        overflow: true,
+        weekdays: [
+          {
+            type: "day",
+            name: "Sunsday",
+            id: "ID_7af94bda1aab"
+          },
+          {
+            type: "day",
+            name: "Moonday",
+            id: "ID_2ada88ea4959"
+          },
+          {
+            type: "day",
+            name: "Godsday",
+            id: "ID_f869b859c8c9"
+          },
+          {
+            type: "day",
+            name: "Midweek",
+            id: "ID_1b991a4b8909"
+          },
+          {
+            type: "day",
+            name: "Thundersday",
+            id: "ID_5aba8afb9908"
+          },
+          {
+            type: "day",
+            name: "Freyasday",
+            id: "ID_1a2bc9ca4969"
+          },
+          {
+            type: "day",
+            name: "Shabbat",
+            id: "ID_283aeb9a9ab9"
+          }
+        ],
+        months: [
+          {
+            type: "month",
+            name: "Firstmonth",
+            length: 30,
+            id: "ID_eae8a818c8d9",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Secondmonth",
+            length: 29,
+            id: "ID_7a69aaaafb79",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Thirdmonth",
+            length: 30,
+            id: "ID_49ca3b4858aa",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Fourthmonth",
+            length: 29,
+            id: "ID_a93a98090af8",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Fifthmonth",
+            length: 30,
+            id: "ID_4b4a9a59585b",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Sixtmonth",
+            length: 29,
+            id: "ID_7b49e888b96b",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Seventhmonth",
+            length: 30,
+            id: "ID_4a492b3ab919",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Eightmonth",
+            length: 29,
+            id: "ID_5a9a9afa3989",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Ninthmonth",
+            length: 30,
+            id: "ID_79db9aa87938",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Tenthmonth",
+            length: 29,
+            id: "ID_2a4b9a7bda09",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Eleventhmonth",
+            length: 30,
+            id: "ID_5a790a4be829",
+            interval: 1,
+            offset: 0
+          },
+          {
+            type: "month",
+            name: "Aleph",
+            length: 30,
+            id: "ID_1b2b8a4b8918",
+            interval: 19,
+            offset: 3
+          },
+          {
+            type: "month",
+            name: "Aleph",
+            length: 30,
+            id: "ID_1bb8cb296beb",
+            interval: 19,
+            offset: 6
+          },
+          {
+            type: "month",
+            name: "Aleph",
+            length: 30,
+            id: "ID_9bf849c9ea98",
+            interval: 19,
+            offset: 8
+          },
+          {
+            type: "month",
+            name: "Aleph",
+            length: 30,
+            id: "ID_8b1a888baaf8",
+            interval: 19,
+            offset: 11
+          },
+          {
+            type: "month",
+            name: "Aleph",
+            length: 30,
+            id: "ID_791ac8085aca",
+            interval: 19,
+            offset: 14
+          },
+          {
+            type: "month",
+            name: "Aleph",
+            length: 30,
+            id: "ID_dbdb08790a6a",
+            interval: 19,
+            offset: 17
+          },
+          {
+            type: "month",
+            name: "Aleph",
+            length: 30,
+            id: "ID_4afb697b6a6b",
+            interval: 19,
+            offset: 19
+          },
+          {
+            type: "month",
+            name: "Twelvethmonth",
+            length: 29,
+            id: "ID_2b79d9398a4a",
+            interval: 1,
+            offset: 0
+          }
+        ],
+        moons: [
+          {
+            name: "Luna",
+            cycle: 29.531,
+            offset: 0,
+            faceColor: "#fff",
+            shadowColor: "#000",
+            id: "ID_e9fa7afb092a"
+          }
+        ],
+        displayMoons: true,
+        displayDayNumber: false,
+        leapDays: [
+          {
+            id: "ID_2a980a1b8ad8",
+            name: "Leap Day",
+            interval: [
+              {
+                interval: 5,
+                exclusive: false,
+                ignore: false
+              },
+              {
+                interval: 1000,
+                exclusive: true,
+                ignore: false
+              },
+              {
+                interval: 5000,
+                exclusive: false,
+                ignore: false
+              }
+            ],
+            intercalary: false,
+            timespan: 7,
+            offset: 0,
+            type: "leapday"
+          }
+        ],
+        eras: [
+          {
+            id: "ID_1908490bbb7b",
+            type: "era",
+            name: "Era of Legends",
+            description: "",
+            format: "{{era_name}}",
+            endsYear: false,
+            isEvent: false,
+            category: null,
+            isStartingEra: true,
+            date: {
+              year: 100,
+              month: 5,
+              day: 1
+            }
+          },
+          {
+            id: "ID_08995a29ab89",
+            type: "era",
+            name: "Era of Kings",
+            description: "",
+            format: "{{era_nth_year}} year of the {{era_name}}",
+            endsYear: false,
+            isEvent: false,
+            category: "",
+            isStartingEra: false,
+            date: {
+              year: 1,
+              month: 0,
+              day: 1
+            },
+            end: {
+              year: 231,
+              month: 0,
+              day: 1
+            }
+          },
+          {
+            id: "ID_db592b592a79",
+            type: "era",
+            name: "Era of the Republic",
+            description: "",
+            format: "{{era_nth_year}} year of the Republic",
+            endsYear: false,
+            isEvent: false,
+            category: null,
+            isStartingEra: false,
+            date: {
+              day: 1,
+              month: 0,
+              year: 231
+            },
+            end: {
+              day: 11,
+              month: 9,
+              year: 479
+            }
+          },
+          {
+            id: "ID_7a0a48489a1a",
+            type: "era",
+            name: "Era of the Empire",
+            description: "",
+            format: "{{era_nth_year}} year of the Empire",
+            endsYear: false,
+            isEvent: false,
+            category: null,
+            isStartingEra: false,
+            date: {
+              day: 19,
+              month: 8,
+              year: 538
+            }
+          }
+        ],
+        padMonths: 2,
+        padDays: 2
+      },
+      seasonal: {
+        seasons: [
+          {
+            id: "ID_cb0b4909b829",
+            name: "Spring",
+            color: "#a3c566",
+            type: "Periodic",
+            kind: "None",
+            duration: 91.31065789,
+            peak: 0,
+            weatherOffset: 56,
+            weatherPeak: 5.6000000000000005
+          },
+          {
+            id: "ID_79b8ba09ca6a",
+            name: "Summer",
+            color: "#fde2b4",
+            type: "Periodic",
+            kind: "None",
+            duration: 91.31065789,
+            peak: 0,
+            weatherOffset: 56,
+            weatherPeak: 5.6000000000000005
+          },
+          {
+            id: "ID_c8091aaa4a0b",
+            name: "Autumn",
+            color: "#de8c3c",
+            type: "Periodic",
+            kind: "None",
+            duration: 91.31065789,
+            peak: 0,
+            weatherOffset: 56,
+            weatherPeak: 5.6000000000000005
+          },
+          {
+            id: "ID_68dab80b4889",
+            name: "Winter",
+            color: "#8b8989",
+            type: "Periodic",
+            kind: "None",
+            duration: 91.31065789,
+            peak: 0,
+            weatherOffset: 56,
+            weatherPeak: 5.6000000000000005
+          }
+        ],
+        offset: 0,
+        type: "Periodic",
+        displayColors: true,
+        interpolateColors: true,
+        weather: {
+          enabled: true,
+          seed: 1,
+          tempUnits: UnitSystem.METRIC,
+          windUnits: UnitSystem.METRIC,
+          primaryWindDirection: "E",
+          freezingPoint: 0
+        }
+      },
+      locations: {
+        locations: [],
+      },
+      current: {
+        day: null,
+        month: null,
+        year: null
+      },
+      events: [
+        {
+          name: "Spring Equinox",
+          description: "Spring Equinox occurs when the sun crosses the equator from south to north, marked by both day and night being the same length.",
+          date: {
+            year: null,
+            month: null,
+            day: null
+          },
+          id: "ID_db68dbfbca8b",
+          note: null,
+          category: "ID_c96848991808",
+          sort: {
+            timestamp: 5E-324,
+            order: ""
+          },
+          type: "Undated"
+        },
+        {
+          name: "Summer Solstice",
+          description: "The summer solstice marks the longest day and shortest night of the year, when the sun is at its highest arc in the sky.",
+          date: {
+            year: null,
+            month: null,
+            day: null
+          },
+          id: "ID_09692b4aea7b",
+          note: null,
+          category: "ID_c96848991808",
+          sort: {
+            timestamp: 5E-324,
+            order: ""
+          },
+          type: "Undated"
+        },
+        {
+          name: "Autumn Equinox",
+          description: "Spring Equinox occurs when the sun crosses the equator from north to south, marked by both day and night being the same length.",
+          date: {
+            year: null,
+            month: null,
+            day: null
+          },
+          id: "ID_98fb9aaaea28",
+          note: null,
+          category: "ID_c96848991808",
+          sort: {
+            timestamp: 5E-324,
+            order: ""
+          },
+          type: "Undated"
+        },
+        {
+          name: "Winter Solstice",
+          description: "The summer solstice marks the shortest day and longest night of the year, when the sun is at its lowest arc in the sky.",
+          date: {
+            year: null,
+            month: null,
+            day: null
+          },
+          id: "ID_1999580aab9a",
+          note: null,
+          category: "ID_c96848991808",
+          sort: {
+            timestamp: 5E-324,
+            order: ""
+          },
+          type: "Undated"
+        }
+      ],
+      categories: [
+        {
+          id: "ID_c96848991808",
+          color: "#6ae868",
+          name: "Natural Events"
+        }
+      ],
+      id: null
+    }
 ];

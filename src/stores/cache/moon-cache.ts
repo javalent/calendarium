@@ -32,7 +32,7 @@ class DayMoonCache extends DayCache<MoonState> {
         const daysBefore = this.yearCalculator.daysBefore(this.getDate());
         for (let moon of moons ?? []) {
             const { offset, cycle } = moon;
-            const granularity = 24;
+            const granularity = 40;
 
             let data = (daysBefore - offset) / cycle;
             let position = data - Math.floor(data);

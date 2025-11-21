@@ -574,15 +574,20 @@ export function daysFromYearOne(
     leapDays: LeapDay[],
     includeIntercalary: boolean = false
 ) {
-    if (original == 1) return 0;
     let year = original >= 1 ? original : original + 1;
+    if (year == 1) return 0;
+
+    let actual_months = months.filter((m) => includeIntercalary || m.type == "month")
+
+    let days = 0
+    for (let i = 1; i <= Math.abs(year - 1); i++) {
+        days += actual_months
+            .filter((m) => (m.interval == 1) || (i - (m.offset ?? 0)) % m.interval == 0)
+            .reduce((a, b) => a + b.length, 0)
+    }
 
     return (
-        Math.abs(year - 1) *
-            months
-                .filter((m) => includeIntercalary || m.type == "month")
-                .reduce((a, b) => a + b.length, 0) +
-        leapDaysBeforeYear(original, leapDays)
+        days + leapDaysBeforeYear(original, leapDays)
     );
 }
 

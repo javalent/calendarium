@@ -370,12 +370,9 @@ export function getEphemeralStore(
         getPreviousMonth: (month: number, year: number) => {
             let yearStore = yearCalculator.getYearFromCache(year);
             if (month == 0) {
-                const config = get(staticStore.staticConfiguration);
-                if (config.useCustomYears && year > 0) {
-                    year = year - 1 || -1;
-                    yearStore = yearCalculator.getYearFromCache(year);
-                    month = get(yearStore.months).length - 1;
-                }
+                year = year - 1 || -1;
+                yearStore = yearCalculator.getYearFromCache(year);
+                month = get(yearStore.months).length - 1;
             } else {
                 month = month - 1;
             }
