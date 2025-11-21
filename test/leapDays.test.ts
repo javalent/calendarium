@@ -15,6 +15,9 @@ const GOLARION: Calendar = PRESET_CALENDARS.find(
 const HARPTOS: Calendar = PRESET_CALENDARS.find(
     (p) => p.name == "Calendar of Harptos"
 );
+const NALOREN: Calendar = PRESET_CALENDARS.find(
+    (p) => p.name == "Naloren Calendar"
+);
 
 test("Leap Days (Gregorian)", () => {
     expect(leapDaysBeforeYear(1, GREGORIAN.static.leapDays)).toBe(0);
@@ -44,4 +47,5 @@ test("Effective days in year", () => {
     expect(getEffectiveYearLength(GREGORIAN)).toBe(365.2425);
     expect(getEffectiveYearLength(HARPTOS)).toBe(365.25);
     expect(getEffectiveYearLength(GOLARION)).toBe(365.125);
+    expect(getEffectiveYearLength(NALOREN)).toBe(365.2518315789473);
 });
