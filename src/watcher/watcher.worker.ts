@@ -292,28 +292,40 @@ class Parser {
         file: { path: string; basename: string }
     ): CalEventHelper | null {
         if (!frontmatter?.["fc-ignore"]) {
-            let name = frontmatter?.["fc-calendar"];
-            if (!name || !name.length) {
-                // did we get here because a calendar looks for events in this path?
+            const fcCalendarName = frontmatter?.["fc-calendar"];
+
+            // If calender is defined with frontmatter, find it
+            if (fcCalendarName && fcCalendarName.length > 0) {
+                const trimmed = fcCalendarName?.trim().toLowerCase();
+                return this.getHelperByName(trimmed);
+            }
+
+            let calendarId = "";
+
+            // Check if we are here because a "Event paths" applies to this file
                 const match = this.paths.find((p2n) =>
                     file.path.startsWith(p2n[0])
                 );
+
                 if (match) {
-                    name = match[1];
+                const matchedId = match[1];
+
+                // Event paths stores the default calendar as DEFAULT, not with its ID
+                if (matchedId === "DEFAULT") {
+                    calendarId = this.defaultCalendar;
+                } else {
+                    calendarId = match[1];
                 }
-            }
-            if (!name || !name.length) {
-                name = this.defaultCalendar;
+            } else {
             }
 
-            name = name?.trim().toLowerCase();
-            if (name) {
-                return this.getHelperByName(name);
-            } else if (this.debug) {
-                console.info(
-                    `Skipping file ${file.basename} (no calendar; ${name})`
-                );
+            // If no calendarId is found, use default calendar
+            if (calendarId.length <= 0) {
+                calendarId = this.defaultCalendar;
             }
+
+            // TODO: Probably just get the calendar by its id at this point.
+            return this.getHelperByName(calendarId);
         }
         return null;
     }
