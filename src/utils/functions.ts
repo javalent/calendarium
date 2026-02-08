@@ -36,7 +36,7 @@ export function getIntervalDescription(leapday: LeapDay) {
     if (!leapday.interval?.length) return "";
     const intervals = leapday.interval.sort(
         (a, b) =>
-            (a.interval ?? Number.MIN_VALUE) - (b.interval ?? Number.MIN_VALUE)
+            (a.interval ?? Number.MIN_VALUE) - (b.interval ?? Number.MIN_VALUE),
     );
     let description = [];
     for (let interval of intervals) {
@@ -60,8 +60,8 @@ export function getIntervalDescription(leapday: LeapDay) {
             } else {
                 description.push(
                     `${also ? "also " : ""}every ${ordinal(
-                        length
-                    )} year${offset}`
+                        length,
+                    )} year${offset}`,
                 );
             }
         }
@@ -101,7 +101,7 @@ function getRecurringYear(year: FullCalEventDateBit): string {
 
 function getRecurringMonth(
     month: FullCalEventDateBit,
-    months: Month[]
+    months: Month[],
 ): string {
     if (!Array.isArray(month)) {
         return `${months[month].name}`;
@@ -146,9 +146,9 @@ export function eventDateString(event: CalEvent, calendar: Calendar) {
                 }
             }
             let recurring: string = `${getRecurringDay(
-                day
+                day,
             )} of ${getRecurringMonth(month, months)}, ${getRecurringYear(
-                year
+                year,
             )}`;
 
             return recurring[0].toUpperCase() + recurring.slice(1);
@@ -170,7 +170,7 @@ export function dateString(
     date: OneTimeCalEventDate,
     calendar: Calendar,
     end?: OneTimeCalEventDate | null,
-    dateFormat?: string
+    dateFormat?: string,
 ) {
     if (!date || date.day == undefined) {
         return "";
@@ -214,7 +214,7 @@ export function dateString(
                 calendar,
                 dateFormat,
                 startY,
-                date as CalDate
+                date as CalDate,
             );
             const endStr = format(calendar, dateFormat, endY, end as CalDate);
             return `${startStr} — ${endStr}`;
@@ -252,7 +252,7 @@ function format(
     calendar: Calendar,
     dateFormat: string,
     year: string | number,
-    date: CalDate
+    date: CalDate,
 ): string {
     let format = dateFormat
         .replace(/[Yy]+/g, "🂡")
@@ -275,7 +275,7 @@ function format(
                 .replace(/[ -]🂦|🂧/g, ""); // day in the middle or end
         } else {
             const leapday = calendar.static.leapDays.find(
-                (l: LeapDay) => l.timespan == date.month
+                (l: LeapDay) => l.timespan == date.month,
             );
             if (leapday && testLeapDay(leapday, date.year)) {
                 // It's a well-known intercalary leap day! Huzzah!
@@ -284,7 +284,7 @@ function format(
                     .replace("🂢", leapday.name ?? "") // MMMM
                     .replace(
                         "🂣",
-                        shorten(leapday.short ?? "", leapday.name ?? "")
+                        shorten(leapday.short ?? "", leapday.name ?? ""),
                     ) // MMM
                     .replace(/^🂦|🂧[ -]/g, "") // day at the beginning
                     .replace(/[ -]🂦|🂧/g, ""); // day in the middle or end
@@ -309,27 +309,27 @@ function shorten(short: string, name: string) {
 
 export function toMonthString(
     month: Nullable<number>,
-    calendar: Calendar
+    calendar: Calendar,
 ): string {
-    return month == null ? "*" : calendar.static.months[month]?.name ?? "*";
+    return month == null ? "*" : (calendar.static.months[month]?.name ?? "*");
 }
 
 export function toShortMonthString(
     month: Nullable<number>,
-    calendar: Calendar
+    calendar: Calendar,
 ): string {
     return month == null
         ? "*"
         : shorten(
               calendar.static.months[month].short ?? "",
-              calendar.static.months[month].name ?? ""
+              calendar.static.months[month].name ?? "",
           );
 }
 
 export function toPaddedString(
     data: [DateBit, DateBit] | DateBit,
     calendar: Calendar,
-    field: "month" | "day" | "year"
+    field: "month" | "day" | "year",
 ): string {
     const padding =
         field == "month" ? calendar.static.padMonths : calendar.static.padDays;
@@ -387,7 +387,7 @@ export function testLeapDay(leapday: LeapDay, year: number) {
         .sort(
             (a, b) =>
                 (a.interval ?? Number.MIN_VALUE) -
-                (b.interval ?? Number.MIN_VALUE)
+                (b.interval ?? Number.MIN_VALUE),
         )
         .some(({ interval, exclusive }, index, array) => {
             if (interval == undefined) return false;
@@ -415,7 +415,7 @@ function resolve(number: FullCalEventDateBit | null): number {
 }
 export function compare(
     a: FullCalEventDateBit | null,
-    b: FullCalEventDateBit | null
+    b: FullCalEventDateBit | null,
 ) {
     return resolve(a) != resolve(b);
 }
@@ -441,7 +441,7 @@ export function compareEvents(a: EventLike, b: EventLike) {
 }
 export function compareDates(
     a: CalEventDate | UndatedCalDate,
-    b: CalEventDate | UndatedCalDate
+    b: CalEventDate | UndatedCalDate,
 ) {
     if (compare(a.year, b.year)) {
         return resolve(a.year) - resolve(b.year);
@@ -515,14 +515,14 @@ export function leapDaysBeforeYear(original: number, leapDays: LeapDay[]) {
                 .filter((c) => !c.exclusive)
                 .map((c) =>
                     Math.floor(
-                        (yearPrior + (c.ignore ? 0 : offset)) / c.interval
-                    )
+                        (yearPrior + (c.ignore ? 0 : offset)) / c.interval,
+                    ),
                 )
                 .reduce((a, b) => a + b, 0);
             /** Calculate how many days match this rule. */
             const calc = Math.floor(
                 (yearPrior + (condition.ignore ? 0 : offset)) /
-                    condition.interval
+                    condition.interval,
             );
             if (condition.exclusive) {
                 /** If the rule is exlusive, subtract the result from the total, then add in the rest. */
@@ -546,7 +546,7 @@ export function getFirstDayOfYear(
     leapDays: LeapDay[],
     overflow: boolean,
     firstWeekDay: number,
-    offset?: number
+    offset?: number,
 ) {
     if (!overflow) return 0;
     if (year === 1) return firstWeekDay;
@@ -559,7 +559,7 @@ export function getFirstDayOfYear(
             ((daysFromYearOne(year, months, leapDays) % weekdays.length) +
                 mult * firstWeekDay +
                 mult * (offset ?? 0)),
-        weekdays.length
+        weekdays.length,
     );
 }
 
@@ -572,7 +572,7 @@ export function daysFromYearOne(
     original: number,
     months: Month[],
     leapDays: LeapDay[],
-    includeIntercalary: boolean = false
+    includeIntercalary: boolean = false,
 ) {
     if (original == 1) return 0;
     let year = original >= 1 ? original : original + 1;
@@ -593,8 +593,11 @@ export function getWeatherSeed() {
 export function translateTemperature(
     temp: number,
     to: UnitSystem,
-    from: UnitSystem = UnitSystem.METRIC
+    from: UnitSystem = UnitSystem.METRIC,
 ) {
+    if (!Number.isFinite(temp)) {
+        return 0;
+    }
     if (from === UnitSystem.IMPERIAL && to === UnitSystem.METRIC) {
         return Number((((temp - 32) * 5) / 9).toPrecision(2));
     }
@@ -607,7 +610,7 @@ export function translateTemperature(
 export function stringifyTemperature(
     temp: number,
     to: UnitSystem,
-    from: UnitSystem = UnitSystem.METRIC
+    from: UnitSystem = UnitSystem.METRIC,
 ) {
     const temperature = translateTemperature(temp, to, from);
     return `${temperature}°`;
