@@ -296,33 +296,59 @@ export class Watcher extends Component {
         return false;
     }
     start(calendar?: Calendar) {
-        if (!SettingsService.getData().autoParse) return;
+        if (!SettingsService.getData().autoParse) {
+            console.debug("watcher.start: autoParse disabled, skipping.");
+            return;
+        }
 
         const calendars = calendar
             ? [calendar]
             : SettingsService.getCalendars();
+
         if (!calendars.length) return;
 
         const folders = [];
+
         for (const [path] of SettingsService.getData().paths) {
             const folder = this.vault.getAbstractFileByPath(path);
-            if (!folder || !(folder instanceof TFolder)) return;
+            if (!folder || !(folder instanceof TFolder)) continue;
             folders.push(folder);
         }
-        if (!folders.length) return;
 
-        if (SettingsService.getData().debug) {
+        const { debug: isDebugMode } = SettingsService.getData();
+
+        if (isDebugMode) {
             if (calendar) {
                 console.info(`Starting rescan for ${calendar.name}`);
             } else {
                 console.info(
-                    `Starting rescan for ${calendars.length} calendars`
+                    `Starting rescan for ${calendars.length} calendars`,
                 );
-                console.info(`Looking at ${folders.length} paths`);
             }
         }
 
+        if (folders.length > 0) {
+            if (isDebugMode) {
+                console.info(
+                    `Event paths found. Scanning ${folders.length} paths.`,
+                );
+        }
+
         this.parseFiles(...folders);
+        } else {
+            if (isDebugMode) {
+                console.info(
+                    "No event paths found. Defaulting to full-vault parsing.",
+                );
+            }
+
+            const allFileNames = this.vault
+                .getAllLoadedFiles()
+                .filter((f) => f instanceof TFile && f.extension == "md")
+                .map((f) => f.path);
+
+            this.startParsing(allFileNames);
+        }
     }
     getFiles(abstract: TAbstractFile): string[] {
         let files = [];
