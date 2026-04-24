@@ -43,14 +43,38 @@
 
         modal.onSelect(async (value) => {
             if (value.item) {
-                $event.note = value.item.path;
                 text.setValue(value.item.basename);
+
+                if (shouldReplaceNameFromNote($event)) {
+                    $event.name = value.item.basename;
+                }
+
+                $event.note = value.item.path;
                 tryParse(value.item);
             }
         });
     };
+    /**
+     * Should an event's name be replaced with the name of the linked note?
+     * 
+     * If any of the following are true:
+     * - There is no existing event name
+     * - The event name is the same as the name of the previously linked file
+     */
+    const shouldReplaceNameFromNote = function(event: CalEvent) {
+        if (!event.name) {
+            return true;
+        }
+        if (event.note) {
+            // note is a string path, load the file
+            const file = plugin.app.vault.getFileByPath(event.note)
+            if (file && file.basename === event.name) {
+                return true;
+            }
+        }
+        return false;
+    }
     const tryParse = async (file: TFile) => {
-        $event.name = file.basename;
         const cache = plugin.app.metadataCache.getFileCache(file);
 
         const { frontmatter } = cache ?? {};
