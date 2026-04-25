@@ -13,7 +13,7 @@
         "noImplicitAny": true,
         "moduleResolution": "node",
         "importHelpers": true,
-        "types": ["svelte", "node", "jest"],
+        "types": ["svelte", "node", "vitest"],
         "lib": ["dom", "esnext", "scripthost", "es2015"]
     },
     "include": ["src/**/*", "tests/**/*", "src/global.d.ts"]
