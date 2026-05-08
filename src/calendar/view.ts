@@ -95,6 +95,9 @@ export default class CalendariumView extends ItemView implements ViewParent {
             this.store = this.plugin.getStore(state.calendar);
             this.calendar = state.calendar;
             this.id = state.id;
+            if (state.child) {
+                this.child = state.child;
+            }
             if (this.store) {
                 this.store
                     .getEphemeralStore(this.id)
