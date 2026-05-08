@@ -1,7 +1,8 @@
-import type { CalDate, CalEvent, Calendar } from "src/@types";
+import type { CalDate, CalEvent, CalEventDate, Calendar } from "src/@types";
 import { EventCache } from "./cache/event-cache";
 import { type Writable, derived, get, writable } from "svelte/store";
 import { EventType } from "src/events/event.types";
+import { Notice, type TAbstractFile, type TFile } from "obsidian";
 
 export class EventStore {
     /**
@@ -124,5 +125,37 @@ export class EventStore {
     }
     public isRemovable(eventId: string) {
         return !this.isFileEvent(eventId);
+    }
+
+    public updateLinksToFile(oldPath: string, file: TFile) {
+        let update_count = 0;
+        this.#events.update((SAVED_EVENTS) => {
+            for (const tuple of SAVED_EVENTS) {
+                const id = tuple[0];
+                const event = tuple[1];
+
+                if (event.note != oldPath) {
+                    continue;
+                }
+                
+                event.note = file.path;
+                update_count++;
+                
+                if (event.type != EventType.Undated) {
+                    this.#eventCache.invalidate(event.date);
+                }
+            }
+            let notice_str:string;
+            if (update_count) {
+                if (update_count == 1) {
+                    notice_str = 'Updated 1 calendar event';
+                } else {
+                    notice_str = 'Updated ' + update_count + 'calendar events';
+                }
+                new Notice(notice_str);
+            }
+            return SAVED_EVENTS
+        });
+        return update_count;
     }
 }

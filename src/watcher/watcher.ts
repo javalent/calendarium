@@ -115,10 +115,15 @@ export class Watcher extends Component {
             this.vault.on("rename", async (abstractFile, oldPath) => {
                 if (!SettingsService.getCalendars().length) return;
                 if (!(abstractFile instanceof TFile)) return;
+
+                let updated = false;
                 for (const calendar of SettingsService.getCalendars()) {
                     const store = this.plugin.getStoreByCalendar(calendar);
                     if (!store) continue;
                     store.eventStore.removeEventsFromFile(oldPath);
+                    if (store.eventStore.updateLinksToFile(oldPath, abstractFile)) {
+                        updated = true;
+                    }
                 }
                 this.worker.postMessage<CalendarsMessage>({
                     type: "calendars",
@@ -127,6 +132,8 @@ export class Watcher extends Component {
                 if (this.pathContainsFile(abstractFile.path)) {
                     this.parseFiles(abstractFile);
                 }
+
+                if (updated) await SettingsService.save({ calendar: true });
             })
         );
         /** A file has been deleted and should be checked for events to unlink. */
