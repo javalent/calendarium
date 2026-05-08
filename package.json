@@ -54,7 +54,7 @@
         "xmldom": "^0.6.0"
     },
     "dependencies": {
-        "pure-rand": "^6.1.0",
+        "pure-rand": "7.0",
         "randomcolor": "^0.6.2"
     }
 }
