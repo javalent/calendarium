@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TextComponent, type App, TFile } from "obsidian";
+    import { TextComponent, type App, TFile, TAbstractFile } from "obsidian";
     import { FileInputSuggest } from "@javalent/utilities";
     import { CalEventHelper } from "src/events/event.helper";
     import { EventType } from "src/events/event.types";
@@ -50,10 +50,17 @@
                 }
 
                 $event.note = value.item.path;
+                plugin.app.vault.on('rename', updateLink)
                 tryParse(value.item);
             }
         });
     };
+
+    const updateLink = function(file: TAbstractFile, oldPath: string) {
+        console.log("Link updated");
+        console.log(file);
+        console.log(oldPath);
+    }
     /**
      * Should an event's name be replaced with the name of the linked note?
      * 
