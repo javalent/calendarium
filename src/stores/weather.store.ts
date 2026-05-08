@@ -9,8 +9,6 @@ import {
 } from "src/schemas/calendar/seasonal";
 import { derived, get, readable, type Readable } from "svelte/store";
 import {
-    uniformIntDistribution,
-    unsafeUniformIntDistribution,
     xoroshiro128plus,
     type RandomGenerator,
 } from "pure-rand";
