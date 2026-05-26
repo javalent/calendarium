@@ -91,9 +91,10 @@
                 const func = new funct(
                     "day",
                     "calendar",
+                    "monthIndex",
                     $config.dayDisplayCallback,
                 );
-                number = func.call(undefined, day, $calendar) ?? number;
+                number = func.call(undefined, day, $calendar, $index) ?? number;
                 document.body.removeChild(frame);
             } catch (e) {
                 console.error(e);
